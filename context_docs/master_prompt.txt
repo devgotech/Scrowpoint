@@ -1,0 +1,10 @@
+# Master Prompt: Peer-to-Peer Gadget Escrow Platform (Buyer's High)
+
+Execute modular phases:
+Phase 1: Database & Models (init.sql, models.go, 5%/2.5%/1.5% tiered math, append-only escrow_transactions)
+Phase 2: Auth, User Profiles, SmileID KYC (/api/auth/*, /api/users/*, /api/kyc/*)
+Phase 3: Listings & Orders (/api/listings/*, /api/orders/*, quote calculator)
+Phase 4: Escrow & Payments (/api/escrow/*, /api/payments/*, Paystack webhook, ledger)
+Phase 5: Disputes & Admin (/api/disputes/*, /api/admin/*, sub-cases with parent_dispute_id, reports)
+Phase 6: Escrow Background Workers (48h inspection auto-release cron, dispute SLAs)
+Phase 7: Media Microservice (Python FastAPI, image compression, EXIF stripping, secure storage)

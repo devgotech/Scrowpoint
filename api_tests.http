@@ -1,0 +1,399 @@
+### ============================================================================
+### BUYER'S HIGH - VS CODE REST CLIENT API TEST SUITE
+### Extension: "REST Client" (humao.rest-client)
+### ============================================================================
+###
+### ⚡ QUICK START INSTRUCTIONS (Solving 401 Unauthorized):
+### 
+### 1. HEALTH CHECKS:
+###    Click "Send Request" on # @name GoBackendHealth (No auth needed! Returns 200 OK)
+###
+### 2. BUYER FLOW:
+###    Step A: Send Request on # @name RegisterBuyer
+###    Step B: Send Request on # @name LoginBuyer
+###    Step C: Send Request on # @name GetBuyerProfile or # @name GetBuyerKYCStatus
+###            (Uses {{LoginBuyer.response.body.data.token}} directly!)
+###
+### 3. SELLER FLOW:
+###    Step A: Send Request on # @name RegisterSeller
+###    Step B: Send Request on # @name LoginSeller
+###    Step C: Send Request on # @name GetSellerProfile or # @name CreateDraftListing
+###            (Uses {{LoginSeller.response.body.data.token}} directly!)
+###
+### 4. MANUAL TOKEN OVERRIDE (Optional):
+###    If you prefer to paste a JWT directly, paste it below and replace the header:
+###    # @manualToken = your_token_here
+### ============================================================================
+
+@baseUrl = http://localhost:8080
+@mediaUrl = http://localhost:8000
+
+### Interactive Swagger docs (browser):
+###   Core Backend → http://localhost:8080/docs
+###   Media Service → http://localhost:8000/docs
+
+
+### ----------------------------------------------------------------------------
+### 1. SYSTEM HEALTH PROBES (Public - No Token Required)
+### ----------------------------------------------------------------------------
+
+# @name GoBackendHealth
+GET {{baseUrl}}/health
+Content-Type: application/json
+
+###
+
+# @name GoBackendSwaggerDocs
+# Opens the OpenAPI YAML used by http://localhost:8080/docs
+GET {{baseUrl}}/openapi.yaml
+
+###
+
+# @name GoBackendApiHealth
+GET {{baseUrl}}/api/health
+Content-Type: application/json
+
+###
+
+# @name GetPlatformConfig
+GET {{baseUrl}}/api/config
+Content-Type: application/json
+
+###
+
+# @name PythonMediaHealth
+GET {{mediaUrl}}/health
+Content-Type: application/json
+
+
+### ----------------------------------------------------------------------------
+### 2. AUTHENTICATION & LOGIN (BUYER)
+### ----------------------------------------------------------------------------
+
+# @name RegisterBuyer
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "buyer@example.com",
+  "phone": "+2348011112222",
+  "password": "Password123!",
+  "fullName": "Buyer Test User",
+  "role": "buyer"
+}
+
+###
+
+# @name LoginBuyer
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "buyer@example.com",
+  "password": "Password123!"
+}
+
+
+### ----------------------------------------------------------------------------
+### 3. AUTHENTICATION & LOGIN (SELLER & ADMIN)
+### ----------------------------------------------------------------------------
+
+# @name RegisterSeller
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "seller@example.com",
+  "phone": "+2348099998888",
+  "password": "Password123!",
+  "fullName": "Seller Test Merchant",
+  "role": "seller"
+}
+
+###
+
+# @name LoginSeller
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "seller@example.com",
+  "password": "Password123!"
+}
+
+###
+
+# @name LoginAdmin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@buyershigh.com",
+  "password": "AdminPassword123!"
+}
+
+
+### ----------------------------------------------------------------------------
+### 4. BUYER PROFILE & BUYER KYC
+### ----------------------------------------------------------------------------
+
+# @name GetBuyerProfile
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+###
+
+# @name SubmitBuyerKYC
+# Accepts providerVerificationRef (from SmileID SDK job) OR direct document URLs (from Media Service)
+# For testing simulation:
+#   "providerVerificationRef": "sim_approved"     -> immediately marks status as approved
+#   "providerVerificationRef": "sim_timeout_error"-> simulates 503 fallback to MANUAL_REVIEW_REQUIRED
+#   "providerVerificationRef": "sim_rejected"     -> simulates biometric mismatch rejection
+POST {{baseUrl}}/api/kyc/verify
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "providerVerificationRef": "sm_job_mock_buyer_001",
+  "idType": "NIN",
+  "idNumber": "12345678901",
+  "documentUrl": "http://localhost:8000/media/kyc_vault/buyer_nin.webp",
+  "selfieUrl": "http://localhost:8000/media/kyc_vault/buyer_selfie.webp"
+}
+
+###
+
+# @name GetBuyerKYCStatus
+GET {{baseUrl}}/api/kyc/status
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+
+### ----------------------------------------------------------------------------
+### 5. SELLER PROFILE & SELLER KYC
+### ----------------------------------------------------------------------------
+
+# @name GetSellerProfile
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+
+###
+
+# @name SubmitSellerKYC
+# Proving Seller Identity (Use "sim_approved" to auto-approve, or standard ref to leave pending/admin review)
+POST {{baseUrl}}/api/kyc/verify
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "providerVerificationRef": "sim_approved",
+  "idType": "NIN",
+  "idNumber": "98765432109",
+  "documentUrl": "http://localhost:8000/media/kyc_vault/seller_nin.webp",
+  "selfieUrl": "http://localhost:8000/media/kyc_vault/seller_selfie.webp"
+}
+
+###
+
+# @name GetSellerKYCStatus
+GET {{baseUrl}}/api/kyc/status
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+
+
+### ----------------------------------------------------------------------------
+### 6. SELLER LISTINGS WORKFLOW (Draft -> Media -> Publish)
+### ----------------------------------------------------------------------------
+
+# @name CreateOrUpdateDraftListing
+POST {{baseUrl}}/api/listings/draft
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "category": "smartphone",
+  "brand": "Apple",
+  "model": "iPhone 15 Pro Max 256GB Titanium",
+  "storage": "256GB",
+  "condition": "mint",
+  "price": 1450000,
+  "currency": "NGN",
+  "escrowTerms": "48-hour inspection upon tracked courier delivery.",
+  "description": "Flawless condition, 100% battery health, full original box & receipt.",
+  "fulfillmentMethod": "courier"
+}
+
+###
+
+# @name AttachMediaToDraft
+POST {{baseUrl}}/api/listings/draft/media
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "mediaUrl": "http://localhost:8000/media/listing_media/sample_phone.webp",
+  "mediaType": "image/webp",
+  "sortOrder": 1
+}
+
+###
+
+# @name PublishDraftListing
+POST {{baseUrl}}/api/listings
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+
+###
+
+# @name GetMySellerListings
+GET {{baseUrl}}/api/listings/my-listings
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+
+###
+
+# @name SearchPublicListings (Public - No Token Required)
+GET {{baseUrl}}/api/listings?search=iPhone&category=smartphone
+
+
+### ----------------------------------------------------------------------------
+### 7. ORDER CREATION & FEE QUOTE (BUYER)
+### ----------------------------------------------------------------------------
+
+# @name CalculatePreCheckoutFeeQuote
+# Tiered Escrow Fee: 5% up to 150k, 2.5% up to 750k, 1.5% remainder
+GET {{baseUrl}}/api/orders/{{CreateOrUpdateDraftListing.response.body.data.id}}/quote
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+###
+
+# @name CreateOrder
+POST {{baseUrl}}/api/orders
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "listingId": "{{CreateOrUpdateDraftListing.response.body.data.id}}",
+  "fulfillmentMethod": "courier"
+}
+
+
+### ----------------------------------------------------------------------------
+### 8. PAYMENTS & ESCROW FUNDING
+### ----------------------------------------------------------------------------
+
+# @name InitializePaystackPayment
+POST {{baseUrl}}/api/payments/paystack/initialize
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "orderId": "{{CreateOrder.response.body.data.id}}"
+}
+
+###
+
+###(Simulates Escrow Funding)
+# Requires InitializePaystackPayment first (moves escrow: created -> pending_payment).
+# Use the real gateway reference from that response so the payment record is found.
+# @name SimulatePaystackWebhookSuccess
+
+POST {{baseUrl}}/api/payments/paystack/webhook
+Content-Type: application/json
+x-paystack-signature: dev_mock_signature
+
+{
+  "event": "charge.success",
+  "data": {
+    "reference": "{{InitializePaystackPayment.response.body.data.reference}}",
+    "amount": 147500000,
+    "currency": "NGN",
+    "status": "success",
+    "metadata": {
+      "order_id": "{{CreateOrder.response.body.data.id}}"
+    }
+  }
+}
+
+###
+
+# @name InspectEscrowStatus
+GET {{baseUrl}}/api/escrow/{{CreateOrder.response.body.data.id}}/status
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+
+### ----------------------------------------------------------------------------
+### 9. LOGISTICS & 48-HOUR INSPECTION WINDOW
+### ----------------------------------------------------------------------------
+
+# @name GetOrderTracking
+GET {{baseUrl}}/api/orders/{{CreateOrder.response.body.data.id}}/tracking
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+###
+
+# @name BuyerConfirmsReceipt
+# Triggers the 48-Hour inspection timer window
+PUT {{baseUrl}}/api/orders/{{CreateOrder.response.body.data.id}}/confirm-receipt
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+###
+
+# @name GetOrderReceipt
+GET {{baseUrl}}/api/orders/{{CreateOrder.response.body.data.id}}/receipt
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+
+### ----------------------------------------------------------------------------
+### 10. DISPUTES & SUB-CASES (Parent-Child Hierarchy)
+### ----------------------------------------------------------------------------
+
+# @name OpenDisputeIfItemDamaged
+POST {{baseUrl}}/api/disputes
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "orderId": "{{CreateOrder.response.body.data.id}}",
+  "reason": "ITEM_NOT_AS_DESCRIBED",
+  "claimSummary": "Device display has noticeable ghost touches not disclosed in listing media.",
+  "evidenceUrls": [
+    "http://localhost:8000/media/dispute_evidence/screen_glitch.webp"
+  ]
+}
+
+###
+
+# @name EscalateSubDispute
+POST {{baseUrl}}/api/disputes/1/subcases
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "reason": "COURIER_RETURN_DAMAGE",
+  "claimSummary": "Courier damaged the return parcel during shipment back to seller."
+}
+
+
+### ----------------------------------------------------------------------------
+### 11. ADMIN DASHBOARD & COMPLIANCE
+### ----------------------------------------------------------------------------
+
+# @name AdminPlatformSummary
+GET {{baseUrl}}/api/admin/summary
+Authorization: Bearer {{LoginAdmin.response.body.data.token}}
+
+###
+
+# @name AdminListDisputes
+GET {{baseUrl}}/api/admin/disputes
+Authorization: Bearer {{LoginAdmin.response.body.data.token}}
+
+###
+
+# @name AdminReviewKYC
+POST {{baseUrl}}/api/admin/kyc/{{SubmitBuyerKYC.response.body.data.id}}/review
+Authorization: Bearer {{LoginAdmin.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "approve": true,
+  "reason": "All government database records and face match verified successfully"
+}
+
