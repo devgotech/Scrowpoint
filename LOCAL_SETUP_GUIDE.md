@@ -186,7 +186,7 @@ Both services expose the same style of browser-based docs:
 
 | Service | Swagger UI | OpenAPI Spec |
 |---------|------------|--------------|
-| Core Backend (Go) | http://localhost:8080/docs | http://localhost:8080/openapi.yaml |
+| Core Backend (Go) | http://localhost:8080/docs | http://localhost:8080/openapi.json |
 | Media Service (Python) | http://localhost:8000/docs | http://localhost:8000/openapi.json |
 
 ### Using Core Backend Swagger

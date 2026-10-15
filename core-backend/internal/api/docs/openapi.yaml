@@ -36,7 +36,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: JWT from login / register (`Authorization: Bearer <token>`)
+      description: "JWT from login / register (Authorization: Bearer <token>)"
 
   schemas:
     StandardResponse:

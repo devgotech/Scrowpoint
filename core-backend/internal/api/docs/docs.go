@@ -6,7 +6,10 @@ import (
 )
 
 //go:embed openapi.yaml
-var OpenAPISpec []byte
+var OpenAPIYAML []byte
+
+//go:embed openapi.json
+var OpenAPIJSON []byte
 
 const swaggerUIHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -27,7 +30,7 @@ const swaggerUIHTML = `<!DOCTYPE html>
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({
-        url: "/openapi.yaml",
+        url: "/openapi.json",
         dom_id: "#swagger-ui",
         deepLinking: true,
         presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
@@ -40,18 +43,23 @@ const swaggerUIHTML = `<!DOCTYPE html>
 </body>
 </html>`
 
-// Handler serves interactive Swagger UI at /docs and the OpenAPI document at /openapi.yaml.
+// Handler serves interactive Swagger UI at /docs and the OpenAPI document.
 func Handler(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/docs", "/docs/":
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(swaggerUIHTML))
-	case "/openapi.yaml", "/openapi.json", "/docs/openapi.yaml":
+	case "/openapi.json", "/docs/openapi.json":
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(OpenAPIJSON)
+	case "/openapi.yaml", "/docs/openapi.yaml":
 		w.Header().Set("Content-Type", "application/yaml; charset=utf-8")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write(OpenAPISpec)
+		_, _ = w.Write(OpenAPIYAML)
 	default:
 		http.NotFound(w, r)
 	}
@@ -60,7 +68,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 // IsDocsPath reports whether the request should be handled by the Swagger docs handler.
 func IsDocsPath(path string) bool {
 	switch path {
-	case "/docs", "/docs/", "/openapi.yaml", "/openapi.json", "/docs/openapi.yaml":
+	case "/docs", "/docs/",
+		"/openapi.yaml", "/openapi.json",
+		"/docs/openapi.yaml", "/docs/openapi.json":
 		return true
 	default:
 		return false

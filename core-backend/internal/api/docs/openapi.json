@@ -1,0 +1,2613 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Buyer's High Core Backend API",
+    "description": "Escrow marketplace API for Auth, KYC, Listings, Orders, Payments (Paystack),\nEscrow state machine, Disputes, Notifications, and Admin compliance.\n\n**Try it out:** Click **Authorize**, paste a JWT from `POST /api/auth/login`\n(`data.token`), then call protected endpoints.\n\nCompanion media service docs: `http://localhost:8000/docs`\n",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Buyer's High Engineering"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "KYC"
+    },
+    {
+      "name": "Listings"
+    },
+    {
+      "name": "Orders"
+    },
+    {
+      "name": "Payments"
+    },
+    {
+      "name": "Escrow"
+    },
+    {
+      "name": "Disputes"
+    },
+    {
+      "name": "Notifications"
+    },
+    {
+      "name": "Admin"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT from login / register (Authorization: Bearer <token>)"
+      }
+    },
+    "schemas": {
+      "StandardResponse": {
+        "type": "object",
+        "properties": {
+          "data": {},
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "example": "Unauthorized"
+          }
+        }
+      },
+      "SignUpRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "buyer@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "Password123!"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Buyer Test User"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+2348011112222"
+          },
+          "location": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "buyer",
+              "seller",
+              "admin"
+            ],
+            "example": "buyer"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "required": [
+          "oldPassword",
+          "newPassword"
+        ],
+        "properties": {
+          "oldPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "required": [
+          "token",
+          "newPassword"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "KYCSubmitRequest": {
+        "type": "object",
+        "properties": {
+          "providerVerificationRef": {
+            "type": "string",
+            "description": "SmileID job ref. Use sim_approved | sim_rejected | sim_timeout_error for local sims.",
+            "example": "sim_approved"
+          },
+          "idType": {
+            "type": "string",
+            "example": "NIN"
+          },
+          "idNumber": {
+            "type": "string",
+            "example": "12345678901"
+          },
+          "documentUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "selfieUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "AdminKYCReviewRequest": {
+        "type": "object",
+        "required": [
+          "approve"
+        ],
+        "properties": {
+          "approve": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "DraftListingRequest": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "smartphone"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Apple"
+          },
+          "model": {
+            "type": "string",
+            "example": "iPhone 15 Pro Max 256GB Titanium"
+          },
+          "storage": {
+            "type": "string",
+            "example": "256GB"
+          },
+          "condition": {
+            "type": "string",
+            "enum": [
+              "mint",
+              "good",
+              "fair",
+              "salvage"
+            ]
+          },
+          "price": {
+            "type": "number",
+            "example": 1450000
+          },
+          "currency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "escrowTerms": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "fulfillmentMethod": {
+            "type": "string",
+            "example": "courier"
+          }
+        }
+      },
+      "DraftMediaRequest": {
+        "type": "object",
+        "required": [
+          "mediaUrl"
+        ],
+        "properties": {
+          "mediaUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "mediaType": {
+            "type": "string",
+            "example": "image/webp"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "CreateOrderRequest": {
+        "type": "object",
+        "required": [
+          "listingId"
+        ],
+        "properties": {
+          "listingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fulfillmentMethod": {
+            "type": "string",
+            "example": "courier"
+          }
+        }
+      },
+      "InitializePaymentRequest": {
+        "type": "object",
+        "required": [
+          "orderId"
+        ],
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "PaystackWebhook": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "example": "charge.success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "reference": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "example": "NGN"
+              },
+              "status": {
+                "type": "string",
+                "example": "success"
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "order_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "FundEscrowRequest": {
+        "type": "object",
+        "required": [
+          "orderId",
+          "paymentMethod"
+        ],
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "card",
+              "bank",
+              "crypto",
+              "wallet"
+            ]
+          },
+          "gatewayReference": {
+            "type": "string"
+          }
+        }
+      },
+      "OpenDisputeRequest": {
+        "type": "object",
+        "required": [
+          "orderId",
+          "reason"
+        ],
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string",
+            "example": "ITEM_NOT_AS_DESCRIBED"
+          },
+          "claimSummary": {
+            "type": "string"
+          },
+          "evidenceUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      },
+      "SubCaseRequest": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "claimSummary": {
+            "type": "string"
+          }
+        }
+      },
+      "AddPaymentMethodRequest": {
+        "type": "object",
+        "required": [
+          "type",
+          "maskedDetails"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "maskedDetails": {
+            "type": "string"
+          },
+          "bankName": {
+            "type": "string"
+          },
+          "accountNumberLast4": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PayoutRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "paymentMethodId"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "paymentMethodId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "UpdateProfileRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health probe",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Service healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandardResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "API health probe",
+        "operationId": "apiHealth",
+        "responses": {
+          "200": {
+            "description": "Service healthy"
+          }
+        }
+      }
+    },
+    "/api/config": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Platform config (categories, fee tiers)",
+        "operationId": "getConfig",
+        "responses": {
+          "200": {
+            "description": "Public platform configuration"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register a new user",
+        "operationId": "register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created with JWT"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register (alias of /register)",
+        "operationId": "signup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created with JWT"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login and obtain JWT",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated session"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/auth/oauth/{provider}": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "OAuth login / link",
+        "operationId": "oauth",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "google"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "providerUid": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OAuth session"
+          }
+        }
+      }
+    },
+    "/api/auth/verify-email": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Verify email with token",
+        "operationId": "verifyEmail",
+        "responses": {
+          "200": {
+            "description": "Email verified"
+          }
+        }
+      }
+    },
+    "/api/auth/request-password-reset": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Request password reset email",
+        "operationId": "requestPasswordReset",
+        "responses": {
+          "200": {
+            "description": "Reset initiated"
+          }
+        }
+      }
+    },
+    "/api/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Reset password with token",
+        "operationId": "resetPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated"
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Current authenticated user",
+        "operationId": "authMe",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout current session",
+        "operationId": "logout",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out"
+          }
+        }
+      }
+    },
+    "/api/auth/resend-verification": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Resend email verification",
+        "operationId": "resendVerification",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verification resent"
+          }
+        }
+      }
+    },
+    "/api/auth/change-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Change password",
+        "operationId": "changePassword",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed"
+          }
+        }
+      }
+    },
+    "/api/auth/sessions": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "List active sessions",
+        "operationId": "listSessions",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sessions list"
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get my profile",
+        "operationId": "getMe",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile"
+          }
+        }
+      }
+    },
+    "/api/users/me/profile": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update my profile",
+        "operationId": "updateProfile",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated"
+          }
+        }
+      }
+    },
+    "/api/users/me/avatar": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update avatar URL",
+        "operationId": "updateAvatar",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Avatar updated"
+          }
+        }
+      }
+    },
+    "/api/users/me/saved-listings": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Saved / bookmarked listings",
+        "operationId": "getSavedListings",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved listings"
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/public-profile": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Public seller / buyer profile",
+        "operationId": "getPublicProfile",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public profile"
+          }
+        }
+      }
+    },
+    "/api/users/me/payment-methods": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "List saved payment methods",
+        "operationId": "listPaymentMethods",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment methods"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Add payment method",
+        "operationId": "addPaymentMethod",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPaymentMethodRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Method saved"
+          }
+        }
+      }
+    },
+    "/api/users/me/payment-methods/{methodId}": {
+      "delete": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Delete payment method",
+        "operationId": "deletePaymentMethod",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "methodId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/api/kyc/verify": {
+      "post": {
+        "tags": [
+          "KYC"
+        ],
+        "summary": "Submit KYC verification",
+        "operationId": "submitKYC",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KYCSubmitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Verification record created"
+          },
+          "400": {
+            "description": "Invalid payload"
+          }
+        }
+      }
+    },
+    "/api/kyc/submit": {
+      "post": {
+        "tags": [
+          "KYC"
+        ],
+        "summary": "Submit KYC (alias of /verify)",
+        "operationId": "submitKYCAlias",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KYCSubmitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Verification record created"
+          }
+        }
+      }
+    },
+    "/api/kyc/status": {
+      "get": {
+        "tags": [
+          "KYC"
+        ],
+        "summary": "Current KYC status",
+        "operationId": "getKYCStatus",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "KYC status payload"
+          }
+        }
+      }
+    },
+    "/api/kyc/history": {
+      "get": {
+        "tags": [
+          "KYC"
+        ],
+        "summary": "KYC verification history",
+        "operationId": "getKYCHistory",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "History list"
+          }
+        }
+      }
+    },
+    "/api/listings": {
+      "get": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Search public listings (or seller listings with role=seller)",
+        "operationId": "listListings",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "seller"
+              ]
+            },
+            "description": "When seller, requires Bearer token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listing results"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Publish current draft listing",
+        "operationId": "publishListing",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Listing published"
+          }
+        }
+      }
+    },
+    "/api/listings/draft": {
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Create or update draft listing",
+        "operationId": "upsertDraft",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftListingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Draft saved"
+          }
+        }
+      }
+    },
+    "/api/listings/draft/media": {
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Attach media URL to draft",
+        "operationId": "attachDraftMedia",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftMediaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Media attached"
+          }
+        }
+      }
+    },
+    "/api/listings/draft/media/reorder": {
+      "put": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Reorder draft media",
+        "operationId": "reorderDraftMedia",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reordered"
+          }
+        }
+      }
+    },
+    "/api/listings/draft/media/{mediaId}": {
+      "delete": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Remove media from draft",
+        "operationId": "deleteDraftMedia",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "mediaId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Removed"
+          }
+        }
+      }
+    },
+    "/api/listings/my-listings": {
+      "get": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Seller's own listings",
+        "operationId": "myListings",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Seller listings"
+          }
+        }
+      }
+    },
+    "/api/listings/{listingId}": {
+      "get": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Get listing by ID (public)",
+        "operationId": "getListing",
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listing detail"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Update listing",
+        "operationId": "updateListing",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Delete listing",
+        "operationId": "deleteListing",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/api/listings/{listingId}/publish": {
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Publish listing by ID",
+        "operationId": "publishListingById",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published"
+          }
+        }
+      }
+    },
+    "/api/listings/{listingId}/save": {
+      "post": {
+        "tags": [
+          "Listings"
+        ],
+        "summary": "Save / bookmark listing",
+        "operationId": "saveListing",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved"
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "List my orders",
+        "operationId": "listOrders",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Create order from listing",
+        "operationId": "createOrder",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created (escrow state created)"
+          }
+        }
+      }
+    },
+    "/api/orders/{listingOrOrderId}/quote": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Pre-checkout fee quote for a listing",
+        "operationId": "orderQuote",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "listingOrOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Listing ID used for fee quote"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tiered fee quote"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderId}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Order detail",
+        "operationId": "getOrder",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderId}/tracking": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Logistics tracking",
+        "operationId": "orderTracking",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tracking info"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderId}/confirm-receipt": {
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Buyer confirms receipt (starts 48h inspection)",
+        "operationId": "confirmReceipt",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inspection period started"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderId}/deliver": {
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Mark order delivered",
+        "operationId": "markDelivered",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delivered"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderId}/release": {
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Release escrow funds",
+        "operationId": "releaseOrder",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Released"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderId}/dispatch": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Dispatch / order detail for logistics",
+        "operationId": "orderDispatch",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dispatch detail"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderId}/receipt": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Order receipt",
+        "operationId": "orderReceipt",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receipt"
+          }
+        }
+      }
+    },
+    "/api/payments/paystack/initialize": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Initialize Paystack payment (moves escrow to pending_payment)",
+        "operationId": "initializePaystack",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitializePaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "authorizationUrl, accessCode, reference"
+          }
+        }
+      }
+    },
+    "/api/payments/initialize": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Initialize payment (alias)",
+        "operationId": "initializePayment",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitializePaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment init response"
+          }
+        }
+      }
+    },
+    "/api/payments/paystack/webhook": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Paystack webhook (charge.success funds escrow)",
+        "operationId": "paystackWebhook",
+        "parameters": [
+          {
+            "name": "x-paystack-signature",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "example": "dev_mock_signature"
+            },
+            "description": "Use `dev_mock_signature` in local development"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaystackWebhook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed"
+          },
+          "400": {
+            "description": "Invalid transition or payload"
+          }
+        }
+      }
+    },
+    "/api/payments/webhook": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Payment webhook (alias)",
+        "operationId": "paymentWebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaystackWebhook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Processed"
+          }
+        }
+      }
+    },
+    "/api/seller/earnings-summary": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Seller earnings summary",
+        "operationId": "earningsSummary",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balances"
+          }
+        }
+      }
+    },
+    "/api/payouts": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "List payouts",
+        "operationId": "listPayouts",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payouts"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Request payout",
+        "operationId": "requestPayout",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoutRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payout requested"
+          }
+        }
+      }
+    },
+    "/api/escrow/fund": {
+      "post": {
+        "tags": [
+          "Escrow"
+        ],
+        "summary": "Fund escrow directly",
+        "operationId": "fundEscrow",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FundEscrowRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Escrow funded (funds_held)"
+          }
+        }
+      }
+    },
+    "/api/escrow/{orderId}/status": {
+      "get": {
+        "tags": [
+          "Escrow"
+        ],
+        "summary": "Escrow status for order",
+        "operationId": "escrowStatus",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Escrow state"
+          }
+        }
+      }
+    },
+    "/api/escrow/{orderId}/ledger": {
+      "get": {
+        "tags": [
+          "Escrow"
+        ],
+        "summary": "Escrow ledger entries",
+        "operationId": "escrowLedger",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ledger"
+          }
+        }
+      }
+    },
+    "/api/disputes": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Open a dispute on an order",
+        "operationId": "openDispute",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenDisputeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dispute opened"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}": {
+      "get": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Get dispute",
+        "operationId": "getDispute",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dispute detail"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/timeline": {
+      "get": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Dispute timeline",
+        "operationId": "disputeTimeline",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Timeline events"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/evidence": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Submit evidence",
+        "operationId": "submitEvidence",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence recorded"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/submit": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Finalize evidence package",
+        "operationId": "finalizeEvidence",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Finalized"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/respond": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Counterparty response",
+        "operationId": "disputeRespond",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response recorded"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/return-label": {
+      "get": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Get return shipping label",
+        "operationId": "returnLabel",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Label"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/return-shipped": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Mark return shipped",
+        "operationId": "returnShipped",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Marked shipped"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/confirm-return": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Confirm return received",
+        "operationId": "confirmReturn",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Confirmed"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/subcases": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Open child sub-case",
+        "operationId": "openSubCase",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubCaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sub-case opened"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/sub-case": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Open sub-case (alias)",
+        "operationId": "openSubCaseAlias",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Sub-case opened"
+          }
+        }
+      }
+    },
+    "/api/disputes/{disputeId}/appeal": {
+      "post": {
+        "tags": [
+          "Disputes"
+        ],
+        "summary": "Submit appeal",
+        "operationId": "submitAppeal",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appeal submitted"
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "List notifications",
+        "operationId": "listNotifications",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notifications"
+          }
+        }
+      }
+    },
+    "/api/notifications/mark-all-read": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Mark all notifications read",
+        "operationId": "markAllNotificationsRead",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All marked read"
+          }
+        }
+      }
+    },
+    "/api/notifications/{notificationId}/read": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Mark one notification read",
+        "operationId": "markNotificationRead",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Marked read"
+          }
+        }
+      }
+    },
+    "/api/reports": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Create user report (authenticated)",
+        "operationId": "createReport",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Report created"
+          }
+        }
+      }
+    },
+    "/api/admin/summary": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Platform admin summary",
+        "operationId": "adminSummary",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard summary"
+          },
+          "403": {
+            "description": "Admin role required"
+          }
+        }
+      }
+    },
+    "/api/admin/disputes": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "List all disputes",
+        "operationId": "adminListDisputes",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disputes queue"
+          }
+        }
+      }
+    },
+    "/api/admin/disputes/assign": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Assign dispute to officer",
+        "operationId": "adminAssignDispute",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Assigned"
+          }
+        }
+      }
+    },
+    "/api/admin/disputes/evidence": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "View dispute evidence (admin)",
+        "operationId": "adminDisputeEvidence",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence package"
+          }
+        }
+      }
+    },
+    "/api/admin/disputes/verdict": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Issue dispute verdict",
+        "operationId": "adminVerdict",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verdict issued"
+          }
+        }
+      }
+    },
+    "/api/admin/appeals/decide": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Decide an appeal",
+        "operationId": "adminDecideAppeal",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appeal decided"
+          }
+        }
+      }
+    },
+    "/api/admin/reports": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "List moderation reports",
+        "operationId": "adminListReports",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reports"
+          }
+        }
+      }
+    },
+    "/api/admin/reports/dismiss": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Dismiss a report",
+        "operationId": "adminDismissReport",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dismissed"
+          }
+        }
+      }
+    },
+    "/api/admin/users/suspend": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Suspend a user",
+        "operationId": "adminSuspendUser",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User suspended"
+          }
+        }
+      }
+    },
+    "/api/admin/kyc/{verificationId}/review": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Manual KYC approve / reject",
+        "operationId": "adminKYCReview",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "verificationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminKYCReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review applied"
+          }
+        }
+      }
+    }
+  }
+}
