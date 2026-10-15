@@ -5,7 +5,7 @@
 *   **Secondary Color:** Hex `#64748b` (Dark Grey)
 *   **Background Color:** Hex `#F6F3F3` (Off-white)
 *   **State Colors:**
-    *   Success (Escrow Funded): Hex `#22c55e` (Green)
+    *   Success (Escrow Funded): Hex `#088235` (Green)
     *   Warning (Dispute Open): Hex `#ecc94b` (Amber)
     *   Error (Verification Failed): Hex `#f56565` (Red)
     *   **Trust Green:** `#22C55E` strictly reserved for escrow signals (Escrow Active, Verified, funds released).
