@@ -7,7 +7,7 @@
 - [x] Implement global `formatCurrency` utility (converting kobo/cents to ₦ NGN).
 - [x] Set up HTTP-only JWT interception in `middleware.ts`.
 - [x] Create `AuthContext.tsx` to distribute user state (ID, Role, KYC tier) globally.
-- [ ] Configure AWS S3 Presigned URL fetcher for the `FileUploader` component.
+- [x] Configure AWS S3 Presigned URL fetcher for the `FileUploader` component.
 - [x] Set up global `error.tsx` (Generic Error State) and `loading.tsx` (Global Skeleton).
 
 ## Phase 2: Global Shell Assembly (ui_1)
