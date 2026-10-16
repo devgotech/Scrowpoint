@@ -4,11 +4,11 @@
 *The foundational layer. Do not build UI components until data fetching and styling variables are locked.*
 
 - [x] Next.js App Router setup (Tailwind v4, Geist/Roboto fonts configured).
-- [ ] Implement global `formatCurrency` utility (converting kobo/cents to ₦ NGN).
-- [ ] Set up HTTP-only JWT interception in `middleware.ts`.
-- [ ] Create `AuthContext.tsx` to distribute user state (ID, Role, KYC tier) globally.
+- [x] Implement global `formatCurrency` utility (converting kobo/cents to ₦ NGN).
+- [x] Set up HTTP-only JWT interception in `middleware.ts`.
+- [x] Create `AuthContext.tsx` to distribute user state (ID, Role, KYC tier) globally.
 - [ ] Configure AWS S3 Presigned URL fetcher for the `FileUploader` component.
-- [ ] Set up global `error.tsx` (Generic Error State) and `loading.tsx` (Global Skeleton).
+- [x] Set up global `error.tsx` (Generic Error State) and `loading.tsx` (Global Skeleton).
 
 ## Phase 2: Global Shell Assembly (ui_1)
 *The unmoving architecture of the application.*
