@@ -18,7 +18,7 @@ const PROTECTED_PREFIXES = ["/dashboard", "/escrow", "/admin"];
 const AUTH_COOKIE_NAME = "bh_token";
 const FALLBACK_COOKIE_NAME = "auth_token";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   // Check if the current route is protected

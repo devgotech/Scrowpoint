@@ -54,7 +54,7 @@
 /* Light-Only Brand Configuration */
 @layer base {
   :root {
-    --background: #F6F3F3; /* Off-white */
+    --background: #fafafa; /* Off-white */
     --foreground: #0f172a; /* Slate 900 */
     
     --card: #ffffff;
@@ -82,7 +82,7 @@
     --input: #e2e8f0;
     --ring: #9e9e9e;
     
-    --radius: 8px; /* 8px base for cards */
+    --radius: 4px; /* 4px base for cards */
   }
 }
 
