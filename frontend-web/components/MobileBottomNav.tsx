@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
  *   4. Profile (User Profile / Auth Gate) -> `/dashboard/settings` or `/login`
  * - Active State Indication:
  *   - Matches current route using `usePathname()`.
- *   - Active icon + label highlighted in `text-primary` (Slate 900) or `text-trust` for Escrows.
+ *   - Active icon + label highlighted in `text-primary` (Slate 900).
  *   - Inactive items rendered in `text-muted-foreground`.
  * - Gated Action Handling:
  *   - Directs to `/login` if unauthenticated when tapping Escrows or Profile.
@@ -96,7 +96,7 @@ export function MobileBottomNav({
             href={item.href}
             prefetch={false}
             className={cn(
-              "relative flex flex-1 flex-col items-center justify-center py-1 transition-colors select-none",
+              "relative flex min-h-11 flex-1 flex-col items-center justify-center py-1 transition-colors duration-200 ease-out select-none",
               isActive
                 ? "text-primary font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -105,12 +105,11 @@ export function MobileBottomNav({
             <div className="relative">
               <Icon
                 className={cn(
-                  "h-5 w-5 transition-transform",
-                  isActive ? "scale-110" : "scale-100"
+                  "h-5 w-5"
                 )}
               />
               {item.badgeCount && item.badgeCount > 0 ? (
-                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white shadow-xs">
+                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-[var(--shadow-soft-sm)]">
                   {item.badgeCount}
                 </span>
               ) : null}
@@ -122,7 +121,7 @@ export function MobileBottomNav({
 
             {/* Subtle Active Pill Indicator */}
             {isActive && (
-              <span className="absolute bottom-1 h-0.5 w-6 rounded-full bg-primary" />
+              <span className="absolute bottom-1 h-0.5 w-6 rounded-md bg-primary" />
             )}
           </Link>
         );

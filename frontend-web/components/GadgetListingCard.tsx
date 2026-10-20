@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  CheckCircle2,
   Heart,
   Lock,
   MapPin,
@@ -11,6 +10,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
@@ -54,8 +54,8 @@ export function GadgetListingCard({
   const conditionConfig = {
     mint: {
       label: "Mint Condition",
-      variant: "trust" as const,
-      className: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+      variant: "secondary" as const,
+      className: "bg-muted text-muted-foreground border-border",
     },
     good: {
       label: "Good Condition",
@@ -64,8 +64,8 @@ export function GadgetListingCard({
     },
     fair: {
       label: "Fair / Used",
-      variant: "warning" as const,
-      className: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+      variant: "secondary" as const,
+      className: "bg-muted text-muted-foreground border-border",
     },
     salvage: {
       label: "Salvage / Parts",
@@ -99,7 +99,7 @@ export function GadgetListingCard({
   return (
     <div
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-xs transition-all duration-200 hover:shadow-md hover:border-border/80",
+        "group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-[var(--shadow-soft-sm)] transition duration-200 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-soft-md)]",
         className
       )}
     >
@@ -111,7 +111,7 @@ export function GadgetListingCard({
               src={primaryImage}
               alt={listing.title}
               onError={() => setImageError(true)}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover"
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center bg-muted/60 text-muted-foreground">
@@ -126,7 +126,7 @@ export function GadgetListingCard({
           <div className="absolute top-3 left-3 z-10">
             <Badge
               variant={conditionConfig.variant}
-              className={cn("gap-1 py-0.5 px-2.5 text-xs font-semibold shadow-xs backdrop-blur-xs", conditionConfig.className)}
+              className={cn("gap-1 px-2 py-0.5 text-xs font-semibold", conditionConfig.className)}
             >
               <span>{conditionConfig.label}</span>
             </Badge>
@@ -139,13 +139,13 @@ export function GadgetListingCard({
               onClick={handleHeartClick}
               aria-label={isSaved ? "Remove from wishlist" : "Save gadget"}
               className={cn(
-                "absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-md shadow-xs transition-colors hover:bg-background",
+                "absolute top-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-md bg-background/90 backdrop-blur-md shadow-[var(--shadow-soft-sm)] transition-colors duration-200 ease-out hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                 isSaved ? "text-destructive" : "text-muted-foreground hover:text-foreground"
               )}
             >
               <Heart
                 className={cn(
-                  "h-4 w-4 transition-transform active:scale-125",
+                  "h-4 w-4 transition-colors duration-200 ease-out",
                   isSaved && "fill-current"
                 )}
               />
@@ -167,10 +167,12 @@ export function GadgetListingCard({
             </span>
 
             {listing.sellerVerified ? (
-              <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                <ShieldCheck className="h-3.5 w-3.5 fill-current/20" />
-                <span>Verified Seller</span>
-              </span>
+              <Tooltip content="GOVERNMENT ID VERIFIED">
+                <span className="flex items-center gap-1 text-[11px] text-trust-strong font-medium">
+                  <ShieldCheck className="h-3.5 w-3.5 fill-current/20" />
+                  <span>Verified Seller</span>
+                </span>
+              </Tooltip>
             ) : listing.location ? (
               <span className="flex items-center gap-1 text-[11px] text-muted-foreground truncate max-w-[120px]">
                 <MapPin className="h-3 w-3" />
@@ -179,7 +181,7 @@ export function GadgetListingCard({
             ) : null}
           </div>
 
-          <h3 className="mt-2 font-heading text-base font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+          <h3 className="mt-2 font-heading text-base font-medium leading-6 text-foreground line-clamp-1">
             {listing.title}
           </h3>
 
@@ -189,21 +191,21 @@ export function GadgetListingCard({
             </p>
           )}
 
-          {/* Price & Escrow Protection Footer */}
+          {/* Price & Escrow Availability Footer */}
           <div className="mt-4 pt-3 border-t border-border/70 flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground">
                 Escrow Price
               </span>
-              <span className="font-mono text-lg font-bold tracking-tight text-foreground">
+              <span className="mono-data text-foreground">
                 {formattedPrice}
               </span>
             </div>
 
-            <div className="flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <Badge variant="secondary" className="gap-1 text-[11px]">
               <Lock className="h-3 w-3" />
-              <span>Escrow Protected</span>
-            </div>
+              <span>Escrow Available</span>
+            </Badge>
           </div>
         </div>
       </Link>

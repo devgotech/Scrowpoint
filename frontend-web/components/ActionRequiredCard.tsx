@@ -2,7 +2,6 @@
 
 import React, { useMemo } from "react";
 import {
-  AlertTriangle,
   ArrowRight,
   CheckCircle2,
   Clock,
@@ -10,7 +9,6 @@ import {
   PackageCheck,
   ShieldAlert,
   ShieldCheck,
-  Upload,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -103,7 +101,7 @@ export function ActionRequiredCard({
             `A dispute was initiated on ${orderNumber}. Please submit photos, video, or courier waybill receipts to our mediation officer within 24 hours.`,
           primaryLabel: primaryActionLabel || "Upload Dispute Evidence",
           secondaryLabel: secondaryActionLabel || "View Case Details",
-          variant: "destructive" as const,
+          variant: "warning" as const,
           icon: ShieldAlert,
           urgent: true,
         };
@@ -115,7 +113,7 @@ export function ActionRequiredCard({
             `To unlock high-volume escrow trades and seller bank payouts, please submit a valid government ID and selfie.`,
           primaryLabel: primaryActionLabel || "Verify Identity with SmileID",
           secondaryLabel: secondaryActionLabel || "Learn More",
-          variant: "default" as const,
+          variant: "warning" as const,
           icon: ShieldCheck,
           urgent: false,
         };
@@ -141,8 +139,8 @@ export function ActionRequiredCard({
     <Alert
       variant={config.variant}
       className={cn(
-        "relative overflow-hidden rounded-2xl border shadow-sm transition-all duration-200",
-        config.urgent && "border-amber-400 dark:border-amber-500/80 shadow-md",
+        "relative overflow-hidden rounded-lg border shadow-[var(--shadow-soft-sm)] transition duration-200 ease-out",
+        config.urgent && "border-warning shadow-[var(--shadow-soft-md)]",
         className
       )}
     >
@@ -151,13 +149,11 @@ export function ActionRequiredCard({
         <div className="flex items-start gap-3.5 flex-1">
           <div
             className={cn(
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors",
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-md transition-colors duration-200 ease-out",
               config.variant === "warning"
-                ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+                ? "bg-warning/20 text-warning-text"
                 : config.variant === "trust"
-                ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                : config.variant === "destructive"
-                ? "bg-destructive/20 text-destructive"
+                ? "bg-trust-subtle text-trust-strong"
                 : "bg-primary/10 text-primary"
             )}
           >
@@ -171,7 +167,7 @@ export function ActionRequiredCard({
               </AlertTitle>
 
               {/* Order Reference Pill */}
-              <span className="font-mono text-[10px] rounded-md bg-muted px-2 py-0.5 font-semibold text-muted-foreground">
+              <span className="mono-data rounded-md bg-muted px-2 py-0.5 text-muted-foreground">
                 {orderNumber}
               </span>
             </div>
@@ -182,10 +178,10 @@ export function ActionRequiredCard({
 
             {/* Countdown Warning Bar if Active */}
             {countdownString && (
-              <div className="mt-2 flex items-center gap-2 text-xs font-mono font-medium">
-                <Clock className="h-3.5 w-3.5 text-amber-500 animate-spin" />
+              <div className="mt-2 flex items-center gap-2 mono-data">
+                <Clock className="h-3.5 w-3.5 text-warning" />
                 <span className="text-muted-foreground">Time Remaining:</span>
-                <span className="font-bold text-amber-600 dark:text-amber-400">
+                <span className="font-bold text-warning-text">
                   {countdownString}
                 </span>
                 <span className="text-[10px] text-muted-foreground font-body">
@@ -204,7 +200,7 @@ export function ActionRequiredCard({
               variant="outline"
               size="sm"
               onClick={onSecondaryAction}
-              className="text-xs h-9 border-border text-foreground hover:bg-muted"
+              className="text-xs border-border text-foreground hover:bg-muted"
             >
               <span>{config.secondaryLabel}</span>
             </Button>
@@ -217,14 +213,12 @@ export function ActionRequiredCard({
             disabled={isLoading}
             onClick={onPrimaryAction}
             className={cn(
-              "gap-2 text-xs h-9 font-semibold shadow-xs transition-transform active:scale-95",
-              config.variant === "warning" && "bg-amber-600 hover:bg-amber-700 text-white dark:bg-amber-500 dark:hover:bg-amber-600",
-              config.variant === "trust" && "bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-500 dark:hover:bg-emerald-600"
+              "gap-2 text-xs font-semibold shadow-[var(--shadow-soft-sm)] transition-colors duration-200 ease-out"
             )}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <Clock className="h-3.5 w-3.5 animate-spin" />
+                <Clock className="h-3.5 w-3.5" />
                 <span>Processing...</span>
               </span>
             ) : (

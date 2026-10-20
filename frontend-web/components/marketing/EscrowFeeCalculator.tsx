@@ -1,0 +1,491 @@
+"use client";
+
+import React, { useMemo, useState } from "react";
+import {
+  ArrowRight,
+  Calculator,
+  CheckCircle2,
+  Clock,
+  Coins,
+  Copy,
+  CreditCard,
+  DollarSign,
+  HelpCircle,
+  Info,
+  Lock,
+  Percent,
+  RefreshCw,
+  ShieldCheck,
+  Truck,
+  Zap,
+} from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+/**
+ * EscrowFeeCalculator Component (Phase 1 §2)
+ *
+ * Requirements (5_screen_flows.md & 4_ui_system.md):
+ * - Pure client-side React component.
+ * - Dynamic formula: calculates amount * fee_percentage, instantly rendering:
+ *   - Buyer Escrow Protection Fee
+ *   - Seller Net Payout
+ *   - Gateway Processing (Paystack 1.5% max ₦2,000)
+ *   - Optional Tracked Insured Waybill
+ * - Split options: Buyer Pays 100%, Seller Pays 100%, 50/50 Shared.
+ * - Token Compliance: 8px card radius, 4px controls, Roboto headers, Geist body, Geist Mono currency.
+ */
+
+export type FeePayer = "buyer" | "seller" | "split";
+
+export interface EscrowFeeCalculatorProps {
+  initialAmount?: number;
+  className?: string;
+  onProceedToTrade?: (details: {
+    amount: number;
+    escrowFee: number;
+    payer: FeePayer;
+    sellerPayout: number;
+    buyerDeposit: number;
+  }) => void;
+}
+
+export function EscrowFeeCalculator({
+  initialAmount = 450000,
+  className,
+  onProceedToTrade,
+}: EscrowFeeCalculatorProps) {
+  const [rawAmount, setRawAmount] = useState<string>(String(initialAmount));
+  const [payer, setPayer] = useState<FeePayer>("buyer");
+  const [includeShipping, setIncludeShipping] = useState<boolean>(true);
+  const [shippingFee, setShippingFee] = useState<number>(4500); // Standard Lagos/Nationwide tracked waybill
+  const [copied, setCopied] = useState<boolean>(false);
+
+  // Parse numerical value safely
+  const amount = useMemo(() => {
+    const cleaned = Number(rawAmount.replace(/[^0-9]/g, ""));
+    return isNaN(cleaned) ? 0 : cleaned;
+  }, [rawAmount]);
+
+  // Determine active fee tier
+  const tierInfo = useMemo(() => {
+    if (amount <= 100000) {
+      return {
+        tierName: "Tier 1: Entry / Accessories",
+        percentage: 5.0,
+        minFee: 1500,
+        badgeColor: "default" as const,
+      };
+    } else if (amount <= 500000) {
+      return {
+        tierName: "Tier 2: Mid-Range Gadgets",
+        percentage: 3.5,
+        minFee: 2500,
+        badgeColor: "trust" as const,
+      };
+    } else {
+      return {
+        tierName: "Tier 3: Flagships & Laptops",
+        percentage: 2.5,
+        minFee: 5000,
+        badgeColor: "trust" as const,
+      };
+    }
+  }, [amount]);
+
+  // Calculated Escrow Fee
+  const calculatedFee = useMemo(() => {
+    if (amount <= 0) return 0;
+    const raw = (amount * tierInfo.percentage) / 100;
+    return Math.max(raw, tierInfo.minFee);
+  }, [amount, tierInfo]);
+
+  // Payment Gateway processing fee (Paystack standard: 1.5% capped at ₦2,000; waived on large bank transfer)
+  const gatewayFee = useMemo(() => {
+    if (amount <= 0) return 0;
+    const raw = amount * 0.015;
+    return Math.min(raw, 2000);
+  }, [amount]);
+
+  // Fee distribution according to payer toggle
+  const buyerFeeContribution = useMemo(() => {
+    if (payer === "buyer") return calculatedFee;
+    if (payer === "seller") return 0;
+    return calculatedFee / 2;
+  }, [calculatedFee, payer]);
+
+  const sellerFeeContribution = useMemo(() => {
+    if (payer === "seller") return calculatedFee;
+    if (payer === "buyer") return 0;
+    return calculatedFee / 2;
+  }, [calculatedFee, payer]);
+
+  // Buyer Total Out-of-Pocket
+  const totalBuyerDeposit = useMemo(() => {
+    const base = amount;
+    const fee = buyerFeeContribution;
+    const ship = includeShipping ? shippingFee : 0;
+    const gw = payer === "buyer" ? gatewayFee : gatewayFee / 2;
+    return base + fee + ship + gw;
+  }, [amount, buyerFeeContribution, includeShipping, shippingFee, gatewayFee, payer]);
+
+  // Seller Total Received Payout
+  const totalSellerPayout = useMemo(() => {
+    const base = amount;
+    const fee = sellerFeeContribution;
+    const gw = payer === "seller" ? gatewayFee : 0;
+    return Math.max(0, base - fee - gw);
+  }, [amount, sellerFeeContribution, gatewayFee, payer]);
+
+  const formatNaira = (val: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      maximumFractionDigits: 0,
+    }).format(val);
+  };
+
+  const setPreset = (val: number) => {
+    setRawAmount(String(val));
+  };
+
+  const handleCopySummary = () => {
+    const summary = `Buyer's High Escrow Breakdown:
+Gadget Price: ${formatNaira(amount)}
+Escrow Rate: ${tierInfo.percentage}% (${formatNaira(calculatedFee)})
+Fee Payer: ${payer.toUpperCase()}
+Tracked Logistics: ${includeShipping ? formatNaira(shippingFee) : "None"}
+Buyer Deposits: ${formatNaira(totalBuyerDeposit)}
+Seller Receives: ${formatNaira(totalSellerPayout)}
+Inspection Window: 48 Hours Guarantee`;
+
+    navigator.clipboard.writeText(summary);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className={cn("grid grid-cols-1 lg:grid-cols-12 gap-8 items-start", className)}>
+      {/* =====================================================================
+          LEFT: INPUTS & CUSTOMIZATION (7 Cols)
+          ===================================================================== */}
+      <div className="lg:col-span-7 space-y-6">
+        <Card className="rounded-[8px] border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
+          <CardHeader className="pb-4 border-b border-[#e2e8f0]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
+                  <Calculator className="h-4 w-4" />
+                </div>
+                <div>
+                  <CardTitle className="font-primary text-base font-bold text-[#020617]">
+                    Escrow Protection Calculator
+                  </CardTitle>
+                  <p className="font-secondary text-xs text-[#64748b]">
+                    Instant client-side mathematical simulation of escrow splits.
+                  </p>
+                </div>
+              </div>
+              <Badge variant="trust" className="text-[10px] font-mono">
+                Live Formula
+              </Badge>
+            </div>
+          </CardHeader>
+
+          <CardContent className="pt-6 space-y-6">
+            {/* 1. Gadget Selling Price Input */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label
+                  htmlFor="gadget-price-input"
+                  className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider"
+                >
+                  Agreed Gadget Price (NGN)
+                </label>
+                <span className="font-mono text-xs text-[#15803d] font-semibold">
+                  {tierInfo.tierName}
+                </span>
+              </div>
+
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-[#64748b]">
+                  ₦
+                </span>
+                <input
+                  id="gadget-price-input"
+                  type="text"
+                  value={rawAmount ? Number(rawAmount).toLocaleString() : ""}
+                  onChange={(e) => {
+                    const onlyNums = e.target.value.replace(/[^0-9]/g, "");
+                    setRawAmount(onlyNums);
+                  }}
+                  placeholder="e.g. 450,000"
+                  className="h-12 w-full rounded-[4px] border border-[#e2e8f0] bg-white pl-8 pr-4 font-mono text-lg font-bold text-[#020617] shadow-xs focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none transition-colors"
+                />
+              </div>
+
+              {/* Preset Buttons */}
+              <div className="flex flex-wrap items-center gap-2 mt-3">
+                <span className="text-[11px] font-secondary text-[#64748b] mr-1">Presets:</span>
+                {[85000, 250000, 450000, 850000, 1400000].map((presetVal) => (
+                  <button
+                    key={presetVal}
+                    type="button"
+                    onClick={() => setPreset(presetVal)}
+                    className={cn(
+                      "px-2.5 py-1 rounded-[4px] border text-[11px] font-mono transition-all duration-200 ease-out",
+                      amount === presetVal
+                        ? "bg-[#0f172a] text-white border-[#0f172a]"
+                        : "bg-[#f8fafc] border-[#e2e8f0] text-[#020617] hover:bg-[#f1f5f9]"
+                    )}
+                  >
+                    ₦{(presetVal / 1000).toLocaleString()}k
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. Fee Payer Toggle: Anti-Pill, strictly rounded-[4px] */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider">
+                  Who Pays the Escrow Fee?
+                </label>
+                <span className="text-[11px] font-secondary text-[#64748b]">
+                  Customizable prior to locking
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "buyer", label: "Buyer Pays (100%)", sub: "Standard for classifieds" },
+                  { id: "seller", label: "Seller Pays (100%)", sub: "Deducted at payout" },
+                  { id: "split", label: "50 / 50 Split", sub: "Shared protection" },
+                ].map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setPayer(opt.id as FeePayer)}
+                    className={cn(
+                      "flex flex-col text-left p-3 rounded-[4px] border transition-all duration-200 ease-out min-h-[56px] justify-center",
+                      payer === opt.id
+                        ? "bg-[#0f172a] text-white border-[#0f172a] shadow-xs"
+                        : "bg-white border-[#e2e8f0] text-[#020617] hover:bg-[#f8fafc]"
+                    )}
+                  >
+                    <span className="font-primary text-xs font-bold leading-tight">
+                      {opt.label}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[10px] mt-0.5",
+                        payer === opt.id ? "text-slate-300" : "text-[#64748b]"
+                      )}
+                    >
+                      {opt.sub}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 3. Tracked Courier Toggle */}
+            <div className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-4 flex items-center justify-between">
+              <div className="flex items-start gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-white border border-[#e2e8f0] text-[#0f172a] mt-0.5 shrink-0">
+                  <Truck className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="font-primary text-xs font-bold text-[#020617]">
+                    Include Insured Tracked Courier Waybill
+                  </div>
+                  <div className="font-secondary text-[11px] text-[#64748b] leading-relaxed">
+                    Doorstep verification by GIG/DHL with tamper-evident seal and live signature capture.
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pl-4 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIncludeShipping(!includeShipping)}
+                  className={cn(
+                    "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                    includeShipping ? "bg-[#22c55e]" : "bg-[#cbd5e1]"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out",
+                      includeShipping ? "translate-x-5" : "translate-x-0"
+                    )}
+                  />
+                </button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* =====================================================================
+          RIGHT: LIVE LEDGER BREAKDOWN & SETTLEMENT RECEIPT (5 Cols)
+          ===================================================================== */}
+      <div className="lg:col-span-5 space-y-4">
+        <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_4px_8px_rgba(15,23,42,0.06)] space-y-5">
+          {/* Header */}
+          <div className="flex items-center justify-between pb-4 border-b border-[#e2e8f0]">
+            <div>
+              <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[#64748b]">
+                Estimated Payout & Deposit
+              </span>
+              <h3 className="font-primary text-base font-bold text-[#020617]">
+                Escrow Settlement Ledger
+              </h3>
+            </div>
+            <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-[#15803d] bg-[#22c55e]/15 px-2.5 py-1 rounded-[4px] border border-[#22c55e]/30">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+              <span>{tierInfo.percentage.toFixed(1)}% Rate</span>
+            </div>
+          </div>
+
+          {/* Breakdown Rows */}
+          <div className="space-y-3 font-secondary text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[#64748b]">Gadget Agreed Price</span>
+              <span className="font-mono font-bold text-[#020617]">
+                {formatNaira(amount)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1 text-[#64748b]">
+                <span>Escrow Protection Fee</span>
+                <span className="font-mono text-[10px] text-[#0f172a]">
+                  ({tierInfo.percentage}%)
+                </span>
+              </div>
+              <span className="font-mono font-medium text-[#020617]">
+                {formatNaira(calculatedFee)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between pl-3 border-l-2 border-[#e2e8f0] text-[11px] text-[#64748b]">
+              <span>Buyer Contribution</span>
+              <span className="font-mono text-[#020617]">
+                {formatNaira(buyerFeeContribution)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between pl-3 border-l-2 border-[#e2e8f0] text-[11px] text-[#64748b]">
+              <span>Seller Contribution</span>
+              <span className="font-mono text-[#020617]">
+                {formatNaira(sellerFeeContribution)}
+              </span>
+            </div>
+
+            {includeShipping && (
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748b]">Tracked Insured Courier</span>
+                <span className="font-mono font-medium text-[#020617]">
+                  +{formatNaira(shippingFee)}
+                </span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-[#64748b]">Paystack Custody Fee (Capped)</span>
+              <span className="font-mono text-[#020617]">
+                +{formatNaira(gatewayFee)}
+              </span>
+            </div>
+          </div>
+
+          {/* Dual Big Result Cards */}
+          <div className="pt-4 border-t border-[#e2e8f0] space-y-3">
+            {/* Buyer Total Card */}
+            <div className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5">
+              <div className="flex items-center justify-between">
+                <span className="font-secondary text-xs text-[#64748b]">
+                  Buyer Total Locked Deposit:
+                </span>
+                <span className="font-mono text-xs text-[#0f172a] font-semibold">
+                  (In Escrow)
+                </span>
+              </div>
+              <div className="font-mono text-2xl font-bold text-[#020617] mt-1">
+                {formatNaira(totalBuyerDeposit)}
+              </div>
+              <div className="font-secondary text-[11px] text-[#15803d] flex items-center gap-1 mt-1">
+                <Lock className="h-3 w-3 text-[#22c55e]" />
+                <span>Protected until 48H hardware inspection passes</span>
+              </div>
+            </div>
+
+            {/* Seller Net Payout Card */}
+            <div className="rounded-[4px] border border-[#22c55e]/30 bg-[#22c55e]/10 p-3.5">
+              <div className="flex items-center justify-between">
+                <span className="font-secondary text-xs text-[#15803d]">
+                  Seller Net Payout:
+                </span>
+                <span className="font-mono text-xs text-[#15803d] font-bold">
+                  (To Bank Account)
+                </span>
+              </div>
+              <div className="font-mono text-2xl font-bold text-[#15803d] mt-1">
+                {formatNaira(totalSellerPayout)}
+              </div>
+              <div className="font-secondary text-[11px] text-[#64748b] flex items-center gap-1 mt-1">
+                <Clock className="h-3 w-3 text-[#64748b]" />
+                <span>Direct payout within 15 mins of buyer approval</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action CTAs */}
+          <div className="space-y-2 pt-2">
+            <Button
+              variant="default"
+              size="lg"
+              onClick={() =>
+                onProceedToTrade?.({
+                  amount,
+                  escrowFee: calculatedFee,
+                  payer,
+                  sellerPayout: totalSellerPayout,
+                  buyerDeposit: totalBuyerDeposit,
+                })
+              }
+              className="w-full h-11 text-xs font-semibold gap-2 shadow-xs"
+            >
+              <span>Initiate Protected Escrow Order</span>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+
+            <button
+              type="button"
+              onClick={handleCopySummary}
+              className="w-full h-9 rounded-[4px] border border-[#e2e8f0] bg-white text-[#020617] hover:bg-[#f8fafc] text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle2 className="h-3.5 w-3.5 text-[#22c55e]" />
+                  <span className="text-[#15803d]">Breakdown Copied to Clipboard!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+                  <span>Copy Settlement Summary</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default EscrowFeeCalculator;

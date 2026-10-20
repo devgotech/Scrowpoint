@@ -5,12 +5,9 @@ import Link from "next/link";
 import {
   ChevronDown,
   Clock,
-  ExternalLink,
   Lock,
-  Mail,
   Shield,
   ShieldCheck,
-  Smartphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -104,7 +101,7 @@ export function Footer() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {/* Trust Metric 1 */}
             <div className="flex items-start gap-4 rounded-xl border border-border/60 bg-background/60 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
                 <Lock className="h-5 w-5" />
               </div>
               <div className="space-y-1">
@@ -119,7 +116,7 @@ export function Footer() {
 
             {/* Trust Metric 2 */}
             <div className="flex items-start gap-4 rounded-xl border border-border/60 bg-background/60 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-warning/20 text-warning-text">
                 <Clock className="h-5 w-5" />
               </div>
               <div className="space-y-1">
@@ -134,7 +131,7 @@ export function Footer() {
 
             {/* Trust Metric 3 */}
             <div className="flex items-start gap-4 rounded-xl border border-border/60 bg-background/60 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-trust-subtle text-trust-strong">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div className="space-y-1">
@@ -165,7 +162,7 @@ export function Footer() {
               </div>
               <div className="flex flex-col">
                 <span className="font-heading text-lg font-bold tracking-tight text-foreground leading-none">
-                  Buyer's High
+                  Buyer&apos;s High
                 </span>
                 <span className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">
                   P2P Escrow
@@ -173,10 +170,10 @@ export function Footer() {
               </div>
             </Link>
             <p className="font-body text-xs text-muted-foreground leading-relaxed max-w-xs">
-              Nigeria's highest-trust secondhand gadget marketplace. Eliminating marketplace fraud with institutional escrow safeguards.
+              Nigeria&apos;s highest-trust secondhand gadget marketplace. Eliminating marketplace fraud with institutional escrow safeguards.
             </p>
             <div className="flex items-center gap-2 pt-2 text-xs font-mono text-muted-foreground">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-primary" />
               <span>Paystack & Escrow Vault Online</span>
             </div>
           </div>
@@ -197,7 +194,7 @@ export function Footer() {
                       >
                         <span>{link.label}</span>
                         {link.badge && (
-                          <span className="font-mono text-[10px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.2 rounded-full font-semibold">
+                          <span className="font-mono text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-md font-semibold">
                             {link.badge}
                           </span>
                         )}
@@ -218,7 +215,7 @@ export function Footer() {
                   <button
                     type="button"
                     onClick={() => toggleAccordion(index)}
-                    className="flex w-full items-center justify-between py-1 text-left font-heading text-sm font-semibold text-foreground"
+                    className="flex min-h-11 w-full items-center justify-between py-1 text-left font-heading text-sm font-semibold text-foreground transition-colors duration-200 ease-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     aria-expanded={isOpen}
                   >
                     <span>{column.title}</span>
@@ -240,7 +237,7 @@ export function Footer() {
                           >
                             <span>{link.label}</span>
                             {link.badge && (
-                              <span className="font-mono text-[10px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.2 rounded-full font-semibold">
+                              <span className="font-mono text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-md font-semibold">
                                 {link.badge}
                               </span>
                             )}
@@ -259,7 +256,7 @@ export function Footer() {
             3. BOTTOM LEGAL DISCLAIMER & COPYRIGHT
             ==================================================================== */}
         <div className="mt-12 border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-body text-muted-foreground">
-          <p>© {CURRENT_YEAR} Buyer's High Escrow Technologies Ltd. All rights reserved.</p>
+          <p>© {CURRENT_YEAR} Buyer&apos;s High Escrow Technologies Ltd. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-6 text-xs">
             <Link href="/legal/terms" className="hover:text-foreground transition-colors">
               Terms of Service

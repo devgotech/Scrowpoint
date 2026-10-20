@@ -5,14 +5,12 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
-  Filter,
   Search,
   SlidersHorizontal,
   X,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
@@ -111,14 +109,14 @@ export function SearchBar({
             value={internalQuery}
             onChange={handleInputChange}
             placeholder={placeholder}
-            className="h-11 pl-10 pr-10 text-sm bg-background border-border shadow-xs focus-visible:ring-1 focus-visible:ring-ring"
+            className="h-11 pl-10 pr-12 bg-background border-border shadow-[var(--shadow-soft-sm)] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           />
           {internalQuery && (
             <button
               type="button"
               onClick={handleClear}
               aria-label="Clear search query"
-              className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-11 w-11 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors duration-200 ease-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -151,7 +149,7 @@ export function SearchBar({
           type="button"
           onClick={() => scrollChips("left")}
           aria-label="Scroll filters left"
-          className="hidden md:flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground hover:text-foreground shadow-xs transition-colors mr-1 z-10"
+          className="hidden md:flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground hover:text-foreground shadow-[var(--shadow-soft-sm)] transition-colors duration-200 ease-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 mr-1 z-10"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -164,22 +162,15 @@ export function SearchBar({
         >
           {chips.map((chip) => {
             const isSelected = selectedChipId === chip.id;
-            const isMint = chip.id === "mint";
-            const isVerified = chip.id === "verified";
-
             return (
               <button
                 key={chip.id}
                 type="button"
                 onClick={() => handleChipClick(chip.id)}
                 className={cn(
-                  "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-full px-3.5 text-xs font-medium transition-all duration-150 select-none cursor-pointer border",
+                  "inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md px-3 text-xs font-medium transition-colors duration-200 ease-out select-none cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                   isSelected
-                    ? "bg-primary text-primary-foreground border-primary shadow-xs font-semibold"
-                    : isMint
-                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
-                    : isVerified
-                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
+                    ? "bg-primary text-primary-foreground border-primary shadow-[var(--shadow-soft-sm)] font-semibold"
                     : "bg-muted/50 text-muted-foreground border-border/80 hover:bg-muted hover:text-foreground"
                 )}
               >
@@ -188,7 +179,7 @@ export function SearchBar({
                 {chip.count !== undefined && (
                   <span
                     className={cn(
-                      "font-mono text-[10px] rounded-full px-1.5 py-0.2",
+                      "font-mono text-[10px] rounded-md px-1.5 py-0.5",
                       isSelected
                         ? "bg-primary-foreground/20 text-primary-foreground"
                         : "bg-muted text-muted-foreground"
@@ -207,7 +198,7 @@ export function SearchBar({
           type="button"
           onClick={() => scrollChips("right")}
           aria-label="Scroll filters right"
-          className="hidden md:flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground hover:text-foreground shadow-xs transition-colors ml-1 z-10"
+          className="hidden md:flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground hover:text-foreground shadow-[var(--shadow-soft-sm)] transition-colors duration-200 ease-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ml-1 z-10"
         >
           <ChevronRight className="h-4 w-4" />
         </button>

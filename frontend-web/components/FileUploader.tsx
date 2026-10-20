@@ -9,12 +9,9 @@ import {
   Film,
   Image as ImageIcon,
   Loader2,
-  Lock,
-  RefreshCw,
   Trash2,
   Upload,
   UploadCloud,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadToPresignedUrl, type UploadResult } from "@/lib/s3";
@@ -249,9 +246,9 @@ export function FileUploader({
         onDrop={handleDrop}
         onClick={() => galleryInputRef.current?.click()}
         className={cn(
-          "group relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer text-center select-none",
+          "group relative flex flex-col items-center justify-center p-8 rounded-lg border-2 border-dashed transition duration-200 ease-out cursor-pointer text-center select-none",
           isDragOver
-            ? "border-primary bg-primary/5 scale-[1.005]"
+            ? "border-primary bg-primary/5"
             : "border-border bg-card hover:border-border/80 hover:bg-muted/20"
         )}
       >
@@ -277,7 +274,7 @@ export function FileUploader({
               e.stopPropagation();
               galleryInputRef.current?.click();
             }}
-            className="text-xs h-8 gap-1.5 border-border"
+            className="text-xs gap-1.5 border-border"
           >
             <Upload className="h-3.5 w-3.5" />
             <span>Select Files</span>
@@ -372,7 +369,7 @@ export function FileUploader({
                         <span>•</span>
                         {/* Dynamic Status Badges */}
                         {item.status === "presigning" && (
-                          <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                          <span className="flex items-center gap-1 text-primary">
                             <Loader2 className="h-3 w-3 animate-spin" />
                             <span>Authorizing presigned URL...</span>
                           </span>
@@ -386,7 +383,7 @@ export function FileUploader({
                         )}
 
                         {item.status === "success" && (
-                          <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                          <span className="flex items-center gap-1 text-primary font-semibold">
                             <CheckCircle2 className="h-3 w-3" />
                             <span>Uploaded</span>
                           </span>
@@ -407,7 +404,7 @@ export function FileUploader({
                     type="button"
                     onClick={() => removeFile(item.file.name)}
                     aria-label={`Remove ${item.file.name}`}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200 ease-out focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

@@ -3,14 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import {
-  AlertTriangle,
   ArrowRight,
   Clock,
-  Eye,
   FileText,
   Lock,
   Scale,
-  ShieldAlert,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -57,27 +54,27 @@ export function AdminDisputeRow({
     evidence_collection: {
       label: "Evidence",
       variant: "warning" as const,
-      className: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+      className: "bg-warning/20 text-warning-text border-warning/40",
     },
     seller_review: {
       label: "Seller Review",
       variant: "warning" as const,
-      className: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+      className: "bg-warning/20 text-warning-text border-warning/40",
     },
     admin_mediation: {
       label: "Mediation",
       variant: "warning" as const,
-      className: "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/50 font-bold",
+      className: "bg-warning/20 text-warning-text border-warning/50 font-bold",
     },
     resolved: {
       label: "Resolved",
-      variant: "trust" as const,
-      className: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+      variant: "secondary" as const,
+      className: "bg-muted text-muted-foreground border-border",
     },
     appealed: {
       label: "Appealed",
-      variant: "destructive" as const,
-      className: "bg-destructive/15 text-destructive border-destructive/30 font-bold",
+      variant: "warning" as const,
+      className: "bg-warning/20 text-warning-text border-warning/40 font-bold",
     },
   }[dispute.status] || {
     label: dispute.status,
@@ -88,15 +85,15 @@ export function AdminDisputeRow({
   return (
     <tr
       className={cn(
-        "hidden md:table-row border-b border-border/80 transition-colors hover:bg-muted/40",
-        dispute.isUrgentSla && "bg-amber-500/5",
+        "hidden md:table-row border-b border-border/80 transition-colors duration-200 ease-out hover:bg-muted/40",
+        dispute.isUrgentSla && "bg-warning/10",
         className
       )}
     >
       {/* 1. Case ID & Date */}
       <td className="px-4 py-3 align-middle text-xs">
         <div className="flex flex-col">
-          <span className="font-mono font-bold text-foreground">
+          <span className="mono-data text-foreground">
             #{dispute.id.slice(0, 8)}
           </span>
           <span className="font-mono text-[10px] text-muted-foreground">
@@ -131,8 +128,8 @@ export function AdminDisputeRow({
 
       {/* 4. Locked Escrow Value */}
       <td className="px-4 py-3 align-middle text-xs">
-        <div className="flex items-center gap-1.5 font-mono font-bold text-foreground">
-          <Lock className="h-3 w-3 text-emerald-500 shrink-0" />
+        <div className="mono-data flex items-center gap-1.5 text-foreground">
+          <Lock className="h-3 w-3 text-trust-strong shrink-0" />
           <span>{formattedLockedAmount}</span>
         </div>
       </td>
@@ -162,7 +159,7 @@ export function AdminDisputeRow({
           className={cn(
             "font-mono inline-flex items-center gap-1 font-medium",
             dispute.isUrgentSla
-              ? "text-amber-600 dark:text-amber-400 font-bold animate-pulse"
+              ? "text-warning-text font-bold"
               : "text-muted-foreground"
           )}
         >
@@ -180,7 +177,7 @@ export function AdminDisputeRow({
               variant="ghost"
               size="sm"
               onClick={() => onQuickAssign(dispute.id)}
-              className="h-7 text-xs px-2 text-muted-foreground hover:text-foreground"
+              className="text-xs px-2 text-muted-foreground hover:text-foreground"
             >
               Assign
             </Button>
@@ -191,7 +188,7 @@ export function AdminDisputeRow({
               type="button"
               variant="default"
               size="sm"
-              className="h-7 text-xs px-2.5 gap-1 font-semibold shadow-xs"
+              className="text-xs px-2.5 gap-1 font-semibold shadow-[var(--shadow-soft-sm)]"
             >
               <span>Review</span>
               <ArrowRight className="h-3 w-3" />

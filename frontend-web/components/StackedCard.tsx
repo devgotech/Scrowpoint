@@ -3,15 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import {
-  AlertTriangle,
   ArrowRight,
-  CheckCircle2,
   Clock,
   Eye,
   FileText,
   Lock,
   Scale,
-  ShieldAlert,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,27 +49,27 @@ export function StackedCard({
     evidence_collection: {
       label: "Evidence Gathering",
       variant: "warning" as const,
-      className: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+      className: "bg-warning/20 text-warning-text border-warning/40",
     },
     seller_review: {
       label: "Seller Review",
       variant: "warning" as const,
-      className: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+      className: "bg-warning/20 text-warning-text border-warning/40",
     },
     admin_mediation: {
       label: "Admin Arbitration",
       variant: "warning" as const,
-      className: "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/50 font-bold",
+      className: "bg-warning/20 text-warning-text border-warning/50 font-bold",
     },
     resolved: {
       label: "Settled / Closed",
-      variant: "trust" as const,
-      className: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+      variant: "secondary" as const,
+      className: "bg-muted text-muted-foreground border-border",
     },
     appealed: {
       label: "Under Appeal",
-      variant: "destructive" as const,
-      className: "bg-destructive/15 text-destructive border-destructive/30 font-bold",
+      variant: "warning" as const,
+      className: "bg-warning/20 text-warning-text border-warning/40 font-bold",
     },
   }[dispute.status] || {
     label: dispute.status,
@@ -85,15 +82,15 @@ export function StackedCard({
       role="article"
       aria-label={`Dispute case ${dispute.id}`}
       className={cn(
-        "block md:hidden w-full rounded-xl border border-border bg-card p-4 shadow-xs space-y-3 transition-colors hover:border-border/90",
-        dispute.isUrgentSla && "border-amber-400/80 bg-amber-500/5",
+        "block md:hidden w-full rounded-lg border border-border bg-card p-4 shadow-xs space-y-3 transition-colors duration-200 ease-out hover:border-border/90",
+        dispute.isUrgentSla && "border-warning/80 bg-warning/10",
         className
       )}
     >
       {/* 1. Header: Dispute Reference + Status Badge */}
       <div className="flex items-start justify-between gap-2">
         <div>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span className="mono-data text-muted-foreground">
             Dispute #{dispute.id.slice(0, 8)}
           </span>
           <h4 className="font-heading text-sm font-semibold text-foreground line-clamp-1">
@@ -126,8 +123,8 @@ export function StackedCard({
           <span className="font-mono text-[10px] uppercase text-muted-foreground block">
             Locked in Vault
           </span>
-          <span className="font-mono text-sm font-bold text-foreground flex items-center gap-1">
-            <Lock className="h-3 w-3 text-emerald-500" />
+          <span className="mono-data text-foreground flex items-center gap-1">
+            <Lock className="h-3 w-3 text-trust-strong" />
             {formattedLockedAmount}
           </span>
         </div>
@@ -138,9 +135,9 @@ export function StackedCard({
           </span>
           <span
             className={cn(
-              "font-mono text-xs font-semibold flex items-center justify-end gap-1",
+              "mono-data flex items-center justify-end gap-1",
               dispute.isUrgentSla
-                ? "text-amber-600 dark:text-amber-400 animate-pulse font-bold"
+                ? "text-warning-text font-bold"
                 : "text-muted-foreground"
             )}
           >
@@ -171,7 +168,7 @@ export function StackedCard({
             type="button"
             variant="default"
             size="sm"
-            className="w-full h-8 text-xs font-semibold gap-1.5 shadow-xs"
+            className="w-full text-xs font-semibold gap-1.5 shadow-xs"
           >
             <Eye className="h-3.5 w-3.5" />
             <span>Review Case</span>
@@ -185,7 +182,7 @@ export function StackedCard({
             variant="outline"
             size="sm"
             onClick={() => onQuickAssign(dispute.id)}
-            className="h-8 text-xs border-border shrink-0"
+            className="text-xs border-border shrink-0"
           >
             Assign
           </Button>

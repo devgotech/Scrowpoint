@@ -5,15 +5,13 @@ import {
   CheckCircle2,
   Copy,
   Download,
-  Info,
   Lock,
   Printer,
   Receipt,
-  Shield,
   ShieldCheck,
   Truck,
 } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/currency";
@@ -131,7 +129,7 @@ export function EscrowFeeReceipt({
   return (
     <Card
       className={cn(
-        "w-full max-w-xl mx-auto overflow-hidden rounded-2xl border border-border bg-card shadow-sm",
+        "w-full max-w-xl mx-auto overflow-hidden rounded-lg border border-border bg-card shadow-[var(--shadow-soft-sm)]",
         className
       )}
     >
@@ -152,7 +150,7 @@ export function EscrowFeeReceipt({
                 {isLockedInEscrow && (
                   <Badge
                     variant="trust"
-                    className="gap-1 py-0 px-2 text-[10px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                    className="gap-1 py-0 px-2 text-[10px] font-semibold"
                   >
                     <Lock className="h-3 w-3" />
                     <span>LOCKED IN ESCROW</span>
@@ -173,12 +171,12 @@ export function EscrowFeeReceipt({
             <button
               type="button"
               onClick={handleCopyReceipt}
-              className="inline-flex items-center gap-1.5 font-mono font-medium text-foreground hover:text-primary transition-colors cursor-pointer group"
+              className="inline-flex items-center gap-1.5 mono-data text-foreground hover:text-primary transition-colors duration-200 ease-out cursor-pointer group"
               title="Copy receipt number"
             >
               <span>{receiptNumber}</span>
               {copied ? (
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
               ) : (
                 <Copy className="h-3 w-3 text-muted-foreground group-hover:text-foreground" />
               )}
@@ -207,7 +205,7 @@ export function EscrowFeeReceipt({
               <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                 Order Ref
               </span>
-              <p className="font-mono text-xs font-semibold text-foreground">
+              <p className="mono-data text-foreground">
                 {orderNumber}
               </p>
             </div>
@@ -247,7 +245,7 @@ export function EscrowFeeReceipt({
                 (Declared value)
               </span>
             </div>
-            <span className="font-mono text-foreground font-semibold">
+            <span className="mono-data text-foreground">
               {formattedItemPrice}
             </span>
           </div>
@@ -257,7 +255,7 @@ export function EscrowFeeReceipt({
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="font-body text-foreground">Escrow Protection Fee</span>
-                <span className="font-mono text-[11px] rounded-full bg-muted px-1.5 py-0.2 text-muted-foreground font-semibold">
+                <span className="font-mono text-[11px] rounded-md bg-muted px-1.5 py-0.2 text-muted-foreground font-semibold">
                   {feeRatePercent}% tier
                 </span>
               </div>
@@ -265,7 +263,7 @@ export function EscrowFeeReceipt({
                 Custodial guarantee, fraud shielding & mediation coverage
               </span>
             </div>
-            <span className="font-mono text-foreground font-semibold">
+            <span className="mono-data text-foreground">
               {formattedEscrowFee}
             </span>
           </div>
@@ -281,7 +279,7 @@ export function EscrowFeeReceipt({
                 Doorstep dispatch with signature & inspection receipt
               </span>
             </div>
-            <span className="font-mono text-foreground font-semibold">
+            <span className="mono-data text-foreground">
               {formattedShippingFee}
             </span>
           </div>
@@ -290,7 +288,7 @@ export function EscrowFeeReceipt({
           {gatewayFeeKobo > 0 && (
             <div className="flex items-center justify-between py-1">
               <span className="font-body text-foreground">Payment Processing Fee</span>
-              <span className="font-mono text-foreground font-semibold">
+              <span className="mono-data text-foreground">
                 {formattedGatewayFee}
               </span>
             </div>
@@ -299,10 +297,10 @@ export function EscrowFeeReceipt({
           {/* ================================================================
               4. TOTAL LOCKED IN ESCROW HIGHLIGHT
               ================================================================ */}
-          <div className="mt-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4">
+          <div className="mt-4 rounded-lg border border-trust/40 bg-trust-subtle p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-trust/10 text-trust-strong">
                   <Lock className="h-4 w-4" />
                 </div>
                 <div>
@@ -316,7 +314,7 @@ export function EscrowFeeReceipt({
               </div>
 
               <div className="text-right">
-                <span className="font-mono text-xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+                <span className="mono-data text-trust-strong">
                   {formattedTotalLocked}
                 </span>
                 <span className="block font-mono text-[10px] text-muted-foreground uppercase">
@@ -329,7 +327,7 @@ export function EscrowFeeReceipt({
 
         {/* Trust Guarantee Advisory */}
         <div className="flex items-start gap-2.5 rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground border border-border/60">
-          <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+          <ShieldCheck className="h-4 w-4 text-trust-strong shrink-0 mt-0.5" />
           <p className="font-body leading-relaxed">
             The seller does not receive any payout until you receive the package, inspect the gadget,
             and approve condition within the 48-hour inspection window.
@@ -342,7 +340,7 @@ export function EscrowFeeReceipt({
           ==================================================================== */}
       <CardFooter className="bg-muted/20 p-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-          <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+          <Lock className="h-3.5 w-3.5 text-trust-strong" />
           <span>Paystack Escrow Custody Hash: Verified</span>
         </div>
 
@@ -356,7 +354,7 @@ export function EscrowFeeReceipt({
                 window.print();
               }
             }}
-            className="flex-1 sm:flex-none gap-1.5 text-xs h-8 border-border"
+            className="flex-1 sm:flex-none gap-1.5 text-xs border-border"
           >
             <Printer className="h-3.5 w-3.5" />
             <span>Print</span>
@@ -368,7 +366,7 @@ export function EscrowFeeReceipt({
               variant="default"
               size="sm"
               onClick={onDownloadReceipt}
-              className="flex-1 sm:flex-none gap-1.5 text-xs h-8 shadow-xs"
+              className="flex-1 sm:flex-none gap-1.5 text-xs shadow-[var(--shadow-soft-sm)]"
             >
               <Download className="h-3.5 w-3.5" />
               <span>Download PDF</span>

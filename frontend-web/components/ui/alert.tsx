@@ -10,11 +10,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     const variantStyles = {
       default: "bg-background text-foreground border-border",
       destructive:
-        "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive bg-destructive/10",
+        "border-destructive/50 text-destructive [&>svg]:text-destructive bg-destructive/10",
       warning:
-        "border-amber-500/50 text-amber-700 dark:text-amber-400 [&>svg]:text-amber-500 bg-amber-500/10",
+        "border-warning/50 text-warning-text [&>svg]:text-warning bg-warning/10",
       trust:
-        "border-emerald-500/50 text-emerald-700 dark:text-emerald-400 [&>svg]:text-emerald-600 bg-emerald-500/10",
+        "border-trust/50 text-trust-strong [&>svg]:text-trust-strong bg-trust-subtle",
     };
 
     return (
@@ -22,7 +22,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         ref={ref}
         role="alert"
         className={cn(
-          "relative w-full rounded-xl border p-4 [&>svg~*]:pl-8 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
+          "relative w-full rounded-lg border p-4 [&>svg~*]:pl-8 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
           variantStyles[variant],
           className
         )}

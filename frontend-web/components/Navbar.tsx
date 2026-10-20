@@ -77,12 +77,12 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
         {/* Brand Logo & Core Links */}
         <div className="flex items-center gap-6 lg:gap-8">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm">
               <Shield className="h-5 w-5 fill-current" />
             </div>
             <div className="flex flex-col">
               <span className="font-heading text-lg font-bold tracking-tight text-foreground leading-none">
-                Buyer's High
+                Buyer&apos;s High
               </span>
               <span className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">
                 P2P Escrow
@@ -121,7 +121,7 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search phones, laptops, consoles..."
-              className="h-9 w-full rounded-md border border-input bg-muted/40 pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:bg-background focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
+              className="h-11 w-full rounded-md border border-input bg-muted/40 pl-9 pr-4 font-body text-base text-foreground placeholder:text-muted-foreground focus:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors duration-200 ease-out"
             />
           </div>
         </div>
@@ -145,11 +145,11 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
                   size="icon"
                   onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                   aria-label="Notifications"
-                  className="relative h-9 w-9 text-muted-foreground hover:text-foreground"
+                  className="relative text-muted-foreground hover:text-foreground"
                 >
                   <Bell className="h-5 w-5" />
                   {unreadNotificationsCount > 0 && (
-                    <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-primary" />
                   )}
                 </Button>
 
@@ -190,7 +190,7 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 rounded-full p-0.5 focus:outline-none focus:ring-2 focus:ring-ring transition-transform active:scale-95"
+                  className="flex min-h-11 items-center gap-2 rounded-md p-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors duration-200 ease-out"
                   aria-expanded={isDropdownOpen}
                 >
                   <Avatar className="h-9 w-9 border-2 border-border">
@@ -266,7 +266,7 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
                         <Link
                           href="/admin"
                           onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 font-medium transition-colors"
+                          className="flex min-h-11 items-center gap-2.5 px-3 py-2 text-sm rounded-md bg-warning/20 text-warning-text font-medium transition-colors duration-200 ease-out"
                         >
                           <ShieldAlert className="h-4 w-4" />
                           <span>Admin Dispute Portal</span>

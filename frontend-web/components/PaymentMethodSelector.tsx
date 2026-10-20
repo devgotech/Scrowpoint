@@ -108,8 +108,8 @@ export function PaymentMethodSelector({
         </div>
 
         <Badge
-          variant="trust"
-          className="hidden sm:inline-flex gap-1 py-0 px-2 text-[11px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+          variant="secondary"
+          className="hidden sm:inline-flex gap-1 py-0 px-2 text-[11px] font-semibold"
         >
           <Lock className="h-3 w-3" />
           <span>Paystack Custody Vault</span>
@@ -136,7 +136,7 @@ export function PaymentMethodSelector({
                 }
               }}
               className={cn(
-                "group relative flex flex-col justify-between p-4 rounded-xl border transition-all duration-200 cursor-pointer select-none",
+                "group relative flex flex-col justify-between p-4 rounded-lg border transition-colors duration-200 ease-out cursor-pointer select-none",
                 isSelected
                   ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
                   : "border-border bg-card hover:border-border/80 hover:bg-muted/30"
@@ -156,7 +156,7 @@ export function PaymentMethodSelector({
 
                 <div className="flex items-center gap-1.5">
                   {method.isRecommended && (
-                    <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 rounded-full px-2 py-0.5">
+                    <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted border border-border rounded-md px-2 py-0.5">
                       <Sparkles className="h-3 w-3" />
                       Popular
                     </span>
@@ -191,7 +191,7 @@ export function PaymentMethodSelector({
 
               <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono">
                 <span className="text-muted-foreground flex items-center gap-1">
-                  <Zap className="h-3 w-3 text-amber-500" />
+                  <Zap className="h-3 w-3 text-primary" />
                   {method.speedBadge}
                 </span>
 
@@ -214,7 +214,7 @@ export function PaymentMethodSelector({
         <div className="mt-4 rounded-xl border border-border/80 bg-muted/40 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="font-heading text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <ShieldCheck className="h-4 w-4 text-primary" />
               <span>Selected Channel: {currentConfig.name}</span>
             </span>
             <span className="font-mono text-[11px] text-muted-foreground">
@@ -224,8 +224,8 @@ export function PaymentMethodSelector({
 
           {activeMethod === "card" && (
             <p className="font-body text-xs text-muted-foreground leading-relaxed">
-              Clicking <strong className="text-foreground">"Proceed to Paystack"</strong> will invoke
-              a secure popup iframe to tokenize your card and place the escrow reservation hold. No card PIN or CVV is ever stored on Buyer's High servers.
+              Clicking <strong className="text-foreground">&quot;Proceed to Paystack&quot;</strong> will invoke
+              a secure popup iframe to tokenize your card and place the escrow reservation hold. No card PIN or CVV is ever stored on Buyer&apos;s High servers.
             </p>
           )}
 
@@ -243,7 +243,7 @@ export function PaymentMethodSelector({
 
           {activeMethod === "wallet" && (
             <p className="font-body text-xs text-muted-foreground leading-relaxed">
-              Instant deduction from your available Buyer's High balance with zero gateway surcharge. Instant transition to <span className="font-mono font-semibold text-emerald-600">funds_held</span>.
+              Instant deduction from your available Buyer&apos;s High balance with zero gateway surcharge. Instant transition to <span className="font-mono font-semibold text-trust-strong">funds_held</span>.
             </p>
           )}
         </div>

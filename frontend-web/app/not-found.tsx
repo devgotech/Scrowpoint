@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, Home, Search, ShieldCheck } from "lucide-react";
+import { Home, Search, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -35,7 +35,7 @@ export default function NotFound() {
 
         <CardContent className="space-y-4">
           <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5 text-xs text-muted-foreground font-body flex items-center justify-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <ShieldCheck className="h-4 w-4 text-trust-strong shrink-0" />
             <span>All active escrow funds and balances remain safe in the custodial vault.</span>
           </div>
         </CardContent>

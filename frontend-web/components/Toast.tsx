@@ -15,11 +15,7 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (UI Context Spec 2 Tier 2 & UI Context Spec 5, §5):
  * - Supports `info`, `error`, `warning`, and `success` variants.
- * - Strict Color Enforcement:
- *   - Success: `trust` (#22c55e / emerald-500)
- *   - Warning: `warning` (#ecc94b / amber-500)
- *   - Error: `destructive` (red-600)
- *   - Info: `primary` / slate-900 / blue-500
+ * - Semantic colors: state success, warning, error, and primary information.
  * - Auto-dismissible with configurable duration (default 5000ms).
  * - Fixed z-50 overlay positioning at top-right or bottom-right.
  * - Accessible and responsive with single-click manual dismiss.
@@ -177,15 +173,15 @@ export function ToastItem({
     warning: {
       icon: AlertTriangle,
       containerClasses:
-        "border-amber-500/40 bg-card text-card-foreground shadow-md border-l-4 border-l-amber-500",
-      iconClasses: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
+        "border-warning/40 bg-card text-card-foreground shadow-md border-l-4 border-l-warning",
+      iconClasses: "text-warning-text bg-warning/20",
       badgeLabel: "WARNING",
     },
     success: {
       icon: CheckCircle2,
       containerClasses:
-        "border-emerald-500/40 bg-card text-card-foreground shadow-md border-l-4 border-l-emerald-500",
-      iconClasses: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+        "border-state-success/40 bg-card text-card-foreground shadow-md border-l-4 border-l-state-success",
+      iconClasses: "text-state-success bg-state-success/10",
       badgeLabel: "SUCCESS",
     },
   }[toast.type];
@@ -196,14 +192,14 @@ export function ToastItem({
     <div
       role="alert"
       className={cn(
-        "pointer-events-auto relative flex w-full items-start gap-3 rounded-xl border p-4 shadow-lg backdrop-blur-md transition-all animate-in fade-in-50 slide-in-from-top-2 sm:slide-in-from-right-4",
+        "pointer-events-auto relative flex w-full items-start gap-3 rounded-lg border p-4 shadow-[var(--shadow-soft-md)] backdrop-blur-md transition-all duration-200 ease-out animate-in fade-in-50 slide-in-from-top-2 sm:slide-in-from-right-4",
         config.containerClasses
       )}
     >
       {/* Type Icon */}
       <div
         className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg mt-0.5",
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-md mt-0.5",
           config.iconClasses
         )}
       >
@@ -216,13 +212,13 @@ export function ToastItem({
           <h5 className="font-heading text-xs font-bold leading-tight text-foreground truncate">
             {toast.title}
           </h5>
-          <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground px-1.5 py-0.2 rounded bg-muted/60">
+          <span className="label-caps text-muted-foreground px-1.5 py-0.5 rounded-md bg-muted/60">
             {config.badgeLabel}
           </span>
         </div>
 
         {toast.description && (
-          <p className="font-body text-xs text-muted-foreground leading-relaxed wrap-break-words">
+          <p className="font-body text-sm leading-5 text-muted-foreground wrap-break-words">
             {toast.description}
           </p>
         )}

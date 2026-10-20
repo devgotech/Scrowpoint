@@ -72,18 +72,19 @@ import { cn } from "@/lib/utils";
 /**
  * Live Design System and Component Documentation Registry for Buyer's High.
  *
- * Requirements (UI Context Specs 1 through 5, Master Prompt Directives):
+ * Requirements (4_ui_system.md & UI Context Specs 1 through 5):
  * - Two-column layout:
  *   - Left: Fixed navigation sidebar with category filtering.
- *     Categories: "All", "Tier 1 Atoms", "Tier 2 Marketplace", "Tier 3 Escrow", "Forms", "Overlays"
+ *     Categories: "All", "Tokens & Rules", "Tier 1 Atoms", "Tier 2 Marketplace", "Tier 3 Escrow", "Forms", "Overlays"
  *   - Right: Main component viewing area.
- * - Strongly-typed COMPONENT_REGISTRY array defining each component, its category, description, and render function.
- * - Each item rendered in a Shadcn <Card> with header, tier tag, and subtle border.
- * - Enforces --background, --card, and --muted semantic variables.
+ * - Corner Radius: strictly 8px on cards (rounded-[8px]), 4px on controls (rounded-[4px]), rounded-full on trust badges only.
+ * - Enforces --color-bg-base (#f8fafc), --color-bg-card (#ffffff), --color-text-primary (#020617).
+ * - Typography: Roboto for headings (font-primary), Geist for body/UI (font-secondary), Geist Mono for numbers/IDs (font-mono).
  */
 
 export type ComponentCategory =
   | "all"
+  | "Tokens & Rules"
   | "Tier 1 Atoms"
   | "Tier 2 Marketplace"
   | "Tier 3 Escrow"
@@ -93,7 +94,7 @@ export type ComponentCategory =
 export interface ComponentRegistryItem {
   id: string;
   title: string;
-  category: "Tier 1 Atoms" | "Tier 2 Marketplace" | "Tier 3 Escrow" | "Forms" | "Overlays";
+  category: "Tokens & Rules" | "Tier 1 Atoms" | "Tier 2 Marketplace" | "Tier 3 Escrow" | "Forms" | "Overlays";
   tierLabel: string;
   description: string;
   tags: string[];
@@ -149,6 +150,112 @@ const MOCK_ADMIN_DISPUTE: AdminDisputeData = {
 
 export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
+  // DESIGN SYSTEM TOKENS & RULES (4_ui_system.md)
+  // --------------------------------------------------------------------------
+  {
+    id: "tokens-quick-reference",
+    title: "4_ui_system.md Design Tokens & Strict Rules",
+    category: "Tokens & Rules",
+    tierLabel: "Design System Core",
+    description: "System colors, corner radius semantics, font stacks, and the 6 NEVER rules from 4_ui_system.md.",
+    tags: ["Tokens", "CSS Variables", "Rules", "WCAG Contrast"],
+    render: () => (
+      <div className="w-full space-y-6">
+        {/* Colors Palette Grid */}
+        <div>
+          <span className="font-mono text-xs uppercase tracking-wider text-[#64748b] block mb-3 font-semibold">
+            Color Palette & Semantic Tokens
+          </span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc]">
+              <div className="h-6 w-full rounded-[2px] bg-[#f8fafc] border border-[#e2e8f0] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-bg-base</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#f8fafc (Page Bg)</div>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
+              <div className="h-6 w-full rounded-[2px] bg-[#0f172a] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-action-primary</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#0f172a (CTA Button)</div>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
+              <div className="h-6 w-full rounded-[2px] bg-[#22c55e] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-trust</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#22c55e (Escrow Only)</div>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
+              <div className="h-6 w-full rounded-[2px] bg-[#15803d] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-trust-strong</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#15803d (Text Contrast)</div>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
+              <div className="h-6 w-full rounded-[2px] bg-[#088235] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-state-success</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#088235 (Escrow Funded)</div>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
+              <div className="h-6 w-full rounded-[2px] bg-[#ecc94b] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-state-warning</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#ecc94b (Dispute Open)</div>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
+              <div className="h-6 w-full rounded-[2px] bg-[#f56565] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-state-error</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#f56565 (Verification Fail)</div>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
+              <div className="h-6 w-full rounded-[2px] bg-[#e2e8f0] mb-2" />
+              <div className="font-mono font-bold text-[#020617]">--color-border-default</div>
+              <div className="font-mono text-[10px] text-[#64748b]">#e2e8f0 (Border)</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Radius Semantics */}
+        <div>
+          <span className="font-mono text-xs uppercase tracking-wider text-[#64748b] block mb-3 font-semibold">
+            Corner Radius Semantics
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc]">
+              <span className="font-mono font-bold text-[#020617] block">--radius-control: 4px</span>
+              <p className="font-secondary text-[#64748b] text-[11px] mt-1">
+                Buttons, form inputs, selects, filter chips, action pills.
+              </p>
+            </div>
+            <div className="p-3 rounded-[8px] border border-[#e2e8f0] bg-[#f8fafc]">
+              <span className="font-mono font-bold text-[#020617] block">--radius-card: 8px</span>
+              <p className="font-secondary text-[#64748b] text-[11px] mt-1">
+                Listing cards, containers, dialogs, dropdown menus.
+              </p>
+            </div>
+            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc]">
+              <span className="font-mono font-bold text-[#020617] block">--radius-badge: 9999px</span>
+              <p className="font-secondary text-[#64748b] text-[11px] mt-1">
+                Trust badges ONLY (Escrow Active, Verified Seller).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* The 6 NEVER Rules */}
+        <div className="rounded-[4px] border border-[#ecc94b]/50 bg-[#ecc94b]/10 p-4">
+          <span className="font-mono text-xs uppercase tracking-wider text-[#975a16] block font-bold mb-2">
+            The 6 NEVER Rules (4_ui_system.md)
+          </span>
+          <ol className="space-y-1.5 text-xs font-secondary text-[#020617] list-decimal list-inside leading-relaxed">
+            <li><strong>NEVER</strong> use Trust Green for anything except escrow signals (Escrow Active, Verified, funds released).</li>
+            <li><strong>NEVER</strong> place Trust Green text on white background (fails WCAG). Always use <code className="font-mono bg-white px-1 py-0.5 rounded text-[#15803d]">--color-trust-strong (#15803d)</code>.</li>
+            <li><strong>NEVER</strong> use pill radius (9999px) on anything except trust badges. Condition chips and status pills use 4px.</li>
+            <li><strong>NEVER</strong> use Warning amber for failures or Error red for disputes. Dispute Open = warning (#ecc94b), Verification Failed = error (#f56565), Escrow Funded = success (#088235).</li>
+            <li><strong>NEVER</strong> set money amounts, IDs or reference numbers in primary font — use <code className="font-mono bg-white px-1 py-0.5 rounded">Geist Mono</code>.</li>
+            <li><strong>NEVER</strong> use bouncy animations. Use strict <code className="font-mono bg-white px-1 py-0.5 rounded">duration-200 ease-out</code> transitions.</li>
+          </ol>
+        </div>
+      </div>
+    ),
+  },
+
+  // --------------------------------------------------------------------------
   // TIER 1 ATOMS
   // --------------------------------------------------------------------------
   {
@@ -156,8 +263,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "Button Primitives",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Standard Shadcn button component with default, secondary, outline, destructive, and ghost variants.",
-    tags: ["Buttons", "Variants", "Interactive"],
+    description: "Buttons configured to 4_ui_system.md: 4px radius, Geist Medium font, #0f172a primary fill, and strict 200ms ease-out transitions.",
+    tags: ["Buttons", "4px Radius", "Geist Medium", "duration-200"],
     render: () => (
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="default">Primary Action</Button>
@@ -165,40 +272,68 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
         <Button variant="outline">Outline</Button>
         <Button variant="destructive">Destructive</Button>
         <Button variant="ghost">Ghost Trigger</Button>
-        <Button variant="default" size="sm">Small</Button>
-        <Button variant="default" size="lg">Large CTA</Button>
+        <Button variant="default" size="sm">Small (h-8)</Button>
+        <Button variant="default" size="lg">Large CTA (h-10)</Button>
         <Button variant="default" disabled>Disabled State</Button>
       </div>
     ),
   },
   {
     id: "atom-badges",
-    title: "Status Badges & Trust Pills",
+    title: "Trust Badges & Status Pills",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Enforces the design system rule: green (#22c55e) strictly reserved for trust/escrow states. Amber for pending.",
-    tags: ["Badges", "Trust Color", "Warning Color"],
+    description: "Strict enforcement of 4_ui_system.md §5.3: Only trust badges use rounded-full (pill). Status indicators use 4px radius.",
+    tags: ["Badges", "Trust Badges", "Pill Rule", "WCAG Contrast"],
     render: () => (
       <div className="flex flex-wrap items-center gap-2.5">
         <Badge variant="trust" className="gap-1">
-          <ShieldCheck className="h-3 w-3" />
-          <span>FUNDS_HELD (Trust State)</span>
+          <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
+          <span>FUNDS_HELD (Trust Pill)</span>
         </Badge>
         <Badge variant="trust" className="gap-1">
-          <CheckCircle2 className="h-3 w-3" />
-          <span>KYC Verified Seller</span>
+          <CheckCircle2 className="h-3 w-3 text-[#22c55e]" />
+          <span>KYC Verified (Trust Pill)</span>
+        </Badge>
+        <Badge variant="success" className="gap-1">
+          <span>Escrow Funded (#088235)</span>
         </Badge>
         <Badge variant="warning" className="gap-1">
-          <Clock className="h-3 w-3" />
-          <span>INSPECTION_PERIOD (Warning State)</span>
+          <Clock className="h-3 w-3 text-[#ecc94b]" />
+          <span>INSPECTION_PERIOD (4px)</span>
         </Badge>
         <Badge variant="warning" className="gap-1">
-          <AlertTriangle className="h-3 w-3" />
-          <span>Dispute Raised</span>
+          <AlertTriangle className="h-3 w-3 text-[#ecc94b]" />
+          <span>Dispute Raised (4px)</span>
         </Badge>
-        <Badge variant="default">Primary Pill</Badge>
-        <Badge variant="secondary">Draft / Neutral</Badge>
-        <Badge variant="outline">Outline Filter</Badge>
+        <Badge variant="destructive" className="gap-1">
+          <span>Verification Failed (4px)</span>
+        </Badge>
+        <Badge variant="transit" className="gap-1">
+          <Truck className="h-3 w-3" />
+          <span>Item In Transit (4px)</span>
+        </Badge>
+        <Badge variant="secondary">Condition Mint (4px)</Badge>
+      </div>
+    ),
+  },
+  {
+    id: "atom-inputs",
+    title: "Form Inputs (4px Radius)",
+    category: "Tier 1 Atoms",
+    tierLabel: "Tier 1 Foundation",
+    description: "Input fields with strict 4px radius, 16px text on mobile (prevents iOS zoom), and #f56565 validation error state.",
+    tags: ["Input", "Forms", "4px Radius", "iOS Safe"],
+    render: () => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
+        <div className="space-y-1">
+          <label className="font-secondary text-xs font-medium text-[#020617]">Standard Input</label>
+          <Input placeholder="Enter gadget serial number..." />
+        </div>
+        <div className="space-y-1">
+          <label className="font-secondary text-xs font-medium text-[#c53030]">Validation Error State</label>
+          <Input error defaultValue="INVALID-IMEI-CHECK" />
+        </div>
       </div>
     ),
   },
@@ -207,7 +342,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "UserAvatar with Initials Fallback",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Wrapper around Shadcn Avatar primitive with automated initials calculation, size presets, and graceful image error recovery.",
+    description: "Shadcn Avatar primitive wrapper with algorithmic initials calculation and graceful image error fallback.",
     tags: ["Avatar", "Initials Fallback", "Accessibility"],
     render: () => (
       <div className="flex flex-wrap items-center gap-6">
@@ -238,8 +373,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "Actionable Empty State",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Standardized empty screen with subtle monochrome icon, bold heading, muted description, and primary CTA button.",
-    tags: ["Empty State", "Call to Action", "Premium States"],
+    description: "Standardized empty screen with 8px radius card, subtle monochrome icon, Roboto heading, and primary CTA button.",
+    tags: ["Empty State", "Call to Action", "8px Radius"],
     render: () => (
       <EmptyState
         title="No Active Escrow Trades Found"
@@ -255,7 +390,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "Toast Notifications (Info, Error, Warning, Success)",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Multi-variant toast notifications with Lucide icons, semantic borders, and auto-dismiss capabilities for immediate system feedback.",
+    description: "Toasts mapped to semantic colors: #22c55e (success/trust), #ecc94b (warning), #f56565 (error), and #0f172a (info).",
     tags: ["Toasts", "Notifications", "Info", "Error", "Warning", "Success"],
     render: () => {
       const ToastTriggerDemo = () => {
@@ -267,7 +402,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
                 variant="outline"
                 size="sm"
                 onClick={() => info("Order Tracking Updated", "Tracking number GIG-89421092-NG assigned by seller.")}
-                className="text-xs gap-1.5 border-border"
+                className="text-xs gap-1.5"
               >
                 Trigger Info Toast
               </Button>
@@ -283,7 +418,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
                 variant="outline"
                 size="sm"
                 onClick={() => warning("Inspection Expiring Soon", "Only 1 hour 48 minutes remain before funds auto-release to seller.")}
-                className="text-xs gap-1.5 border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10"
+                className="text-xs gap-1.5 border-[#ecc94b]/50 text-[#975a16] hover:bg-[#ecc94b]/10"
               >
                 Trigger Warning Toast
               </Button>
@@ -291,7 +426,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
                 variant="default"
                 size="sm"
                 onClick={() => success("Escrow Funds Secured", "₦850,000 deposited into custodial vault. Seller has been notified to ship.")}
-                className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="text-xs gap-1.5 bg-[#0f172a] text-white"
               >
                 Trigger Success Toast
               </Button>
@@ -343,15 +478,15 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "Global Error Boundary & Recovery",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "app/error.tsx boundary view with 'Try Again' reset trigger, safe error digest reference, and escrow safeguard badge.",
+    description: "app/error.tsx boundary view with 8px radius card, 'Try Again' reset trigger, safe error digest reference, and escrow safeguard badge.",
     tags: ["Error Page", "Boundary", "Try Again Recovery", "Safeguard"],
     render: () => (
-      <div className="w-full max-w-xl mx-auto rounded-xl border border-dashed border-border p-2">
+      <div className="w-full max-w-xl mx-auto rounded-[8px] border border-dashed border-[#e2e8f0] p-2 bg-[#f8fafc]">
         <GlobalError
           error={Object.assign(new Error("Unable to establish handshake with Paystack Escrow Gateway"), {
             digest: "ERR_BH_TRANSACTION_RETRY_948",
           })}
-          reset={() => alert("Simulation: Reset handler called to re-render component.")}
+          reset={() => {}}
         />
       </div>
     ),
@@ -361,10 +496,10 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "404 Not Found Page",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "app/not-found.tsx branded missing page with custody vault safety assurance and marketplace browse action.",
+    description: "app/not-found.tsx branded missing page with custody vault safety assurance, 8px card radius, and marketplace browse action.",
     tags: ["404 Page", "Not Found", "Recovery Navigation"],
     render: () => (
-      <div className="w-full max-w-xl mx-auto rounded-xl border border-dashed border-border p-2">
+      <div className="w-full max-w-xl mx-auto rounded-[8px] border border-dashed border-[#e2e8f0] p-2 bg-[#f8fafc]">
         <NotFound />
       </div>
     ),
@@ -378,8 +513,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "SearchBar with Filter Chips Carousel",
     category: "Tier 2 Marketplace",
     tierLabel: "Tier 2 Flow-Specific",
-    description: "Search input with clear action, filter trigger, and horizontally swipeable filter chips row with left/right scroll navigation.",
-    tags: ["Search", "Carousel", "Filter Chips"],
+    description: "Search input with 4px radius filter chips (rule 3: non-trust badges NEVER use pill radius). Horizontal scrolling on mobile.",
+    tags: ["Search", "Carousel", "Filter Chips", "4px Radius"],
     render: () => (
       <div className="w-full max-w-2xl">
         <SearchBar
@@ -395,18 +530,18 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "GadgetListingCard & Skeleton",
     category: "Tier 2 Marketplace",
     tierLabel: "Tier 2 Flow-Specific",
-    description: "4:3 aspect ratio image container, condition badge, bold title, and font-mono formatted NGN price with exact layout parity skeleton.",
+    description: "Anatomy: [media] → [title] → [condition · location] → [amount] → [badge slot]. Title in Roboto 16px, Price in Geist Mono 14px, 8px card radius.",
     tags: ["Listing Card", "4:3 Image", "Skeleton Parity", "Currency"],
     render: () => (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl">
         <div>
-          <span className="font-mono text-[11px] text-muted-foreground uppercase block mb-2">
+          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-2">
             Loaded State (Masonry Ready)
           </span>
           <GadgetListingCard listing={MOCK_LISTING} />
         </div>
         <div>
-          <span className="font-mono text-[11px] text-muted-foreground uppercase block mb-2">
+          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-2">
             Skeleton State (Zero CLS Parity)
           </span>
           <GadgetListingSkeleton />
@@ -428,7 +563,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     render: () => (
       <div className="w-full space-y-4">
         <div>
-          <span className="font-mono text-[11px] text-muted-foreground uppercase block mb-1">
+          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-1">
             Urgent State (&lt;2h Inspection Window - Amber Pulse)
           </span>
           <EscrowStatusBar
@@ -439,7 +574,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
           />
         </div>
         <div>
-          <span className="font-mono text-[11px] text-muted-foreground uppercase block mb-1">
+          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-1">
             Standard Vault State (Funds Held - Emerald Trust)
           </span>
           <EscrowStatusBar
@@ -457,8 +592,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "EscrowTrackerStepper (Macro Timeline)",
     category: "Tier 3 Escrow",
     tierLabel: "Tier 3 Domain-Specific",
-    description: "Macro-view timeline for /escrow/[id]/status. Full horizontal connector on desktop; vertical accordion history on mobile. FUNDS_HELD pulses in trust color.",
-    tags: ["Timeline", "Macro Stepper", "Responsive Isolation", "Pulsing State"],
+    description: "Macro-view timeline for /escrow/[id]/status. 8px card radius, FUNDS_HELD pulses in trust green (#22c55e), completed checkmarks in solid trust.",
+    tags: ["Timeline", "Macro Stepper", "8px Card Radius", "Pulsing State"],
     render: () => (
       <div className="w-full">
         <EscrowTrackerStepper
@@ -475,7 +610,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "EscrowFeeReceipt (Itemized Financial Receipt)",
     category: "Tier 3 Escrow",
     tierLabel: "Tier 3 Domain-Specific",
-    description: "Itemized financial breakdown of Item Price, Tiered Escrow Fee (5% / 2.5% / 1.5%), Shipping, and Total Locked with font-mono enforcement.",
+    description: "Itemized financial breakdown of Item Price, Tiered Escrow Fee (5% / 2.5% / 1.5%), Shipping, and Total Locked in Geist Mono with WCAG contrast text.",
     tags: ["Receipt", "Tiered Fee Math", "Financial Transparency", "font-mono"],
     render: () => (
       <div className="w-full flex justify-center">
@@ -495,8 +630,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "ActionRequiredCard (Transaction Unblocker)",
     category: "Tier 3 Escrow",
     tierLabel: "Tier 3 Domain-Specific",
-    description: "Alert primitive card featuring urgent countdown timer, context details, and high-visibility button to approve delivery or ship device.",
-    tags: ["Alert Primitive", "Action Required", "Unblock Transaction"],
+    description: "Alert primitive card featuring 8px card radius, urgent countdown timer, context details, and high-visibility 4px button without bouncy transforms.",
+    tags: ["Alert Primitive", "Action Required", "Unblock Transaction", "8px Radius"],
     render: () => (
       <div className="w-full space-y-4">
         <ActionRequiredCard
@@ -520,14 +655,14 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "AdminDisputeRow & StackedCard (Responsive Isolation)",
     category: "Tier 3 Escrow",
     tierLabel: "Tier 3 Domain-Specific",
-    description: "Demonstrates Master Prompt Directive §2: Desktop table row (md:table-row) swaps conditionally with mobile glance-and-approve StackedCard (md:hidden).",
+    description: "Demonstrates Responsive Isolation: Desktop table row (md:table-row) swaps conditionally with mobile glance-and-approve StackedCard (md:hidden) with 8px radius.",
     tags: ["Admin Table", "StackedCard", "Responsive Swapping"],
     render: () => (
       <div className="w-full space-y-4">
         {/* Desktop View Table */}
-        <div className="hidden md:block w-full overflow-hidden rounded-xl border border-border bg-card">
+        <div className="hidden md:block w-full overflow-hidden rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase font-mono text-[10px]">
+            <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#64748b] uppercase font-mono text-[10px]">
               <tr>
                 <th className="px-4 py-2.5">Case ID</th>
                 <th className="px-4 py-2.5">Item & Reason</th>
@@ -547,7 +682,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
 
         {/* Mobile View StackedCard */}
         <div className="block md:hidden">
-          <span className="font-mono text-[11px] text-muted-foreground uppercase block mb-1.5">
+          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-1.5">
             Mobile Screen Active (&lt;768px Viewport)
           </span>
           <StackedCard dispute={MOCK_ADMIN_DISPUTE} />
@@ -564,8 +699,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "PaymentMethodSelector",
     category: "Forms",
     tierLabel: "Tier 3 Domain-Specific",
-    description: "Selectable card grid for Card (Paystack), Bank (Virtual Account), Crypto (USDT/USDC), and Wallet with primary border highlight.",
-    tags: ["Payment Grid", "Paystack Vault", "Radio Select"],
+    description: "Selectable card grid for Card (Paystack), Bank (Virtual Account), Crypto (USDT/USDC), and Wallet with 8px card radius and primary border highlight.",
+    tags: ["Payment Grid", "Paystack Vault", "Radio Select", "8px Radius"],
     render: () => (
       <div className="w-full max-w-3xl">
         <PaymentMethodSelector selectedMethodId="card" />
@@ -577,7 +712,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "FileUploader (Direct S3 Presigned Upload)",
     category: "Forms",
     tierLabel: "Tier 2 Flow-Specific",
-    description: "Desktop drag-and-drop dropzone with mobile camera capture triggers (capture='environment'). Granular loading states for presigned URL authorization.",
+    description: "Desktop drag-and-drop dropzone (8px radius) with mobile camera capture triggers (capture='environment'). Zero bouncy transforms, strict 200ms ease-out transitions.",
     tags: ["Direct S3", "Presigned URL", "Camera Capture", "Drag and Drop"],
     render: () => (
       <div className="w-full max-w-2xl">
@@ -598,10 +733,10 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "Navbar (Global Header Shell)",
     category: "Overlays",
     tierLabel: "Tier 1 Foundation",
-    description: "Sticky h-16 blur header featuring guest login/signup state and authenticated state with notification bell and avatar dropdown with KYC verification pill.",
+    description: "Sticky h-16 blur header (1280px max width) featuring guest state and authenticated state with notification bell and avatar dropdown with KYC verification pill.",
     tags: ["Sticky Header", "Backdrop Blur", "Auth Gate"],
     render: () => (
-      <div className="w-full rounded-xl overflow-hidden border border-border shadow-sm">
+      <div className="w-full rounded-[8px] overflow-hidden border border-[#e2e8f0] shadow-xs">
         <Navbar unreadNotificationsCount={3} />
       </div>
     ),
@@ -611,11 +746,11 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "MobileBottomNav (Fixed App Navigation)",
     category: "Overlays",
     tierLabel: "Tier 1 Foundation",
-    description: "Fixed bottom navigation for mobile screens (<768px) with Home, Search, Escrows (active trade counter), and Profile links.",
+    description: "Fixed bottom navigation for mobile screens (<768px) with Home, Search, Escrows (active trade counter), and Profile links. Zero bouncy scaling.",
     tags: ["Mobile Bottom Bar", "Webapp Nav", "Touch Friendly"],
     render: () => (
-      <div className="w-full max-w-md mx-auto relative h-20 rounded-xl overflow-hidden border border-border bg-card p-2">
-        <span className="font-mono text-[10px] text-muted-foreground uppercase block text-center mb-1">
+      <div className="w-full max-w-md mx-auto relative h-20 rounded-[8px] overflow-hidden border border-[#e2e8f0] bg-white p-2">
+        <span className="font-mono text-[10px] text-[#64748b] uppercase block text-center mb-1">
           Simulated Mobile Screen Nav Bar
         </span>
         <div className="relative">
@@ -637,6 +772,11 @@ export default function SandboxPage() {
   const categories: { label: string; value: ComponentCategory; count: number }[] = [
     { label: "All Components", value: "all", count: COMPONENT_REGISTRY.length },
     {
+      label: "Tokens & Rules",
+      value: "Tokens & Rules",
+      count: COMPONENT_REGISTRY.filter((c) => c.category === "Tokens & Rules").length,
+    },
+    {
       label: "Tier 1 Atoms",
       value: "Tier 1 Atoms",
       count: COMPONENT_REGISTRY.filter((c) => c.category === "Tier 1 Atoms").length,
@@ -652,12 +792,12 @@ export default function SandboxPage() {
       count: COMPONENT_REGISTRY.filter((c) => c.category === "Tier 3 Escrow").length,
     },
     {
-      label: "Forms & Media",
+      label: "Forms",
       value: "Forms",
       count: COMPONENT_REGISTRY.filter((c) => c.category === "Forms").length,
     },
     {
-      label: "Overlays & Shell",
+      label: "Overlays",
       value: "Overlays",
       count: COMPONENT_REGISTRY.filter((c) => c.category === "Overlays").length,
     },
@@ -667,198 +807,199 @@ export default function SandboxPage() {
     return COMPONENT_REGISTRY.filter((item) => {
       const matchesCategory =
         activeCategory === "all" || item.category === activeCategory;
-      const matchesSearch =
+      const matchesQuery =
+        !searchQuery ||
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      return matchesCategory && matchesSearch;
+      return matchesCategory && matchesQuery;
     });
   }, [activeCategory, searchQuery]);
 
   return (
     <AuthProvider>
       <ToastProvider>
-        <div className="min-h-screen w-full bg-background text-foreground antialiased font-body">
-        {/* Sandbox Top Branded Strip */}
-        <div className="border-b border-border bg-card px-4 py-3 sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
-                <Boxes className="h-4 w-4" />
+        <div className="min-h-screen bg-[#f8fafc] text-[#020617] font-secondary">
+          {/* Header Banner */}
+          <div className="border-b border-[#e2e8f0] bg-white sticky top-16 z-30 shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
+            <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
+                  <Boxes className="h-4 w-4" />
+                </div>
+                <div>
+                  <h1 className="font-primary text-sm font-semibold tracking-tight text-[#020617] flex items-center gap-2">
+                    <span>Buyer's High Component Sandbox</span>
+                    <span className="font-mono text-[10px] bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2 py-0.5 rounded-full font-bold">
+                      4_ui_system.md Compliant
+                    </span>
+                  </h1>
+                </div>
               </div>
-              <div>
-                <h1 className="font-heading text-base font-bold text-foreground leading-none">
-                  Buyer's High Component Registry
-                </h1>
-                <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Live Design System & Sandbox Architecture
+
+              <div className="flex items-center gap-2">
+                <span className="hidden sm:inline-flex font-mono text-xs text-[#64748b]">
+                  {COMPONENT_REGISTRY.length} Documented Components
                 </span>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-center gap-2">
-              <Badge variant="trust" className="text-[10px] font-mono py-0">
-                Next.js 16 App Router
-              </Badge>
-              <Badge variant="secondary" className="text-[10px] font-mono py-0">
-                Tailwind v4 • 4pt Scale
-              </Badge>
+          {/* Two-Column Layout Container */}
+          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 py-8">
+            <div className="flex flex-col md:flex-row gap-8 items-start">
+              {/* ==================================================================
+                  LEFT COLUMN: FIXED CATEGORY NAVIGATION SIDEBAR
+                  ================================================================== */}
+              <aside className="w-full md:w-64 shrink-0 space-y-6 md:sticky md:top-36">
+                {/* Search Bar */}
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b]" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Filter registry..."
+                    className="h-8 w-full rounded-[4px] border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs text-[#020617] placeholder:text-[#64748b] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0f172a] transition-colors duration-200 ease-out"
+                  />
+                </div>
+
+                {/* Navigation Categories */}
+                <div className="space-y-1">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#64748b] px-2 block mb-2">
+                    Categories
+                  </span>
+                  {categories.map((cat) => {
+                    const isActive = activeCategory === cat.value;
+
+                    return (
+                      <button
+                        key={cat.value}
+                        type="button"
+                        onClick={() => setActiveCategory(cat.value)}
+                        className={cn(
+                          "flex w-full items-center justify-between rounded-[4px] px-2.5 py-2 text-xs font-medium transition-colors duration-200 ease-out text-left select-none cursor-pointer",
+                          isActive
+                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                            : "text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#020617]"
+                        )}
+                      >
+                        <span>{cat.label}</span>
+                        <span
+                          className={cn(
+                            "font-mono text-[10px] rounded-[4px] px-1.5 py-0.2",
+                            isActive
+                              ? "bg-white/20 text-white"
+                              : "bg-[#f1f5f9] text-[#64748b]"
+                          )}
+                        >
+                          {cat.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Design System Rules Reference Box */}
+                <div className="rounded-[4px] border border-[#e2e8f0] bg-white p-3 space-y-2 text-xs text-[#64748b] shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
+                  <div className="flex items-center gap-1.5 font-primary font-semibold text-[#020617]">
+                    <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                    <span>Enforced Directives</span>
+                  </div>
+                  <ul className="space-y-1 text-[11px] leading-relaxed list-disc list-inside font-secondary">
+                    <li>Strict 4-point spacing base</li>
+                    <li>Green #22c55e strictly for trust</li>
+                    <li>#15803d text on white (WCAG)</li>
+                    <li>Amber #ecc94b for disputes</li>
+                    <li>Cards: 8px, Controls: 4px</li>
+                    <li>font-mono for numbers & IDs</li>
+                    <li>Zero bouncy animations</li>
+                  </ul>
+                </div>
+              </aside>
+
+              {/* ==================================================================
+                  RIGHT COLUMN: MAIN COMPONENT DISPLAY VIEWPORT
+                  ================================================================== */}
+              <main className="flex-1 space-y-8 overflow-y-auto w-full">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#e2e8f0]">
+                  <div>
+                    <h2 className="font-primary text-xl font-medium tracking-tight text-[#020617]">
+                      {categories.find((c) => c.value === activeCategory)?.label}
+                    </h2>
+                    <p className="font-secondary text-xs text-[#64748b] mt-0.5">
+                      Displaying {filteredComponents.length} production-ready React components complying with 4_ui_system.md.
+                    </p>
+                  </div>
+
+                  <span className="font-mono text-xs text-[#64748b]">
+                    Registry Items: {filteredComponents.length} / {COMPONENT_REGISTRY.length}
+                  </span>
+                </div>
+
+                {/* Component Cards Display Grid */}
+                {filteredComponents.length === 0 ? (
+                  <EmptyState
+                    title="No Components Found"
+                    description={`We couldn't find any components matching "${searchQuery}".`}
+                    actionLabel="Clear Filter"
+                    onAction={() => {
+                      setSearchQuery("");
+                      setActiveCategory("all");
+                    }}
+                  />
+                ) : (
+                  <div className="space-y-8">
+                    {filteredComponents.map((item) => (
+                      <Card
+                        key={item.id}
+                        id={item.id}
+                        className="w-full rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] overflow-hidden transition-all duration-200 ease-out hover:border-[#cbd5e1]"
+                      >
+                        {/* Component Card Header */}
+                        <CardHeader className="bg-[#f8fafc] p-5 border-b border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <CardTitle className="font-primary text-base font-medium text-[#020617]">
+                                {item.title}
+                              </CardTitle>
+                              <Badge
+                                variant="secondary"
+                                className="font-mono text-[10px] py-0 tracking-wider uppercase"
+                              >
+                                {item.tierLabel}
+                              </Badge>
+                            </div>
+                            <CardDescription className="font-secondary text-xs text-[#64748b] mt-1 max-w-2xl leading-relaxed">
+                              {item.description}
+                            </CardDescription>
+                          </div>
+
+                          {/* Tags */}
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {item.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="font-mono text-[10px] bg-white border border-[#e2e8f0] px-2 py-0.5 rounded-[4px] text-[#64748b]"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </CardHeader>
+
+                        {/* Component Live Render Canvas */}
+                        <CardContent className="p-6 bg-white flex flex-col items-center justify-center min-h-36">
+                          <div className="w-full">{item.render()}</div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </main>
             </div>
           </div>
         </div>
-
-        {/* 2-Column Responsive Layout */}
-        <div className="mx-auto flex max-w-7xl flex-col md:flex-row min-h-[calc(100vh-57px)]">
-          {/* ==================================================================
-              LEFT COLUMN: FIXED / STICKY SIDEBAR NAVIGATION
-              ================================================================== */}
-          <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-border bg-card p-4 sm:p-6 space-y-6">
-            {/* Filter Search Input */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Filter registry..."
-                className="h-8 w-full rounded-md border border-input bg-muted/50 pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:bg-background focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
-              />
-            </div>
-
-            {/* Navigation Categories */}
-            <div className="space-y-1">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground px-2 block mb-2">
-                Categories
-              </span>
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat.value;
-
-                return (
-                  <button
-                    key={cat.value}
-                    type="button"
-                    onClick={() => setActiveCategory(cat.value)}
-                    className={cn(
-                      "flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium transition-colors text-left select-none cursor-pointer",
-                      isActive
-                        ? "bg-primary text-primary-foreground font-semibold shadow-xs"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <span>{cat.label}</span>
-                    <span
-                      className={cn(
-                        "font-mono text-[10px] rounded-full px-1.5 py-0.2",
-                        isActive
-                          ? "bg-primary-foreground/20 text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      {cat.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Design System Rules Reference Box */}
-            <div className="rounded-xl border border-border/80 bg-muted/40 p-3 space-y-2 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5 font-heading font-semibold text-foreground">
-                <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Enforced Directives</span>
-              </div>
-              <ul className="space-y-1 text-[11px] leading-relaxed list-disc list-inside">
-                <li>Strict 4-point spacing scale</li>
-                <li>Green #22c55e strictly for trust/escrow</li>
-                <li>Amber #ecc94b for pending/dispute</li>
-                <li>font-mono for numbers & IDs</li>
-                <li>Zero arbitrary px values</li>
-              </ul>
-            </div>
-          </aside>
-
-          {/* ==================================================================
-              RIGHT COLUMN: MAIN COMPONENT DISPLAY VIEWPORT
-              ================================================================== */}
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-8 overflow-y-auto bg-background">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border">
-              <div>
-                <h2 className="font-heading text-xl font-bold tracking-tight text-foreground">
-                  {categories.find((c) => c.value === activeCategory)?.label}
-                </h2>
-                <p className="font-body text-xs text-muted-foreground mt-0.5">
-                  Displaying {filteredComponents.length} production-ready React components with responsive isolation.
-                </p>
-              </div>
-
-              <span className="font-mono text-xs text-muted-foreground">
-                Registry Items: {filteredComponents.length} / {COMPONENT_REGISTRY.length}
-              </span>
-            </div>
-
-            {/* Component Cards Display Grid */}
-            {filteredComponents.length === 0 ? (
-              <EmptyState
-                title="No Components Found"
-                description={`We couldn't find any components matching "${searchQuery}".`}
-                actionLabel="Clear Filter"
-                onAction={() => {
-                  setSearchQuery("");
-                  setActiveCategory("all");
-                }}
-              />
-            ) : (
-              <div className="space-y-8">
-                {filteredComponents.map((item) => (
-                  <Card
-                    key={item.id}
-                    id={item.id}
-                    className="w-full rounded-2xl border border-border bg-card shadow-xs overflow-hidden transition-all hover:border-border/90"
-                  >
-                    {/* Component Card Header */}
-                    <CardHeader className="bg-muted/30 p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <CardTitle className="font-heading text-base font-bold text-foreground">
-                            {item.title}
-                          </CardTitle>
-                          <Badge
-                            variant="secondary"
-                            className="font-mono text-[10px] py-0 tracking-wider uppercase"
-                          >
-                            {item.tierLabel}
-                          </Badge>
-                        </div>
-                        <CardDescription className="font-body text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
-                          {item.description}
-                        </CardDescription>
-                      </div>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {item.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="font-mono text-[10px] bg-background border border-border px-2 py-0.5 rounded-md text-muted-foreground"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </CardHeader>
-
-                    {/* Component Live Render Canvas */}
-                    <CardContent className="p-6 bg-background flex flex-col items-center justify-center min-h-36">
-                      <div className="w-full">{item.render()}</div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </main>
-        </div>
-      </div>
       </ToastProvider>
     </AuthProvider>
   );

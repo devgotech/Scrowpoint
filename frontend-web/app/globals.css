@@ -1,3 +1,4 @@
+@import "./tokens.css";
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -5,95 +6,115 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Typography Mapping */
-  --font-heading: var(--font-roboto), sans-serif;
-  --font-body: var(--font-geist), sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-heading: var(--font-primary);
+  --font-body: var(--font-secondary);
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* Shadcn Core Variable Mapping */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--color-bg-base);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-bg-card);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-bg-surface);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-primary: var(--color-action-primary);
+  --color-primary-foreground: var(--color-action-primary-text);
+  --color-secondary: var(--color-bg-subtle);
+  --color-secondary-foreground: var(--color-text-primary);
+  --color-muted: var(--color-bg-subtle);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: var(--color-bg-subtle);
+  --color-accent-foreground: var(--color-text-primary);
+  --color-destructive: var(--color-state-error);
+  --color-destructive-foreground: var(--color-text-invert);
+  --color-border: var(--color-border-default);
+  --color-input: var(--color-border-default);
+  --color-ring: var(--color-action-primary);
 
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-trust: var(--accent-700);
+  --color-trust-strong: #15803d;
+  --color-trust-subtle: var(--accent-50);
+  --color-warning: var(--warning-500);
+  --color-warning-text: var(--warning-1000);
+  --color-state-success: #088235;
+  --color-state-error: var(--error-400);
 
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  --radius-sm: var(--radius-2);
+  --radius-md: var(--radius-control);
+  --radius-lg: var(--radius-card);
+  --radius-xl: var(--radius-card);
+  --radius-2xl: var(--radius-card);
 
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  /* Buyer's High Custom Semantic Colors */
-  --color-trust: #088235;
-  --color-trust-foreground: #ffffff;
-  --color-warning: #ecc94b;
-
-  /* Strict Corner Radii Mapping */
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 4px); /* 4px for buttons/inputs */
-  --radius-sm: calc(var(--radius) - 6px);
-  --radius-full: 9999px; /* Trust badges ONLY */
+  --shadow-xs: var(--shadow-soft-xs);
+  --shadow-sm: var(--shadow-soft-sm);
+  --shadow-md: var(--shadow-soft-md);
+  --shadow-lg: var(--shadow-soft-lg);
+  --shadow-xl: var(--shadow-soft-xl);
+  --shadow-2xl: var(--shadow-soft-2xl);
 }
 
-/* Light-Only Brand Configuration */
+@utility mono-data {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+@utility label-caps {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 @layer base {
   :root {
-    --background: #fafafa; /* Off-white */
-    --foreground: #0f172a; /* Slate 900 */
-    
-    --card: #ffffff;
-    --card-foreground: #0f172a;
-    
-    --popover: #ffffff;
-    --popover-foreground: #d2d2d3;
-    
-    --primary: #0f172a; 
-    --primary-foreground: #F6F3F3;
-    
-    --secondary: #64748b; /* Slate 500 */
-    --secondary-foreground: #F6F3F3;
-    
-    --muted: #e2e8f0;
-    --muted-foreground: #64748b;
-    
-    --accent: #e2e8f0;
-    --accent-foreground: #0f172a;
-    
-    --destructive: #f56565;
-    --destructive-foreground: #ffffff;
-    
-    --border: #e2e8f0;
-    --input: #e2e8f0;
-    --ring: #9e9e9e;
-    
-    --radius: 4px; /* 4px base for cards */
+    --background: var(--color-bg-base);
+    --foreground: var(--color-text-primary);
+    --card: var(--color-bg-card);
+    --card-foreground: var(--color-text-primary);
+    --popover: var(--color-bg-surface);
+    --popover-foreground: var(--color-text-primary);
+    --primary: var(--color-action-primary);
+    --primary-foreground: var(--color-action-primary-text);
+    --secondary: var(--color-bg-subtle);
+    --secondary-foreground: var(--color-text-primary);
+    --muted: var(--color-bg-subtle);
+    --muted-foreground: var(--color-text-secondary);
+    --accent: var(--color-bg-subtle);
+    --accent-foreground: var(--color-text-primary);
+    --destructive: var(--color-state-error);
+    --destructive-foreground: var(--color-text-invert);
+    --border: var(--color-border-default);
+    --input: var(--color-border-default);
+    --ring: var(--color-action-primary);
+    --radius: var(--radius-card);
   }
-}
 
-@layer base {
-  * {
-    border-color: var(--border);
-    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border-default);
   }
+
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-body);
+    min-height: 100vh;
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-primary);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-secondary);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-action-primary);
+    outline-offset: 2px;
   }
 }
