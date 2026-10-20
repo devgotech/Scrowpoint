@@ -58,6 +58,9 @@ import { EscrowFeeReceipt } from "@/components/EscrowFeeReceipt";
 import { ActionRequiredCard } from "@/components/ActionRequiredCard";
 import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
 import { FileUploader } from "@/components/FileUploader";
+import { ToastItem, ToastProvider, useToast } from "@/components/Toast";
+import GlobalError from "@/app/error";
+import NotFound from "@/app/not-found";
 import { AdminDisputeRow } from "@/components/AdminDisputeRow";
 import { StackedCard } from "@/components/StackedCard";
 
@@ -245,6 +248,125 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
         actionHref="/marketplace"
         icon={Package}
       />
+    ),
+  },
+  {
+    id: "atom-toast-notifications",
+    title: "Toast Notifications (Info, Error, Warning, Success)",
+    category: "Tier 1 Atoms",
+    tierLabel: "Tier 1 Foundation",
+    description: "Multi-variant toast notifications with Lucide icons, semantic borders, and auto-dismiss capabilities for immediate system feedback.",
+    tags: ["Toasts", "Notifications", "Info", "Error", "Warning", "Success"],
+    render: () => {
+      const ToastTriggerDemo = () => {
+        const { info, error, warning, success } = useToast();
+        return (
+          <div className="space-y-4 w-full">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => info("Order Tracking Updated", "Tracking number GIG-89421092-NG assigned by seller.")}
+                className="text-xs gap-1.5 border-border"
+              >
+                Trigger Info Toast
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => error("Payment Declined", "Your bank declined the card authorization. Please retry or switch to direct bank transfer.")}
+                className="text-xs gap-1.5"
+              >
+                Trigger Error Toast
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => warning("Inspection Expiring Soon", "Only 1 hour 48 minutes remain before funds auto-release to seller.")}
+                className="text-xs gap-1.5 border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10"
+              >
+                Trigger Warning Toast
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => success("Escrow Funds Secured", "₦850,000 deposited into custodial vault. Seller has been notified to ship.")}
+                className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                Trigger Success Toast
+              </Button>
+            </div>
+
+            {/* Static Visual Showcase of All 4 Variants */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <ToastItem
+                toast={{
+                  id: "showcase-info",
+                  type: "info",
+                  title: "KYC Document Submitted",
+                  description: "SmileID verification is processing in background (usually < 2 minutes).",
+                }}
+              />
+              <ToastItem
+                toast={{
+                  id: "showcase-error",
+                  type: "error",
+                  title: "Direct S3 Upload Rejected",
+                  description: "File size exceeds 50MB maximum limit. Please compress unboxing video.",
+                }}
+              />
+              <ToastItem
+                toast={{
+                  id: "showcase-warning",
+                  type: "warning",
+                  title: "48-Hour Inspection Active",
+                  description: "Device delivered. Please approve or open dispute before auto-release.",
+                }}
+              />
+              <ToastItem
+                toast={{
+                  id: "showcase-success",
+                  type: "success",
+                  title: "Escrow Deposit Completed",
+                  description: "Payment verified by Paystack webhook. Order transitioned to funds_held.",
+                }}
+              />
+            </div>
+          </div>
+        );
+      };
+      return <ToastTriggerDemo />;
+    },
+  },
+  {
+    id: "atom-error-boundary-preview",
+    title: "Global Error Boundary & Recovery",
+    category: "Tier 1 Atoms",
+    tierLabel: "Tier 1 Foundation",
+    description: "app/error.tsx boundary view with 'Try Again' reset trigger, safe error digest reference, and escrow safeguard badge.",
+    tags: ["Error Page", "Boundary", "Try Again Recovery", "Safeguard"],
+    render: () => (
+      <div className="w-full max-w-xl mx-auto rounded-xl border border-dashed border-border p-2">
+        <GlobalError
+          error={Object.assign(new Error("Unable to establish handshake with Paystack Escrow Gateway"), {
+            digest: "ERR_BH_TRANSACTION_RETRY_948",
+          })}
+          reset={() => alert("Simulation: Reset handler called to re-render component.")}
+        />
+      </div>
+    ),
+  },
+  {
+    id: "atom-not-found-preview",
+    title: "404 Not Found Page",
+    category: "Tier 1 Atoms",
+    tierLabel: "Tier 1 Foundation",
+    description: "app/not-found.tsx branded missing page with custody vault safety assurance and marketplace browse action.",
+    tags: ["404 Page", "Not Found", "Recovery Navigation"],
+    render: () => (
+      <div className="w-full max-w-xl mx-auto rounded-xl border border-dashed border-border p-2">
+        <NotFound />
+      </div>
     ),
   },
 
@@ -556,7 +678,8 @@ export default function SandboxPage() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen w-full bg-background text-foreground antialiased font-body">
+      <ToastProvider>
+        <div className="min-h-screen w-full bg-background text-foreground antialiased font-body">
         {/* Sandbox Top Branded Strip */}
         <div className="border-b border-border bg-card px-4 py-3 sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -736,6 +859,7 @@ export default function SandboxPage() {
           </main>
         </div>
       </div>
+      </ToastProvider>
     </AuthProvider>
   );
 }

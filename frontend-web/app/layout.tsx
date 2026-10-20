@@ -33,7 +33,7 @@ export default function RootLayout({
         {/* The AuthProvider wraps the entire app so all components know the user's login state */}
         <AuthProvider>
           
-          {/* <Navbar /> */}
+          <Navbar />
           
           {/* Mounts directly below the top bar during active trades (ui_1 spec) */}
           {/* <EscrowStatusBar /> */}
