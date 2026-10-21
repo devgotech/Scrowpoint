@@ -9,18 +9,17 @@ import { cn } from "@/lib/utils";
 /**
  * EmptyState Component for Buyer's High.
  *
- * Requirements (UI Context Spec 3, §3):
- * - Visual Structure:
- *   1. Centered layout (`flex flex-col items-center justify-center text-center p-8`).
- *   2. Subtle monochrome Lucide icon sized at `w-12 h-12 text-muted-foreground` (with soft circular background).
- *   3. Bold Heading (`font-heading text-lg`).
- *   4. Descriptive subtext (`text-muted-foreground text-sm max-w-md font-body`).
- *   5. Optional actionable `<Button>` (supports either onAction callback or href navigation).
- * - Adheres strictly to the 4-point spacing scale (p-8, gap-3, max-w-md, etc.) and semantic color tokens.
+ * Requirements (4_ui_system.md & UI Context Spec 3, §3):
+ * - Corner Radius: --radius-card (8px -> rounded-[8px]).
+ * - Subtle monochrome Lucide icon sized at `w-12 h-12` with soft circular background.
+ * - Bold Heading (font-primary text-lg font-medium text-[#020617]).
+ * - Descriptive subtext (font-secondary text-sm text-[#64748b] max-w-md).
+ * - Optional actionable `<Button>` (supports onAction callback or href navigation) with 4px control radius.
+ * - Transitions: strict duration-200 ease-out transitions.
  */
 
 export interface EmptyStateProps {
-  /** The primary bold heading for the empty state */
+  /** The primary heading for the empty state */
   title: string;
   /** Descriptive subtext explaining why the screen is empty */
   description: string;
@@ -53,7 +52,7 @@ export function EmptyState({
         onClick={onAction}
         variant="default"
         size="default"
-        className="mt-2 font-medium shadow-sm min-w-36"
+        className="mt-2 font-medium shadow-xs min-w-36"
       >
         {actionLabel}
       </Button>
@@ -75,22 +74,22 @@ export function EmptyState({
       role="status"
       aria-live="polite"
       className={cn(
-        "flex flex-col items-center justify-center text-center p-8 sm:p-12 w-full rounded-2xl border border-dashed border-border/80 bg-card/50",
+        "flex flex-col items-center justify-center text-center p-8 sm:p-12 w-full rounded-[8px] border border-dashed border-[#e2e8f0] bg-white transition-all duration-200 ease-out",
         className
       )}
     >
       {/* 1. Subtle, monochrome Lucide icon with soft circular backdrop */}
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted/60 text-muted-foreground">
-        <Icon className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f1f5f9] text-[#64748b]">
+        <Icon className="h-8 w-8 text-[#64748b]" aria-hidden="true" />
       </div>
 
-      {/* 2. Bold Heading */}
-      <h3 className="font-heading text-lg font-semibold tracking-tight text-foreground">
+      {/* 2. Heading (Roboto, 500) */}
+      <h3 className="font-primary text-lg font-medium tracking-normal text-[#020617]">
         {title}
       </h3>
 
-      {/* 3. Descriptive Subtext in Muted Text */}
-      <p className="mt-2 max-w-md font-body text-sm text-muted-foreground leading-relaxed">
+      {/* 3. Descriptive Subtext in Muted Text (Geist) */}
+      <p className="mt-2 max-w-md font-secondary text-sm text-[#64748b] leading-relaxed">
         {description}
       </p>
 

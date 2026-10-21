@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import {
+  AlertTriangle,
   ArrowRight,
   CheckCircle2,
   Clock,
@@ -9,6 +10,7 @@ import {
   PackageCheck,
   ShieldAlert,
   ShieldCheck,
+  Upload,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -17,13 +19,14 @@ import { cn } from "@/lib/utils";
 /**
  * ActionRequiredCard Component for Buyer's High.
  *
- * Requirements (UI Context Spec 2 Tier 1, Spec 4 §5 Dashboard, Spec 5 §2):
+ * Requirements (4_ui_system.md & UI Context Spec 2 Tier 1, Spec 4 §5):
  * - Wrapper using the Shadcn Alert primitive.
+ * - Corner Radius: --radius-card (8px -> rounded-[8px]). Inner controls: 4px.
  * - Used on `/dashboard` and `/escrow/[id]/status` to highlight blocking steps.
  * - Primary Action Button: Immediately unblocks the transaction (e.g. "Approve Item", "Submit Tracking Waybill").
  * - Secondary Action Button: Optional secondary route (e.g. "Raise Dispute").
- * - Critical timer badge if time-bound (e.g., "48h inspection countdown: 02h 15m remaining").
- * - Strict adherence to the 4-point spacing scale (p-4, gap-3, etc.) and semantic colors (`warning`, `trust`, `destructive`).
+ * - Critical timer badge if time-bound in `font-mono`.
+ * - Transitions: strict duration-200 ease-out transitions. NEVER bouncy animations (no active:scale-95).
  */
 
 export type ActionRequiredType =
@@ -101,7 +104,7 @@ export function ActionRequiredCard({
             `A dispute was initiated on ${orderNumber}. Please submit photos, video, or courier waybill receipts to our mediation officer within 24 hours.`,
           primaryLabel: primaryActionLabel || "Upload Dispute Evidence",
           secondaryLabel: secondaryActionLabel || "View Case Details",
-          variant: "warning" as const,
+          variant: "destructive" as const,
           icon: ShieldAlert,
           urgent: true,
         };
@@ -113,7 +116,7 @@ export function ActionRequiredCard({
             `To unlock high-volume escrow trades and seller bank payouts, please submit a valid government ID and selfie.`,
           primaryLabel: primaryActionLabel || "Verify Identity with SmileID",
           secondaryLabel: secondaryActionLabel || "Learn More",
-          variant: "warning" as const,
+          variant: "default" as const,
           icon: ShieldCheck,
           urgent: false,
         };
@@ -139,8 +142,8 @@ export function ActionRequiredCard({
     <Alert
       variant={config.variant}
       className={cn(
-        "relative overflow-hidden rounded-lg border shadow-[var(--shadow-soft-sm)] transition duration-200 ease-out",
-        config.urgent && "border-warning shadow-[var(--shadow-soft-md)]",
+        "relative overflow-hidden rounded-[8px] border shadow-[0_2px_4px_rgba(15,23,42,0.06)] transition-all duration-200 ease-out",
+        config.urgent && "border-[#ecc94b]/80 shadow-md",
         className
       )}
     >
@@ -149,42 +152,44 @@ export function ActionRequiredCard({
         <div className="flex items-start gap-3.5 flex-1">
           <div
             className={cn(
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-md transition-colors duration-200 ease-out",
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-[4px] transition-colors duration-200 ease-out",
               config.variant === "warning"
-                ? "bg-warning/20 text-warning-text"
+                ? "bg-[#ecc94b]/20 text-[#975a16]"
                 : config.variant === "trust"
-                ? "bg-trust-subtle text-trust-strong"
-                : "bg-primary/10 text-primary"
+                ? "bg-[#22c55e]/15 text-[#15803d]"
+                : config.variant === "destructive"
+                ? "bg-[#f56565]/15 text-[#c53030]"
+                : "bg-[#f1f5f9] text-[#0f172a]"
             )}
           >
-            <Icon className="h-5 w-5 fill-current/20" />
+            <Icon className="h-5 w-5" />
           </div>
 
           <div className="space-y-1 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <AlertTitle className="font-heading text-base font-bold text-foreground">
+              <AlertTitle className="font-primary text-base font-medium text-[#020617]">
                 {config.title}
               </AlertTitle>
 
-              {/* Order Reference Pill */}
-              <span className="mono-data rounded-md bg-muted px-2 py-0.5 text-muted-foreground">
+              {/* Order Reference Pill (4px radius per rule 3) */}
+              <span className="font-mono text-[10px] rounded-[4px] bg-[#f1f5f9] border border-[#e2e8f0] px-2 py-0.5 font-semibold text-[#64748b]">
                 {orderNumber}
               </span>
             </div>
 
-            <AlertDescription className="font-body text-xs text-muted-foreground leading-relaxed max-w-2xl">
+            <AlertDescription className="font-secondary text-xs text-[#64748b] leading-relaxed max-w-2xl">
               {config.description}
             </AlertDescription>
 
             {/* Countdown Warning Bar if Active */}
             {countdownString && (
-              <div className="mt-2 flex items-center gap-2 mono-data">
-                <Clock className="h-3.5 w-3.5 text-warning" />
-                <span className="text-muted-foreground">Time Remaining:</span>
-                <span className="font-bold text-warning-text">
+              <div className="mt-2 flex items-center gap-2 text-xs font-mono font-medium">
+                <Clock className="h-3.5 w-3.5 text-[#ecc94b] animate-spin" />
+                <span className="text-[#64748b] font-secondary">Time Remaining:</span>
+                <span className="font-bold text-[#975a16]">
                   {countdownString}
                 </span>
-                <span className="text-[10px] text-muted-foreground font-body">
+                <span className="text-[10px] text-[#64748b] font-secondary">
                   (auto-resolves upon expiration)
                 </span>
               </div>
@@ -193,14 +198,14 @@ export function ActionRequiredCard({
         </div>
 
         {/* Right: Primary and Optional Secondary Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:self-center shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border/60">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:self-center shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-[#e2e8f0]">
           {config.secondaryLabel && onSecondaryAction && (
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onSecondaryAction}
-              className="text-xs border-border text-foreground hover:bg-muted"
+              className="text-xs h-9"
             >
               <span>{config.secondaryLabel}</span>
             </Button>
@@ -213,12 +218,14 @@ export function ActionRequiredCard({
             disabled={isLoading}
             onClick={onPrimaryAction}
             className={cn(
-              "gap-2 text-xs font-semibold shadow-[var(--shadow-soft-sm)] transition-colors duration-200 ease-out"
+              "gap-2 text-xs h-9 font-medium shadow-xs transition-colors duration-200 ease-out",
+              config.variant === "warning" && "bg-[#0f172a] hover:bg-[#0f172a]/90 text-white",
+              config.variant === "trust" && "bg-[#0f172a] hover:bg-[#0f172a]/90 text-white"
             )}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <Clock className="h-3.5 w-3.5" />
+                <Clock className="h-3.5 w-3.5 animate-spin" />
                 <span>Processing...</span>
               </span>
             ) : (

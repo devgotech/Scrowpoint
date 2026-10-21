@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" className={`${roboto.variable} ${geist.variable} ${geistMono.variable}`}>
@@ -36,7 +37,6 @@ export default function RootLayout({
         {/* The AuthProvider wraps the entire app so all components know the user's login state */}
         <AuthProvider>
           <TooltipProvider delayDuration={300}>
-            <Navbar />
             <main className="mx-auto w-full max-w-[var(--page-max-width)] flex-1 px-4 py-6 pb-24 md:px-8 md:pb-6">
               {children}
             </main>

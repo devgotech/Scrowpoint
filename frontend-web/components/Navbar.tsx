@@ -21,12 +21,35 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/components/providers/AuthContext";
 import { cn } from "@/lib/utils";
 
+/**
+ * Navbar Component for Buyer's High.
+ *
+ * Requirements (4_ui_system.md & UI Context Spec 1, §2 & §3):
+ * - Sticky at top, exact height: `h-16`.
+ * - Semi-transparent background with backdrop blur: `bg-[#f8fafc]/90 backdrop-blur-md border-b border-[#e2e8f0]`.
+ * - Maximum layout width: `max-w-[1280px]` with `mx-auto` and `px-4 sm:px-6 lg:px-8`.
+ * - Radius semantics: controls/buttons use 4px (`rounded-[4px]`), dropdown cards use 8px (`rounded-[8px]`).
+ * - Guest State:
+ *   - "Log in" (Ghost) and "Sign up" (Primary Fill: #0f172a) buttons.
+ *   - Marketplace search bar & public discovery links.
+ * - Authenticated State:
+ *   - Notification Bell with unread counter dot in --color-trust (#22c55e).
+ *   - "Sell Gadget" primary CTA.
+ *   - User Avatar with initials fallback and dropdown (KYC status pill, Dashboard, Wallet, Logout).
+ * - Transitions: strict duration-200 ease-out transitions. NEVER bouncy scaling animations.
+ */
+
 export interface NavbarProps {
   className?: string;
   unreadNotificationsCount?: number;
+  onNavigate?: (href: string) => void;
 }
 
-export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps) {
+export function Navbar({
+  className,
+  unreadNotificationsCount = 2,
+  onNavigate,
+}: NavbarProps) {
   const { user, isAuthenticated, isAdmin, isKYCVerified, kycTier, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -34,7 +57,7 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
-  // Click outside to dismiss menus
+  // Close menus when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -57,6 +80,7 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
     };
   }, []);
 
+  // Compute initials for avatar fallback (e.g., "John Doe" -> "JD")
   const getInitials = (name?: string) => {
     if (!name) return "BH";
     const parts = name.trim().split(/\s+/);
@@ -69,59 +93,70 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full border-b border-border bg-background/90 backdrop-blur-md",
+        "sticky top-0 z-40 w-full border-b border-[#e2e8f0] bg-[#f8fafc]/90 backdrop-blur-md",
         className
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo & Core Links */}
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Left: Brand Logo & Navigation */}
         <div className="flex items-center gap-6 lg:gap-8">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-[#0f172a] text-white shadow-xs transition-colors duration-200 ease-out">
               <Shield className="h-5 w-5 fill-current" />
             </div>
             <div className="flex flex-col">
-              <span className="font-heading text-lg font-bold tracking-tight text-foreground leading-none">
+              <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
                 Buyer&apos;s High
               </span>
-              <span className="font-mono text-[10px] tracking-wider uppercase text-muted-foreground">
+              <span className="font-mono text-[10px] tracking-wider uppercase text-[#64748b]">
                 P2P Escrow
               </span>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-secondary font-medium">
             <Link
               href="/marketplace"
-              className="text-foreground/80 hover:text-foreground transition-colors"
+              onClick={() => onNavigate?.("/marketplace")}
+              className="text-[#020617] hover:text-[#0f172a] transition-colors duration-200 ease-out"
             >
               Marketplace
             </Link>
             <Link
               href="/pricing"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => onNavigate?.("/pricing")}
+              className="text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
             >
               Fee Calculator
             </Link>
             <Link
-              href="/escrow/how-it-works"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              href="/trust-and-safety"
+              onClick={() => onNavigate?.("/trust-and-safety")}
+              className="text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
             >
               Trust & Safety
+            </Link>
+            <Link
+              href="/seller/dashboard"
+              onClick={() => onNavigate?.("/seller/dashboard")}
+              className="text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
+            >
+              Seller Hub
             </Link>
           </nav>
         </div>
 
-        {/* Global Search Input (Desktop) */}
+        {/* Center: Global Search Bar (Desktop) */}
         <div className="hidden lg:flex flex-1 max-w-md mx-8">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search phones, laptops, consoles..."
-              className="h-11 w-full rounded-md border border-input bg-muted/40 pl-9 pr-4 font-body text-base text-foreground placeholder:text-muted-foreground focus:bg-background focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors duration-200 ease-out"
+              className="h-9 w-full rounded-[4px] border border-[#e2e8f0] bg-white pl-9 pr-4 text-sm font-secondary text-[#020617] placeholder:text-[#64748b] transition-colors duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-[#0f172a] focus:ring-offset-2"
             />
           </div>
         </div>
@@ -129,8 +164,11 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
         {/* Right Section: Guest vs Authenticated States */}
         <div className="flex items-center gap-3 md:gap-4">
           {isAuthenticated && user ? (
+            /* ===============================================================
+               AUTHENTICATED STATE
+               =============================================================== */
             <>
-              {/* "Sell Gadget" Action */}
+              {/* "List a Gadget" CTA */}
               <Link href="/dashboard/listings/create" className="hidden sm:block">
                 <Button variant="default" size="sm" className="gap-2 font-medium">
                   <PlusCircle className="h-4 w-4" />
@@ -138,45 +176,72 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
                 </Button>
               </Link>
 
-              {/* Notification Bell */}
+              {/* Notification Bell Dropdown */}
               <div className="relative" ref={notificationsRef}>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                   aria-label="Notifications"
-                  className="relative text-muted-foreground hover:text-foreground"
+                  className="relative h-9 w-9 text-[#64748b] hover:text-[#020617]"
                 >
                   <Bell className="h-5 w-5" />
                   {unreadNotificationsCount > 0 && (
-                    <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-primary" />
+                    <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
                   )}
                 </Button>
 
+                {/* Notifications Flyout */}
                 {isNotificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-card p-4 shadow-xl z-50 text-foreground animate-in fade-in-50 zoom-in-95">
-                    <div className="flex items-center justify-between pb-3 border-b border-border">
-                      <span className="font-heading font-semibold text-sm">Notifications</span>
-                      <span className="text-xs text-muted-foreground font-mono">
+                  <div className="absolute right-0 mt-2 w-80 rounded-[8px] border border-[#e2e8f0] bg-white p-4 shadow-[0_4px_8px_rgba(15,23,42,0.06)] z-50 text-[#020617] transition-all duration-200 ease-out">
+                    <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
+                      <span className="font-primary font-medium text-sm">
+                        Notifications
+                      </span>
+                      <span className="text-xs text-[#64748b] font-mono">
                         {unreadNotificationsCount} unread
                       </span>
                     </div>
-                    <div className="py-2 space-y-2 text-xs">
-                      <div className="p-2.5 rounded-lg bg-muted/40 border border-border/50">
+                    <div className="py-2 space-y-2 text-xs font-secondary">
+                      <div className="p-2.5 rounded-[4px] bg-[#f8fafc] border border-[#e2e8f0]">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-foreground">Escrow Funded</span>
-                          <span className="text-[10px] text-muted-foreground">10m ago</span>
+                          <span className="font-semibold text-[#020617]">
+                            Escrow Funded
+                          </span>
+                          <span className="text-[10px] text-[#64748b] font-mono">
+                            10m ago
+                          </span>
                         </div>
-                        <p className="text-muted-foreground">
-                          Order #BH-8921 funds are held securely. You may now ship the gadget.
+                        <p className="text-[#64748b]">
+                          Order #BH-8921 funds are held securely. You may now ship
+                          the gadget.
+                        </p>
+                      </div>
+                      <div className="p-2.5 rounded-[4px] hover:bg-[#f8fafc] transition-colors duration-200 ease-out">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-semibold text-[#020617]">
+                            KYC Verification
+                          </span>
+                          <span className="text-[10px] text-[#64748b] font-mono">
+                            2h ago
+                          </span>
+                        </div>
+                        <p className="text-[#64748b]">
+                          Your tier-1 identity documents were reviewed and approved.
                         </p>
                       </div>
                     </div>
-                    <div className="pt-2 border-t border-border text-center">
+                    <div className="pt-2 border-t border-[#e2e8f0] text-center">
                       <Link
-                        href="/dashboard/notifications"
-                        onClick={() => setIsNotificationsOpen(false)}
-                        className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        href="/notifications"
+                        onClick={(e) => {
+                          setIsNotificationsOpen(false);
+                          if (onNavigate) {
+                            e.preventDefault();
+                            onNavigate("/notifications");
+                          }
+                        }}
+                        className="text-xs font-medium text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
                       >
                         View all activity
                       </Link>
@@ -185,15 +250,15 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
                 )}
               </div>
 
-              {/* User Avatar Dropdown */}
+              {/* User Avatar & Dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex min-h-11 items-center gap-2 rounded-md p-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors duration-200 ease-out"
+                  className="flex items-center gap-2 rounded-full p-0.5 focus:outline-none focus:ring-2 focus:ring-[#0f172a] transition-colors duration-200 ease-out"
                   aria-expanded={isDropdownOpen}
                 >
-                  <Avatar className="h-9 w-9 border-2 border-border">
+                  <Avatar className="h-9 w-9 border-2 border-[#e2e8f0]">
                     {user.avatarUrl && (
                       <AvatarImage src={user.avatarUrl} alt={user.name} />
                     )}
@@ -201,87 +266,95 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
                   </Avatar>
                   <ChevronDown
                     className={cn(
-                      "hidden sm:block h-3.5 w-3.5 text-muted-foreground transition-transform duration-200",
+                      "hidden sm:block h-3.5 w-3.5 text-[#64748b] transition-transform duration-200 ease-out",
                       isDropdownOpen && "rotate-180"
                     )}
                   />
                 </button>
 
+                {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card p-2 shadow-xl z-50 text-foreground animate-in fade-in-50 zoom-in-95">
-                    <div className="px-3 py-2.5 border-b border-border">
-                      <p className="font-heading font-semibold text-sm truncate text-foreground">
+                  <div className="absolute right-0 mt-2 w-64 rounded-[8px] border border-[#e2e8f0] bg-white p-2 shadow-[0_4px_8px_rgba(15,23,42,0.06)] z-50 text-[#020617] transition-all duration-200 ease-out">
+                    {/* User Identity Header */}
+                    <div className="px-3 py-2.5 border-b border-[#e2e8f0]">
+                      <p className="font-primary font-medium text-sm truncate text-[#020617]">
                         {user.name || "Authenticated Trader"}
                       </p>
-                      <p className="text-xs text-muted-foreground truncate font-mono">
+                      <p className="text-xs text-[#64748b] truncate font-mono">
                         {user.email}
                       </p>
 
+                      {/* KYC Status Badge (Spec Rule: Green strictly for verified) */}
                       <div className="mt-2 flex items-center gap-2">
                         {isKYCVerified ? (
-                          <Badge variant="trust" className="gap-1 text-[11px] py-0">
-                            <ShieldCheck className="h-3 w-3" />
+                          <Badge variant="trust" className="gap-1 text-[11px] py-0 font-mono tracking-wider">
+                            <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
                             <span>KYC Verified</span>
                           </Badge>
                         ) : kycTier === "manual_review_required" ? (
-                          <Badge variant="warning" className="gap-1 text-[11px] py-0">
-                            <ShieldAlert className="h-3 w-3" />
+                          <Badge variant="warning" className="gap-1 text-[11px] py-0 font-mono tracking-wider">
+                            <ShieldAlert className="h-3 w-3 text-[#ecc94b]" />
                             <span>In Manual Review</span>
                           </Badge>
                         ) : (
-                          <Badge variant="secondary" className="gap-1 text-[11px] py-0">
-                            <Shield className="h-3 w-3 text-muted-foreground" />
+                          <Badge variant="secondary" className="gap-1 text-[11px] py-0 font-mono tracking-wider">
+                            <Shield className="h-3 w-3 text-[#64748b]" />
                             <span>KYC Pending</span>
                           </Badge>
                         )}
                       </div>
                     </div>
 
+                    {/* Navigation Links */}
                     <div className="py-1">
                       <Link
                         href="/dashboard"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg hover:bg-muted text-foreground transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
                       >
-                        <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
+                        <LayoutDashboard className="h-4 w-4 text-[#64748b]" />
                         <span>Trades Dashboard</span>
                       </Link>
+
                       <Link
                         href="/dashboard/wallet"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg hover:bg-muted text-foreground transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
                       >
-                        <Wallet className="h-4 w-4 text-muted-foreground" />
+                        <Wallet className="h-4 w-4 text-[#64748b]" />
                         <span>Wallet & Payouts</span>
                       </Link>
+
                       <Link
                         href="/kyc/document"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg hover:bg-muted text-foreground transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
                       >
-                        <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                        <CheckCircle2 className="h-4 w-4 text-[#64748b]" />
                         <span>Identity Verification</span>
                       </Link>
+
                       {isAdmin && (
                         <Link
                           href="/admin"
                           onClick={() => setIsDropdownOpen(false)}
-                          className="flex min-h-11 items-center gap-2.5 px-3 py-2 text-sm rounded-md bg-warning/20 text-warning-text font-medium transition-colors duration-200 ease-out"
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] bg-[#ecc94b]/15 text-[#975a16] font-semibold transition-colors duration-200 ease-out"
                         >
-                          <ShieldAlert className="h-4 w-4" />
+                          <ShieldAlert className="h-4 w-4 text-[#ecc94b]" />
                           <span>Admin Dispute Portal</span>
                         </Link>
                       )}
                     </div>
 
-                    <div className="pt-1 border-t border-border">
+                    {/* Logout Action */}
+                    <div className="pt-1 border-t border-[#e2e8f0]">
                       <button
                         type="button"
                         onClick={async () => {
                           setIsDropdownOpen(false);
                           await logout();
                         }}
-                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] text-[#c53030] hover:bg-[#f56565]/10 transition-colors duration-200 ease-out"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>Log out</span>
@@ -292,6 +365,9 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
               </div>
             </>
           ) : (
+            /* ===============================================================
+               GUEST STATE
+               =============================================================== */
             <div className="flex items-center gap-2.5">
               <Link href="/login">
                 <Button variant="ghost" size="sm" className="font-medium">
@@ -299,7 +375,7 @@ export function Navbar({ className, unreadNotificationsCount = 2 }: NavbarProps)
                 </Button>
               </Link>
               <Link href="/signup">
-                <Button variant="default" size="sm" className="font-medium shadow-sm">
+                <Button variant="default" size="sm" className="font-medium shadow-xs">
                   Sign up
                 </Button>
               </Link>

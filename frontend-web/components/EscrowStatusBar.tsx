@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Tooltip } from "@/components/ui/tooltip";
 
 /**
  * EscrowStatusBar Component for Buyer's High.
@@ -21,11 +20,12 @@ import { Tooltip } from "@/components/ui/tooltip";
  * Requirements (UI Context Spec 1, §2 & §3.C, Core Directive 3):
  * - Micro-summary component that mounts directly below the sticky top navbar during active trades.
  * - Trigger states: PENDING_PAYMENT, FUNDS_HELD, IN_TRANSIT, INSPECTION_PERIOD, or DISPUTED.
- * - Visual Theme: Brand navy background with crisp white text.
+ * - Visual Theme: Slate 900 background (`bg-slate-900` / `dark:bg-slate-950`), crisp white text.
  * - Color Enforcement:
- *   - `trust` (#22c55e) strictly for escrow-active and verified states.
+ *   - `trust` (#22c55e) strictly for verified / funds held states.
  *   - `warning` (#ecc94b) for pending, inspection warnings, or disputed states.
- * - Inspection windows use the warning state; urgent windows are emphasized without motion.
+ * - Critical Alert Pulsing:
+ *   - If inspection window drops below 2 hours (< 7200 seconds), pulses with the `warning` (#ecc94b) color.
  * - Typography: Tracking IDs & countdown timer in `font-mono`.
  * - Navigation: Actionable link directing directly to `/escrow/[id]/status`.
  */
@@ -52,7 +52,7 @@ export function EscrowStatusBar({
   orderId = "bh-ord-94218a",
   orderShortId = "BH-ORD-9421",
   state = "INSPECTION_PERIOD",
-  initialSecondsRemaining = 6840, // 1h 54m to demonstrate the urgent warning state
+  initialSecondsRemaining = 6840, // ~1h 54m to demonstrate <2h warning pulse by default
   itemTitle = "MacBook Pro 14' M2",
 }: EscrowStatusBarProps) {
   const [secondsRemaining, setSecondsRemaining] = useState<number>(
@@ -92,23 +92,23 @@ export function EscrowStatusBar({
           variant: "trust" as const,
           icon: Lock,
           timerLabel: "Seller Ship Window",
-          barAccent: "border-trust/30",
+          barAccent: "border-emerald-500/30",
         };
       case "IN_TRANSIT":
         return {
           label: "In Transit with Courier",
-          variant: "secondary" as const,
+          variant: "trust" as const,
           icon: Package,
           timerLabel: "Estimated Delivery",
-          barAccent: "border-border",
+          barAccent: "border-emerald-500/30",
         };
       case "INSPECTION_PERIOD":
         return {
           label: isUrgent ? "Inspection Ending Soon" : "48-Hour Inspection Active",
-          variant: "warning" as const,
+          variant: isUrgent ? ("warning" as const) : ("trust" as const),
           icon: isUrgent ? AlertTriangle : ShieldCheck,
           timerLabel: "Auto-Release in",
-          barAccent: isUrgent ? "border-warning ring-1 ring-warning/30" : "border-warning/50",
+          barAccent: isUrgent ? "border-amber-400/80 ring-1 ring-amber-400/30" : "border-emerald-500/30",
         };
       case "DISPUTED":
         return {
@@ -116,7 +116,7 @@ export function EscrowStatusBar({
           variant: "warning" as const,
           icon: ShieldAlert,
           timerLabel: "Evidence Deadline",
-          barAccent: "border-warning",
+          barAccent: "border-amber-400/80",
         };
       case "PENDING_PAYMENT":
       default:
@@ -125,7 +125,7 @@ export function EscrowStatusBar({
           variant: "warning" as const,
           icon: Clock,
           timerLabel: "Payment Reservation",
-          barAccent: "border-warning/60",
+          barAccent: "border-amber-400/60",
         };
     }
   }, [state, isUrgent]);
@@ -137,59 +137,38 @@ export function EscrowStatusBar({
       role="region"
       aria-label="Active Escrow Status"
       className={cn(
-        "relative w-full bg-primary text-primary-foreground border-b px-4 py-2 transition-colors duration-200 ease-out",
+        "relative w-full bg-slate-900 text-white border-b px-4 py-2 transition-all duration-300",
         statusConfig.barAccent,
-        isUrgent && "ring-inset ring-1 ring-warning/50",
+        isUrgent && "bg-slate-900 ring-inset ring-1 ring-amber-400/50 animate-pulse",
         className
       )}
     >
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 sm:gap-4 text-xs">
+      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-2 sm:gap-4 text-xs font-secondary">
         {/* Left: Escrow Order ID & Status Badge */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-          <div className="flex items-center gap-1.5 mono-data text-slate-300">
-            <Lock className="h-3.5 w-3.5 text-trust" />
+          <div className="flex items-center gap-1.5 font-mono font-medium text-slate-300">
+            <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
             <span className="hidden sm:inline text-slate-400">Order:</span>
-            <span className="text-white">{orderShortId}</span>
+            <span className="text-white font-semibold">{orderShortId}</span>
           </div>
 
           <span className="hidden md:inline text-slate-600">|</span>
 
           {/* Item Title context */}
-          <span className="hidden lg:inline text-slate-300 font-medium truncate max-w-xs">
+          <span className="hidden lg:inline text-slate-300 font-medium truncate max-w-xs font-primary">
             {itemTitle}
           </span>
 
           <span className="hidden lg:inline text-slate-600">|</span>
 
           {/* Status Badge */}
-          <Tooltip
-            content={
-              state === "IN_TRANSIT"
-                ? "ITEM WITH COURIER"
-                : state === "DISPUTED"
-                  ? "ESCROW LOCKED: DISPUTE"
-                  : state === "INSPECTION_PERIOD"
-                    ? "48H INSPECTION ACTIVE"
-                    : state === "FUNDS_HELD"
-                      ? "FUNDS SECURED IN VAULT"
-                      : "PAYMENT REQUIRED"
-            }
+          <Badge
+            variant={statusConfig.variant}
+            className="gap-1 py-0.5 px-2 text-[10px] font-mono tracking-wider"
           >
-            <Badge
-              variant={statusConfig.variant}
-              className={cn(
-                "gap-1 py-0 px-2 label-caps",
-                statusConfig.variant === "trust"
-                  ? "bg-trust/20 text-trust border-trust/40"
-                  : statusConfig.variant === "warning"
-                    ? "bg-warning/20 text-warning border-warning/40"
-                    : "bg-white/10 text-white border-white/20"
-              )}
-            >
-              <StatusIcon className="h-3 w-3" />
-              <span>{statusConfig.label}</span>
-            </Badge>
-          </Tooltip>
+            <StatusIcon className="h-3 w-3" />
+            <span>{statusConfig.label}</span>
+          </Badge>
         </div>
 
         {/* Right: Dynamic Countdown Timer & CTA */}
@@ -197,19 +176,19 @@ export function EscrowStatusBar({
           {/* Countdown Clock */}
           <div
             className={cn(
-              "flex items-center gap-1.5 mono-data px-2 py-0.5 rounded-md",
+              "flex items-center gap-1.5 font-mono text-[11px] sm:text-xs px-2.5 py-0.5 rounded-[4px]",
               isUrgent
-                ? "bg-warning/20 text-warning font-bold"
+                ? "bg-[#ecc94b]/20 text-[#ecc94b] font-bold"
                 : "bg-slate-800/80 text-slate-200"
             )}
           >
             <Clock
               className={cn(
                 "h-3.5 w-3.5",
-                isUrgent ? "text-warning" : "text-slate-400"
+                isUrgent ? "text-[#ecc94b] animate-spin" : "text-slate-400"
               )}
             />
-            <span className="hidden sm:inline text-slate-400">
+            <span className="hidden sm:inline text-slate-400 font-secondary">
               {statusConfig.timerLabel}:
             </span>
             <span>{formattedCountdown}</span>
@@ -218,7 +197,7 @@ export function EscrowStatusBar({
           {/* Escrow Status Link */}
           <Link
             href={`/escrow/${orderId}/status`}
-            className="group flex min-h-11 items-center gap-1 rounded-md bg-slate-800 px-3 py-1 text-[11px] font-semibold text-white transition-colors duration-200 ease-out hover:bg-slate-700 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="group flex items-center gap-1 rounded-[4px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 text-[11px] font-secondary font-medium text-white transition-colors duration-200 ease-out"
           >
             <span>View Trade</span>
             <ArrowRight className="h-3 w-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />

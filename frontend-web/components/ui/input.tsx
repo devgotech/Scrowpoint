@@ -1,6 +1,14 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Input component adhering to 4_ui_system.md:
+ * - Radius: Strictly 4px (--radius-control -> rounded-[4px])
+ * - Text: Geist 16px (text-base / 16px to prevent iOS auto-zoom)
+ * - Validation: --color-state-error (#f56565) for destructive borders on invalid fields
+ * - Focus Style: focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+ * - Motion: duration-200 ease-out
+ */
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
@@ -12,8 +20,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 font-body text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200 ease-out",
-          error && "border-destructive focus-visible:ring-destructive",
+          "flex h-10 w-full rounded-[4px] border border-[#e2e8f0] bg-white px-3 py-2 text-base md:text-sm font-secondary text-[#020617] placeholder:text-[#64748b] transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f172a] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          error && "border-[#f56565] focus-visible:ring-[#f56565]",
           className
         )}
         ref={ref}

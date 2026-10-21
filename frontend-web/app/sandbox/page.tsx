@@ -19,6 +19,7 @@ import {
   Laptop,
   Layers,
   Lock,
+  MessageCircle,
   Package,
   Receipt,
   RotateCcw,
@@ -34,6 +35,7 @@ import {
   Upload,
   User,
   Wallet,
+  Zap,
 } from "lucide-react";
 
 // Atomic Primitives
@@ -64,6 +66,49 @@ import NotFound from "@/app/not-found";
 import { AdminDisputeRow } from "@/components/AdminDisputeRow";
 import { StackedCard } from "@/components/StackedCard";
 
+// Marketing & Trust Components (Phase 1)
+import { TrustPillarsGrid } from "@/components/marketing/TrustPillarsGrid";
+import { PolicyAccordion } from "@/components/marketing/PolicyAccordion";
+import { EscrowTimelineExplainer } from "@/components/marketing/EscrowTimelineExplainer";
+import { PricingTierCards } from "@/components/marketing/PricingTierCards";
+import { EscrowFeeCalculator } from "@/components/marketing/EscrowFeeCalculator";
+import { LegalSidebarNav } from "@/components/marketing/LegalSidebarNav";
+
+// Auth & Onboarding Components (Phase 1 & Phase 2)
+import { AuthForm } from "@/components/auth/AuthForm";
+import { FormHelperText } from "@/components/auth/FormHelperText";
+import { CameraCaptureWidget } from "@/components/onboarding/CameraCaptureWidget";
+import { DocumentUploadArea } from "@/components/onboarding/DocumentUploadArea";
+
+// Escrow & Checkout Components (Phase 2 & Phase 4)
+import { OrderSummaryCard, type EscrowOrderData } from "@/components/escrow/OrderSummaryCard";
+import { SecureCheckoutButton } from "@/components/escrow/SecureCheckoutButton";
+import { SystemMilestoneBubble } from "@/components/escrow/SystemMilestoneBubble";
+import { EvidenceUploadForm } from "@/components/escrow/EvidenceUploadForm";
+
+// Seller Components (Phase 3)
+import { SellerStatsOverview } from "@/components/seller/SellerStatsOverview";
+import { RecentOrdersTable } from "@/components/seller/RecentOrdersTable";
+import { QuickActionBanner } from "@/components/seller/QuickActionBanner";
+import { BalanceCard } from "@/components/seller/BalanceCard";
+import { BankAccList } from "@/components/seller/BankAccList";
+import { TransactionHistoryLedger } from "@/components/seller/TransactionHistoryLedger";
+
+// User & Support Components (Phase 5)
+import { ProfileDetailsForm } from "@/components/settings/ProfileDetailsForm";
+import { SecuritySettings } from "@/components/settings/SecuritySettings";
+import { KYCStatusBadge } from "@/components/settings/KYCStatusBadge";
+import { NotificationFeed } from "@/components/notifications/NotificationFeed";
+import { SupportChatWindow } from "@/components/support/SupportChatWindow";
+import { FAQQuickLinks } from "@/components/support/FAQQuickLinks";
+
+// Admin Mediation Components (Phase 6)
+import { DisputeQueueDataTable } from "@/components/admin/DisputeQueueDataTable";
+import { KYCManualApprovalQueue } from "@/components/admin/KYCManualApprovalQueue";
+import { EvidenceViewer } from "@/components/admin/EvidenceViewer";
+import { ReadonlyChatTranscript } from "@/components/admin/ReadonlyChatTranscript";
+import { VerdictActionGroup } from "@/components/admin/VerdictActionGroup";
+
 import { AuthProvider } from "@/components/providers/AuthContext";
 import { formatCurrency } from "@/lib/currency";
 import type { AdminDisputeData } from "@/types/dispute";
@@ -72,10 +117,10 @@ import { cn } from "@/lib/utils";
 /**
  * Live Design System and Component Documentation Registry for Buyer's High.
  *
- * Requirements (4_ui_system.md & UI Context Specs 1 through 5):
+ * Requirements (4_ui_system.md & UI Context Specs 1 through 6):
  * - Two-column layout:
  *   - Left: Fixed navigation sidebar with category filtering.
- *     Categories: "All", "Tokens & Rules", "Tier 1 Atoms", "Tier 2 Marketplace", "Tier 3 Escrow", "Forms", "Overlays"
+ *     Categories: "All", "Tokens & Rules", "Tier 1 Atoms", "Tier 2 Marketplace", "Tier 3 Escrow", "Marketing & Trust", "Seller & Wallet", "User & Support", "Admin Mediation", "Forms", "Overlays"
  *   - Right: Main component viewing area.
  * - Corner Radius: strictly 8px on cards (rounded-[8px]), 4px on controls (rounded-[4px]), rounded-full on trust badges only.
  * - Enforces --color-bg-base (#f8fafc), --color-bg-card (#ffffff), --color-text-primary (#020617).
@@ -88,13 +133,17 @@ export type ComponentCategory =
   | "Tier 1 Atoms"
   | "Tier 2 Marketplace"
   | "Tier 3 Escrow"
+  | "Marketing & Trust"
+  | "Seller & Wallet"
+  | "User & Support"
+  | "Admin Mediation"
   | "Forms"
   | "Overlays";
 
 export interface ComponentRegistryItem {
   id: string;
   title: string;
-  category: "Tokens & Rules" | "Tier 1 Atoms" | "Tier 2 Marketplace" | "Tier 3 Escrow" | "Forms" | "Overlays";
+  category: ComponentCategory;
   tierLabel: string;
   description: string;
   tags: string[];
@@ -138,14 +187,49 @@ const MOCK_ADMIN_DISPUTE: AdminDisputeData = {
   reason: "Battery capacity shows 81% on 3uTools diagnostic audit despite listing claiming 97% mint condition.",
   lockedAmountKobo: 85000000, // ₦850,000 in kobo
   status: "admin_mediation",
-  evidenceCount: 4,
-  slaRemainingString: "01h 48m",
+  evidenceCount: 5,
+  slaRemainingString: "04h 18m",
   isUrgentSla: true,
-  createdAt: "Oct 16, 10:14 AM",
+  createdAt: "3 hours ago",
 };
 
+const MOCK_ORDER_DATA: EscrowOrderData = {
+  orderId: "BH-ORD-9421",
+  gadgetId: "g-001",
+  gadgetTitle: "Apple iPhone 14 Pro Max 256GB Deep Purple",
+  gadgetImage:
+    "https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?w=600&auto=format&fit=crop&q=80",
+  condition: "mint",
+  amount: 850000,
+  escrowFee: 21250,
+  logisticsFee: 4500,
+  totalDeposit: 875750,
+  buyerName: "Adeola Fashola",
+  sellerName: "Chidi Tech Hub",
+  status: "FUNDED",
+};
+
+function EvidenceUploadDemo() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <Button type="button" variant="outline" onClick={() => setIsOpen(true)}>
+        Open evidence upload
+      </Button>
+      <EvidenceUploadForm
+        orderId="BH-ORD-9421"
+        orderAmount={850000}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onSubmitDispute={() => {}}
+      />
+    </>
+  );
+}
+
 // ============================================================================
-// COMPONENT REGISTRY DEFINITIONS
+// COMPONENT REGISTRY CATALOG
 // ============================================================================
 
 export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
@@ -161,7 +245,6 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     tags: ["Tokens", "CSS Variables", "Rules", "WCAG Contrast"],
     render: () => (
       <div className="w-full space-y-6">
-        {/* Colors Palette Grid */}
         <div>
           <span className="font-mono text-xs uppercase tracking-wider text-[#64748b] block mb-3 font-semibold">
             Color Palette & Semantic Tokens
@@ -210,7 +293,6 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
           </div>
         </div>
 
-        {/* Radius Semantics */}
         <div>
           <span className="font-mono text-xs uppercase tracking-wider text-[#64748b] block mb-3 font-semibold">
             Corner Radius Semantics
@@ -237,7 +319,6 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
           </div>
         </div>
 
-        {/* The 6 NEVER Rules */}
         <div className="rounded-[4px] border border-[#ecc94b]/50 bg-[#ecc94b]/10 p-4">
           <span className="font-mono text-xs uppercase tracking-wider text-[#975a16] block font-bold mb-2">
             The 6 NEVER Rules (4_ui_system.md)
@@ -248,7 +329,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
             <li><strong>NEVER</strong> use pill radius (9999px) on anything except trust badges. Condition chips and status pills use 4px.</li>
             <li><strong>NEVER</strong> use Warning amber for failures or Error red for disputes. Dispute Open = warning (#ecc94b), Verification Failed = error (#f56565), Escrow Funded = success (#088235).</li>
             <li><strong>NEVER</strong> set money amounts, IDs or reference numbers in primary font — use <code className="font-mono bg-white px-1 py-0.5 rounded">Geist Mono</code>.</li>
-            <li><strong>NEVER</strong> use bouncy animations. Use strict <code className="font-mono bg-white px-1 py-0.5 rounded">duration-200 ease-out</code> transitions.</li>
+            <li><strong>NEVER</strong> write money values in major units directly if stored in base kobo/cents.</li>
           </ol>
         </div>
       </div>
@@ -256,473 +337,497 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   },
 
   // --------------------------------------------------------------------------
-  // TIER 1 ATOMS
+  // MARKETING & TRUST (Phase 1)
   // --------------------------------------------------------------------------
   {
-    id: "atom-buttons",
-    title: "Button Primitives",
+    id: "marketing-trust-pillars",
+    title: "TrustPillarsGrid (Phase 1 §3)",
+    category: "Marketing & Trust",
+    tierLabel: "Phase 1: Marketing",
+    description: "4 Core pillars of trust: Biometric KYC, Segregated Vaults, Tracked Logistics, and 48-Hour SLA.",
+    tags: ["Trust Hub", "Pillars", "Fraud Prevention"],
+    render: () => <TrustPillarsGrid />,
+  },
+  {
+    id: "marketing-policy-accordion",
+    title: "PolicyAccordion (Phase 1 §3)",
+    category: "Marketing & Trust",
+    tierLabel: "Phase 1: Marketing",
+    description: "Expandable policy questions detailing the 48-hour hardware diagnostic SLA and inspection guarantees.",
+    tags: ["Policy", "FAQ", "Accordion", "Legal SLA"],
+    render: () => <PolicyAccordion />,
+  },
+  {
+    id: "marketing-escrow-timeline",
+    title: "EscrowTimelineExplainer (Phase 1 §3)",
+    category: "Marketing & Trust",
+    tierLabel: "Phase 1: Marketing",
+    description: "Visual 4-step escrow timeline walkthrough for buyers and sellers.",
+    tags: ["Escrow Flow", "Timeline", "Milestones"],
+    render: () => <EscrowTimelineExplainer />,
+  },
+  {
+    id: "marketing-pricing-tier-cards",
+    title: "PricingTierCards (Phase 1 §2)",
+    category: "Marketing & Trust",
+    tierLabel: "Phase 1: Marketing",
+    description: "Transparent fee tiers: 2.5% Premium (>₦500k), 3.5% Standard (₦100k-₦500k), and 5.0% Basic (<₦100k).",
+    tags: ["Pricing", "Fee Tiers", "Escrow Calculator"],
+    render: () => <PricingTierCards />,
+  },
+  {
+    id: "marketing-fee-calculator",
+    title: "EscrowFeeCalculator (Phase 1 §2)",
+    category: "Marketing & Trust",
+    tierLabel: "Phase 1: Marketing",
+    description: "Interactive real-time client arithmetic fee calculator with exact kobo precision and buyer/seller toggles.",
+    tags: ["Fee Calculator", "Client Math", "Kobo Precision"],
+    render: () => <EscrowFeeCalculator />,
+  },
+  {
+    id: "marketing-legal-sidebar-nav",
+    title: "LegalSidebarNav (Phase 1 §3)",
+    category: "Marketing & Trust",
+    tierLabel: "Phase 1: Marketing",
+    description: "Compliance document navigation sidebar linking all 9 statutory escrow agreements and SLA policies.",
+    tags: ["Legal Docs", "Compliance", "Sidebar"],
+    render: () => (
+      <div className="max-w-xs">
+        <LegalSidebarNav activeSlug="buyer-protection" />
+      </div>
+    ),
+  },
+
+  // --------------------------------------------------------------------------
+  // TIER 1 ATOMIC COMPONENTS
+  // --------------------------------------------------------------------------
+  {
+    id: "atom-button-variants",
+    title: "Buttons & Control Semantics (4px Radius)",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Buttons configured to 4_ui_system.md: 4px radius, Geist Medium font, #0f172a primary fill, and strict 200ms ease-out transitions.",
-    tags: ["Buttons", "4px Radius", "Geist Medium", "duration-200"],
+    description: "Button variants conforming to 4_ui_system.md: 4px radius (rounded-[4px]), 44px min-touch target, duration-200 transitions.",
+    tags: ["Button", "Controls", "4px Radius"],
     render: () => (
       <div className="flex flex-wrap items-center gap-3">
-        <Button variant="default">Primary Action</Button>
-        <Button variant="secondary">Secondary Action</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="destructive">Destructive</Button>
-        <Button variant="ghost">Ghost Trigger</Button>
-        <Button variant="default" size="sm">Small (h-8)</Button>
-        <Button variant="default" size="lg">Large CTA (h-10)</Button>
-        <Button variant="default" disabled>Disabled State</Button>
+        <Button variant="default">Primary CTA (#0f172a)</Button>
+        <Button variant="secondary">Secondary Button</Button>
+        <Button variant="outline">Outline Button</Button>
+        <Button variant="ghost">Ghost Button</Button>
+        <Button variant="destructive">Destructive (Dispute)</Button>
+        <Button className="bg-[#22c55e] text-[#020617] hover:bg-[#16a34a] font-semibold">Trust Action (Release)</Button>
       </div>
     ),
   },
   {
-    id: "atom-badges",
-    title: "Trust Badges & Status Pills",
+    id: "atom-badge-variants",
+    title: "Badges & Trust Signal Discipline",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Strict enforcement of 4_ui_system.md §5.3: Only trust badges use rounded-full (pill). Status indicators use 4px radius.",
-    tags: ["Badges", "Trust Badges", "Pill Rule", "WCAG Contrast"],
+    description: "Strict anti-pill discipline: Trust Green is strictly reserved for escrow signals (rounded-full). Non-trust chips use rounded-[4px].",
+    tags: ["Badges", "Trust Green", "Zero Pill Slop"],
     render: () => (
-      <div className="flex flex-wrap items-center gap-2.5">
-        <Badge variant="trust" className="gap-1">
-          <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
-          <span>FUNDS_HELD (Trust Pill)</span>
+      <div className="flex flex-wrap items-center gap-3">
+        <Badge variant="trust" className="gap-1.5 font-mono text-xs">
+          <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+          <span>Escrow Active (Pill Allowed)</span>
         </Badge>
-        <Badge variant="trust" className="gap-1">
-          <CheckCircle2 className="h-3 w-3 text-[#22c55e]" />
-          <span>KYC Verified (Trust Pill)</span>
+        <Badge variant="secondary" isPill={false} className="font-mono text-xs">
+          Mint Condition (4px)
         </Badge>
-        <Badge variant="success" className="gap-1">
-          <span>Escrow Funded (#088235)</span>
+        <Badge variant="warning" isPill={false} className="font-mono text-xs">
+          Inspection Window (4px)
         </Badge>
-        <Badge variant="warning" className="gap-1">
-          <Clock className="h-3 w-3 text-[#ecc94b]" />
-          <span>INSPECTION_PERIOD (4px)</span>
+        <Badge variant="destructive" isPill={false} className="font-mono text-xs">
+          Verification Rejected (4px)
         </Badge>
-        <Badge variant="warning" className="gap-1">
-          <AlertTriangle className="h-3 w-3 text-[#ecc94b]" />
-          <span>Dispute Raised (4px)</span>
-        </Badge>
-        <Badge variant="destructive" className="gap-1">
-          <span>Verification Failed (4px)</span>
-        </Badge>
-        <Badge variant="transit" className="gap-1">
-          <Truck className="h-3 w-3" />
-          <span>Item In Transit (4px)</span>
-        </Badge>
-        <Badge variant="secondary">Condition Mint (4px)</Badge>
-      </div>
-    ),
-  },
-  {
-    id: "atom-inputs",
-    title: "Form Inputs (4px Radius)",
-    category: "Tier 1 Atoms",
-    tierLabel: "Tier 1 Foundation",
-    description: "Input fields with strict 4px radius, 16px text on mobile (prevents iOS zoom), and #f56565 validation error state.",
-    tags: ["Input", "Forms", "4px Radius", "iOS Safe"],
-    render: () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
-        <div className="space-y-1">
-          <label className="font-secondary text-xs font-medium text-[#020617]">Standard Input</label>
-          <Input placeholder="Enter gadget serial number..." />
-        </div>
-        <div className="space-y-1">
-          <label className="font-secondary text-xs font-medium text-[#c53030]">Validation Error State</label>
-          <Input error defaultValue="INVALID-IMEI-CHECK" />
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "atom-user-avatar",
-    title: "UserAvatar with Initials Fallback",
-    category: "Tier 1 Atoms",
-    tierLabel: "Tier 1 Foundation",
-    description: "Shadcn Avatar primitive wrapper with algorithmic initials calculation and graceful image error fallback.",
-    tags: ["Avatar", "Initials Fallback", "Accessibility"],
-    render: () => (
-      <div className="flex flex-wrap items-center gap-6">
-        <div className="flex items-center gap-2">
-          <UserAvatar name="Chidi Okonkwo" size="xl" />
-          <UserAvatar name="Adeola Johnson" size="lg" />
-          <UserAvatar name="Tunde Adeleke" size="md" />
-          <UserAvatar name="Zainab Mobile" size="sm" />
-          <UserAvatar name="Emeka" size="xs" />
-        </div>
-        <div className="flex items-center gap-3">
-          <UserAvatar
-            name="Verified Trader"
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-            size="lg"
-          />
-          <UserAvatar
-            name="Broken Image Test"
-            src="https://invalid-broken-url.example/404.jpg"
-            size="lg"
-          />
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "atom-empty-state",
-    title: "Actionable Empty State",
-    category: "Tier 1 Atoms",
-    tierLabel: "Tier 1 Foundation",
-    description: "Standardized empty screen with 8px radius card, subtle monochrome icon, Roboto heading, and primary CTA button.",
-    tags: ["Empty State", "Call to Action", "8px Radius"],
-    render: () => (
-      <EmptyState
-        title="No Active Escrow Trades Found"
-        description="You have no gadgets currently held in escrow. Explore verified secondhand iPhones, MacBooks, and consoles in our marketplace."
-        actionLabel="Browse Marketplace"
-        actionHref="/marketplace"
-        icon={Package}
-      />
-    ),
-  },
-  {
-    id: "atom-toast-notifications",
-    title: "Toast Notifications (Info, Error, Warning, Success)",
-    category: "Tier 1 Atoms",
-    tierLabel: "Tier 1 Foundation",
-    description: "Toasts mapped to semantic colors: #22c55e (success/trust), #ecc94b (warning), #f56565 (error), and #0f172a (info).",
-    tags: ["Toasts", "Notifications", "Info", "Error", "Warning", "Success"],
-    render: () => {
-      const ToastTriggerDemo = () => {
-        const { info, error, warning, success } = useToast();
-        return (
-          <div className="space-y-4 w-full">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => info("Order Tracking Updated", "Tracking number GIG-89421092-NG assigned by seller.")}
-                className="text-xs gap-1.5"
-              >
-                Trigger Info Toast
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => error("Payment Declined", "Your bank declined the card authorization. Please retry or switch to direct bank transfer.")}
-                className="text-xs gap-1.5"
-              >
-                Trigger Error Toast
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => warning("Inspection Expiring Soon", "Only 1 hour 48 minutes remain before funds auto-release to seller.")}
-                className="text-xs gap-1.5 border-[#ecc94b]/50 text-[#975a16] hover:bg-[#ecc94b]/10"
-              >
-                Trigger Warning Toast
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => success("Escrow Funds Secured", "₦850,000 deposited into custodial vault. Seller has been notified to ship.")}
-                className="text-xs gap-1.5 bg-[#0f172a] text-white"
-              >
-                Trigger Success Toast
-              </Button>
-            </div>
-
-            {/* Static Visual Showcase of All 4 Variants */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <ToastItem
-                toast={{
-                  id: "showcase-info",
-                  type: "info",
-                  title: "KYC Document Submitted",
-                  description: "SmileID verification is processing in background (usually < 2 minutes).",
-                }}
-              />
-              <ToastItem
-                toast={{
-                  id: "showcase-error",
-                  type: "error",
-                  title: "Direct S3 Upload Rejected",
-                  description: "File size exceeds 50MB maximum limit. Please compress unboxing video.",
-                }}
-              />
-              <ToastItem
-                toast={{
-                  id: "showcase-warning",
-                  type: "warning",
-                  title: "48-Hour Inspection Active",
-                  description: "Device delivered. Please approve or open dispute before auto-release.",
-                }}
-              />
-              <ToastItem
-                toast={{
-                  id: "showcase-success",
-                  type: "success",
-                  title: "Escrow Deposit Completed",
-                  description: "Payment verified by Paystack webhook. Order transitioned to funds_held.",
-                }}
-              />
-            </div>
-          </div>
-        );
-      };
-      return <ToastTriggerDemo />;
-    },
-  },
-  {
-    id: "atom-error-boundary-preview",
-    title: "Global Error Boundary & Recovery",
-    category: "Tier 1 Atoms",
-    tierLabel: "Tier 1 Foundation",
-    description: "app/error.tsx boundary view with 8px radius card, 'Try Again' reset trigger, safe error digest reference, and escrow safeguard badge.",
-    tags: ["Error Page", "Boundary", "Try Again Recovery", "Safeguard"],
-    render: () => (
-      <div className="w-full max-w-xl mx-auto rounded-[8px] border border-dashed border-[#e2e8f0] p-2 bg-[#f8fafc]">
-        <GlobalError
-          error={Object.assign(new Error("Unable to establish handshake with Paystack Escrow Gateway"), {
-            digest: "ERR_BH_TRANSACTION_RETRY_948",
-          })}
-          reset={() => {}}
-        />
-      </div>
-    ),
-  },
-  {
-    id: "atom-not-found-preview",
-    title: "404 Not Found Page",
-    category: "Tier 1 Atoms",
-    tierLabel: "Tier 1 Foundation",
-    description: "app/not-found.tsx branded missing page with custody vault safety assurance, 8px card radius, and marketplace browse action.",
-    tags: ["404 Page", "Not Found", "Recovery Navigation"],
-    render: () => (
-      <div className="w-full max-w-xl mx-auto rounded-[8px] border border-dashed border-[#e2e8f0] p-2 bg-[#f8fafc]">
-        <NotFound />
       </div>
     ),
   },
 
   // --------------------------------------------------------------------------
-  // TIER 2 MARKETPLACE
+  // TIER 2 MARKETPLACE COMPONENTS
   // --------------------------------------------------------------------------
   {
-    id: "market-search-bar",
-    title: "SearchBar with Filter Chips Carousel",
+    id: "marketplace-listing-card",
+    title: "GadgetListingCard (Masonry Grid Ready)",
     category: "Tier 2 Marketplace",
-    tierLabel: "Tier 2 Flow-Specific",
-    description: "Search input with 4px radius filter chips (rule 3: non-trust badges NEVER use pill radius). Horizontal scrolling on mobile.",
-    tags: ["Search", "Carousel", "Filter Chips", "4px Radius"],
+    tierLabel: "Tier 2 Public Feed",
+    description: "4:3 media aspect ratio, Roboto title, Geist Mono price, location, condition chips, and verified trust badge slot.",
+    tags: ["Listing Card", "Gadget", "Price Kobo", "4:3 Aspect"],
     render: () => (
-      <div className="w-full max-w-2xl">
-        <SearchBar
-          placeholder="Search iPhones, MacBooks, Samsung Galaxy, PS5..."
-          selectedChipId="all"
-          onOpenAdvancedFilters={() => {}}
-        />
+      <div className="w-full max-w-sm mx-auto">
+        <GadgetListingCard listing={MOCK_LISTING} />
       </div>
     ),
   },
   {
-    id: "market-listing-card",
-    title: "GadgetListingCard & Skeleton",
+    id: "marketplace-skeleton",
+    title: "GadgetListingSkeleton & Grid Loader",
     category: "Tier 2 Marketplace",
-    tierLabel: "Tier 2 Flow-Specific",
-    description: "Anatomy: [media] → [title] → [condition · location] → [amount] → [badge slot]. Title in Roboto 16px, Price in Geist Mono 14px, 8px card radius.",
-    tags: ["Listing Card", "4:3 Image", "Skeleton Parity", "Currency"],
+    tierLabel: "Tier 2 Public Feed",
+    description: "Low-contrast skeleton state matching the exact card aspect ratio and metadata structure without layout shifts.",
+    tags: ["Skeleton", "Loading State", "Feed Placeholder"],
     render: () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl">
-        <div>
-          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-2">
-            Loaded State (Masonry Ready)
-          </span>
-          <GadgetListingCard listing={MOCK_LISTING} />
-        </div>
-        <div>
-          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-2">
-            Skeleton State (Zero CLS Parity)
-          </span>
-          <GadgetListingSkeleton />
-        </div>
+      <div className="w-full max-w-sm mx-auto">
+        <GadgetListingSkeleton />
       </div>
     ),
+  },
+  {
+    id: "marketplace-search-bar",
+    title: "SearchBar with Category Dropdown",
+    category: "Tier 2 Marketplace",
+    tierLabel: "Tier 2 Public Feed",
+    description: "Global search input with auto-filtering and category selectors.",
+    tags: ["Search", "Filters", "Input Control"],
+    render: () => <SearchBar onQueryChange={() => {}} />,
   },
 
   // --------------------------------------------------------------------------
-  // TIER 3 ESCROW
+  // TIER 3 ESCROW COMPONENTS
   // --------------------------------------------------------------------------
   {
-    id: "escrow-status-bar",
-    title: "EscrowStatusBar (Micro-Summary Trust Bar)",
+    id: "escrow-order-summary-card",
+    title: "OrderSummaryCard (Phase 2 & 4)",
     category: "Tier 3 Escrow",
-    tierLabel: "Tier 3 Domain-Specific",
-    description: "Sticky micro-summary bar residing below top navigation. Features Slate 900 styling, live countdown timer, and critical warning pulse under 2 hours.",
-    tags: ["Trust Bar", "Micro-Summary", "Urgent Alert Pulse", "Timer"],
+    tierLabel: "Phase 4: Escrow",
+    description: "Collapsible order details showing gadget thumbnail, serial/condition, segregated vault balance, and fee breakdown.",
+    tags: ["Order Summary", "Escrow Vault", "Fee Breakdown"],
     render: () => (
-      <div className="w-full space-y-4">
-        <div>
-          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-1">
-            Urgent State (&lt;2h Inspection Window - Amber Pulse)
-          </span>
-          <EscrowStatusBar
-            orderShortId="BH-ORD-9421"
-            state="INSPECTION_PERIOD"
-            initialSecondsRemaining={6480} // 1h 48m
-            itemTitle="MacBook Pro 14' M2 Max"
-          />
-        </div>
-        <div>
-          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-1">
-            Standard Vault State (Funds Held - Emerald Trust)
-          </span>
-          <EscrowStatusBar
-            orderShortId="BH-ORD-8812"
-            state="FUNDS_HELD"
-            initialSecondsRemaining={86400} // 24h
-            itemTitle="Samsung Galaxy S23 Ultra"
-          />
-        </div>
+      <div className="w-full max-w-md mx-auto">
+        <OrderSummaryCard order={MOCK_ORDER_DATA} />
+      </div>
+    ),
+  },
+  {
+    id: "escrow-secure-checkout-btn",
+    title: "SecureCheckoutButton (Phase 2 §2)",
+    category: "Tier 3 Escrow",
+    tierLabel: "Phase 2: Payment",
+    description: "Locked escrow checkout trigger with Paystack/Flutterwave gateway status and SSL encryption guarantee.",
+    tags: ["Checkout", "Payment CTA", "Vault Lock"],
+    render: () => (
+      <div className="w-full max-w-md mx-auto">
+        <SecureCheckoutButton amount={875750} />
       </div>
     ),
   },
   {
     id: "escrow-stepper",
-    title: "EscrowTrackerStepper (Macro Timeline)",
+    title: "EscrowTrackerStepper (Horizontal Ledger)",
     category: "Tier 3 Escrow",
-    tierLabel: "Tier 3 Domain-Specific",
-    description: "Macro-view timeline for /escrow/[id]/status. 8px card radius, FUNDS_HELD pulses in trust green (#22c55e), completed checkmarks in solid trust.",
-    tags: ["Timeline", "Macro Stepper", "8px Card Radius", "Pulsing State"],
+    tierLabel: "Tier 3 Escrow Ledger",
+    description: "5-stage progression: Agreement Created, Funds Locked, Courier In-Transit, 48H Diagnostic Window, Funds Settled.",
+    tags: ["Stepper", "Escrow Milestones", "Inspection SLA"],
+    render: () => <EscrowTrackerStepper currentState="funds_held" />,
+  },
+  {
+    id: "escrow-status-bar",
+    title: "EscrowStatusBar (Sticky Room Top Bar)",
+    category: "Tier 3 Escrow",
+    tierLabel: "Tier 3 Escrow Ledger",
+    description: "Sticky contextual banner showing Order ID in Geist Mono, 48-Hour Inspection Countdown timer, and quick action.",
+    tags: ["Status Bar", "Countdown", "Inspection Window"],
     render: () => (
-      <div className="w-full">
-        <EscrowTrackerStepper
-          currentState="funds_held"
-          orderNumber="BH-ORD-94218A"
-          trackingNumber="GIG-89421092-NG"
-          courierName="GIG Logistics"
-        />
-      </div>
+      <EscrowStatusBar
+        orderShortId="BH-ORD-9421"
+        state="INSPECTION_PERIOD"
+        initialSecondsRemaining={6840}
+      />
     ),
   },
   {
-    id: "escrow-receipt",
-    title: "EscrowFeeReceipt (Itemized Financial Receipt)",
+    id: "escrow-system-milestone",
+    title: "SystemMilestoneBubble (Phase 4 §2)",
     category: "Tier 3 Escrow",
-    tierLabel: "Tier 3 Domain-Specific",
-    description: "Itemized financial breakdown of Item Price, Tiered Escrow Fee (5% / 2.5% / 1.5%), Shipping, and Total Locked in Geist Mono with WCAG contrast text.",
-    tags: ["Receipt", "Tiered Fee Math", "Financial Transparency", "font-mono"],
+    tierLabel: "Phase 4: Escrow",
+    description: "Permanent, immutable system-injected milestone event bubbles for the P2P chat ledger.",
+    tags: ["Milestone", "P2P Ledger", "Immutable Event"],
     render: () => (
-      <div className="w-full flex justify-center">
-        <EscrowFeeReceipt
-          orderNumber="BH-ORD-94218A"
-          itemTitle="Apple iPhone 14 Pro 256GB (Space Black)"
-          itemPrice={65000000} // ₦650,000 in kobo
-          shippingFee={450000} // ₦4,500 in kobo
-          currency="NGN"
-          isLockedInEscrow={true}
+      <div className="w-full max-w-md mx-auto space-y-2">
+        <SystemMilestoneBubble
+          milestone={{
+            id: "ms-1",
+            type: "FUNDED",
+            title: "Escrow Funded",
+            description: "Buyer locked ₦850,000 in segregated escrow account. Safe to dispatch package.",
+            timestamp: "10:14 AM",
+          }}
         />
-      </div>
-    ),
-  },
-  {
-    id: "escrow-action-card",
-    title: "ActionRequiredCard (Transaction Unblocker)",
-    category: "Tier 3 Escrow",
-    tierLabel: "Tier 3 Domain-Specific",
-    description: "Alert primitive card featuring 8px card radius, urgent countdown timer, context details, and high-visibility 4px button without bouncy transforms.",
-    tags: ["Alert Primitive", "Action Required", "Unblock Transaction", "8px Radius"],
-    render: () => (
-      <div className="w-full space-y-4">
-        <ActionRequiredCard
-          type="APPROVE_DELIVERY"
-          orderNumber="BH-ORD-94218A"
-          countdownString="01h 48m 12s"
-          onPrimaryAction={() => {}}
-          onSecondaryAction={() => {}}
+        <SystemMilestoneBubble
+          milestone={{
+            id: "ms-2",
+            type: "DELIVERED",
+            title: "Device Delivered",
+            description: "Courier delivered device. 48-Hour Hardware Diagnostic SLA has commenced.",
+            timestamp: "02:30 PM",
+          }}
         />
-        <ActionRequiredCard
-          type="SHIP_ITEM"
-          orderNumber="BH-ORD-77123B"
-          countdownString="22h 15m 00s"
-          onPrimaryAction={() => {}}
-        />
-      </div>
-    ),
-  },
-  {
-    id: "escrow-admin-dispute-views",
-    title: "AdminDisputeRow & StackedCard (Responsive Isolation)",
-    category: "Tier 3 Escrow",
-    tierLabel: "Tier 3 Domain-Specific",
-    description: "Demonstrates Responsive Isolation: Desktop table row (md:table-row) swaps conditionally with mobile glance-and-approve StackedCard (md:hidden) with 8px radius.",
-    tags: ["Admin Table", "StackedCard", "Responsive Swapping"],
-    render: () => (
-      <div className="w-full space-y-4">
-        {/* Desktop View Table */}
-        <div className="hidden md:block w-full overflow-hidden rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#64748b] uppercase font-mono text-[10px]">
-              <tr>
-                <th className="px-4 py-2.5">Case ID</th>
-                <th className="px-4 py-2.5">Item & Reason</th>
-                <th className="px-4 py-2.5">Parties</th>
-                <th className="px-4 py-2.5">Locked Vault</th>
-                <th className="px-4 py-2.5">Files</th>
-                <th className="px-4 py-2.5">Status</th>
-                <th className="px-4 py-2.5">SLA</th>
-                <th className="px-4 py-2.5 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <AdminDisputeRow dispute={MOCK_ADMIN_DISPUTE} />
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile View StackedCard */}
-        <div className="block md:hidden">
-          <span className="font-mono text-[11px] text-[#64748b] uppercase block mb-1.5">
-            Mobile Screen Active (&lt;768px Viewport)
-          </span>
-          <StackedCard dispute={MOCK_ADMIN_DISPUTE} />
-        </div>
       </div>
     ),
   },
 
   // --------------------------------------------------------------------------
-  // FORMS
+  // SELLER & WALLET (Phase 3)
   // --------------------------------------------------------------------------
   {
-    id: "form-payment-methods",
-    title: "PaymentMethodSelector",
-    category: "Forms",
-    tierLabel: "Tier 3 Domain-Specific",
-    description: "Selectable card grid for Card (Paystack), Bank (Virtual Account), Crypto (USDT/USDC), and Wallet with 8px card radius and primary border highlight.",
-    tags: ["Payment Grid", "Paystack Vault", "Radio Select", "8px Radius"],
+    id: "seller-stats-overview",
+    title: "SellerStatsOverview (Phase 3 §1)",
+    category: "Seller & Wallet",
+    tierLabel: "Phase 3: Seller",
+    description: "Metric cards: Active Listings, Settled Sales Volume, and Locked Escrow Balance in Geist Mono.",
+    tags: ["Seller Metrics", "Volume", "Escrow Balance"],
+    render: () => <SellerStatsOverview />,
+  },
+  {
+    id: "seller-recent-orders-table",
+    title: "RecentOrdersTable (Phase 3 §1)",
+    category: "Seller & Wallet",
+    tierLabel: "Phase 3: Seller",
+    description: "Live merchant orders table with order IDs, buyers, amounts in kobo, and status indicators.",
+    tags: ["Orders Table", "Merchant Console", "Order Status"],
+    render: () => <RecentOrdersTable />,
+  },
+  {
+    id: "seller-quick-action-banner",
+    title: "QuickActionBanner (Phase 3 §1)",
+    category: "Seller & Wallet",
+    tierLabel: "Phase 3: Seller",
+    description: "Verified seller callout to list new gadgets under verified escrow protections.",
+    tags: ["Sell CTA", "Quick Action", "Listing"],
+    render: () => <QuickActionBanner />,
+  },
+  {
+    id: "seller-balance-card",
+    title: "BalanceCard (Phase 3 §2)",
+    category: "Seller & Wallet",
+    tierLabel: "Phase 3: Seller",
+    description: "Split ledger displaying Available Withdrawable Balance vs. Pending Escrow Balance with instant NIP payout button.",
+    tags: ["Wallet Balance", "Payouts", "NIP Settlement"],
     render: () => (
-      <div className="w-full max-w-3xl">
-        <PaymentMethodSelector selectedMethodId="card" />
+      <div className="w-full max-w-md mx-auto">
+        <BalanceCard onWithdrawClick={() => {}} />
       </div>
     ),
   },
   {
-    id: "form-file-uploader",
-    title: "FileUploader (Direct S3 Presigned Upload)",
-    category: "Forms",
-    tierLabel: "Tier 2 Flow-Specific",
-    description: "Desktop drag-and-drop dropzone (8px radius) with mobile camera capture triggers (capture='environment'). Zero bouncy transforms, strict 200ms ease-out transitions.",
-    tags: ["Direct S3", "Presigned URL", "Camera Capture", "Drag and Drop"],
+    id: "seller-bank-acc-list",
+    title: "BankAccList (Phase 3 §2)",
+    category: "Seller & Wallet",
+    tierLabel: "Phase 3: Seller",
+    description: "Saved NIP settlement bank accounts with primary badge and add-account trigger.",
+    tags: ["Bank Accounts", "NIP Transfer", "Settlement"],
     render: () => (
-      <div className="w-full max-w-2xl">
-        <FileUploader
-          referenceId="demo-dispute-evidence"
-          title="Upload Diagnostic Proof & Photos"
-          description="Drag and drop 3uTools screenshots, IMEI photos, or unboxing video up to 50MB."
-        />
+      <div className="w-full max-w-md mx-auto">
+        <BankAccList />
       </div>
     ),
+  },
+  {
+    id: "seller-transaction-ledger",
+    title: "TransactionHistoryLedger (Phase 3 §2)",
+    category: "Seller & Wallet",
+    tierLabel: "Phase 3: Seller",
+    description: "Audit ledger of payouts, escrow credits, and gateway transaction references.",
+    tags: ["Ledger", "Transaction History", "Audit Trail"],
+    render: () => <TransactionHistoryLedger />,
+  },
+
+  // --------------------------------------------------------------------------
+  // USER & SUPPORT (Phase 5)
+  // --------------------------------------------------------------------------
+  {
+    id: "user-profile-details",
+    title: "ProfileDetailsForm (Phase 5 §1)",
+    category: "User & Support",
+    tierLabel: "Phase 5: User",
+    description: "Merchant contact details, verified phone number, and location management.",
+    tags: ["Profile", "Settings", "Account Details"],
+    render: () => (
+      <div className="w-full max-w-lg mx-auto">
+        <ProfileDetailsForm />
+      </div>
+    ),
+  },
+  {
+    id: "user-security-settings",
+    title: "SecuritySettings (Phase 5 §1)",
+    category: "User & Support",
+    tierLabel: "Phase 5: User",
+    description: "Two-factor authentication (2FA) toggle, password updates, and session termination.",
+    tags: ["Security", "2FA", "Authentication"],
+    render: () => (
+      <div className="w-full max-w-lg mx-auto">
+        <SecuritySettings />
+      </div>
+    ),
+  },
+  {
+    id: "user-kyc-status-badge",
+    title: "KYCStatusBadge (Phase 5 §1)",
+    category: "User & Support",
+    tierLabel: "Phase 5: User",
+    description: "SmileID verification tier badge with compliance status and upgrade triggers.",
+    tags: ["KYC Badge", "SmileID", "Compliance Status"],
+    render: () => (
+      <div className="flex flex-wrap items-center gap-4">
+        <KYCStatusBadge status="verified" ninLast4="8492" verifiedAt="Oct 2026" />
+        <KYCStatusBadge status="pending" ninLast4="1029" />
+        <KYCStatusBadge status="unverified" />
+      </div>
+    ),
+  },
+  {
+    id: "user-notification-feed",
+    title: "NotificationFeed (Phase 5 §2)",
+    category: "User & Support",
+    tierLabel: "Phase 5: User",
+    description: "Live escrow alerts feed: payment confirmations, courier transit milestones, and 48-hour inspection countdown alerts.",
+    tags: ["Notifications", "Push Alerts", "Escrow Updates"],
+    render: () => (
+      <div className="w-full max-w-md mx-auto">
+        <NotificationFeed />
+      </div>
+    ),
+  },
+  {
+    id: "user-faq-quick-links",
+    title: "FAQQuickLinks (Phase 5 §3)",
+    category: "User & Support",
+    tierLabel: "Phase 5: Support",
+    description: "Touch-friendly instant suggestion pills for prompt dispute and escrow queries.",
+    tags: ["FAQ", "Suggestions", "Support Assistance"],
+    render: () => (
+      <div className="w-full max-w-md mx-auto">
+        <FAQQuickLinks onSelect={() => {}} />
+      </div>
+    ),
+  },
+
+  // --------------------------------------------------------------------------
+  // ADMIN MEDIATION (Phase 6)
+  // --------------------------------------------------------------------------
+  {
+    id: "admin-dispute-queue-table",
+    title: "DisputeQueueDataTable (Phase 6 §2)",
+    category: "Admin Mediation",
+    tierLabel: "Phase 6: Admin",
+    description: "Arbitration queue automatically sorted by SLA urgency and locked vault amount.",
+    tags: ["Dispute Queue", "SLA Sorting", "Admin Triage"],
+    render: () => <DisputeQueueDataTable onSelectCase={() => {}} />,
+  },
+  {
+    id: "admin-kyc-approval-queue",
+    title: "KYCManualApprovalQueue (Phase 6 §2)",
+    category: "Admin Mediation",
+    tierLabel: "Phase 6: Admin",
+    description: "Manual biometric KYC document verification queue with approve/reject actions.",
+    tags: ["KYC Triage", "Manual Review", "Biometric Audit"],
+    render: () => <KYCManualApprovalQueue />,
+  },
+  {
+    id: "admin-evidence-viewer",
+    title: "EvidenceViewer (Phase 6 §1)",
+    category: "Admin Mediation",
+    tierLabel: "Phase 6: Admin",
+    description: "Split-pane diagnostic evidence viewer: unboxing video, 3uTools diagnostic logs, and serial receipt photos.",
+    tags: ["Evidence", "Diagnostic Viewer", "Arbitration"],
+    render: () => <EvidenceViewer />,
+  },
+  {
+    id: "admin-readonly-chat",
+    title: "ReadonlyChatTranscript (Phase 6 §1)",
+    category: "Admin Mediation",
+    tierLabel: "Phase 6: Admin",
+    description: "Immutable, audit-logged P2P chat transcript with timestamps and masked contact info warnings.",
+    tags: ["Chat Transcript", "Immutable Ledger", "Audit Trail"],
+    render: () => (
+      <div className="w-full max-w-md mx-auto">
+        <ReadonlyChatTranscript />
+      </div>
+    ),
+  },
+  {
+    id: "admin-verdict-action-group",
+    title: "VerdictActionGroup (Phase 6 §1)",
+    category: "Admin Mediation",
+    tierLabel: "Phase 6: Admin",
+    description: "Binding arbitration rulings: Rule in favor of Buyer (Refund), Seller (Release), or 50/50 Split.",
+    tags: ["Ruling", "Arbitration Decision", "Payout Instruction"],
+    render: () => (
+      <div className="w-full max-w-md mx-auto">
+        <VerdictActionGroup orderAmount={850000} caseId="dsp-101" onExecuteVerdict={() => {}} />
+      </div>
+    ),
+  },
+
+  // --------------------------------------------------------------------------
+  // FORMS & ONBOARDING (Phase 1 & Phase 2)
+  // --------------------------------------------------------------------------
+  {
+    id: "form-auth-form",
+    title: "AuthForm (Phase 1 §4)",
+    category: "Forms",
+    tierLabel: "Phase 1: Auth",
+    description: "Login and registration form with password visibility toggle, 2FA prompt, and validation states.",
+    tags: ["Auth Form", "Login", "Register", "Inputs"],
+    render: () => (
+      <div className="w-full max-w-sm mx-auto">
+        <AuthForm mode="login" />
+      </div>
+    ),
+  },
+  {
+    id: "form-helper-text",
+    title: "FormHelperText (Phase 1 §4)",
+    category: "Forms",
+    tierLabel: "Phase 1: Auth",
+    description: "Contextual input validation helper text with icons for error, success, warning, and default states.",
+    tags: ["Helper Text", "Validation", "Field Status"],
+    render: () => (
+      <div className="space-y-2 max-w-sm mx-auto">
+        <FormHelperText variant="default">Must be at least 8 characters</FormHelperText>
+        <FormHelperText variant="error">Password must contain at least one numeral</FormHelperText>
+        <FormHelperText variant="success">Government ID format verified</FormHelperText>
+        <FormHelperText variant="warning">Phone number requires international +234 format</FormHelperText>
+      </div>
+    ),
+  },
+  {
+    id: "form-camera-capture",
+    title: "CameraCaptureWidget (Phase 1 §5)",
+    category: "Forms",
+    tierLabel: "Phase 2: KYC",
+    description: "SmileID biometric liveness detection and live selfie capture interface with alignment oval.",
+    tags: ["Camera", "Biometrics", "Liveness Detection", "Selfie"],
+    render: () => (
+      <div className="w-full max-w-sm mx-auto">
+        <CameraCaptureWidget onCaptureComplete={() => {}} />
+      </div>
+    ),
+  },
+  {
+    id: "form-document-upload",
+    title: "DocumentUploadArea (Phase 1 §5)",
+    category: "Forms",
+    tierLabel: "Phase 2: KYC",
+    description: "NIN/Voters Card/Passport upload area with drag-and-drop file preview and upload progress indicator.",
+    tags: ["KYC Upload", "Government ID", "File Drop"],
+    render: () => (
+      <div className="w-full max-w-md mx-auto">
+        <DocumentUploadArea onComplete={() => {}} />
+      </div>
+    ),
+  },
+  {
+    id: "form-evidence-upload",
+    title: "EvidenceUploadForm (Phase 4 §3)",
+    category: "Forms",
+    tierLabel: "Phase 4: Dispute",
+    description: "Dispute evidence submission form: select defect type, upload diagnostic video, and submit for arbitration.",
+    tags: ["Dispute Form", "Evidence Upload", "Report Issue"],
+    render: () => <EvidenceUploadDemo />,
   },
 
   // --------------------------------------------------------------------------
@@ -730,13 +835,13 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
   {
     id: "overlay-navbar",
-    title: "Navbar (Global Header Shell)",
+    title: "Navbar (Authenticated & Guest Header)",
     category: "Overlays",
     tierLabel: "Tier 1 Foundation",
-    description: "Sticky h-16 blur header (1280px max width) featuring guest state and authenticated state with notification bell and avatar dropdown with KYC verification pill.",
-    tags: ["Sticky Header", "Backdrop Blur", "Auth Gate"],
+    description: "Exact 64px (h-16) header with brand mark, marketplace search, notification dropdown, and KYC status pill.",
+    tags: ["Navbar", "Header", "Navigation Bar"],
     render: () => (
-      <div className="w-full rounded-[8px] overflow-hidden border border-[#e2e8f0] shadow-xs">
+      <div className="w-full">
         <Navbar unreadNotificationsCount={3} />
       </div>
     ),
@@ -746,8 +851,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "MobileBottomNav (Fixed App Navigation)",
     category: "Overlays",
     tierLabel: "Tier 1 Foundation",
-    description: "Fixed bottom navigation for mobile screens (<768px) with Home, Search, Escrows (active trade counter), and Profile links. Zero bouncy scaling.",
-    tags: ["Mobile Bottom Bar", "Webapp Nav", "Touch Friendly"],
+    description: "Reconciled bottom navigation for mobile screens (<768px): Market, Trust Hub, Escrow, Seller Hub, and Profile.",
+    tags: ["Mobile Bottom Bar", "Webapp Nav", "Touch Friendly", "44px Targets"],
     render: () => (
       <div className="w-full max-w-md mx-auto relative h-20 rounded-[8px] overflow-hidden border border-[#e2e8f0] bg-white p-2">
         <span className="font-mono text-[10px] text-[#64748b] uppercase block text-center mb-1">
@@ -792,6 +897,26 @@ export default function SandboxPage() {
       count: COMPONENT_REGISTRY.filter((c) => c.category === "Tier 3 Escrow").length,
     },
     {
+      label: "Marketing & Trust",
+      value: "Marketing & Trust",
+      count: COMPONENT_REGISTRY.filter((c) => c.category === "Marketing & Trust").length,
+    },
+    {
+      label: "Seller & Wallet",
+      value: "Seller & Wallet",
+      count: COMPONENT_REGISTRY.filter((c) => c.category === "Seller & Wallet").length,
+    },
+    {
+      label: "User & Support",
+      value: "User & Support",
+      count: COMPONENT_REGISTRY.filter((c) => c.category === "User & Support").length,
+    },
+    {
+      label: "Admin Mediation",
+      value: "Admin Mediation",
+      count: COMPONENT_REGISTRY.filter((c) => c.category === "Admin Mediation").length,
+    },
+    {
       label: "Forms",
       value: "Forms",
       count: COMPONENT_REGISTRY.filter((c) => c.category === "Forms").length,
@@ -821,7 +946,7 @@ export default function SandboxPage() {
       <ToastProvider>
         <div className="min-h-screen bg-[#f8fafc] text-[#020617] font-secondary">
           {/* Header Banner */}
-          <div className="border-b border-[#e2e8f0] bg-white sticky top-16 z-30 shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
+          <div className="border-b border-[#e2e8f0] bg-white sticky top-0 z-30 shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
             <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
@@ -851,7 +976,7 @@ export default function SandboxPage() {
               {/* ==================================================================
                   LEFT COLUMN: FIXED CATEGORY NAVIGATION SIDEBAR
                   ================================================================== */}
-              <aside className="w-full md:w-64 shrink-0 space-y-6 md:sticky md:top-36">
+              <aside className="w-full md:w-64 shrink-0 space-y-6 md:sticky md:top-20">
                 {/* Search Bar */}
                 <div className="relative">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b]" />
