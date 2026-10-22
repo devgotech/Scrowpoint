@@ -37,6 +37,17 @@ export interface UserProfile {
   updatedAt?: string;
 }
 
+export const DEFAULT_DEMO_USER: UserProfile = {
+  id: "usr-trader-01",
+  name: "Chidi Okafor",
+  email: "chidi.okafor@buyershigh.ng",
+  role: "seller",
+  phone: "+234 803 456 7890",
+  location: "Ikeja, Lagos",
+  kycStatus: "approved",
+  avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+};
+
 export interface AuthContextValue {
   /** The authenticated user entity or null if guest */
   user: UserProfile | null;
@@ -46,7 +57,7 @@ export interface AuthContextValue {
   role: UserRole | null;
   /** Active KYC verification status */
   kycTier: KYCStatus | null;
-  /** True while the session is being initialized from the cookie or backend */
+  /** True while the session is being initialized */
   isLoading: boolean;
   /** Convenience boolean for authentication state */
   isAuthenticated: boolean;
@@ -54,11 +65,13 @@ export interface AuthContextValue {
   isAdmin: boolean;
   /** True if the user has been fully approved for high-trust escrow actions */
   isKYCVerified: boolean;
-  /** Manually refresh the authenticated user's profile from the API */
+  /** Manually refresh the authenticated user's profile */
   refreshUser: () => Promise<void>;
   /** Client-side state updater / setter */
   setUser: (user: UserProfile | null) => void;
-  /** Clear auth state and notify the backend */
+  /** Login helper */
+  login: (email?: string, name?: string, role?: UserRole) => void;
+  /** Clear auth state */
   logout: () => Promise<void>;
 }
 
@@ -71,8 +84,20 @@ export interface AuthProviderProps {
 }
 
 export function AuthProvider({ children, initialUser = null }: AuthProviderProps) {
-  const [user, setUser] = useState<UserProfile | null>(initialUser);
-  const [isLoading, setIsLoading] = useState<boolean>(!initialUser);
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    if (initialUser) return initialUser;
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("bh_auth_user");
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch {}
+    }
+    return null;
+  });
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -86,7 +111,10 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
 
       if (!res.ok) {
         if (res.status === 401 || res.status === 403) {
-          setUser(null);
+          // If no server session and no localStorage user, reset
+          if (typeof window !== "undefined" && !localStorage.getItem("bh_auth_user")) {
+            setUser(null);
+          }
         }
         return;
       }
@@ -98,17 +126,30 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
         setUser(json as UserProfile);
       }
     } catch {
-      // In case of network drops or offline states, avoid crashing the app
+      // Offline fallback
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    if (!initialUser) {
-      fetchCurrentUser();
-    }
-  }, [initialUser, fetchCurrentUser]);
+  const login = useCallback(
+    (email = "chidi.okafor@buyershigh.ng", name = "Chidi Okafor", role: UserRole = "seller") => {
+      const newUser: UserProfile = {
+        ...DEFAULT_DEMO_USER,
+        id: `usr-${Date.now().toString(36)}`,
+        email,
+        name,
+        role,
+      };
+      setUser(newUser);
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("bh_auth_user", JSON.stringify(newUser));
+        } catch {}
+      }
+    },
+    []
+  );
 
   const logout = useCallback(async () => {
     try {
@@ -117,11 +158,13 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
         credentials: "include",
       });
     } catch {
-      // Ignore network errors on logout
+      // Ignore network errors
     } finally {
       setUser(null);
       if (typeof window !== "undefined") {
-        window.location.href = "/login";
+        try {
+          localStorage.removeItem("bh_auth_user");
+        } catch {}
       }
     }
   }, []);
@@ -144,18 +187,23 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       isAdmin,
       isKYCVerified,
       refreshUser: fetchCurrentUser,
-      setUser,
+      setUser: (u) => {
+        setUser(u);
+        if (typeof window !== "undefined") {
+          try {
+            if (u) localStorage.setItem("bh_auth_user", JSON.stringify(u));
+            else localStorage.removeItem("bh_auth_user");
+          } catch {}
+        }
+      },
+      login,
       logout,
     };
-  }, [user, isLoading, fetchCurrentUser, logout]);
+  }, [user, isLoading, fetchCurrentUser, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-/**
- * Custom hook to consume the Buyer's High AuthContext.
- * Throws a helpful error if invoked outside of <AuthProvider>.
- */
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
   if (context === undefined) {
