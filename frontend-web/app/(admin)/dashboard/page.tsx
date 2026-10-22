@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft, Clock, IdCard, Scale, ShieldAlert, ShieldCheck } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { DashboardUtilityBar } from "@/components/footers";
 import { DisputeQueueDataTable } from "@/components/admin/DisputeQueueDataTable";
 import { KYCManualApprovalQueue } from "@/components/admin/KYCManualApprovalQueue";
 
@@ -76,7 +76,8 @@ export default function AdminDashboardPage({
         </div>
       </main>
 
-      <Footer />
+      {/* Strategy 3: Compact Utility Bar for Admin Operations */}
+      <DashboardUtilityBar />
     </div>
   );
 }

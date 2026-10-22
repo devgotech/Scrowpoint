@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * - Respects the 4-point scale and design system typography (font-heading).
  */
 
-export type UserAvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
+export type UserAvatarSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
 export interface UserAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   /** The full name or display name of the user (e.g. "Chidi Okonkwo") */
@@ -36,6 +36,7 @@ const SIZE_STYLES: Record<UserAvatarSize, { container: string; text: string }> =
   md: { container: "h-9 w-9 border", text: "text-xs" },
   lg: { container: "h-12 w-12 border-2", text: "text-sm" },
   xl: { container: "h-16 w-16 border-2", text: "text-base font-bold" },
+  "2xl": { container: "h-24 w-24 border-2", text: "text-2xl font-bold" },
 };
 
 export function UserAvatar({

@@ -5,6 +5,8 @@ import { Check, Mail, MapPin, Phone, Save, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import { useAuth } from "@/components/providers/AuthContext";
+
 /**
  * ProfileDetailsForm Component (Phase 5 §1 - Settings & Profile)
  *
@@ -20,16 +22,37 @@ export interface ProfileDetailsFormProps {
 }
 
 export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProps) {
-  const [legalName, setLegalName] = useState("Adeola Fashola");
+  const { user, setUser } = useAuth();
+
+  const [legalName, setLegalName] = useState(user?.name || "Adeola Fashola");
   const [storeName, setStoreName] = useState("Adeola Tech Hub");
-  const [email, setEmail] = useState("adeola.fashola@gmail.com");
-  const [phone, setPhone] = useState("+234 803 849 1029");
-  const [location, setLocation] = useState("Ikeja, Lagos State");
+  const [email, setEmail] = useState(user?.email || "adeola.fashola@gmail.com");
+  const [phone, setPhone] = useState(user?.phone || "+234 803 849 1029");
+  const [location, setLocation] = useState(user?.location || "Ikeja, Lagos State");
   const [saved, setSaved] = useState(false);
+
+  // Synchronize when user updates
+  React.useEffect(() => {
+    if (user) {
+      if (user.name) setLegalName(user.name);
+      if (user.email) setEmail(user.email);
+      if (user.phone) setPhone(user.phone);
+      if (user.location) setLocation(user.location);
+    }
+  }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSaved(true);
+    if (user) {
+      setUser({
+        ...user,
+        name: legalName,
+        email,
+        phone,
+        location,
+      });
+    }
     onSave?.({ legalName, storeName, email, phone, location });
     setTimeout(() => setSaved(false), 2000);
   };

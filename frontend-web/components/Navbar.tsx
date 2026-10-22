@@ -146,6 +146,15 @@ export function Navbar({
             >
               Seller Hub
             </Link>
+            {isAuthenticated && (
+              <Link
+                href="/settings/profile"
+                onClick={() => onNavigate?.("/settings/profile")}
+                className="text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
+              >
+                Profile & Settings
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -257,7 +266,9 @@ export function Navbar({
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 rounded-full p-0.5 focus:outline-none focus:ring-2 focus:ring-[#0f172a] transition-colors duration-200 ease-out"
+                  title="Profile & Account Settings"
+                  aria-label="Open user profile and account settings menu"
+                  className="flex items-center gap-2 rounded-full p-0.5 hover:ring-2 hover:ring-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#0f172a] transition-all duration-200 ease-out cursor-pointer"
                   aria-expanded={isDropdownOpen}
                 >
                   <Avatar className="h-9 w-9 border-2 border-[#e2e8f0]">
@@ -266,6 +277,14 @@ export function Navbar({
                     )}
                     <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                   </Avatar>
+                  <div className="hidden xl:flex flex-col text-left">
+                    <span className="text-xs font-semibold text-[#020617] truncate max-w-[100px] leading-tight">
+                      {user.name?.split(" ")[0] || "Profile"}
+                    </span>
+                    <span className="text-[10px] text-[#64748b] font-mono leading-none">
+                      Settings
+                    </span>
+                  </div>
                   <ChevronDown
                     className={cn(
                       "hidden sm:block h-3.5 w-3.5 text-[#64748b] transition-transform duration-200 ease-out",
@@ -276,13 +295,25 @@ export function Navbar({
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 rounded-[8px] border border-[#e2e8f0] bg-white p-2 shadow-[0_4px_8px_rgba(15,23,42,0.06)] z-50 text-[#020617] transition-all duration-200 ease-out">
-                    {/* User Identity Header */}
-                    <div className="px-3 py-2.5 border-b border-[#e2e8f0]">
-                      <p className="font-primary font-medium text-sm truncate text-[#020617]">
-                        {user.name || "Authenticated Trader"}
-                      </p>
-                      <p className="text-xs text-[#64748b] truncate font-mono">
+                  <div className="absolute right-0 mt-2 w-72 rounded-[8px] border border-[#e2e8f0] bg-white p-2 shadow-[0_8px_16px_rgba(15,23,42,0.08)] z-50 text-[#020617] transition-all duration-200 ease-out">
+                    {/* User Identity Header -> Direct Link to Profile */}
+                    <Link
+                      href="/settings/profile"
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        onNavigate?.("/settings/profile");
+                      }}
+                      className="block px-3 py-2.5 border-b border-[#e2e8f0] rounded-[6px] hover:bg-[#f8fafc] transition-colors duration-200 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="font-primary font-bold text-sm truncate text-[#020617] group-hover:text-[#0f172a]">
+                          {user.name || "Authenticated Trader"}
+                        </p>
+                        <span className="font-mono text-[10px] text-[#0f172a] font-semibold bg-[#e2e8f0] px-1.5 py-0.5 rounded-[4px] group-hover:bg-[#0f172a] group-hover:text-white transition-colors">
+                          Manage →
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#64748b] truncate font-mono mt-0.5">
                         {user.email}
                       </p>
 
@@ -305,10 +336,28 @@ export function Navbar({
                           </Badge>
                         )}
                       </div>
-                    </div>
+                    </Link>
 
                     {/* Navigation Links */}
                     <div className="py-1">
+                      {/* 1. Direct Profile & Settings Link with Change Avatar prompt */}
+                      <Link
+                        href="/settings/profile"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onNavigate?.("/settings/profile");
+                        }}
+                        className="flex items-center justify-between px-3 py-2.5 text-sm rounded-[4px] bg-[#f8fafc] hover:bg-[#f1f5f9] text-[#020617] font-semibold border border-[#e2e8f0] my-1 transition-colors duration-200 ease-out"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <User className="h-4 w-4 text-[#0f172a]" />
+                          <span>Profile & Settings</span>
+                        </div>
+                        <span className="font-mono text-[10px] text-[#15803d] font-medium bg-[#22c55e]/15 px-1.5 py-0.5 rounded-[3px]">
+                          Change Avatar
+                        </span>
+                      </Link>
+
                       <Link
                         href="/seller/dashboard"
                         onClick={() => setIsDropdownOpen(false)}

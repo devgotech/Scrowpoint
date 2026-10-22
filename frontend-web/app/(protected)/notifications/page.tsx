@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft, Bell, ShieldCheck } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { DashboardUtilityBar } from "@/components/footers";
 import { NotificationFeed } from "@/components/notifications/NotificationFeed";
 
 /**
@@ -64,7 +64,8 @@ export default function NotificationsPage({
         </div>
       </main>
 
-      <Footer />
+      {/* Strategy 3: Compact Utility Bar for Feed/Notification Workspace */}
+      <DashboardUtilityBar />
     </div>
   );
 }

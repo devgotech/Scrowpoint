@@ -52,6 +52,11 @@ import { EmptyState } from "@/components/EmptyState";
 import { EscrowStatusBar } from "@/components/EscrowStatusBar";
 import { Navbar } from "@/components/Navbar";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import {
+  MarketingFatFooter,
+  MinimalistAuthFooter,
+  DashboardUtilityBar,
+} from "@/components/footers";
 import { GadgetListingCard, type GadgetListingData } from "@/components/GadgetListingCard";
 import { GadgetListingSkeleton, GadgetListingGridSkeleton } from "@/components/GadgetListingSkeleton";
 import { SearchBar } from "@/components/SearchBar";
@@ -95,6 +100,7 @@ import { BankAccList } from "@/components/seller/BankAccList";
 import { TransactionHistoryLedger } from "@/components/seller/TransactionHistoryLedger";
 
 // User & Support Components (Phase 5)
+import { AvatarChangeCard } from "@/components/settings/AvatarChangeCard";
 import { ProfileDetailsForm } from "@/components/settings/ProfileDetailsForm";
 import { SecuritySettings } from "@/components/settings/SecuritySettings";
 import { KYCStatusBadge } from "@/components/settings/KYCStatusBadge";
@@ -657,6 +663,19 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // USER & SUPPORT (Phase 5)
   // --------------------------------------------------------------------------
   {
+    id: "user-avatar-changer",
+    title: "AvatarChangeCard (Phase 5 §1)",
+    category: "User & Support",
+    tierLabel: "Phase 5: User Settings",
+    description: "Responsive profile photo changer: native camera/file upload, drag-and-drop, 6 curated merchant headshot presets, initials generator, and global auth sync.",
+    tags: ["Avatar", "Profile Photo", "Presets", "Camera Upload", "Responsive"],
+    render: () => (
+      <div className="w-full max-w-2xl mx-auto">
+        <AvatarChangeCard />
+      </div>
+    ),
+  },
+  {
     id: "user-profile-details",
     title: "ProfileDetailsForm (Phase 5 §1)",
     category: "User & Support",
@@ -880,6 +899,53 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
         <div className="relative">
           <MobileBottomNav className="relative bottom-auto" />
         </div>
+      </div>
+    ),
+  },
+  {
+    id: "footer-strategy-1-marketing",
+    title: "MarketingFatFooter (Strategy 1: The 'Fat' Footer)",
+    category: "Marketing & Trust",
+    tierLabel: "Level 1: Public Marketing",
+    description: "Comprehensive safety-net directory for landing and pricing pages: secondary CTA banner ('Get Started for Free'), multi-column doormat navigation, newsletter signup, NDPR/ISO security badges, and trust certificates.",
+    tags: ["Footer", "Marketing", "Directory", "Trust Badges", "Newsletter"],
+    render: () => (
+      <div className="w-full border border-[#e2e8f0] rounded-[8px] overflow-hidden shadow-xs">
+        <MarketingFatFooter />
+      </div>
+    ),
+  },
+  {
+    id: "footer-strategy-2-minimalist",
+    title: "MinimalistAuthFooter (Strategy 2: The Minimalist Footer)",
+    category: "Forms",
+    tierLabel: "Level 2: Auth & Onboarding",
+    description: "Clean, distraction-free single-row footer eliminating funnel leaks on login, register, KYC camera verify, and checkout screens. Features interactive locale selector and live help modal.",
+    tags: ["Footer", "Minimalist", "Auth", "Onboarding", "Locale Selector"],
+    render: () => (
+      <div className="w-full border border-[#e2e8f0] rounded-[8px] overflow-hidden bg-[#f8fafc] p-4">
+        <div className="py-6 px-4 bg-white rounded-[6px] border border-[#e2e8f0] mb-4 text-center">
+          <span className="font-mono text-xs text-[#64748b]">Simulated Form Wizard Screen Area</span>
+        </div>
+        <MinimalistAuthFooter />
+      </div>
+    ),
+  },
+  {
+    id: "footer-strategy-3-utility-bar",
+    title: "DashboardUtilityBar (Strategy 3: Compact Utility Bar)",
+    category: "Overlays",
+    tierLabel: "Level 3: Protected Workspace",
+    description: "Preserves vertical screen real estate for dashboards, feeds, and dispute desks. Features live system operational pulse dot, build metadata (v2.4.1), interactive ⌘K keyboard shortcuts modal dialog, and release notes drawer.",
+    tags: ["Footer", "Utility Bar", "System Status", "Shortcuts ⌘K", "Build Version"],
+    render: () => (
+      <div className="w-full border border-[#e2e8f0] rounded-[8px] overflow-hidden bg-[#f8fafc]">
+        <div className="py-12 px-6 text-center">
+          <span className="font-mono text-xs text-[#64748b]">
+            Simulated Logged-In Workspace (e.g., Seller Hub / Wallet / Escrow Desk)
+          </span>
+        </div>
+        <DashboardUtilityBar />
       </div>
     ),
   },

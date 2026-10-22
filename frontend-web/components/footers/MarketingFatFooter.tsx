@@ -7,25 +7,18 @@ import {
   CheckCircle2,
   ChevronDown,
   Clock,
-  ExternalLink,
-  Globe,
-  Heart,
   Lock,
   Mail,
-  Send,
   Shield,
-  ShieldAlert,
   ShieldCheck,
-  Smartphone,
   Sparkles,
 } from "lucide-react";
-import { 
+import {
   IconBrandInstagram,
   IconBrandLinkedin,
   IconBrandTwitter,
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
@@ -271,7 +264,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
               </div>
               <div className="flex flex-col">
                 <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
-                  Buyer's High
+                  Buyer&apos;s High
                 </span>
                 <span className="font-mono text-[10px] tracking-wider uppercase text-[#64748b]">
                   Peer-to-Peer Escrow
@@ -280,7 +273,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
             </Link>
 
             <p className="font-secondary text-xs sm:text-sm text-[#475569] leading-relaxed">
-              Nigeria's most secure secondhand gadget exchange. We bridge buyers and sellers with
+              Nigeria&apos;s most secure secondhand gadget exchange. We bridge buyers and sellers with
               institutional escrow accounts, mandatory 30-second inspection video audits, and legally binding 48-hour dispute arbitration.
             </p>
 
@@ -446,7 +439,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
             ==================================================================== */}
         <div className="mt-12 border-t border-[#e2e8f0] pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-secondary text-[#64748b]">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-            <span>© {new Date().getFullYear()} Buyer's High Escrow Technologies Ltd. (RC: 1984210).</span>
+            <span>© {new Date().getFullYear()} Buyer&apos;s High Escrow Technologies Ltd. (RC: 1984210).</span>
             <span className="hidden sm:inline">•</span>
             <span>All escrow deposits segregated with CBN-licensed bank partners.</span>
           </div>

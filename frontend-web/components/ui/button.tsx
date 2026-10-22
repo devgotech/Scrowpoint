@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
-  size?: "default" | "sm" | "lg" | "icon";
+  size?: "default" | "sm" | "lg" | "icon" | "icon-sm";
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -37,6 +37,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       sm: "h-8 px-3 text-xs",
       lg: "h-10 px-6 text-sm",
       icon: "h-9 w-9",
+      "icon-sm": "h-8 w-8",
     };
 
     return (
