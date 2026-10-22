@@ -49,6 +49,7 @@ export interface GadgetListingData {
   storage?: string;
   sellerName?: string;
   sellerVerified?: boolean;
+  videoUrl?: string;
   isSaved?: boolean;
 }
 

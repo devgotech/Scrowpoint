@@ -209,22 +209,41 @@ const MOCK_ORDER_DATA: EscrowOrderData = {
   status: "FUNDED",
 };
 
-function EvidenceUploadDemo() {
+function EvidenceUploadSandboxDemo() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
-      <Button type="button" variant="outline" onClick={() => setIsOpen(true)}>
-        Open evidence upload
+    <div className="flex flex-col items-center justify-center p-6 rounded-[8px] border border-dashed border-[#e2e8f0] bg-[#f8fafc] text-center space-y-3 w-full max-w-md mx-auto">
+      <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#f56565]/15 text-[#c53030]">
+        <AlertTriangle className="h-5 w-5" />
+      </div>
+      <div>
+        <h4 className="font-primary text-sm font-bold text-[#020617]">Dispute Evidence Submission Modal</h4>
+        <p className="font-secondary text-xs text-[#64748b] mt-0.5">
+          Modal stays closed by default. Tap the button below to test opening, reviewing, and dismissing the arbitration drawer.
+        </p>
+      </div>
+      <Button
+        variant="default"
+        size="sm"
+        onClick={() => setIsOpen(true)}
+        className="gap-2 bg-[#0f172a] text-white hover:bg-slate-800"
+      >
+        <AlertTriangle className="h-4 w-4 text-[#ecc94b]" />
+        <span>Open Dispute Modal Preview</span>
       </Button>
+
       <EvidenceUploadForm
         orderId="BH-ORD-9421"
         orderAmount={850000}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        onSubmitDispute={() => {}}
+        onSubmitDispute={() => {
+          alert("Evidence submitted successfully. Order placed into DISPUTED state.");
+          setIsOpen(false);
+        }}
       />
-    </>
+    </div>
   );
 }
 
@@ -827,7 +846,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     tierLabel: "Phase 4: Dispute",
     description: "Dispute evidence submission form: select defect type, upload diagnostic video, and submit for arbitration.",
     tags: ["Dispute Form", "Evidence Upload", "Report Issue"],
-    render: () => <EvidenceUploadDemo />,
+    render: () => <EvidenceUploadSandboxDemo />,
   },
 
   // --------------------------------------------------------------------------

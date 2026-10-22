@@ -19,7 +19,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { MinimalistAuthFooter } from "@/components/footers";
 import { DocumentUploadArea } from "@/components/onboarding/DocumentUploadArea";
 import { CameraCaptureWidget } from "@/components/onboarding/CameraCaptureWidget";
 import { Button } from "@/components/ui/button";
@@ -396,7 +396,8 @@ export default function VerifyIdentityPage({
         </div>
       </main>
 
-      <Footer />
+      {/* Strategy 2: Minimalist Auth & Onboarding Footer */}
+      <MinimalistAuthFooter />
     </div>
   );
 }

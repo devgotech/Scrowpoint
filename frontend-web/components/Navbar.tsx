@@ -7,12 +7,14 @@ import {
   CheckCircle2,
   ChevronDown,
   LayoutDashboard,
+  Lock,
   LogOut,
   PlusCircle,
   Search,
   Shield,
   ShieldAlert,
   ShieldCheck,
+  User,
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -106,7 +108,7 @@ export function Navbar({
             </div>
             <div className="flex flex-col">
               <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
-                Buyer&apos;s High
+                Buyer's High
               </span>
               <span className="font-mono text-[10px] tracking-wider uppercase text-[#64748b]">
                 P2P Escrow
@@ -168,8 +170,8 @@ export function Navbar({
                AUTHENTICATED STATE
                =============================================================== */
             <>
-              {/* "List a Gadget" CTA */}
-              <Link href="/dashboard/listings/create" className="hidden sm:block">
+              {/* "Sell Gadget" CTA */}
+              <Link href="/seller/post-gadget" className="hidden sm:block">
                 <Button variant="default" size="sm" className="gap-2 font-medium">
                   <PlusCircle className="h-4 w-4" />
                   <span>Sell Gadget</span>
@@ -308,7 +310,7 @@ export function Navbar({
                     {/* Navigation Links */}
                     <div className="py-1">
                       <Link
-                        href="/dashboard"
+                        href="/seller/dashboard"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
                       >
@@ -317,7 +319,16 @@ export function Navbar({
                       </Link>
 
                       <Link
-                        href="/dashboard/wallet"
+                        href="/seller/post-gadget"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
+                      >
+                        <PlusCircle className="h-4 w-4 text-[#22c55e]" />
+                        <span>Post New Gadget</span>
+                      </Link>
+
+                      <Link
+                        href="/seller/wallet"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
                       >
@@ -326,7 +337,16 @@ export function Navbar({
                       </Link>
 
                       <Link
-                        href="/kyc/document"
+                        href="/escrow/BH-ORD-9421"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
+                      >
+                        <Lock className="h-4 w-4 text-[#64748b]" />
+                        <span>Active Escrow Room</span>
+                      </Link>
+
+                      <Link
+                        href="/verify-identity"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
                       >
@@ -336,7 +356,7 @@ export function Navbar({
 
                       {isAdmin && (
                         <Link
-                          href="/admin"
+                          href="/admin/dashboard"
                           onClick={() => setIsDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] bg-[#ecc94b]/15 text-[#975a16] font-semibold transition-colors duration-200 ease-out"
                         >

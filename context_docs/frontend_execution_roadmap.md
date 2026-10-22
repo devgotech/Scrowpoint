@@ -52,26 +52,26 @@
 *Stitching the components into Next.js routes.*
 
 **Public / Pre-Auth**
-- [ ] Assemble `/(marketing)/page.tsx` (Landing page with value props).
-- [ ] Assemble `/pricing` (Escrow fee calculator).
-- [ ] Assemble `/login` and `/signup` auth entry points.
+- [x] Assemble `/(marketing)/page.tsx` (Landing page with value props).
+- [x] Assemble `/pricing` (Escrow fee calculator).
+- [x] Assemble `/login` and `/signup` auth entry points.
 
 **Marketplace & Dashboard**
-- [ ] Assemble `/marketplace` (Inject SearchBar and GadgetListingCard grid).
-- [ ] Assemble `/dashboard` (Unified overview of sales/purchases).
-- [ ] Assemble `/dashboard/listings/create` (Multi-step gadget creation wizard).
-- [ ] Assemble `/kyc/document` (Inject FileUploader for ID and selfie).
+- [x] Assemble `/marketplace` (Inject SearchBar and GadgetListingCard grid).
+- [x] Assemble `/dashboard` (Unified overview of sales/purchases).
+- [x] Assemble `/dashboard/listings/create` (Multi-step gadget creation wizard).
+- [x] Assemble `/kyc/document` (Inject FileUploader for ID and selfie).
 
 **The Escrow Room**
-- [ ] Assemble `/escrow/[id]/review` (Inject EscrowFeeReceipt).
-- [ ] Assemble `/escrow/[id]/status` (Inject EscrowTrackerStepper and ActionRequiredCard).
-- [ ] Assemble `/escrow/[id]/chat` (P2P negotiation interface).
+- [x] Assemble `/escrow/[id]/review` (Inject EscrowFeeReceipt).
+- [x] Assemble `/escrow/[id]/status` (Inject EscrowTrackerStepper and ActionRequiredCard).
+- [x] Assemble `/escrow/[id]/chat` (P2P negotiation interface).
 
 **Dispute Resolution Engine**
-- [ ] Assemble `/dispute/[id]/report` (Issue type selection form).
-- [ ] Assemble `/dispute/[id]/evidence` (Inject FileUploader).
-- [ ] Assemble `/dispute/[id]/status` (Dispute timeline and seller response).
+- [x] Assemble `/dispute/[id]/report` (Issue type selection form).
+- [x] Assemble `/dispute/[id]/evidence` (Inject FileUploader).
+- [x] Assemble `/dispute/[id]/status` (Dispute timeline and seller response).
 
 **Admin Dashboard**
-- [ ] Assemble `/admin/disputes` (Inject AdminDisputeRow and StackedCard).
-- [ ] Assemble `/admin/disputes/[id]` (Inject EvidenceViewer and verdict actions).
+- [x] Assemble `/admin/disputes` (Inject AdminDisputeRow and StackedCard).
+- [x] Assemble `/admin/disputes/[id]` (Inject EvidenceViewer and verdict actions).

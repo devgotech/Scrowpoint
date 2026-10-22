@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/components/providers/AuthContext";
 import { cn } from "@/lib/utils";
 
 /**
@@ -45,6 +46,8 @@ export function AuthForm({ mode, onSubmitSuccess, className }: AuthFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const { login } = useAuth();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -61,11 +64,12 @@ export function AuthForm({ mode, onSubmitSuccess, className }: AuthFormProps) {
 
     setIsLoading(true);
 
-    // Simulate Go Auth API call + cookie setting
+    // Set authenticated session in context
     setTimeout(() => {
+      login(email, fullName || (email.split("@")[0]));
       setIsLoading(false);
       onSubmitSuccess?.(email);
-    }, 800);
+    }, 700);
   };
 
   return (

@@ -20,7 +20,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { DashboardUtilityBar } from "@/components/footers";
 import { EscrowStatusBar } from "@/components/EscrowStatusBar";
 import { EscrowTrackerStepper, type EscrowState } from "@/components/EscrowTrackerStepper";
 import { OrderSummaryCard, type EscrowOrderData } from "@/components/escrow/OrderSummaryCard";
@@ -324,7 +324,8 @@ export default function EscrowRoomPage({
         </div>
       )}
 
-      <Footer />
+      {/* Strategy 3: Compact Utility Bar for Active Escrow Workspace */}
+      <DashboardUtilityBar />
     </div>
   );
 }

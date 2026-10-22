@@ -1,22 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
   BatteryCharging,
+  Camera,
+  Check,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Copy,
   Cpu,
+  Expand,
+  Eye,
   HardDrive,
   Heart,
   Lock,
   MapPin,
+  Maximize2,
   MessageSquare,
   Package,
+  Pause,
+  Play,
   RotateCcw,
   Share2,
   Shield,
@@ -26,6 +35,9 @@ import {
   Star,
   Truck,
   UserCheck,
+  Video,
+  Volume2,
+  VolumeX,
   Zap,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
@@ -41,7 +53,8 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (5_screen_flows.md & 4_ui_system.md):
  * - Authoritative inspection presentation before buyer locks funds in escrow.
- * - Hardware diagnostics: battery health, iCloud status, diagnostic tests.
+ * - Scrollable high-resolution image gallery with thumbnail carousel & active counter.
+ * - Hardware inspection video segment with verified diagnostic sweeps (IMEI, Digitizer, TrueTone, Battery).
  * - SmileID KYC verified seller badge.
  * - Sticky mobile bottom bar with 44px touch targets.
  * - Token Compliance: 8px card radius, 4px controls, Roboto headings, Geist Mono metrics.
@@ -61,14 +74,52 @@ export default function GadgetDetailPage({
   const gadget =
     INITIAL_GADGETS.find((g) => g.id === gadgetId) || INITIAL_GADGETS[0];
 
+  // Media Gallery State
+  const [activeMediaTab, setActiveMediaTab] = useState<"photos" | "video">("photos");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const thumbnailStripRef = useRef<HTMLDivElement>(null);
 
   const priceNaira = gadget.price / 100;
-  const escrowFee = (priceNaira * 0.025); // Tier 3 rate for premium
+  const escrowFee = priceNaira * 0.025; // Tier 3 rate for premium
   const shippingFee = 4500;
   const totalDeposit = priceNaira + escrowFee + shippingFee;
+
+  const totalImages = gadget.images.length;
+
+  const handlePrevImage = () => {
+    setActiveImageIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setActiveImageIndex((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
+  };
+
+  const handleSelectThumbnail = (index: number) => {
+    setActiveImageIndex(index);
+    setActiveMediaTab("photos");
+  };
+
+  const handleToggleVideoPlay = () => {
+    if (!videoRef.current) return;
+    if (isVideoPlaying) {
+      videoRef.current.pause();
+      setIsVideoPlaying(false);
+    } else {
+      videoRef.current.play();
+      setIsVideoPlaying(true);
+    }
+  };
+
+  const handleToggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isVideoMuted;
+    setIsVideoMuted(!isVideoMuted);
+  };
 
   const handleShare = () => {
     if (navigator.clipboard) {
@@ -138,31 +189,270 @@ export default function GadgetDetailPage({
           <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* =============================================================
-                  LEFT COLUMN: PHOTOS & HARDWARE DIAGNOSTICS (7 Cols)
+                  LEFT COLUMN: PHOTOS GALLERY & VIDEO SEGMENT & HARDWARE DIAGNOSTICS (7 Cols)
                   ============================================================= */}
               <div className="lg:col-span-7 space-y-6">
-                {/* Main Media Viewer */}
-                <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-4 shadow-[0_2px_4px_rgba(15,23,42,0.04)]">
-                  <div className="relative aspect-4/3 w-full overflow-hidden rounded-[4px] bg-[#f8fafc] flex items-center justify-center border border-[#e2e8f0]">
-                    <img
-                      src={gadget.images[activeImageIndex] || gadget.images[0]}
-                      alt={gadget.title}
-                      className="h-full w-full object-cover"
-                    />
+                {/* Media Container: Photos & Hardware Inspection Video */}
+                <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-4 shadow-[0_2px_4px_rgba(15,23,42,0.04)] space-y-3">
+                  {/* Media Mode Tabs: [Photos (5)] vs [Inspection Video (30s)] */}
+                  <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setActiveMediaTab("photos")}
+                        className={cn(
+                          "flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] text-xs font-mono font-semibold transition-all",
+                          activeMediaTab === "photos"
+                            ? "bg-[#0f172a] text-white shadow-xs"
+                            : "bg-[#f8fafc] text-[#64748b] hover:text-[#020617] border border-[#e2e8f0]"
+                        )}
+                      >
+                        <Camera className="h-3.5 w-3.5" />
+                        <span>Photos ({totalImages})</span>
+                      </button>
 
-                    {/* Condition Chip */}
-                    <div className="absolute top-3 left-3 bg-[#0f172a]/90 backdrop-blur-xs text-white px-2.5 py-1 rounded-[4px] font-mono text-xs font-semibold uppercase tracking-wider">
-                      {gadget.condition} Grade
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMediaTab("video");
+                          if (videoRef.current && !isVideoPlaying) {
+                            videoRef.current.play().catch(() => {});
+                            setIsVideoPlaying(true);
+                          }
+                        }}
+                        className={cn(
+                          "flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] text-xs font-mono font-semibold transition-all",
+                          activeMediaTab === "video"
+                            ? "bg-[#22c55e] text-[#020617] shadow-xs"
+                            : "bg-[#f8fafc] text-[#64748b] hover:text-[#020617] border border-[#e2e8f0]"
+                        )}
+                      >
+                        <Video className="h-3.5 w-3.5" />
+                        <span>Inspection Video (30s)</span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#15803d] animate-pulse" />
+                      </button>
                     </div>
 
-                    {/* Trust Verified Badge */}
-                    {gadget.sellerVerified && (
-                      <div className="absolute top-3 right-3 bg-[#22c55e]/90 backdrop-blur-xs text-white px-2.5 py-1 rounded-[4px] font-mono text-xs font-semibold flex items-center gap-1 shadow-xs">
-                        <ShieldCheck className="h-3.5 w-3.5" />
-                        <span>SmileID Verified</span>
-                      </div>
-                    )}
+                    <div className="text-[11px] font-mono text-[#64748b] hidden sm:block">
+                      {activeMediaTab === "photos"
+                        ? `Photo ${activeImageIndex + 1} of ${totalImages}`
+                        : "Verified 30s Hardware Sweep"}
+                    </div>
                   </div>
+
+                  {/* Viewport 1: High-Res Photo Gallery */}
+                  {activeMediaTab === "photos" && (
+                    <div className="space-y-3">
+                      <div className="relative aspect-4/3 w-full overflow-hidden rounded-[6px] bg-[#f8fafc] flex items-center justify-center border border-[#e2e8f0] group">
+                        <img
+                          src={gadget.images[activeImageIndex] || gadget.images[0]}
+                          alt={`${gadget.title} - View ${activeImageIndex + 1}`}
+                          className="h-full w-full object-cover transition-all duration-200"
+                        />
+
+                        {/* Top Left: Condition Badge */}
+                        <div className="absolute top-3 left-3 bg-[#0f172a]/90 backdrop-blur-xs text-white px-2.5 py-1 rounded-[4px] font-mono text-xs font-semibold uppercase tracking-wider shadow-xs">
+                          {gadget.condition} Grade
+                        </div>
+
+                        {/* Top Right: SmileID Verified Badge */}
+                        {gadget.sellerVerified && (
+                          <div className="absolute top-3 right-3 bg-[#22c55e]/95 backdrop-blur-xs text-[#020617] px-2.5 py-1 rounded-[4px] font-mono text-xs font-bold flex items-center gap-1 shadow-xs">
+                            <ShieldCheck className="h-3.5 w-3.5" />
+                            <span>SmileID Verified</span>
+                          </div>
+                        )}
+
+                        {/* Carousel Prev / Next Chevron Arrows */}
+                        <button
+                          type="button"
+                          onClick={handlePrevImage}
+                          aria-label="Previous photo"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white text-[#0f172a] shadow-md flex items-center justify-center opacity-80 group-hover:opacity-100 transition-all border border-[#e2e8f0]"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleNextImage}
+                          aria-label="Next photo"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white text-[#0f172a] shadow-md flex items-center justify-center opacity-80 group-hover:opacity-100 transition-all border border-[#e2e8f0]"
+                        >
+                          <ChevronRight className="h-5 w-5" />
+                        </button>
+
+                        {/* Bottom Floating Counter Strip */}
+                        <div className="absolute bottom-3 inset-x-0 flex justify-center">
+                          <div className="bg-[#020617]/80 backdrop-blur-xs text-white font-mono text-xs px-3 py-1 rounded-full flex items-center gap-2">
+                            <span>
+                              {activeImageIndex + 1} / {totalImages}
+                            </span>
+                            <span>•</span>
+                            <span className="text-[#22c55e] text-[10px] font-semibold">
+                              Authentic Inspection Photos
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Scrollable Thumbnail Carousel Strip */}
+                      <div className="space-y-1">
+                        <div className="text-[11px] font-mono text-[#64748b] flex items-center justify-between">
+                          <span>Scroll or click to inspect angles:</span>
+                          <span className="text-[10px]">Use arrows or swipe</span>
+                        </div>
+                        <div
+                          ref={thumbnailStripRef}
+                          className="flex items-center gap-2.5 overflow-x-auto pb-2 pt-1 scrollbar-thin scroll-smooth"
+                        >
+                          {gadget.images.map((img, idx) => {
+                            const isCurrent = activeImageIndex === idx;
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => handleSelectThumbnail(idx)}
+                                className={cn(
+                                  "relative h-16 w-20 sm:h-20 sm:w-24 shrink-0 rounded-[4px] overflow-hidden border-2 transition-all duration-150",
+                                  isCurrent
+                                    ? "border-[#0f172a] ring-2 ring-[#0f172a]/20 scale-[1.02]"
+                                    : "border-[#e2e8f0] opacity-70 hover:opacity-100 hover:border-slate-400"
+                                )}
+                              >
+                                <img
+                                  src={img}
+                                  alt={`Thumbnail ${idx + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
+                                <div className="absolute bottom-0 inset-x-0 bg-black/60 text-white font-mono text-[9px] text-center py-0.5">
+                                  Angle {idx + 1}
+                                </div>
+                              </button>
+                            );
+                          })}
+
+                          {/* Quick Shortcut to Video in the thumbnail strip */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveMediaTab("video");
+                              if (videoRef.current) {
+                                videoRef.current.play().catch(() => {});
+                                setIsVideoPlaying(true);
+                              }
+                            }}
+                            className="relative h-16 w-24 sm:h-20 sm:w-28 shrink-0 rounded-[4px] overflow-hidden border-2 border-dashed border-[#22c55e] bg-[#22c55e]/10 flex flex-col items-center justify-center p-1 text-center hover:bg-[#22c55e]/20 transition-colors"
+                          >
+                            <Play className="h-5 w-5 text-[#15803d] mb-1 fill-[#15803d]" />
+                            <span className="font-mono text-[10px] font-bold text-[#15803d]">
+                              Play Video
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Viewport 2: Dedicated Hardware Inspection Video Segment */}
+                  {activeMediaTab === "video" && (
+                    <div className="space-y-4 animate-in fade-in duration-200">
+                      <div className="relative aspect-video w-full rounded-[6px] overflow-hidden bg-[#020617] border border-slate-800 shadow-md">
+                        <video
+                          ref={videoRef}
+                          src={
+                            gadget.videoUrl ||
+                            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                          }
+                          playsInline
+                          loop
+                          muted={isVideoMuted}
+                          poster={gadget.images[0]}
+                          onPlay={() => setIsVideoPlaying(true)}
+                          onPause={() => setIsVideoPlaying(false)}
+                          className="h-full w-full object-contain"
+                        />
+
+                        {/* Video Controls Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none flex flex-col justify-between p-3">
+                          <div className="flex items-center justify-between pointer-events-auto">
+                            <div className="bg-[#020617]/90 backdrop-blur-xs text-white font-mono text-[11px] px-2.5 py-1 rounded-[4px] flex items-center gap-1.5 border border-slate-700">
+                              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                              <span className="font-bold">VERIFIED SELLER INSPECTION</span>
+                              <span className="text-slate-400">• 0:30 Diagnostic Sweep</span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={handleToggleMute}
+                              className="h-8 w-8 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-colors border border-slate-700"
+                              title={isVideoMuted ? "Unmute" : "Mute"}
+                            >
+                              {isVideoMuted ? (
+                                <VolumeX className="h-4 w-4" />
+                              ) : (
+                                <Volume2 className="h-4 w-4" />
+                              )}
+                            </button>
+                          </div>
+
+                          <div className="flex items-center justify-between pointer-events-auto">
+                            <button
+                              type="button"
+                              onClick={handleToggleVideoPlay}
+                              className="h-10 w-10 rounded-full bg-[#22c55e] hover:bg-[#16a34a] text-[#020617] flex items-center justify-center shadow-lg transition-transform hover:scale-105"
+                              title={isVideoPlaying ? "Pause Video" : "Play Video"}
+                            >
+                              {isVideoPlaying ? (
+                                <Pause className="h-5 w-5 fill-current" />
+                              ) : (
+                                <Play className="h-5 w-5 fill-current ml-0.5" />
+                              )}
+                            </button>
+
+                            <div className="font-mono text-xs text-white/90 bg-black/60 px-2.5 py-1 rounded-[4px] border border-slate-700">
+                              Device: {gadget.model}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Video Diagnostic Checkpoints Banner */}
+                      <div className="p-4 rounded-[6px] border border-[#22c55e]/30 bg-[#22c55e]/5 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 font-primary text-xs font-bold text-[#020617]">
+                            <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                            <span>Pre-Escrow Video Inspection Checkpoints</span>
+                          </div>
+                          <Badge variant="trust" className="text-[10px] font-mono">
+                            Mandatory Proof
+                          </Badge>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-secondary">
+                          <div className="flex items-center gap-2 text-[#15803d]">
+                            <Check className="h-3.5 w-3.5 shrink-0" />
+                            <span>IMEI on screen matches listing registry</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[#15803d]">
+                            <Check className="h-3.5 w-3.5 shrink-0" />
+                            <span>Full screen digitizer touch sweep verified</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[#15803d]">
+                            <Check className="h-3.5 w-3.5 shrink-0" />
+                            <span>Front &amp; Rear cameras autofocus active</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[#15803d]">
+                            <Check className="h-3.5 w-3.5 shrink-0" />
+                            <span>iCloud / Activation Lock clean &amp; logged out</span>
+                          </div>
+                        </div>
+
+                        <p className="text-[11px] text-[#64748b] pt-1 border-t border-[#22c55e]/20">
+                          <strong>Escrow Protection Rule:</strong> When courier delivers your package, inspect and verify this video's exact condition before approving funds release.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Hardware Diagnostic Report Card */}
@@ -282,7 +572,7 @@ export default function GadgetDetailPage({
                       Agreed Marketplace Price
                     </div>
                     <div className="font-mono text-3xl font-extrabold text-[#020617]">
-                      ₦{(priceNaira).toLocaleString()}
+                      ₦{priceNaira.toLocaleString()}
                     </div>
                     <div className="font-mono text-[11px] text-[#15803d] flex items-center gap-1 mt-1 font-semibold">
                       <CheckCircle2 className="h-3.5 w-3.5 text-[#22c55e]" />
@@ -295,21 +585,21 @@ export default function GadgetDetailPage({
                     <div className="flex items-center justify-between">
                       <span className="text-[#64748b]">Escrow Protection Fee (2.5%)</span>
                       <span className="font-mono font-medium text-[#020617]">
-                        +₦{(escrowFee).toLocaleString()}
+                        +₦{escrowFee.toLocaleString()}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <span className="text-[#64748b]">Tracked & Insured Courier Waybill</span>
                       <span className="font-mono font-medium text-[#020617]">
-                        +₦{(shippingFee).toLocaleString()}
+                        +₦{shippingFee.toLocaleString()}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-[#e2e8f0] font-bold">
                       <span className="text-[#020617]">Total Locked in Escrow</span>
                       <span className="font-mono text-sm text-[#020617]">
-                        ₦{(totalDeposit).toLocaleString()}
+                        ₦{totalDeposit.toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -322,7 +612,7 @@ export default function GadgetDetailPage({
                     className="w-full h-12 text-sm font-semibold gap-2 shadow-xs"
                   >
                     <Lock className="h-4 w-4" />
-                    <span>Lock Funds & Start Escrow Trade</span>
+                    <span>Lock Funds &amp; Start Escrow Trade</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
 
@@ -385,7 +675,7 @@ export default function GadgetDetailPage({
         <div>
           <div className="font-mono text-[10px] text-[#64748b]">Price in Escrow</div>
           <div className="font-mono text-lg font-bold text-[#020617]">
-            ₦{(priceNaira).toLocaleString()}
+            ₦{priceNaira.toLocaleString()}
           </div>
         </div>
 

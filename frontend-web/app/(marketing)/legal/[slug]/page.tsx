@@ -7,6 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LegalSidebarNav } from "@/components/marketing/LegalSidebarNav";
 import { ProseTypography } from "@/components/marketing/ProseTypography";
+import { LiveChatWidget } from "@/components/support/LiveChatWidget";
 
 /**
  * Screen 3: Legal & Trust Shield Documents (Phase 1 §3)
@@ -95,7 +96,7 @@ export default function LegalDocumentPage({
           </div>
         </section>
       </main>
-
+          
       <Footer />
     </div>
   );

@@ -48,8 +48,13 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
     sellerName: "Adeola Tech Hub",
     sellerVerified: true,
     images: [
-      "https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=800&auto=format&fit=crop&q=80",
     ],
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
   },
   {
     id: "g-002",
@@ -66,8 +71,12 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
     sellerName: "Chidi Gadgets",
     sellerVerified: true,
     images: [
-      "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&auto=format&fit=crop&q=80",
     ],
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
   },
   {
     id: "g-003",
@@ -84,8 +93,11 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
     sellerName: "Emeka Verified Store",
     sellerVerified: true,
     images: [
-      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     ],
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
   },
   {
     id: "g-004",
@@ -102,8 +114,11 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
     sellerName: "Zainab Mobile Deals",
     sellerVerified: true,
     images: [
-      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1567581935884-3349723552ca?w=800&auto=format&fit=crop&q=80",
     ],
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
   },
   {
     id: "g-005",
@@ -120,8 +135,10 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
     sellerName: "Prime Apple Exchange",
     sellerVerified: true,
     images: [
-      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=800&auto=format&fit=crop&q=80",
     ],
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
   },
   {
     id: "g-006",
@@ -138,8 +155,10 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
     sellerName: "TechPro Systems",
     sellerVerified: true,
     images: [
-      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80",
     ],
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
   },
 ];
 
@@ -346,13 +365,12 @@ export default function MarketplacePage({
                   /* Grid of Verified Gadget Listings */
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredListings.map((item) => (
-                      <div
+                      <GadgetListingCard
                         key={item.id}
-                        onClick={() => onSelectGadget?.(item.id)}
-                        className="cursor-pointer"
-                      >
-                        <GadgetListingCard listing={item} />
-                      </div>
+                        listing={item}
+                        onSelect={onSelectGadget}
+                        href={`/gadget/${item.id}`}
+                      />
                     ))}
                   </div>
                 )}
