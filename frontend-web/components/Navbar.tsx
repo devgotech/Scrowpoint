@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Bell,
   CheckCircle2,
@@ -37,7 +38,7 @@ import { cn } from "@/lib/utils";
  * - Authenticated State:
  *   - Notification Bell with unread counter dot in --color-trust (#22c55e).
  *   - "Sell Gadget" primary CTA.
- *   - User Avatar with initials fallback and dropdown (KYC status pill, Dashboard, Wallet, Logout).
+ *   - User Avatar with initials fallback and dropdown (matching current page context).
  * - Transitions: strict duration-200 ease-out transitions. NEVER bouncy scaling animations.
  */
 
@@ -45,19 +46,38 @@ export interface NavbarProps {
   className?: string;
   unreadNotificationsCount?: number;
   onNavigate?: (href: string) => void;
+  activePath?: string;
 }
 
 export function Navbar({
   className,
   unreadNotificationsCount = 2,
   onNavigate,
+  activePath,
 }: NavbarProps) {
+  const routerPathname = usePathname();
+  const currentPath = activePath || routerPathname || "/";
+
   const { user, isAuthenticated, isAdmin, isKYCVerified, kycTier, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+
+  // Active page detection for dropdown navigation focus matching
+  const isProfileActive =
+    currentPath === "/settings/profile" || currentPath.startsWith("/settings");
+  const isDashboardActive =
+    currentPath === "/seller/dashboard" || currentPath === "/dashboard";
+  const isPostGadgetActive =
+    currentPath === "/seller/post-gadget" || currentPath === "/post-gadget";
+  const isWalletActive =
+    currentPath === "/seller/wallet" || currentPath.startsWith("/seller/wallet");
+  const isEscrowActive = currentPath.startsWith("/escrow");
+  const isKYCActive =
+    currentPath.startsWith("/verify-identity") || currentPath.startsWith("/kyc");
+  const isAdminActive = currentPath.startsWith("/admin");
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -146,15 +166,6 @@ export function Navbar({
             >
               Seller Hub
             </Link>
-            {isAuthenticated && (
-              <Link
-                href="/settings/profile"
-                onClick={() => onNavigate?.("/settings/profile")}
-                className="text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
-              >
-                Profile & Settings
-              </Link>
-            )}
           </nav>
         </div>
 
@@ -266,9 +277,12 @@ export function Navbar({
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  title="Profile & Account Settings"
-                  aria-label="Open user profile and account settings menu"
-                  className="flex items-center gap-2 rounded-full p-0.5 hover:ring-2 hover:ring-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#0f172a] transition-all duration-200 ease-out cursor-pointer"
+                  title="Profile & Account Menu"
+                  aria-label="Open profile dropdown"
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full p-0.5 hover:ring-2 hover:ring-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#0f172a] transition-all duration-200 ease-out cursor-pointer",
+                    isProfileActive && "ring-2 ring-[#0f172a] ring-offset-2 ring-offset-white"
+                  )}
                   aria-expanded={isDropdownOpen}
                 >
                   <Avatar className="h-9 w-9 border-2 border-[#e2e8f0]">
@@ -277,14 +291,6 @@ export function Navbar({
                     )}
                     <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                   </Avatar>
-                  <div className="hidden xl:flex flex-col text-left">
-                    <span className="text-xs font-semibold text-[#020617] truncate max-w-[100px] leading-tight">
-                      {user.name?.split(" ")[0] || "Profile"}
-                    </span>
-                    <span className="text-[10px] text-[#64748b] font-mono leading-none">
-                      Settings
-                    </span>
-                  </div>
                   <ChevronDown
                     className={cn(
                       "hidden sm:block h-3.5 w-3.5 text-[#64748b] transition-transform duration-200 ease-out",
@@ -295,7 +301,7 @@ export function Navbar({
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-72 rounded-[8px] border border-[#e2e8f0] bg-white p-2 shadow-[0_8px_16px_rgba(15,23,42,0.08)] z-50 text-[#020617] transition-all duration-200 ease-out">
+                  <div className="absolute right-0 mt-2 w-72 rounded-[8px] border border-[#e2e8f0] bg-white p-2 shadow-[0_8px_16px_rgba(15,23,42,0.08)] z-50 text-[#020617] transition-all duration-200 ease-out animate-in fade-in zoom-in-95">
                     {/* User Identity Header -> Direct Link to Profile */}
                     <Link
                       href="/settings/profile"
@@ -303,14 +309,26 @@ export function Navbar({
                         setIsDropdownOpen(false);
                         onNavigate?.("/settings/profile");
                       }}
-                      className="block px-3 py-2.5 border-b border-[#e2e8f0] rounded-[6px] hover:bg-[#f8fafc] transition-colors duration-200 group"
+                      className={cn(
+                        "block px-3 py-2.5 border-b border-[#e2e8f0] rounded-[6px] transition-colors duration-200 group mb-1",
+                        isProfileActive
+                          ? "bg-[#f1f5f9] border-[#cbd5e1]"
+                          : "hover:bg-[#f8fafc]"
+                      )}
                     >
                       <div className="flex items-center justify-between">
                         <p className="font-primary font-bold text-sm truncate text-[#020617] group-hover:text-[#0f172a]">
                           {user.name || "Authenticated Trader"}
                         </p>
-                        <span className="font-mono text-[10px] text-[#0f172a] font-semibold bg-[#e2e8f0] px-1.5 py-0.5 rounded-[4px] group-hover:bg-[#0f172a] group-hover:text-white transition-colors">
-                          Manage →
+                        <span
+                          className={cn(
+                            "font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded-[4px] transition-colors",
+                            isProfileActive
+                              ? "bg-[#0f172a] text-white"
+                              : "bg-[#e2e8f0] text-[#0f172a] group-hover:bg-[#0f172a] group-hover:text-white"
+                          )}
+                        >
+                          {isProfileActive ? "Current Page" : "Manage →"}
                         </span>
                       </div>
                       <p className="text-xs text-[#64748b] truncate font-mono mt-0.5">
@@ -338,79 +356,228 @@ export function Navbar({
                       </div>
                     </Link>
 
-                    {/* Navigation Links */}
-                    <div className="py-1">
-                      {/* 1. Direct Profile & Settings Link with Change Avatar prompt */}
+                    {/* Navigation Links with Active Page Focus */}
+                    <div className="py-1 space-y-0.5">
+                      {/* 1. Profile & Settings */}
                       <Link
                         href="/settings/profile"
                         onClick={() => {
                           setIsDropdownOpen(false);
                           onNavigate?.("/settings/profile");
                         }}
-                        className="flex items-center justify-between px-3 py-2.5 text-sm rounded-[4px] bg-[#f8fafc] hover:bg-[#f1f5f9] text-[#020617] font-semibold border border-[#e2e8f0] my-1 transition-colors duration-200 ease-out"
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm rounded-[4px] transition-all duration-200 ease-out",
+                          isProfileActive
+                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                            : "text-[#020617] hover:bg-[#f8fafc] font-medium"
+                        )}
                       >
                         <div className="flex items-center gap-2.5">
-                          <User className="h-4 w-4 text-[#0f172a]" />
+                          <User
+                            className={cn(
+                              "h-4 w-4",
+                              isProfileActive ? "text-white" : "text-[#64748b]"
+                            )}
+                          />
                           <span>Profile & Settings</span>
                         </div>
-                        <span className="font-mono text-[10px] text-[#15803d] font-medium bg-[#22c55e]/15 px-1.5 py-0.5 rounded-[3px]">
-                          Change Avatar
-                        </span>
+                        {isProfileActive ? (
+                          <span className="flex items-center gap-1 font-mono text-[10px] text-[#22c55e] font-semibold bg-white/15 px-1.5 py-0.5 rounded-[3px]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                            Active
+                          </span>
+                        ) : (
+                          <span className="font-mono text-[10px] text-[#64748b] bg-[#f1f5f9] px-1.5 py-0.5 rounded-[3px]">
+                            Avatar
+                          </span>
+                        )}
                       </Link>
 
+                      {/* 2. Trades Dashboard */}
                       <Link
                         href="/seller/dashboard"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onNavigate?.("/seller/dashboard");
+                        }}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm rounded-[4px] transition-all duration-200 ease-out",
+                          isDashboardActive
+                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                            : "text-[#020617] hover:bg-[#f8fafc] font-medium"
+                        )}
                       >
-                        <LayoutDashboard className="h-4 w-4 text-[#64748b]" />
-                        <span>Trades Dashboard</span>
+                        <div className="flex items-center gap-2.5">
+                          <LayoutDashboard
+                            className={cn(
+                              "h-4 w-4",
+                              isDashboardActive ? "text-white" : "text-[#64748b]"
+                            )}
+                          />
+                          <span>Trades Dashboard</span>
+                        </div>
+                        {isDashboardActive && (
+                          <span className="flex items-center gap-1 font-mono text-[10px] text-[#22c55e] font-semibold bg-white/15 px-1.5 py-0.5 rounded-[3px]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                            Active
+                          </span>
+                        )}
                       </Link>
 
+                      {/* 3. Post New Gadget */}
                       <Link
                         href="/seller/post-gadget"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onNavigate?.("/seller/post-gadget");
+                        }}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm rounded-[4px] transition-all duration-200 ease-out",
+                          isPostGadgetActive
+                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                            : "text-[#020617] hover:bg-[#f8fafc] font-medium"
+                        )}
                       >
-                        <PlusCircle className="h-4 w-4 text-[#22c55e]" />
-                        <span>Post New Gadget</span>
+                        <div className="flex items-center gap-2.5">
+                          <PlusCircle
+                            className={cn(
+                              "h-4 w-4",
+                              isPostGadgetActive ? "text-white" : "text-[#22c55e]"
+                            )}
+                          />
+                          <span>Post New Gadget</span>
+                        </div>
+                        {isPostGadgetActive && (
+                          <span className="flex items-center gap-1 font-mono text-[10px] text-[#22c55e] font-semibold bg-white/15 px-1.5 py-0.5 rounded-[3px]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                            Active
+                          </span>
+                        )}
                       </Link>
 
+                      {/* 4. Wallet & Payouts */}
                       <Link
                         href="/seller/wallet"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onNavigate?.("/seller/wallet");
+                        }}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm rounded-[4px] transition-all duration-200 ease-out",
+                          isWalletActive
+                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                            : "text-[#020617] hover:bg-[#f8fafc] font-medium"
+                        )}
                       >
-                        <Wallet className="h-4 w-4 text-[#64748b]" />
-                        <span>Wallet & Payouts</span>
+                        <div className="flex items-center gap-2.5">
+                          <Wallet
+                            className={cn(
+                              "h-4 w-4",
+                              isWalletActive ? "text-white" : "text-[#64748b]"
+                            )}
+                          />
+                          <span>Wallet & Payouts</span>
+                        </div>
+                        {isWalletActive && (
+                          <span className="flex items-center gap-1 font-mono text-[10px] text-[#22c55e] font-semibold bg-white/15 px-1.5 py-0.5 rounded-[3px]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                            Active
+                          </span>
+                        )}
                       </Link>
 
+                      {/* 5. Active Escrow Room */}
                       <Link
                         href="/escrow/BH-ORD-9421"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onNavigate?.("/escrow/BH-ORD-9421");
+                        }}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm rounded-[4px] transition-all duration-200 ease-out",
+                          isEscrowActive
+                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                            : "text-[#020617] hover:bg-[#f8fafc] font-medium"
+                        )}
                       >
-                        <Lock className="h-4 w-4 text-[#64748b]" />
-                        <span>Active Escrow Room</span>
+                        <div className="flex items-center gap-2.5">
+                          <Lock
+                            className={cn(
+                              "h-4 w-4",
+                              isEscrowActive ? "text-white" : "text-[#64748b]"
+                            )}
+                          />
+                          <span>Active Escrow Room</span>
+                        </div>
+                        {isEscrowActive && (
+                          <span className="flex items-center gap-1 font-mono text-[10px] text-[#22c55e] font-semibold bg-white/15 px-1.5 py-0.5 rounded-[3px]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                            Active
+                          </span>
+                        )}
                       </Link>
 
+                      {/* 6. Identity Verification */}
                       <Link
                         href="/verify-identity"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          onNavigate?.("/verify-identity");
+                        }}
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 text-sm rounded-[4px] transition-all duration-200 ease-out",
+                          isKYCActive
+                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                            : "text-[#020617] hover:bg-[#f8fafc] font-medium"
+                        )}
                       >
-                        <CheckCircle2 className="h-4 w-4 text-[#64748b]" />
-                        <span>Identity Verification</span>
+                        <div className="flex items-center gap-2.5">
+                          <CheckCircle2
+                            className={cn(
+                              "h-4 w-4",
+                              isKYCActive ? "text-white" : "text-[#64748b]"
+                            )}
+                          />
+                          <span>Identity Verification</span>
+                        </div>
+                        {isKYCActive && (
+                          <span className="flex items-center gap-1 font-mono text-[10px] text-[#22c55e] font-semibold bg-white/15 px-1.5 py-0.5 rounded-[3px]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                            Active
+                          </span>
+                        )}
                       </Link>
 
+                      {/* 7. Admin Dispute Portal */}
                       {isAdmin && (
                         <Link
                           href="/admin/dashboard"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] bg-[#ecc94b]/15 text-[#975a16] font-semibold transition-colors duration-200 ease-out"
+                          onClick={() => {
+                            setIsDropdownOpen(false);
+                            onNavigate?.("/admin/dashboard");
+                          }}
+                          className={cn(
+                            "flex items-center justify-between px-3 py-2 text-sm rounded-[4px] transition-all duration-200 ease-out",
+                            isAdminActive
+                              ? "bg-[#0f172a] text-white font-semibold shadow-xs"
+                              : "bg-[#ecc94b]/15 text-[#975a16] hover:bg-[#ecc94b]/25 font-semibold"
+                          )}
                         >
-                          <ShieldAlert className="h-4 w-4 text-[#ecc94b]" />
-                          <span>Admin Dispute Portal</span>
+                          <div className="flex items-center gap-2.5">
+                            <ShieldAlert
+                              className={cn(
+                                "h-4 w-4",
+                                isAdminActive ? "text-white" : "text-[#ecc94b]"
+                              )}
+                            />
+                            <span>Admin Dispute Portal</span>
+                          </div>
+                          {isAdminActive && (
+                            <span className="flex items-center gap-1 font-mono text-[10px] text-[#22c55e] font-semibold bg-white/15 px-1.5 py-0.5 rounded-[3px]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                              Active
+                            </span>
+                          )}
                         </Link>
                       )}
                     </div>
