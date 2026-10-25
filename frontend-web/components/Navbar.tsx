@@ -130,9 +130,6 @@ export function Navbar({
               <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
                 Scrowpoint
               </span>
-              <span className="font-mono text-[10px] tracking-wider uppercase text-[#64748b]">
-                P2P Escrow
-              </span>
             </div>
           </Link>
 
@@ -159,12 +156,26 @@ export function Navbar({
             >
               Trust & Safety
             </Link>
+            {isAuthenticated && user && (
+              <Link
+                href="/seller/dashboard"
+                onClick={() => onNavigate?.("/seller/dashboard")}
+                className="text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
+              >
+                Seller Hub
+              </Link>
+            )}
             <Link
-              href="/seller/dashboard"
-              onClick={() => onNavigate?.("/seller/dashboard")}
-              className="text-[#64748b] hover:text-[#020617] transition-colors duration-200 ease-out"
+              href="/waitlist"
+              onClick={() => onNavigate?.("/waitlist")}
             >
-              Seller Hub
+              <Button
+                variant={currentPath === "/waitlist" ? "default" : "outline"}
+                size="sm"
+                className="h-8 px-3 text-xs font-medium rounded-[4px] border-[#e2e8f0] text-[#020617] hover:bg-[#f1f5f9] transition-colors duration-200 ease-out"
+              >
+                Waitlist
+              </Button>
             </Link>
           </nav>
         </div>

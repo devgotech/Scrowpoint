@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import { Suspense, type ReactNode } from "react";
 import "./globals.css";
 
 import { AuthProvider } from "@/components/providers/AuthContext";
@@ -40,7 +40,9 @@ export default function RootLayout({
             <main className="mx-auto w-full max-w-[var(--page-max-width)] flex-1 px-4 py-6 pb-24 md:px-8 md:pb-6">
               {children}
             </main>
-            <MobileBottomNav />
+            <Suspense fallback={null}>
+              <MobileBottomNav />
+            </Suspense>
           </TooltipProvider>
         </AuthProvider>
       </body>

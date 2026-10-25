@@ -40,7 +40,7 @@ export interface UserProfile {
 export const DEFAULT_DEMO_USER: UserProfile = {
   id: "usr-trader-01",
   name: "Chidi Okafor",
-  email: "chidi.okafor@scrowpoint.ng",
+  email: "chidi.okafor@scrowpoint.com",
   role: "seller",
   phone: "+234 803 456 7890",
   location: "Ikeja, Lagos",
@@ -133,7 +133,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
   }, []);
 
   const login = useCallback(
-    (email = "chidi.okafor@scrowpoint.ng", name = "Chidi Okafor", role: UserRole = "seller") => {
+    (email = "chidi.okafor@scrowpoint.com", name = "Chidi Okafor", role: UserRole = "seller") => {
       const newUser: UserProfile = {
         ...DEFAULT_DEMO_USER,
         id: `usr-${Date.now().toString(36)}`,

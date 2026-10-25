@@ -223,7 +223,7 @@ export default function WaitlistPage({}: WaitlistPageProps) {
 
   const handleCopyReferral = () => {
     if (!submittedData) return;
-    const shareUrl = `https://scrowpoint.ng/waitlist?ref=${submittedData.referralCode}`;
+    const shareUrl = `https://scrowpoint.com/waitlist?ref=${submittedData.referralCode}`;
     if (navigator?.clipboard) {
       navigator.clipboard.writeText(shareUrl);
       setCopiedLink(true);
@@ -251,8 +251,8 @@ export default function WaitlistPage({}: WaitlistPageProps) {
   };
 
   const referralUrl = submittedData
-    ? `https://scrowpoint.ng/waitlist?ref=${submittedData.referralCode}`
-    : "https://scrowpoint.ng/waitlist";
+    ? `https://scrowpoint.com/waitlist?ref=${submittedData.referralCode}`
+    : "https://scrowpoint.com/waitlist";
 
   const whatsappShareText = encodeURIComponent(
     `I just reserved my early spot on Scrowpoint — Nigeria's zero-fraud secondhand gadget escrow with a 48-hour hardware diagnostic countdown! The first 500 traders get 0% escrow fees on their first 5 transactions: ${referralUrl}`
@@ -276,18 +276,15 @@ export default function WaitlistPage({}: WaitlistPageProps) {
               <Shield className="h-5 w-5 fill-current" />
             </div>
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-8">
                 <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
-                  Buyer&apos;s High
+                  Scrowpoint
                 </span>
                 <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-wider bg-[#22c55e]/15 text-[#15803d] font-bold px-2 py-0.5 rounded-[3px] border border-[#22c55e]/30">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
                   Pre-Launch
                 </span>
               </div>
-              <span className="font-mono text-[10px] tracking-wider uppercase text-[#64748b]">
-                P2P Gadget Escrow
-              </span>
             </div>
           </div>
 
@@ -349,7 +346,7 @@ export default function WaitlistPage({}: WaitlistPageProps) {
               </span>
             </div>
 
-            <h1 className="font-primary text-3xl sm:text-5xl font-extrabold text-[#020617] tracking-tight leading-tight text-left">
+            <h1 className="font-primary text-4xl sm:text-5xl font-extrabold text-[#020617] tracking-tight leading-tight text-left">
               Trade Secondhand Gadgets With <span className="text-[#15803d]">Zero Risk</span>.
             </h1>
 
@@ -877,7 +874,7 @@ export default function WaitlistPage({}: WaitlistPageProps) {
                 Frequently Asked Questions
               </h2>
               <p className="font-secondary text-xs sm:text-sm text-[#64748b]">
-                Everything you need to know about the Buyer&apos;s High pre-launch waitlist.
+                Everything you need to know about the Scrowpoint pre-launch waitlist.
               </p>
             </div>
 
@@ -953,7 +950,7 @@ export default function WaitlistPage({}: WaitlistPageProps) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-xs font-secondary text-[#64748b]">
             <div>
               <p className="font-medium text-[#020617]">
-                Buyer&apos;s High Escrow Technologies Limited
+                Scrowpoint
               </p>
               <p className="text-[11px] mt-0.5">
                 Pre-launch enrollment phase. All rights reserved &copy; {new Date().getFullYear()}.
@@ -967,11 +964,11 @@ export default function WaitlistPage({}: WaitlistPageProps) {
                 className="hover:text-[#0f172a] transition-colors flex items-center gap-1"
               >
                 <Mail className="h-3.5 w-3.5" />
-                <span>early@scrowpoint.ng</span>
+                <span>early@scrowpoint.com</span>
               </a>
               <span className="text-[#cbd5e1]">•</span>
               <a
-                href="https://wa.me/2348000000000?text=Hello%20Buyer's%20High%20Team%2C%20I%20have%20an%20inquiry%20about%20the%20Waitlist"
+                href="https://wa.me/2348103202050?text=Hello%20Scrowpoint%20Team%2C%20I%20have%20an%20inquiry%20about%20the%20Waitlist"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-[#15803d] transition-colors flex items-center gap-1 text-[#15803d]"

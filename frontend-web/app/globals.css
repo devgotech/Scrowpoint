@@ -19,6 +19,15 @@
   --font-primary: "Roboto", sans-serif;
   --font-secondary: "Geist", sans-serif;
   --font-mono: "Geist Mono", monospace;
+  --font-newsreader: "Newsreader", serif;
+  --font-inter: "Inter", sans-serif;
+  --font-space-mono: "Space Mono", monospace;
+
+  --color-ink: #1a1a1a;
+  --color-ink-faint: rgba(26, 26, 26, 0.08);
+  --color-ink-medium: rgba(26, 26, 26, 0.6);
+  --color-paper: #fdfdfc;
+  --color-pane: #f8f8f6;
 
   --radius-control: 4px;
   --radius-card: 8px;
@@ -187,4 +196,22 @@
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0;
+}
+
+/* Infinite Left-to-Right Marquee for Trusted Partners */
+@keyframes marquee-ltr {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee-ltr {
+  animation: marquee-ltr 28s linear infinite;
+}
+
+.animate-marquee-ltr:hover {
+  animation-play-state: paused;
 }
