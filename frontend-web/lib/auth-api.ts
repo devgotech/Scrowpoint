@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-const AUTH_COOKIE_NAME = "bh_token";
+const AUTH_COOKIE_NAME = "sp_token";
 const AUTH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
 const BACKEND_URL = (
   process.env.CORE_BACKEND_URL?.trim() || "http://localhost:8080"

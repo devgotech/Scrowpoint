@@ -86,7 +86,7 @@ const FAT_FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: "Company & Legal",
     links: [
-      { label: "About Buyer's High", href: "/trust-and-safety" },
+      { label: "About Scrowpoint", href: "/trust-and-safety" },
       { label: "Terms of Service", href: "/legal/terms" },
       { label: "Privacy & Data Protection", href: "/legal/privacy" },
       { label: "Escrow Rules Agreement", href: "/legal/buyer-protection" },
@@ -264,7 +264,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
               </div>
               <div className="flex flex-col">
                 <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
-                  Buyer&apos;s High
+                  Scrowpoint
                 </span>
                 <span className="font-mono text-[10px] tracking-wider uppercase text-[#64748b]">
                   Peer-to-Peer Escrow
@@ -348,7 +348,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                   <IconBrandInstagram className="h-4 w-4" />
                 </a>
                 <a
-                  href="mailto:compliance@buyershigh.com"
+                  href="mailto:compliance@scrowpoint.com"
                   aria-label="Email Compliance"
                   className="h-8 w-8 rounded-[4px] border border-[#e2e8f0] bg-white flex items-center justify-center text-[#64748b] hover:text-[#0f172a] hover:border-slate-400 transition-colors"
                 >
@@ -439,7 +439,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
             ==================================================================== */}
         <div className="mt-12 border-t border-[#e2e8f0] pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-secondary text-[#64748b]">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-            <span>© {new Date().getFullYear()} Buyer&apos;s High Escrow Technologies Ltd. (RC: 1984210).</span>
+            <span>© {new Date().getFullYear()} Scrowpoint.</span>
             <span className="hidden sm:inline">•</span>
             <span>All escrow deposits segregated with CBN-licensed bank partners.</span>
           </div>

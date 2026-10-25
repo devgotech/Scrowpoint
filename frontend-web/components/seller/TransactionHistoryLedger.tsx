@@ -26,7 +26,7 @@ export const SAMPLE_LEDGER: LedgerEntry[] = [
   {
     id: "tx-1",
     type: "ESCROW_RELEASE",
-    title: "iPhone 14 Pro Max (BH-ORD-9421) Payout Released",
+    title: "iPhone 14 Pro Max (SP-ORD-9421) Payout Released",
     ref: "REL-PAY-9421-LOS",
     amountNaira: 850000,
     date: "Today, 11:20 AM",
@@ -44,7 +44,7 @@ export const SAMPLE_LEDGER: LedgerEntry[] = [
   {
     id: "tx-3",
     type: "ESCROW_HOLD",
-    title: "MacBook Air M2 (BH-ORD-9104) Vault Hold",
+    title: "MacBook Air M2 (SP-ORD-9104) Vault Hold",
     ref: "HLD-SEC-9104-PST",
     amountNaira: 680000,
     date: "2 days ago",

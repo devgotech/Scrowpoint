@@ -24,7 +24,7 @@ import { useAuth } from "@/components/providers/AuthContext";
 import { cn } from "@/lib/utils";
 
 /**
- * Navbar Component for Buyer's High.
+ * Navbar Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 1, §2 & §3):
  * - Sticky at top, exact height: `h-16`.
@@ -84,7 +84,7 @@ export function Navbar({
 
   // Compute initials for avatar fallback (e.g., "John Doe" -> "JD")
   const getInitials = (name?: string) => {
-    if (!name) return "BH";
+    if (!name) return "SP";
     const parts = name.trim().split(/\s+/);
     if (parts.length >= 2) {
       return (parts[0][0] + parts[1][0]).toUpperCase();
@@ -108,7 +108,7 @@ export function Navbar({
             </div>
             <div className="flex flex-col">
               <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
-                Buyer's High
+                Scrowpoint
               </span>
               <span className="font-mono text-[10px] tracking-wider uppercase text-[#64748b]">
                 P2P Escrow
@@ -215,7 +215,7 @@ export function Navbar({
                           </span>
                         </div>
                         <p className="text-[#64748b]">
-                          Order #BH-8921 funds are held securely. You may now ship
+                          Order #SP-8921 funds are held securely. You may now ship
                           the gadget.
                         </p>
                       </div>
@@ -337,7 +337,7 @@ export function Navbar({
                       </Link>
 
                       <Link
-                        href="/escrow/BH-ORD-9421"
+                        href="/escrow/SP-ORD-9421"
                         onClick={() => setIsDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-[4px] hover:bg-[#f8fafc] text-[#020617] transition-colors duration-200 ease-out"
                       >

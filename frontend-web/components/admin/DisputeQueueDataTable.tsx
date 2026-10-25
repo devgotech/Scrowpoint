@@ -30,7 +30,7 @@ export interface DisputeQueueRecord {
 export const SAMPLE_DISPUTE_QUEUE: DisputeQueueRecord[] = [
   {
     id: "dsp-101",
-    orderNumber: "BH-ORD-9421",
+    orderNumber: "SP-ORD-9421",
     gadgetTitle: "iPhone 14 Pro Max 256GB Deep Purple",
     buyerName: "Adeola Fashola",
     sellerName: "Chidi Tech Hub",
@@ -42,7 +42,7 @@ export const SAMPLE_DISPUTE_QUEUE: DisputeQueueRecord[] = [
   },
   {
     id: "dsp-102",
-    orderNumber: "BH-ORD-9104",
+    orderNumber: "SP-ORD-9104",
     gadgetTitle: "MacBook Air M2 512GB Space Gray",
     buyerName: "Emeka Okafor",
     sellerName: "Zainab Mobile Deals",
@@ -53,7 +53,7 @@ export const SAMPLE_DISPUTE_QUEUE: DisputeQueueRecord[] = [
   },
   {
     id: "dsp-103",
-    orderNumber: "BH-ORD-8812",
+    orderNumber: "SP-ORD-8812",
     gadgetTitle: "Google Pixel 7 Pro 128GB Obsidian",
     buyerName: "Fatima Bello",
     sellerName: "Adeola Tech Hub",

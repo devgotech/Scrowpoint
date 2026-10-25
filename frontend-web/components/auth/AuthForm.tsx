@@ -86,7 +86,7 @@ export function AuthForm({ mode, onSubmitSuccess, className }: AuthFormProps) {
         </div>
 
         <h1 className="font-primary text-2xl font-bold tracking-tight text-[#020617]">
-          {mode === "login" ? "Sign in to Buyer's High" : "Create Protected Account"}
+          {mode === "login" ? "Sign in to Scrowpoint" : "Create Protected Account"}
         </h1>
 
         <p className="font-secondary text-sm text-[#64748b]">
@@ -226,7 +226,7 @@ export function AuthForm({ mode, onSubmitSuccess, className }: AuthFormProps) {
           </div>
         ) : (
           <div>
-            Already verified on Buyer's High?{" "}
+            Already verified on Scrowpoint?{" "}
             <Link
               href="/login"
               className="font-bold text-[#0f172a] hover:underline underline-offset-4"

@@ -60,7 +60,7 @@ export default function TrustAndSafetyPage({
                 <span>INSTITUTIONAL GRADE FRAUD PREVENTION</span>
               </div>
               <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-tight text-[#020617]">
-                Trust & Safety at Buyer's High
+                Trust & Safety at Scrowpoint
               </h1>
               <p className="font-secondary text-sm sm:text-base text-[#64748b] leading-relaxed">
                 We engineered Nigeria's first custodial escrow framework for secondhand gadgets. Every trade is fortified with biometric KYC, segregated holding accounts, and an enforceable 48-hour hardware diagnostic SLA.

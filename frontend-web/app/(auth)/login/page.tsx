@@ -45,7 +45,7 @@ export default function LoginPage({
             <div className="flex h-6 w-6 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
               <Shield className="h-3.5 w-3.5 fill-current" />
             </div>
-            <span className="font-primary text-xs font-bold text-[#020617]">Buyer's High</span>
+            <span className="font-primary text-xs font-bold text-[#020617]">Scrowpoint</span>
           </div>
         </div>
       </div>

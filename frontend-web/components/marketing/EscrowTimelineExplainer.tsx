@@ -105,7 +105,7 @@ export function EscrowTimelineExplainer({ className }: EscrowTimelineExplainerPr
             Protocol Lifecycle
           </span>
           <h3 className="font-primary text-xl font-bold text-[#020617] mt-1">
-            The Buyer's High Escrow Cycle
+            The Scrowpoint Escrow Cycle
           </h3>
           <p className="font-secondary text-xs sm:text-sm text-[#64748b] mt-1">
             How funds, goods, and hardware inspections move through our platform.

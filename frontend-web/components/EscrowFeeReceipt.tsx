@@ -20,7 +20,7 @@ import { formatCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 /**
- * EscrowFeeReceipt Component for Buyer's High.
+ * EscrowFeeReceipt Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & Spec 2 Tier 1, Spec 4 §6, Spec 5 §6):
  * - Itemized digital financial breakdown:
@@ -60,8 +60,8 @@ export interface EscrowFeeReceiptProps {
 }
 
 export function EscrowFeeReceipt({
-  receiptNumber = "BH-REC-94218A-20261016",
-  orderNumber = "BH-ORD-94218A",
+  receiptNumber = "SP-REC-94218A-20261016",
+  orderNumber = "SP-ORD-94218A",
   sku = "APL-IPHONE-14PRO-256GB-MINT",
   itemTitle = "Apple iPhone 14 Pro 256GB (Space Black)",
   itemPrice = 65000000, // ₦650,000 in kobo

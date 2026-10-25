@@ -11,7 +11,7 @@ import {
 } from "./footers";
 
 /**
- * Main Footer Export for Buyer's High.
+ * Main Footer Export for Scrowpoint.
  *
  * Deploys the Three Distinct Footer Strategies:
  * 1. MarketingFatFooter: For Public Marketing Pages, Marketplace, Pricing, Legal, Trust & Safety.

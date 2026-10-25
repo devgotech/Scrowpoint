@@ -1,4 +1,4 @@
-# Buyer's High: Frontend Execution Roadmap
+# Scrowpoint: Frontend Execution Roadmap
 
 ## Phase 1: Environment & API Bridge (ui_1, ui_5)
 *The foundational layer. Do not build UI components until data fetching and styling variables are locked.*

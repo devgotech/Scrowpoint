@@ -65,7 +65,7 @@ export default function ArbitrationRoomPage({
                 </span>
               </div>
               <h1 className="font-primary text-2xl sm:text-3xl font-bold tracking-tight text-[#020617]">
-                Dispute Adjudication: iPhone 14 Pro Max (BH-ORD-9421)
+                Dispute Adjudication: iPhone 14 Pro Max (SP-ORD-9421)
               </h1>
               <p className="font-secondary text-xs sm:text-sm text-[#64748b] mt-0.5">
                 Buyer: Adeola Fashola • Seller: Chidi Tech Hub • Vault Balance: ₦850,000 NGN

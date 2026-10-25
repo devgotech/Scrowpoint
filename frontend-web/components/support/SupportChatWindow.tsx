@@ -38,7 +38,7 @@ export function SupportChatWindow({
     {
       id: "sup-1",
       sender: "agent",
-      text: "Hello! Welcome to Buyer's High Escrow Support. Need assistance with an active trade, 48-hour inspection, or KYC?",
+      text: "Hello! Welcome to Scrowpoint Escrow Support. Need assistance with an active trade, 48-hour inspection, or KYC?",
       time: "Just now",
     },
   ]);
@@ -100,7 +100,7 @@ export function SupportChatWindow({
           </div>
           <div>
             <h4 className="font-primary text-xs font-bold leading-tight">
-              Buyer's High Escrow Support
+              Scrowpoint Escrow Support
             </h4>
             <span className="font-mono text-[10px] text-slate-300 flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />

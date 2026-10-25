@@ -1,6 +1,6 @@
 # 5_screen_flows.md — Screen Flows & Architecture Mapping (Updated)
 
-> **Purpose:** Defines the exact Next.js routing, Shadcn UI components, and Go/Python architecture links for every screen in the Buyer's High platform, including adaptive navigation, gadget detail media galleries with inspection video, post gadget screen flow, and sandbox verification.
+> **Purpose:** Defines the exact Next.js routing, Shadcn UI components, and Go/Python architecture links for every screen in the Scrowpoint platform, including adaptive navigation, gadget detail media galleries with inspection video, post gadget screen flow, and sandbox verification.
 
 ---
 
@@ -17,7 +17,7 @@ The navigation bar dynamically adapts to user authentication and role state:
   - **"Sell Gadget"** Primary CTA Button (links directly to `/seller/post-gadget`).
   - **Notification Bell** with active green unread indicator dot (`#22c55e`) and flyout popover for recent escrow alerts.
   - **User Avatar Dropdown** with initials fallback, user email, and SmileID KYC Status Pill (`KYC Verified` / `In Manual Review` / `KYC Pending`).
-  - Quick action links: Trades Dashboard (`/seller/dashboard`), Post New Gadget (`/seller/post-gadget`), Wallet & Payouts (`/seller/wallet`), Active Escrow Room (`/escrow/BH-ORD-9421`), Identity Verification (`/verify-identity`), and Logout.
+  - Quick action links: Trades Dashboard (`/seller/dashboard`), Post New Gadget (`/seller/post-gadget`), Wallet & Payouts (`/seller/wallet`), Active Escrow Room (`/escrow/SP-ORD-9421`), Identity Verification (`/verify-identity`), and Logout.
 
 ---
 

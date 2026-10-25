@@ -89,7 +89,7 @@ import { cn } from "@/lib/utils";
 function navigate(path: string) {
   if (typeof window === "undefined") return;
   window.history.pushState({}, "", path);
-  window.dispatchEvent(new Event("bh_route_change"));
+  window.dispatchEvent(new Event("sp_route_change"));
 }
 
 export type ScreenRoute =
@@ -134,7 +134,7 @@ export default function App() {
   const [viewportMode, setViewportMode] = useState<ViewportMode>("desktop");
   const [selectedGadgetId, setSelectedGadgetId] = useState<string>("g-001");
   const [selectedLegalSlug, setSelectedLegalSlug] = useState<string>("buyer-protection");
-  const [selectedOrderId, setSelectedOrderId] = useState<string>("BH-ORD-9421");
+  const [selectedOrderId, setSelectedOrderId] = useState<string>("SP-ORD-9421");
   const [selectedCaseId, setSelectedCaseId] = useState<string>("dsp-101");
 
   // Synchronize route with URL pathname
@@ -198,11 +198,11 @@ export default function App() {
       parseRouteFromUrl();
     };
 
-    window.addEventListener("bh_route_change", handleRouteChange);
+    window.addEventListener("sp_route_change", handleRouteChange);
     window.addEventListener("popstate", handleRouteChange);
 
     return () => {
-      window.removeEventListener("bh_route_change", handleRouteChange);
+      window.removeEventListener("sp_route_change", handleRouteChange);
       window.removeEventListener("popstate", handleRouteChange);
     };
   }, []);
@@ -369,7 +369,7 @@ export default function App() {
                 </div>
                 <div>
                   <div className="font-primary text-xs font-bold tracking-tight flex items-center gap-1.5">
-                    <span>BUYER'S HIGH</span>
+                    <span>Scrowpoint</span>
                     <span className="font-mono text-[9px] bg-slate-800 text-[#22c55e] px-1.5 py-0.2 rounded-[2px] font-semibold border border-slate-700">
                       5_SCREEN_FLOWS
                     </span>

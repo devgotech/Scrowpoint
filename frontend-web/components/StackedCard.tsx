@@ -17,7 +17,7 @@ import type { AdminDisputeData } from "@/types/dispute";
 import { cn } from "@/lib/utils";
 
 /**
- * StackedCard Component for Buyer's High.
+ * StackedCard Component for Scrowpoint.
  *
  * Requirements (UI Context Spec 2 Tier 3, Master Prompt §2 Sandbox & Directives):
  * - Mobile glance-and-approve moderation view for admin disputes.

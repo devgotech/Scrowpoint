@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
- * EmptyState Component for Buyer's High.
+ * EmptyState Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 3, §3):
  * - Corner Radius: --radius-card (8px -> rounded-[8px]).

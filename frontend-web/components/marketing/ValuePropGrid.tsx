@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * ValuePropGrid Component for Buyer's High Landing Page.
+ * ValuePropGrid Component for Scrowpoint Landing Page.
  *
  * Requirements (5_screen_flows.md Phase 1 §1 & 4_ui_system.md):
  * - 6-item Value Proposition Grid outlining core architectural escrow pillars.
@@ -118,7 +118,7 @@ export function ValuePropGrid({ className }: ValuePropGridProps) {
             Built from the Ground Up for Absolute Trust
           </h2>
           <p className="font-secondary text-sm sm:text-base text-[#64748b] leading-relaxed">
-            Standard classifieds leave buyers and sellers exposed to scams. Buyer's High
+            Standard classifieds leave buyers and sellers exposed to scams. Scrowpoint
             engineers every trade with bank-grade custodial rules.
           </p>
         </div>

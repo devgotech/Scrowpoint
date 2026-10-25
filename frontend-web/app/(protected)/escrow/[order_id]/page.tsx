@@ -52,7 +52,7 @@ export interface EscrowRoomPageProps {
 }
 
 export default function EscrowRoomPage({
-  orderId = "bh-ord-94218a",
+  orderId = "sp-ord-94218a",
   onNavigateHome,
   onNavigateDisputes,
 }: EscrowRoomPageProps) {
@@ -62,7 +62,7 @@ export default function EscrowRoomPage({
   const [isSettledModalOpen, setIsSettledModalOpen] = useState(false);
 
   const orderData: EscrowOrderData = {
-    orderId: "BH-ORD-9421",
+    orderId: "SP-ORD-9421",
     gadgetId: "g-001",
     gadgetTitle: "Apple iPhone 14 Pro Max 256GB Deep Purple",
     gadgetImage:

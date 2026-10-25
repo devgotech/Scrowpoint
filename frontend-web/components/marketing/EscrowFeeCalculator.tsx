@@ -153,7 +153,7 @@ export function EscrowFeeCalculator({
   };
 
   const handleCopySummary = () => {
-    const summary = `Buyer's High Escrow Breakdown:
+    const summary = `Scrowpoint Escrow Breakdown:
 Gadget Price: ${formatNaira(amount)}
 Escrow Rate: ${tierInfo.percentage}% (${formatNaira(calculatedFee)})
 Fee Payer: ${payer.toUpperCase()}

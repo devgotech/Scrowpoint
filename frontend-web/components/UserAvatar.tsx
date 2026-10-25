@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 /**
- * UserAvatar Component for Buyer's High.
+ * UserAvatar Component for Scrowpoint.
  *
  * Requirements (UI Context Spec 2, Tier 1):
  * - Wrapper around Shadcn Avatar primitive.
@@ -55,13 +55,13 @@ export function UserAvatar({
     }
 
     if (!name || typeof name !== "string") {
-      return "BH";
+      return "SP";
     }
 
     // Clean whitespace and filter empty parts
     const cleanName = name.trim().replace(/[^a-zA-Z0-9\s]/g, "");
     if (!cleanName) {
-      return "BH";
+      return "SP";
     }
 
     const segments = cleanName.split(/\s+/).filter(Boolean);

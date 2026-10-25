@@ -130,7 +130,7 @@ export function DashboardUtilityBar({
               type="button"
               onClick={() => {
                 if (typeof window !== "undefined") {
-                  window.dispatchEvent(new CustomEvent("bh_open_live_chat"));
+                  window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
                 }
               }}
               className="hover:text-[#020617] transition-colors flex items-center gap-1"
@@ -291,7 +291,7 @@ export function DashboardUtilityBar({
                   NEW RELEASE
                 </span>
                 <h3 className="font-primary text-sm font-bold text-[#020617] mt-1">
-                  Buyer's High {appVersion} Changelog
+                  Scrowpoint {appVersion} Changelog
                 </h3>
               </div>
               <button

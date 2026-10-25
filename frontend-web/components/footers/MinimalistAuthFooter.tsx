@@ -74,7 +74,7 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
     }
     // Dispatch event to open floating live chat widget if present
     if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("bh_open_live_chat"));
+      window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
     }
   };
 
@@ -89,7 +89,7 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
         {/* Left: Brand Copyright & Trust Micro-Copy */}
         <div className="flex items-center gap-2 text-center sm:text-left">
           <span className="font-mono text-[11px] text-[#475569]">
-            © {new Date().getFullYear()} Buyer's High Escrow Technologies
+            © {new Date().getFullYear()} Scrowpoint
           </span>
           <span className="hidden md:inline text-slate-300">•</span>
           <span className="hidden md:flex items-center gap-1 font-mono text-[10px] text-[#15803d]">

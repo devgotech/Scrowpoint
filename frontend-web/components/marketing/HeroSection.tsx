@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * HeroSection Component for Buyer's High Landing Page.
+ * HeroSection Component for Scrowpoint Landing Page.
  *
  * Requirements (5_screen_flows.md Phase 1 §1 & 4_ui_system.md):
  * - Authoritative, transparent, and frictionless trust-first marketplace presentation.

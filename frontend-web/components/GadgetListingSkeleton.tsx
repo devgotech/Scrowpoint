@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 /**
- * GadgetListingSkeleton Component for Buyer's High.
+ * GadgetListingSkeleton Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & Spec 3, §2):
  * - Rule of Parity: Exactly mirrors the height, padding, 8px radius, and grid structure of `GadgetListingCard`.

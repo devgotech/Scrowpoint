@@ -1,5 +1,5 @@
 """
-Buyer's High Secure Object Storage Microservice Component
+Scrowpoint Secure Object Storage Microservice Component
 Handles saving sanitized media and returning secure CDN / object storage URLs.
 Supports local directory storage and cloud object store adapters (S3 / GCS).
 """
@@ -15,7 +15,7 @@ from typing import Dict, Any
 
 class StorageService:
     """
-    Manages partitioned, tamper-evident object storage for Buyer's High media assets.
+    Manages partitioned, tamper-evident object storage for Scrowpoint media assets.
     Enforces path traversal defenses and generates cryptographically random identifiers.
     """
 
@@ -23,8 +23,8 @@ class StorageService:
 
     def __init__(self):
         self.backend = os.getenv("STORAGE_BACKEND", "local").lower()
-        self.local_dir = Path(os.getenv("LOCAL_STORAGE_DIR", "/tmp/buyers_high_media"))
-        self.cdn_base = os.getenv("CDN_BASE_URL", "https://cdn.buyershigh.internal").rstrip("/")
+        self.local_dir = Path(os.getenv("LOCAL_STORAGE_DIR", "/tmp/scrowpoint_media"))
+        self.cdn_base = os.getenv("CDN_BASE_URL", "https://cdn.scrowpoint.internal").rstrip("/")
 
         if self.backend == "local":
             self.local_dir.mkdir(parents=True, exist_ok=True)

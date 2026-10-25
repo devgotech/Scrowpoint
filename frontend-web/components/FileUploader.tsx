@@ -21,7 +21,7 @@ import { uploadToPresignedUrl, type UploadResult } from "@/lib/s3";
 import { cn } from "@/lib/utils";
 
 /**
- * FileUploader Component for Buyer's High.
+ * FileUploader Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 2, Spec 5 §4):
  * - Desktop: Drag-and-drop dropzone with file picker fallback.

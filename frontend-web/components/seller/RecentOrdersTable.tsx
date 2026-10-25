@@ -33,7 +33,7 @@ export interface SellerOrderRecord {
 export const SAMPLE_SELLER_ORDERS: SellerOrderRecord[] = [
   {
     id: "ord-01",
-    orderNumber: "BH-ORD-9421",
+    orderNumber: "SP-ORD-9421",
     gadgetTitle: "iPhone 14 Pro Max 256GB Deep Purple",
     condition: "Mint",
     buyerName: "Adeola Fashola",
@@ -46,7 +46,7 @@ export const SAMPLE_SELLER_ORDERS: SellerOrderRecord[] = [
   },
   {
     id: "ord-02",
-    orderNumber: "BH-ORD-9104",
+    orderNumber: "SP-ORD-9104",
     gadgetTitle: "MacBook Air M2 512GB Space Gray",
     condition: "Good",
     buyerName: "Emeka Okafor",
@@ -58,7 +58,7 @@ export const SAMPLE_SELLER_ORDERS: SellerOrderRecord[] = [
   },
   {
     id: "ord-03",
-    orderNumber: "BH-ORD-8812",
+    orderNumber: "SP-ORD-8812",
     gadgetTitle: "Samsung Galaxy S23 Ultra 512GB",
     condition: "Fair",
     buyerName: "Fatima Bello",
@@ -69,7 +69,7 @@ export const SAMPLE_SELLER_ORDERS: SellerOrderRecord[] = [
   },
   {
     id: "ord-04",
-    orderNumber: "BH-ORD-8210",
+    orderNumber: "SP-ORD-8210",
     gadgetTitle: "Google Pixel 7 Pro 128GB Obsidian",
     condition: "Mint",
     buyerName: "Tunde Bakare",

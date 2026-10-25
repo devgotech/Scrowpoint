@@ -328,7 +328,7 @@ func (s *OrderService) GetReceipt(ctx context.Context, orderID, requestorID uuid
 		feePct = 0.015
 	}
 
-	receiptNumber := fmt.Sprintf("BH-REC-%s-%s", order.ID.String()[:8], order.CreatedAt.Format("20060102"))
+	receiptNumber := fmt.Sprintf("SP-REC-%s-%s", order.ID.String()[:8], order.CreatedAt.Format("20060102"))
 
 	return &OrderReceiptDTO{
 		OrderID:           order.ID,

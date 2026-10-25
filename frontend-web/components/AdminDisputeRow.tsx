@@ -19,7 +19,7 @@ import type { AdminDisputeData } from "@/types/dispute";
 import { cn } from "@/lib/utils";
 
 /**
- * AdminDisputeRow Component for Buyer's High.
+ * AdminDisputeRow Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 3):
  * - Standard Table Row for Admin Dispute Queue on Desktop.

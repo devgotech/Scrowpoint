@@ -11,7 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Toast Notification System for Buyer's High.
+ * Toast Notification System for Scrowpoint.
  *
  * Requirements (UI Context Spec 2 Tier 2 & UI Context Spec 5, §5):
  * - Supports `info`, `error`, `warning`, and `success` variants.

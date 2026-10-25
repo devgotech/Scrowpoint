@@ -15,7 +15,7 @@ import { formatCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 /**
- * GadgetListingCard Component for Buyer's High.
+ * GadgetListingCard Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md, §5.2 Listing Card):
  * - Anatomy: [media] → [title] → [condition · location] → [amount] → [badge slot]

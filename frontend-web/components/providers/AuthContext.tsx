@@ -10,7 +10,7 @@ import React, {
 } from "react";
 
 /**
- * Types and Enums matching Buyer's High Go Backend & Domain Models
+ * Types and Enums matching Scrowpoint Go Backend & Domain Models
  */
 export type UserRole = "buyer" | "seller" | "admin";
 
@@ -40,7 +40,7 @@ export interface UserProfile {
 export const DEFAULT_DEMO_USER: UserProfile = {
   id: "usr-trader-01",
   name: "Chidi Okafor",
-  email: "chidi.okafor@buyershigh.ng",
+  email: "chidi.okafor@scrowpoint.ng",
   role: "seller",
   phone: "+234 803 456 7890",
   location: "Ikeja, Lagos",
@@ -88,7 +88,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     if (initialUser) return initialUser;
     if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("bh_auth_user");
+        const saved = localStorage.getItem("sp_auth_user");
         if (saved) {
           return JSON.parse(saved);
         }
@@ -112,7 +112,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       if (!res.ok) {
         if (res.status === 401 || res.status === 403) {
           // If no server session and no localStorage user, reset
-          if (typeof window !== "undefined" && !localStorage.getItem("bh_auth_user")) {
+          if (typeof window !== "undefined" && !localStorage.getItem("sp_auth_user")) {
             setUser(null);
           }
         }
@@ -133,7 +133,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
   }, []);
 
   const login = useCallback(
-    (email = "chidi.okafor@buyershigh.ng", name = "Chidi Okafor", role: UserRole = "seller") => {
+    (email = "chidi.okafor@scrowpoint.ng", name = "Chidi Okafor", role: UserRole = "seller") => {
       const newUser: UserProfile = {
         ...DEFAULT_DEMO_USER,
         id: `usr-${Date.now().toString(36)}`,
@@ -144,7 +144,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       setUser(newUser);
       if (typeof window !== "undefined") {
         try {
-          localStorage.setItem("bh_auth_user", JSON.stringify(newUser));
+          localStorage.setItem("sp_auth_user", JSON.stringify(newUser));
         } catch {}
       }
     },
@@ -163,7 +163,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       setUser(null);
       if (typeof window !== "undefined") {
         try {
-          localStorage.removeItem("bh_auth_user");
+          localStorage.removeItem("sp_auth_user");
         } catch {}
       }
     }
@@ -191,8 +191,8 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
         setUser(u);
         if (typeof window !== "undefined") {
           try {
-            if (u) localStorage.setItem("bh_auth_user", JSON.stringify(u));
-            else localStorage.removeItem("bh_auth_user");
+            if (u) localStorage.setItem("sp_auth_user", JSON.stringify(u));
+            else localStorage.removeItem("sp_auth_user");
           } catch {}
         }
       },

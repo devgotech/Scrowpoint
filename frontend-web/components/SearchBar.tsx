@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * SearchBar Component for Buyer's High.
+ * SearchBar Component for Scrowpoint.
  *
  * Requirements (UI Context Spec 2, Tier 2 & Spec 4, §4):
  * - Text search input with icon, clear action, and enter submission.

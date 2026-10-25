@@ -1,15 +1,15 @@
-# Buyer's High — Peer-to-Peer Gadget Escrow Platform
+# Scrowpoint — Peer-to-Peer Gadget Escrow Platform
 
 > Living workspace README. Update this file when you add services, change ports, or change how the stack is run.
 
-**Buyer's High** is a peer-to-peer marketplace where buyers and sellers trade used gadgets under escrow protection. Funds are held until delivery and a 48-hour inspection window complete (or until an admin resolves a dispute).
+**Scrowpoint** is a peer-to-peer marketplace where buyers and sellers trade used gadgets under escrow protection. Funds are held until delivery and a 48-hour inspection window complete (or until an admin resolves a dispute).
 
 ---
 
 ## Workspace layout
 
 ```
-buyers_high_workspace/
+scrowpoint_workspace/
 ├── README.md                 ← you are here (run the whole app)
 ├── LOCAL_SETUP_GUIDE.md      ← VS Code / REST Client focused setup
 ├── docker-compose.yml        ← Postgres + Go API + Media service
@@ -43,7 +43,7 @@ buyers_high_workspace/
 | Escrow ledger (append-only) | ✅ | Deposit, platform fee, release, refund types |
 | 48h inspection auto-release worker | ✅ | Background cron in Go process |
 | Disputes + sub-cases + appeals | ✅ | Parent/child dispute hierarchy |
-| Admin summary, verdicts, KYC review | ✅ | Seeded admin: `admin@buyershigh.com` |
+| Admin summary, verdicts, KYC review | ✅ | Seeded admin: `admin@scrowpoint.com` |
 | Media microservice | ✅ | Listing / KYC / dispute partitions |
 | Interactive Swagger (both services) | ✅ | `/docs` on 8080 and 8000 |
 | PostgreSQL schema (`init.sql`) | ✅ | Compose mounts it on first boot |
@@ -76,7 +76,7 @@ docker compose up -d --build
 | Core Swagger | http://localhost:8080/docs |
 | Media API | http://localhost:8000 |
 | Media Swagger | http://localhost:8000/docs |
-| Postgres | `localhost:5432` / db `buyers_high` |
+| Postgres | `localhost:5432` / db `scrowpoint` |
 
 Stop:
 
@@ -134,7 +134,7 @@ Suggested order:
 
 Seeded admin (created on Go API boot):
 
-- Email: `admin@buyershigh.com`
+- Email: `admin@scrowpoint.com`
 - Password: `AdminPassword123!`
 
 ---

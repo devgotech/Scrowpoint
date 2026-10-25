@@ -1,5 +1,5 @@
 """
-Buyer's High Media Microservice
+Scrowpoint Media Microservice
 FastAPI entry point for secure image compression, EXIF metadata stripping,
 and secure object storage upload across listings, KYC documents, and dispute evidence.
 """
@@ -18,7 +18,7 @@ from .processor import (
 from .storage import StorageService
 
 app = FastAPI(
-    title="Buyer's High Media Microservice",
+    title="Scrowpoint Media Microservice",
     description="Sanitizes, compresses, strips EXIF privacy data, and hosts gadget photos, KYC documents, and dispute evidence.",
     version="1.0.0"
 )
@@ -62,7 +62,7 @@ class BatchUploadResponse(BaseModel):
 def health_check():
     return {
         "status": "healthy",
-        "service": "buyers_high_media_microservice",
+        "service": "scrowpoint_media_microservice",
         "version": "1.0.0",
         "storageBackend": storage.backend,
         "maxFileSizeBytes": MAX_FILE_SIZE_BYTES,

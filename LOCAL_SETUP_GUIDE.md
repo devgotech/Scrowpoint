@@ -1,6 +1,6 @@
-# Buyer's High - Local Development & VS Code Execution Guide
+# Scrowpoint - Local Development & VS Code Execution Guide
 
-This document explains how to set up, run, and test the full Buyer's High Escrow platform on your local machine using Visual Studio Code.
+This document explains how to set up, run, and test the full Scrowpoint Escrow platform on your local machine using Visual Studio Code.
 
 ---
 
@@ -35,27 +35,27 @@ Both `.env` and `.env.example` templates are provided in your workspace.
 
 ```env
 # ============================================================================
-# BUYER'S HIGH CORE BACKEND ENVIRONMENT CONFIGURATION
+# Scrowpoint CORE BACKEND ENVIRONMENT CONFIGURATION
 # ============================================================================
 
 PORT=8080
 ENV=development
 
 # Database Configuration (PostgreSQL)
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/buyers_high?sslmode=disable
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/scrowpoint?sslmode=disable
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=postgres
-DB_NAME=buyers_high
+DB_NAME=scrowpoint
 
 # Authentication & Security
-JWT_SECRET=super-secret-buyers-high-production-jwt-key-2026
+JWT_SECRET=super-secret-scrowpoint-production-jwt-key-2026
 JWT_EXPIRATION_HOURS=168
 
 # Payment Gateway (Paystack)
-PAYSTACK_SECRET_KEY=sk_test_buyers_high_mock_paystack_secret_key
-PAYSTACK_PUBLIC_KEY=pk_test_buyers_high_mock_paystack_public_key
+PAYSTACK_SECRET_KEY=sk_test_scrowpoint_mock_paystack_secret_key
+PAYSTACK_PUBLIC_KEY=pk_test_scrowpoint_mock_paystack_public_key
 
 # KYC Provider (SmileID)
 SMILE_ID_PARTNER_ID=smile_partner_test_8492
@@ -71,7 +71,7 @@ MEDIA_SERVICE_URL=http://localhost:8000
 
 ```env
 # ============================================================================
-# BUYER'S HIGH MEDIA MICROSERVICE (PYTHON / FASTAPI)
+# Scrowpoint MEDIA MICROSERVICE (PYTHON / FASTAPI)
 # ============================================================================
 
 PORT=8000
@@ -80,14 +80,14 @@ ENVIRONMENT=development
 
 # Storage Provider Configuration (use 'local' for testing, 's3' for production)
 STORAGE_BACKEND=local
-LOCAL_STORAGE_DIR=/tmp/buyers_high_media
+LOCAL_STORAGE_DIR=/tmp/scrowpoint_media
 CDN_BASE_URL=http://localhost:8000/media
 
 # AWS S3 / Cloud Object Storage (activated when STORAGE_BACKEND=s3)
 AWS_ACCESS_KEY_ID=test_aws_key
 AWS_SECRET_ACCESS_KEY=test_aws_secret
 AWS_REGION=eu-west-1
-S3_BUCKET_NAME=buyers-high-secure-media-vault
+S3_BUCKET_NAME=scrowpoint-secure-media-vault
 
 # Image Processing Limits & EXIF Privacy Stripping
 MAX_UPLOAD_SIZE_MB=15
@@ -106,7 +106,7 @@ You can run everything via **Docker Compose** or run each service natively in VS
 
 ### Option A: Using Docker Compose (Single Command)
 
-Run from `buyers_high_workspace/`:
+Run from `scrowpoint_workspace/`:
 
 ```bash
 # Start all 3 services (Postgres, Go backend, Python media service):
@@ -134,8 +134,8 @@ If using native local PostgreSQL:
 
 ```bash
 psql -U postgres
-CREATE DATABASE buyers_high;
-\c buyers_high;
+CREATE DATABASE scrowpoint;
+\c scrowpoint;
 \i core-backend/internal/db/init.sql;
 ```
 
@@ -205,7 +205,7 @@ The OpenAPI file lives at `core-backend/internal/api/docs/openapi.yaml` — upda
 
 ## 6. Testing API Endpoints in VS Code
 
-1. Open `buyers_high_workspace/api_tests.http` in VS Code.
+1. Open `scrowpoint_workspace/api_tests.http` in VS Code.
 2. Click the **"Send Request"** button right above any request to execute it.
 3. The requests test the complete lifecycle:
   - **Auth & KYC**: Registration, Login, Token capture, SmileID verification.

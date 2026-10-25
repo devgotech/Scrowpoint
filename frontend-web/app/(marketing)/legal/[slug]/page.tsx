@@ -63,7 +63,7 @@ export default function LegalDocumentPage({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h1 className="font-primary text-2xl sm:text-3xl font-bold tracking-tight text-[#020617]">
-                  Buyer's High Trust & Legal Registry
+                  Scrowpoint Trust & Legal Registry
                 </h1>
                 <p className="font-secondary text-xs sm:text-sm text-[#64748b] mt-1">
                   Enforceable statutory guidelines, custodial escrow protections, and diagnostic rules.

@@ -1,5 +1,5 @@
 ### ============================================================================
-### BUYER'S HIGH - VS CODE REST CLIENT API TEST SUITE
+### Scrowpoint - VS CODE REST CLIENT API TEST SUITE
 ### Extension: "REST Client" (humao.rest-client)
 ### ============================================================================
 ###
@@ -128,7 +128,7 @@ POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@buyershigh.com",
+  "email": "admin@scrowpoint.com",
   "password": "AdminPassword123!"
 }
 

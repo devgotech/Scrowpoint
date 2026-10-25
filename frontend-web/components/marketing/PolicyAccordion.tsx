@@ -42,9 +42,9 @@ export const POLICIES: PolicyItem[] = [
     summary:
       "Our Trust Shield automatically scans and masks phone numbers, WhatsApp links, and personal emails inside the P2P chat.",
     details: [
-      "Off-platform trades completely void Buyer's High escrow coverage.",
+      "Off-platform trades completely void Scrowpoint escrow coverage.",
       "Scammers often request buyers to 'send a WhatsApp message' or 'pay directly to account' to bypass protections.",
-      "By masking off-platform contact details, Buyer's High guarantees full legal recourse and reimbursement if goods fail inspection.",
+      "By masking off-platform contact details, Scrowpoint guarantees full legal recourse and reimbursement if goods fail inspection.",
     ],
   },
   {
@@ -52,7 +52,7 @@ export const POLICIES: PolicyItem[] = [
     title: "Stolen & Blacklisted Device Zero Tolerance",
     category: "Compliance",
     summary:
-      "Buyer's High maintains zero tolerance for stolen goods, blacklisted IMEIs, or iCloud-locked hardware.",
+      "Scrowpoint maintains zero tolerance for stolen goods, blacklisted IMEIs, or iCloud-locked hardware.",
     details: [
       "All devices must be verified clean before shipment.",
       "Sellers listing stolen phones face immediate law enforcement handover, police report filing, and permanent biometric account freeze.",

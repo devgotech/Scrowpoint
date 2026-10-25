@@ -66,7 +66,7 @@ export default function LandingPage({
                 Trade Protocol
               </span>
               <h2 className="font-primary text-2xl sm:text-3xl font-bold text-[#020617] mt-1 tracking-tight">
-                How Buyer's High Protects Your Money
+                How Scrowpoint Protects Your Money
               </h2>
               <p className="font-secondary text-xs sm:text-sm text-[#64748b] mt-2">
                 Three tamper-proof steps ensure you never pay for a damaged gadget or get cheated out of a sale.

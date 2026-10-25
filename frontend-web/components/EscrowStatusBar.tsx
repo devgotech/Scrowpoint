@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * EscrowStatusBar Component for Buyer's High.
+ * EscrowStatusBar Component for Scrowpoint.
  *
  * Requirements (UI Context Spec 1, §2 & §3.C, Core Directive 3):
  * - Micro-summary component that mounts directly below the sticky top navbar during active trades.
@@ -49,8 +49,8 @@ export interface EscrowStatusBarProps {
 
 export function EscrowStatusBar({
   className,
-  orderId = "bh-ord-94218a",
-  orderShortId = "BH-ORD-9421",
+  orderId = "sp-ord-94218a",
+  orderShortId = "SP-ORD-9421",
   state = "INSPECTION_PERIOD",
   initialSecondsRemaining = 6840, // ~1h 54m to demonstrate <2h warning pulse by default
   itemTitle = "MacBook Pro 14' M2",

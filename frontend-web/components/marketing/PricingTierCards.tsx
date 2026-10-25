@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * PricingTierCards Component (Phase 1 §2)
  *
  * Requirements (5_screen_flows.md & 4_ui_system.md):
- * - Displays the 3 transparent fee tiers of Buyer's High Escrow.
+ * - Displays the 3 transparent fee tiers of Scrowpoint Escrow.
  * - Corner Radius: 8px on cards (rounded-[8px]), 4px on badges/chips (rounded-[4px]).
  * - Typography: Roboto headings (font-primary), Geist body (font-secondary), Geist Mono for percentages.
  * - Responsive: 1-col on mobile, 3-col on lg desktop.

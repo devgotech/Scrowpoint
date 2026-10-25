@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**
- * ActionRequiredCard Component for Buyer's High.
+ * ActionRequiredCard Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 1, Spec 4 §5):
  * - Wrapper using the Shadcn Alert primitive.
@@ -60,7 +60,7 @@ export function ActionRequiredCard({
   type = "APPROVE_DELIVERY",
   title,
   description,
-  orderNumber = "BH-ORD-94218A",
+  orderNumber = "SP-ORD-94218A",
   primaryActionLabel,
   onPrimaryAction,
   secondaryActionLabel,

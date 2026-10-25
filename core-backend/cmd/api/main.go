@@ -26,18 +26,18 @@ func main() {
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
-		jwtSecret = "super-secret-buyers-high-production-jwt-key-2026"
+		jwtSecret = "super-secret-scrowpoint-production-jwt-key-2026"
 	}
 
 	paystackSecret := os.Getenv("PAYSTACK_SECRET_KEY")
 	if paystackSecret == "" {
-		paystackSecret = "sk_test_buyers_high_mock_paystack_secret_key"
+		paystackSecret = "sk_test_scrowpoint_mock_paystack_secret_key"
 	}
 
 	smilePartnerID := os.Getenv("SMILE_ID_PARTNER_ID")
 	smileAPIKey := os.Getenv("SMILE_ID_API_KEY")
 
-	log.Println("[INFO] Initializing Buyer's High Escrow Core Backend...")
+	log.Println("[INFO] Initializing Scrowpoint Escrow Core Backend...")
 
 	jwtMw := middleware.NewAuthMiddleware(jwtSecret)
 
@@ -57,7 +57,7 @@ func main() {
 	defer cancel()
 
 	adminUser, err := authService.SignUp(ctx, services.SignUpInput{
-		Email:    "admin@buyershigh.com",
+		Email:    "admin@scrowpoint.com",
 		Password: "AdminPassword123!",
 		Name:     "Lead Compliance Officer",
 		Role:     db.RoleAdmin,

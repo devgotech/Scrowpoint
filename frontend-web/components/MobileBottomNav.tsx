@@ -8,7 +8,7 @@ import { useAuth } from "@/components/providers/AuthContext";
 import { cn } from "@/lib/utils";
 
 /**
- * MobileBottomNav Component for Buyer's High.
+ * MobileBottomNav Component for Scrowpoint.
  *
  * Requirements (5_screen_flows.md & 4_ui_system.md):
  * - Fixed to the bottom of the viewport: `fixed bottom-0 z-40 w-full`.
@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
  * - Reconciled Routes:
  *   1. Marketplace: /marketplace
  *   2. Trust & Safety: /trust-and-safety
- *   3. Active Escrow: /escrow/BH-ORD-9421
+ *   3. Active Escrow: /escrow/SP-ORD-9421
  *   4. Seller Hub: /seller/dashboard
  *   5. Profile: /settings/profile
  * - Active State Indication + touch targets >= 44px.
@@ -57,7 +57,7 @@ export function MobileBottomNav({
     {
       label: "Escrow",
       icon: Lock,
-      href: "/escrow/BH-ORD-9421",
+      href: "/escrow/SP-ORD-9421",
       isActive: currentPath.startsWith("/escrow") || currentPath.startsWith("/checkout"),
       badgeCount: activeEscrowTradesCount,
     },

@@ -128,7 +128,7 @@ export default function PricingPage({
                 Frequently Asked Escrow Questions
               </h3>
               <p className="font-secondary text-xs text-[#64748b] mt-1">
-                How custody, payouts, and chargeback protection work on Buyer's High.
+                How custody, payouts, and chargeback protection work on Scrowpoint.
               </p>
             </div>
 

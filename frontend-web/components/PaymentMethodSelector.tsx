@@ -63,7 +63,7 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
   },
   {
     id: "wallet",
-    name: "Buyer's High Wallet",
+    name: "Scrowpoint Wallet",
     subtitle: "Platform Balance",
     description: "One-click settlement using proceeds from previous sales or refunded escrow deposits.",
     icon: Wallet,
@@ -225,7 +225,7 @@ export function PaymentMethodSelector({
           {activeMethod === "card" && (
             <p className="font-body text-xs text-muted-foreground leading-relaxed">
               Clicking <strong className="text-foreground">&quot;Proceed to Paystack&quot;</strong> will invoke
-              a secure popup iframe to tokenize your card and place the escrow reservation hold. No card PIN or CVV is ever stored on Buyer&apos;s High servers.
+              a secure popup iframe to tokenize your card and place the escrow reservation hold. No card PIN or CVV is ever stored on Scrowpoint servers.
             </p>
           )}
 
@@ -243,7 +243,7 @@ export function PaymentMethodSelector({
 
           {activeMethod === "wallet" && (
             <p className="font-body text-xs text-muted-foreground leading-relaxed">
-              Instant deduction from your available Buyer&apos;s High balance with zero gateway surcharge. Instant transition to <span className="font-mono font-semibold text-trust-strong">funds_held</span>.
+              Instant deduction from your available Scrowpoint balance with zero gateway surcharge. Instant transition to <span className="font-mono font-semibold text-trust-strong">funds_held</span>.
             </p>
           )}
         </div>

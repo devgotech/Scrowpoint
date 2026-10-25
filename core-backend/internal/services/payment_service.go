@@ -112,7 +112,7 @@ func (s *PaymentService) InitializePaystackTransaction(ctx context.Context, orde
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	reference := fmt.Sprintf("BH-PSTK-%s-%d", orderID.String()[:8], time.Now().UnixNano())
+	reference := fmt.Sprintf("SP-PSTK-%s-%d", orderID.String()[:8], time.Now().UnixNano())
 	accessCode := fmt.Sprintf("pstk_acc_%s", uuid.New().String()[:12])
 	authURL := fmt.Sprintf("https://checkout.paystack.com/%s", accessCode)
 
@@ -358,7 +358,7 @@ func (s *PaymentService) RequestPayout(ctx context.Context, sellerID uuid.UUID, 
 	defer s.mu.Unlock()
 
 	now := time.Now()
-	reference := fmt.Sprintf("BH-PAYOUT-%s-%d", sellerID.String()[:8], time.Now().Unix())
+	reference := fmt.Sprintf("SP-PAYOUT-%s-%d", sellerID.String()[:8], time.Now().Unix())
 	transferCode := fmt.Sprintf("TRF_%s", uuid.New().String()[:12])
 
 	payout := &db.Payout{

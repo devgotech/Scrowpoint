@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 /**
- * 404 Not Found Page for Buyer's High.
+ * 404 Not Found Page for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 4, §9, UI Context Spec 3, §4):
  * - Corner Radius: --radius-card (8px -> rounded-[8px]). Controls: 4px.

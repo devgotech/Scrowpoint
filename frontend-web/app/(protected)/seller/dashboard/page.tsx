@@ -85,7 +85,7 @@ export default function SellerDashboardPage({
             onNewListing={() => {
               if (typeof window !== "undefined") {
                 window.history.pushState({}, "", "/seller/post-gadget");
-                window.dispatchEvent(new Event("bh_route_change"));
+                window.dispatchEvent(new Event("sp_route_change"));
               }
             }}
             onOpenWallet={onNavigateWallet}

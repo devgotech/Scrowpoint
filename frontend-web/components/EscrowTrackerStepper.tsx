@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * EscrowTrackerStepper Component for Buyer's High.
+ * EscrowTrackerStepper Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 3):
  * - Macro-view timeline component located in the page body of `/escrow/[id]/status`.
@@ -73,7 +73,7 @@ export interface EscrowTrackerStepperProps {
 
 export function EscrowTrackerStepper({
   currentState = "funds_held",
-  orderNumber = "BH-ORD-94218A",
+  orderNumber = "SP-ORD-94218A",
   trackingNumber = "GIG-89421092-NG",
   courierName = "GIG Logistics",
   className,
@@ -304,7 +304,7 @@ export function EscrowTrackerStepper({
               </h4>
               <p className="mt-1 font-secondary text-xs text-[#64748b] leading-relaxed">
                 {steps.find((s) => s.isCurrent)?.description ||
-                  "Funds are protected by Buyer's High escrow. Both buyer and seller are shielded from fraudulent chargebacks and counterfeit items."}
+                  "Funds are protected by Scrowpoint escrow. Both buyer and seller are shielded from fraudulent chargebacks and counterfeit items."}
               </p>
             </div>
           </div>

@@ -121,7 +121,7 @@ import type { AdminDisputeData } from "@/types/dispute";
 import { cn } from "@/lib/utils";
 
 /**
- * Live Design System and Component Documentation Registry for Buyer's High.
+ * Live Design System and Component Documentation Registry for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Specs 1 through 6):
  * - Two-column layout:
@@ -183,8 +183,8 @@ const MOCK_LISTING: GadgetListingData = {
 
 const MOCK_ADMIN_DISPUTE: AdminDisputeData = {
   id: "dsp-8942-bc89",
-  orderId: "bh-ord-94218a",
-  orderNumber: "BH-ORD-94218A",
+  orderId: "sp-ord-94218a",
+  orderNumber: "SP-ORD-94218A",
   buyerName: "Tunde Adeleke",
   buyerEmail: "tunde@example.ng",
   sellerName: "Adeola Tech Hub",
@@ -200,7 +200,7 @@ const MOCK_ADMIN_DISPUTE: AdminDisputeData = {
 };
 
 const MOCK_ORDER_DATA: EscrowOrderData = {
-  orderId: "BH-ORD-9421",
+  orderId: "SP-ORD-9421",
   gadgetId: "g-001",
   gadgetTitle: "Apple iPhone 14 Pro Max 256GB Deep Purple",
   gadgetImage:
@@ -240,7 +240,7 @@ function EvidenceUploadSandboxDemo() {
       </Button>
 
       <EvidenceUploadForm
-        orderId="BH-ORD-9421"
+        orderId="SP-ORD-9421"
         orderAmount={850000}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -556,7 +556,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     tags: ["Status Bar", "Countdown", "Inspection Window"],
     render: () => (
       <EscrowStatusBar
-        orderShortId="BH-ORD-9421"
+        orderShortId="SP-ORD-9421"
         state="INSPECTION_PERIOD"
         initialSecondsRemaining={6840}
       />
@@ -1039,7 +1039,7 @@ export default function SandboxPage() {
                 </div>
                 <div>
                   <h1 className="font-primary text-sm font-semibold tracking-tight text-[#020617] flex items-center gap-2">
-                    <span>Buyer's High Component Sandbox</span>
+                    <span>Scrowpoint Component Sandbox</span>
                     <span className="font-mono text-[10px] bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2 py-0.5 rounded-full font-bold">
                       4_ui_system.md Compliant
                     </span>

@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Buyer's High | Premium Gadget Escrow",
+  title: "Scrowpoint | Premium Gadget Escrow",
   description: "Secure, high-trust P2P escrow marketplace for secondhand gadgets.",
 };
 

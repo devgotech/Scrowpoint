@@ -75,7 +75,7 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if path == "/health" || path == "/api/health" || path == "/" {
 		handlers.JSONSuccess(w, http.StatusOK, map[string]interface{}{
 			"status":  "healthy",
-			"service": "buyers-high-core-backend",
+			"service": "scrowpoint-core-backend",
 			"version": "1.0.0",
 			"docs":    "http://localhost:8080/docs",
 		})

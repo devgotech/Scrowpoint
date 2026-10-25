@@ -14,7 +14,7 @@ COPY app/ ./app/
 
 ENV PORT=8000
 ENV STORAGE_BACKEND=local
-ENV LOCAL_STORAGE_DIR=/tmp/buyers_high_media
+ENV LOCAL_STORAGE_DIR=/tmp/scrowpoint_media
 ENV CDN_BASE_URL=http://localhost:8000/media
 
 EXPOSE 8000

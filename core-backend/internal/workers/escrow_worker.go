@@ -166,7 +166,7 @@ func (w *EscrowWorker) ProcessInspectionAutoReleases(ctx context.Context) int {
 			db.NotificationChannelInApp,
 			"ESCROW_AUTO_RELEASED_BUYER",
 			"Transaction Completed",
-			"The 48-hour device inspection period has concluded. Escrow protection is finalized. Thank you for trading safely on Buyer's High.",
+			"The 48-hour device inspection period has concluded. Escrow protection is finalized. Thank you for trading safely on Scrowpoint.",
 			map[string]interface{}{
 				"orderId":   updatedOrder.ID,
 				"timestamp": now,

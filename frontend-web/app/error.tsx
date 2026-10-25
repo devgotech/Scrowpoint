@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 
 /**
- * Root Error Boundary Component for Buyer's High.
+ * Root Error Boundary Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 3, §4, UI Context Spec 4, §9):
  * - Must be a Client Component ("use client").
@@ -30,7 +30,7 @@ interface GlobalErrorProps {
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
     // Log the error securely for client observability
-    console.error("[Buyer's High Client Exception]:", error);
+    console.error("[Scrowpoint Client Exception]:", error);
   }, [error]);
 
   return (
@@ -55,7 +55,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               <ShieldAlert className="h-4 w-4 text-[#ecc94b]" />
               <span>Escrow State Safeguard Active</span>
             </div>
-            <span>Reference ID: {error.digest || "ERR_BH_TRANSACTION_RETRY"}</span>
+            <span>Reference ID: {error.digest || "ERR_SP_TRANSACTION_RETRY"}</span>
           </div>
         </CardContent>
 

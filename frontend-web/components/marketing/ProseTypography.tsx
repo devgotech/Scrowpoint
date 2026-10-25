@@ -33,11 +33,11 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
   > = {
     "buyer-protection": {
       title: "Buyer Protection Policy & 48-Hour Hardware SLA",
-      docId: "BHP-POL-2026-001",
+      docId: "SPP-POL-2026-001",
       effectiveDate: "January 15, 2026",
       jurisdiction: "Lagos State & Federal Republic of Nigeria",
       summary:
-        "Every transaction initiated on Buyer's High is guaranteed by our custodial escrow protocol. Buyer funds are segregated and held securely by our CBN-licensed custodial partner (Paystack) until the buyer receives and validates the gadget within a strict 48-hour diagnostic window.",
+        "Every transaction initiated on Scrowpoint is guaranteed by our custodial escrow protocol. Buyer funds are segregated and held securely by our CBN-licensed custodial partner (Paystack) until the buyer receives and validates the gadget within a strict 48-hour diagnostic window.",
       clauses: [
         {
           title: "1. Scope of 48-Hour Hardware Inspection",
@@ -56,11 +56,11 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "seller-guarantee": {
       title: "Seller Payout Guarantee & Anti-Reversal Protection",
-      docId: "BHP-POL-2026-002",
+      docId: "SPP-POL-2026-002",
       effectiveDate: "January 15, 2026",
       jurisdiction: "Federal Republic of Nigeria",
       summary:
-        "Legitimate secondhand gadget merchants often fall victim to fake alerts, fraudulent bank reversals, and abusive buyers. Buyer's High guarantees 100% payout security once funds are confirmed locked in escrow prior to dispatch.",
+        "Legitimate secondhand gadget merchants often fall victim to fake alerts, fraudulent bank reversals, and abusive buyers. Scrowpoint guarantees 100% payout security once funds are confirmed locked in escrow prior to dispatch.",
       clauses: [
         {
           title: "1. Zero Chargeback Liability",
@@ -78,11 +78,11 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "dispute-resolution": {
       title: "Dispute Arbitration & Mediation Rules",
-      docId: "BHP-POL-2026-003",
+      docId: "SPP-POL-2026-003",
       effectiveDate: "February 1, 2026",
       jurisdiction: "Arbitration Laws of Lagos State",
       summary:
-        "When buyer and seller disagree on device condition, functionality, or logistics damage, Buyer's High Arbitration Desk acts as an impartial adjudicator bound by photographic and video proof.",
+        "When buyer and seller disagree on device condition, functionality, or logistics damage, Scrowpoint Arbitration Desk acts as an impartial adjudicator bound by photographic and video proof.",
       clauses: [
         {
           title: "1. 24-Hour Evidence Submission SLA",
@@ -100,15 +100,15 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "escrow-agreement": {
       title: "Custodial Escrow Agreement & Legal Structure",
-      docId: "BHP-AGR-2026-004",
+      docId: "SPP-AGR-2026-004",
       effectiveDate: "January 1, 2026",
       jurisdiction: "Federal Republic of Nigeria",
       summary:
-        "This Agreement governs the tri-partite custodial relationship between Buyer, Seller, and Buyer's High (acting through our CBN-licensed payment partner Paystack Payments Limited).",
+        "This Agreement governs the tri-partite custodial relationship between Buyer, Seller, and Scrowpoint (acting through our CBN-licensed payment partner Paystack Payments Limited).",
       clauses: [
         {
           title: "1. Tri-Party Escrow Holding",
-          body: "Buyer's High acts solely as an independent custodial agent. Funds deposited do not form part of the operational assets of Buyer's High and are protected against insolvency.",
+          body: "Scrowpoint acts solely as an independent custodial agent. Funds deposited do not form part of the operational assets of Scrowpoint and are protected against insolvency.",
         },
         {
           title: "2. Irrevocable Deposit",
@@ -118,7 +118,7 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "escrow-rules": {
       title: "48-Hour Inspection Window Protocol",
-      docId: "BHP-POL-2026-005",
+      docId: "SPP-POL-2026-005",
       effectiveDate: "January 10, 2026",
       jurisdiction: "Federal Republic of Nigeria",
       summary:
@@ -136,7 +136,7 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "kyc-policy": {
       title: "Biometric Identity (KYC) & SmileID Policy",
-      docId: "BHP-POL-2026-006",
+      docId: "SPP-POL-2026-006",
       effectiveDate: "January 5, 2026",
       jurisdiction: "National Identity Management Commission (NIMC) Standards",
       summary:
@@ -154,11 +154,11 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "prohibited-items": {
       title: "Blacklisted & Prohibited Gadgets Policy",
-      docId: "BHP-POL-2026-007",
+      docId: "SPP-POL-2026-007",
       effectiveDate: "January 1, 2026",
       jurisdiction: "Federal Republic of Nigeria",
       summary:
-        "Buyer's High maintains zero tolerance for stolen goods, iCloud-locked devices, and counterfeit knock-offs.",
+        "Scrowpoint maintains zero tolerance for stolen goods, iCloud-locked devices, and counterfeit knock-offs.",
       clauses: [
         {
           title: "1. Strict Prohibition of iCloud / MDM Locked Devices",
@@ -172,7 +172,7 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "privacy": {
       title: "Data Masking & P2P Chat Privacy Policy",
-      docId: "BHP-POL-2026-008",
+      docId: "SPP-POL-2026-008",
       effectiveDate: "January 1, 2026",
       jurisdiction: "Nigeria Data Protection Regulation (NDPR)",
       summary:
@@ -186,11 +186,11 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
     },
     "terms": {
       title: "General Terms of Service",
-      docId: "BHP-TOS-2026-009",
+      docId: "SPP-TOS-2026-009",
       effectiveDate: "January 1, 2026",
       jurisdiction: "Federal Republic of Nigeria",
       summary:
-        "Terms and conditions governing the use of the Buyer's High marketplace, escrow protocol, and platform services.",
+        "Terms and conditions governing the use of the Scrowpoint marketplace, escrow protocol, and platform services.",
       clauses: [
         {
           title: "1. Acceptance of Terms",

@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**
- * Root Loading State for Buyer's High App Router.
+ * Root Loading State for Scrowpoint App Router.
  *
  * Requirements (UI Context Spec 3, §2 & UI Context Spec 4, §9):
  * - Rule of Parity: Exactly mirrors the global shell, active escrow bar, and 6-card listing grid to eliminate Cumulative Layout Shift (CLS).
