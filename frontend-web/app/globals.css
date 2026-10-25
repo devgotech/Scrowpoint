@@ -1,99 +1,217 @@
 @import "tailwindcss";
 
-@plugin "tailwindcss-animate";
-
-@custom-variant dark (&:is(.dark *));
-
 @theme {
-  /* Typography Mapping */
-  --font-heading: var(--font-roboto), sans-serif;
-  --font-body: var(--font-geist), sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --color-bg-base: #f8fafc;
+  --color-bg-surface: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-text-primary: #020617;
+  --color-text-secondary: #64748b;
+  --color-action-primary: #0f172a;
+  --color-border-default: #e2e8f0;
 
-  /* Shadcn Core Variable Mapping */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-state-success: #088235;
+  --color-state-warning: #ecc94b;
+  --color-state-error: #f56565;
 
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-trust: #22c55e;
+  --color-trust-strong: #15803d;
 
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  --font-primary: "Roboto", sans-serif;
+  --font-secondary: "Geist", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+  --font-newsreader: "Newsreader", serif;
+  --font-inter: "Inter", sans-serif;
+  --font-space-mono: "Space Mono", monospace;
 
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-ink: #1a1a1a;
+  --color-ink-faint: rgba(26, 26, 26, 0.08);
+  --color-ink-medium: rgba(26, 26, 26, 0.6);
+  --color-paper: #fdfdfc;
+  --color-pane: #f8f8f6;
 
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --radius-control: 4px;
+  --radius-card: 8px;
+  --radius-badge: 9999px;
 
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --shadow-soft-sm: 0 2px 4px rgba(15, 23, 42, 0.06);
+  --shadow-soft-md: 0 4px 8px rgba(15, 23, 42, 0.06);
+  --shadow-soft-lg: 0 6px 16px rgba(15, 23, 42, 0.06);
 
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  /* Buyer's High Custom Semantic Colors */
-  --color-trust: #088235;
-  --color-trust-foreground: #ffffff;
-  --color-warning: #ecc94b;
-
-  /* Strict Corner Radii Mapping */
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 4px); /* 4px for buttons/inputs */
-  --radius-sm: calc(var(--radius) - 6px);
-  --radius-full: 9999px; /* Trust badges ONLY */
+  --shadow-sharp-sm: 0 2px 2px rgba(15, 23, 42, 0.12);
+  --shadow-sharp-md: 0 4px 4px rgba(15, 23, 42, 0.12);
+  --shadow-sharp-lg: 0 6px 6px rgba(15, 23, 42, 0.12);
 }
 
-/* Light-Only Brand Configuration */
 @layer base {
   :root {
-    --background: #F6F3F3; /* Off-white */
-    --foreground: #0f172a; /* Slate 900 */
-    
+    /* === CORE TOKENS — 4_ui_system.md Gadget Escrow App === */
+    --color-bg-base: #f8fafc;            /* Page background (Off-white Slate) */
+    --color-bg-surface: #ffffff;         /* Panels, artboards */
+    --color-bg-card: #ffffff;            /* Listing card fill */
+    --color-text-primary: #020617;       /* Deep Slate */
+    --color-text-secondary: #64748b;     /* Muted Slate */
+    --color-action-primary: #0f172a;     /* Primary Button/CTA */
+    --color-border-default: #e2e8f0;
+
+    /* Semantic Escrow States */
+    --color-state-success: #088235;      /* Escrow Funded */
+    --color-state-warning: #ecc94b;      /* Dispute Open / Action Required */
+    --color-state-error: #f56565;        /* Verification Failed */
+
+    /* Trust Signals (Strict Usage) */
+    --color-trust: #22c55e;              /* Backgrounds, badges, icons */
+    --color-trust-strong: #15803d;       /* Text on white backgrounds (WCAG contrast) */
+
+    /* Typography */
+    --font-primary: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-secondary: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-2xl: 24px;
+    --space-3xl: 32px;
+    --space-4xl: 40px;
+
+    /* Radius Semantics (4_ui_system.md §4) */
+    --radius-control: 4px;   /* Buttons, form controls, inputs, selects */
+    --radius-card: 8px;      /* Cards, containers, dropdowns */
+    --radius-badge: 9999px;  /* Trust badges ONLY */
+
+    /* Composite Shadcn Mappings */
+    --background: #f8fafc;
+    --foreground: #020617;
     --card: #ffffff;
-    --card-foreground: #0f172a;
-    
+    --card-foreground: #020617;
     --popover: #ffffff;
-    --popover-foreground: #d2d2d3;
-    
-    --primary: #0f172a; 
-    --primary-foreground: #F6F3F3;
-    
-    --secondary: #64748b; /* Slate 500 */
-    --secondary-foreground: #F6F3F3;
-    
-    --muted: #e2e8f0;
+    --popover-foreground: #020617;
+    --primary: #0f172a;
+    --primary-foreground: #ffffff;
+    --secondary: #f1f5f9;
+    --secondary-foreground: #0f172a;
+    --muted: #f1f5f9;
     --muted-foreground: #64748b;
-    
-    --accent: #e2e8f0;
+    --accent: #f1f5f9;
     --accent-foreground: #0f172a;
-    
     --destructive: #f56565;
     --destructive-foreground: #ffffff;
-    
     --border: #e2e8f0;
     --input: #e2e8f0;
-    --ring: #9e9e9e;
-    
-    --radius: 8px; /* 8px base for cards */
+    --ring: #0f172a;
+
+    --trust: #22c55e;
+    --trust-strong: #15803d;
+    --state-success: #088235;
+    --warning: #ecc94b;
+    --state-error: #f56565;
+
+    /* Elevation & Shadows (4_ui_system.md §6) */
+    --shadow-soft-sm: 0 2px 4px rgba(15, 23, 42, 0.06);
+    --shadow-soft-md: 0 4px 8px rgba(15, 23, 42, 0.06);
+    --shadow-soft-lg: 0 6px 16px rgba(15, 23, 42, 0.06);
+
+    --shadow-sharp-sm: 0 2px 2px rgba(15, 23, 42, 0.12);
+    --shadow-sharp-md: 0 4px 4px rgba(15, 23, 42, 0.12);
+    --shadow-sharp-lg: 0 6px 6px rgba(15, 23, 42, 0.12);
+
+    /* Motion (4_ui_system.md §7) */
+    --duration-regular: 200ms;
+    --ease-standard: cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  body {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary);
   }
 }
 
-@layer base {
-  * {
-    border-color: var(--border);
-    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
+/* Typography Utility Classes (4_ui_system.md §3) */
+.font-primary {
+  font-family: var(--font-primary);
+}
+
+.font-secondary {
+  font-family: var(--font-secondary);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.type-headline-xl {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 56px;
+  letter-spacing: 0;
+}
+
+.type-headline-md {
+  font-family: var(--font-primary);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.type-body-md {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.type-body-sm {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.type-label-caps {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.type-mono-data {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+/* Infinite Left-to-Right Marquee for Trusted Partners */
+@keyframes marquee-ltr {
+  0% {
+    transform: translateX(-50%);
   }
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-body);
+  100% {
+    transform: translateX(0%);
   }
+}
+
+.animate-marquee-ltr {
+  animation: marquee-ltr 28s linear infinite;
+}
+
+.animate-marquee-ltr:hover {
+  animation-play-state: paused;
 }

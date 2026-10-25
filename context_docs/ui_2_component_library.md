@@ -1,7 +1,7 @@
 # UI Context Spec 2: Component Inventory & Rules
 
 ## 1. Executive Purpose
-This document defines the strict architectural rules for the Buyer's High UI components, derived from the 56-screen Figma inventory. Components follow a Mobile-First baseline (360-428px), adapting through tablet (768px) and desktop (1280px+). The AI must build these in complete isolation using Shadcn primitives and Tailwind v4, strictly adhering to the 8-point grid.
+This document defines the strict architectural rules for the Scrowpoint UI components, derived from the 56-screen Figma inventory. Components follow a Mobile-First baseline (360-428px), adapting through tablet (768px) and desktop (1280px+). The AI must build these in complete isolation using Shadcn primitives and Tailwind v4, strictly adhering to the 8-point grid.
 
 ---
 

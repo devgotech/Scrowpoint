@@ -1,5 +1,5 @@
 """
-Buyer's High Image Processing Microservice Component
+Scrowpoint Image Processing Microservice Component
 Handles image optimization, resolution downscaling, and total EXIF metadata stripping
 to preserve buyer and seller privacy (removes GPS coordinates, device serials, camera models).
 """

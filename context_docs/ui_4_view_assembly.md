@@ -1,7 +1,7 @@
 # UI Context Spec 4: View Assembly & Screen Inventory
 
 ## 1. Executive Purpose
-This document defines the complete Next.js route structure and screen inventory for the Buyer's High platform. It merges the core user journeys (Buyer, Seller, Admin, Escrow, Disputes)[cite: 6, 7, 8] with essential external, legal, and edge-case screens required for a compliant P2P financial product.
+This document defines the complete Next.js route structure and screen inventory for the Scrowpoint platform. It merges the core user journeys (Buyer, Seller, Admin, Escrow, Disputes)[cite: 6, 7, 8] with essential external, legal, and edge-case screens required for a compliant P2P financial product.
 
 ---
 

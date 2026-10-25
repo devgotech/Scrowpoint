@@ -1,5 +1,5 @@
 /**
- * S3 Direct Client Upload Utility for Buyer's High.
+ * S3 Direct Client Upload Utility for Scrowpoint.
  *
  * Requirements (UI Context Spec 5, §4):
  * - Direct upload architecture: Prevents large media uploads (e.g., 50MB 4K unboxing videos,

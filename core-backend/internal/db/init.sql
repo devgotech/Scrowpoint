@@ -1,5 +1,5 @@
 -- ============================================================================
--- BUYER'S HIGH: PEER-TO-PEER GADGET ESCROW PLATFORM
+-- Scrowpoint: PEER-TO-PEER GADGET ESCROW PLATFORM
 -- PostgreSQL Database Initialization Schema (Phase 1)
 -- ============================================================================
 

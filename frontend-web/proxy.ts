@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 /**
- * Next.js App Router Edge Middleware for Buyer's High.
+ * Next.js App Router Edge Middleware for Scrowpoint.
  *
  * Requirements (UI Context Spec 5, §3):
  * - Intercepts requests to protected routes: /dashboard, /escrow, /admin (and their nested paths).
- * - Checks for the presence of the secure HTTP-only JWT authentication cookie (e.g. `bh_token` or `auth_token`).
+ * - Checks for the presence of the secure HTTP-only JWT authentication cookie (e.g. `sp_token` or `auth_token`).
  * - If missing or empty, preserves the attempted destination URL via `?redirect=` and redirects to `/login`.
  * - Passes through all public routes, static assets, and auth flows without interruption.
  */
@@ -15,10 +15,10 @@ import type { NextRequest } from "next/server";
 const PROTECTED_PREFIXES = ["/dashboard", "/escrow", "/admin"];
 
 // Name of the HTTP-only cookie set by the Go core backend
-const AUTH_COOKIE_NAME = "bh_token";
+const AUTH_COOKIE_NAME = "sp_token";
 const FALLBACK_COOKIE_NAME = "auth_token";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   // Check if the current route is protected

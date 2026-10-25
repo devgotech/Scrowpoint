@@ -1,5 +1,5 @@
 # ============================================================================
-# BUYER'S HIGH ESCROW - LOCAL DEVELOPMENT DOCKER COMPOSE
+# Scrowpoint ESCROW - LOCAL DEVELOPMENT DOCKER COMPOSE
 # ============================================================================
 version: '3.8'
 
@@ -7,19 +7,19 @@ services:
   # 1. PostgreSQL Database with Escrow Ledger Schema
   postgres:
     image: postgres:16-alpine
-    container_name: buyers_high_postgres
+    container_name: scrowpoint_postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: buyers_high
+      POSTGRES_DB: scrowpoint
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./core-backend/internal/db/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d buyers_high"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d scrowpoint"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -29,7 +29,7 @@ services:
     build:
       context: ./core-backend
       dockerfile: Dockerfile
-    container_name: buyers_high_backend
+    container_name: scrowpoint_backend
     restart: unless-stopped
     depends_on:
       postgres:
@@ -37,16 +37,16 @@ services:
     environment:
       PORT: 8080
       ENV: development
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/buyers_high?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/scrowpoint?sslmode=disable
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
-      DB_NAME: buyers_high
-      JWT_SECRET: super-secret-buyers-high-production-jwt-key-2026
+      DB_NAME: scrowpoint
+      JWT_SECRET: super-secret-scrowpoint-production-jwt-key-2026
       JWT_EXPIRATION_HOURS: 168
-      PAYSTACK_SECRET_KEY: sk_test_buyers_high_mock_paystack_secret_key
-      PAYSTACK_PUBLIC_KEY: pk_test_buyers_high_mock_paystack_public_key
+      PAYSTACK_SECRET_KEY: sk_test_scrowpoint_mock_paystack_secret_key
+      PAYSTACK_PUBLIC_KEY: pk_test_scrowpoint_mock_paystack_public_key
       SMILE_ID_PARTNER_ID: smile_partner_test_8492
       SMILE_ID_API_KEY: smile_api_key_test_9482018492
       MEDIA_SERVICE_URL: http://media-service:8000
@@ -58,17 +58,17 @@ services:
     build:
       context: ./media-service
       dockerfile: Dockerfile
-    container_name: buyers_high_media
+    container_name: scrowpoint_media
     restart: unless-stopped
     environment:
       PORT: 8000
       STORAGE_BACKEND: local
-      LOCAL_STORAGE_DIR: /tmp/buyers_high_media
+      LOCAL_STORAGE_DIR: /tmp/scrowpoint_media
       CDN_BASE_URL: http://localhost:8000/media
     ports:
       - "8000:8000"
     volumes:
-      - media_storage:/tmp/buyers_high_media
+      - media_storage:/tmp/scrowpoint_media
 
 volumes:
   postgres_data:

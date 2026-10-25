@@ -1,4 +1,4 @@
-# AI Studio Execution Guide: Buyer's High Frontend
+# AI Studio Execution Guide: Scrowpoint Frontend
 
 ## Phase 1: Environment & API Bridge
 *These establish the rules for how data moves through your app.*

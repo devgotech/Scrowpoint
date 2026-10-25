@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Buyer's High Core Backend API",
+    "title": "Scrowpoint Core Backend API",
     "description": "Escrow marketplace API for Auth, KYC, Listings, Orders, Payments (Paystack),\nEscrow state machine, Disputes, Notifications, and Admin compliance.\n\n**Try it out:** Click **Authorize**, paste a JWT from `POST /api/auth/login`\n(`data.token`), then call protected endpoints.\n\nCompanion media service docs: `http://localhost:8000/docs`\n",
     "version": "1.0.0",
     "contact": {
-      "name": "Buyer's High Engineering"
+      "name": "Scrowpoint Engineering"
     }
   },
   "servers": [

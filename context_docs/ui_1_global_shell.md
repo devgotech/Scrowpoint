@@ -1,7 +1,7 @@
 # UI Context Spec 1: Global Shell & Application Frame
 
 ## 1. Executive Purpose
-The Global Shell defines the permanent visual and structural framework of the Buyer's High web application. It houses the unmoving elements—Navigation, Escrow Context Bar, Main Content Viewport, and Footer—ensuring a unified, high-trust experience across public marketing pages, trading marketplaces, and secure escrow dashboards.
+The Global Shell defines the permanent visual and structural framework of the Scrowpoint web application. It houses the unmoving elements—Navigation, Escrow Context Bar, Main Content Viewport, and Footer—ensuring a unified, high-trust experience across public marketing pages, trading marketplaces, and secure escrow dashboards.
 
 ## 2. Shell Architecture (`layout.tsx`)
 *   **Top Bar (Sticky):** Brand Logo, Global Search, Notification Bell, User Avatar.
@@ -19,7 +19,7 @@ The Global Shell defines the permanent visual and structural framework of the Bu
 ### B. Mobile "Webapp" Navigation (Bottom Bar)
 To mimic a native app experience on mobile devices, the desktop header links disappear and are replaced by a fixed bottom navigation bar (`fixed bottom-0 z-50 w-full bg-background/90 backdrop-blur-md border-t`).
 *   **Icons:** Home (Marketplace), Search, Escrows (Active Trades), Profile.
-*   **Top Bar on Mobile:** Reduced to simply the Buyer's High Logo (left) and Notification Bell/Hamburger Menu for secondary links (right).
+*   **Top Bar on Mobile:** Reduced to simply the Scrowpoint Logo (left) and Notification Bell/Hamburger Menu for secondary links (right).
 
 ### C. Conditional Escrow Trust Bar & Alerts
 *   **Trigger:** Appears dynamically below the top navbar ONLY when an active order is in state `PENDING_PAYMENT`, `FUNDS_HELD`, `IN_TRANSIT`, or `INSPECTION_PERIOD`.
