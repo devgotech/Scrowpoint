@@ -46,10 +46,16 @@ app.add_middleware(
 
 storage = StorageService()
 
-# In local/test mode, mount StaticFiles so media URLs (e.g. http://localhost:8000/media/...) work immediately in browsers
+# In local/test mode, mount StaticFiles for public assets (listing photos & dispute evidence)
+# Note: kyc_vault is strictly segregated and NOT mounted publicly to protect sensitive PII.
 if storage.backend == "local":
-    Path(storage.local_dir).mkdir(parents=True, exist_ok=True)
-    app.mount("/media", StaticFiles(directory=str(storage.local_dir)), name="media")
+    local_path = Path(storage.local_dir)
+    (local_path / "listing_media").mkdir(parents=True, exist_ok=True)
+    (local_path / "dispute_evidence").mkdir(parents=True, exist_ok=True)
+    (local_path / "kyc_vault").mkdir(parents=True, exist_ok=True)
+
+    app.mount("/media/listing_media", StaticFiles(directory=str(local_path / "listing_media")), name="listing_media")
+    app.mount("/media/dispute_evidence", StaticFiles(directory=str(local_path / "dispute_evidence")), name="dispute_evidence")
 
 
 # ============================================================================
