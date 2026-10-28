@@ -171,6 +171,7 @@ export function AuthForm({
   const [role, setRole] = useState<UserRole>("buyer");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPreviewAccount, setIsPreviewAccount] = useState(false);
 
   // Email OTP state (Stage 2 of Manual Registration)
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
@@ -192,7 +193,23 @@ export function AuthForm({
     verifyEmailToken,
     resendVerificationEmail,
     setUser,
+    user,
   } = useAuth();
+
+  const continueAfterLogin = (authenticatedEmail: string, authenticatedRole: UserRole) => {
+    if (onSubmitSuccess) {
+      onSubmitSuccess(authenticatedEmail);
+      return;
+    }
+
+    router.push(
+      authenticatedRole === "admin"
+        ? "/admin/dashboard"
+        : authenticatedRole === "seller"
+          ? "/seller/dashboard"
+          : "/marketplace"
+    );
+  };
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -279,7 +296,7 @@ export function AuthForm({
         // so jump straight to Stage 3 (Onboarding & KYC Readiness)!
         setRegStage("onboarding_ready");
       } else {
-        onSubmitSuccess?.(authenticatedUser.email);
+        continueAfterLogin(authenticatedUser.email, authenticatedUser.role);
       }
     } catch {
       setErrorMessage(
@@ -360,8 +377,9 @@ export function AuthForm({
             role,
           };
 
+    let response: Response | null = null;
     try {
-      const res = await fetch(endpoint, {
+      response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -369,37 +387,86 @@ export function AuthForm({
         },
         body: JSON.stringify(requestBody),
       });
-
-      if (res.ok) {
-        const json = await res.json();
-        const backendUser = json?.data?.user;
-        const token = json?.data?.token;
-        if (backendUser) {
-          if (typeof window !== "undefined" && token) {
-            localStorage.setItem("sp_auth_token", token);
-          }
-          setUser({
-            ...backendUser,
-            authProvider: "email",
-          });
-          setIsLoading(false);
-
-          if (mode === "register") {
-            setResendCooldown(60);
-            setOtpStatusBanner(
-              `We sent a 6-digit verification code to ${cleanEmail}.`
-            );
-            setRegStage("verify_email_otp");
-          } else {
-            onSubmitSuccess?.(backendUser.email);
-          }
-          return;
-        }
-      }
     } catch {
-      // Standalone frontend preview fallback
+      // Use the local preview account when the API is unreachable.
     }
 
+    if (response && response.status !== 404) {
+      let payload: {
+        data?: { user?: Record<string, unknown>; token?: string };
+        error?: string;
+        message?: string;
+      };
+      try {
+        payload = await response.json();
+      } catch {
+        setErrorMessage("The authentication service returned an invalid response.");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!response.ok) {
+        setErrorMessage(
+          payload.error || payload.message || "Unable to authenticate. Please try again."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      const backendUser = payload.data?.user;
+      if (!backendUser || typeof backendUser.id !== "string") {
+        setErrorMessage("The authentication service did not return an account.");
+        setIsLoading(false);
+        return;
+      }
+
+      const backendRole: UserRole =
+        backendUser.role === "admin" || backendUser.role === "seller"
+          ? backendUser.role
+          : "buyer";
+      const authenticatedEmail =
+        typeof backendUser.email === "string" ? backendUser.email : cleanEmail;
+      const authenticatedName =
+        typeof backendUser.name === "string" ? backendUser.name : cleanName;
+
+      if (typeof window !== "undefined" && payload.data?.token) {
+        localStorage.setItem("sp_auth_token", payload.data.token);
+      }
+      setIsPreviewAccount(false);
+      setUser({
+        id: backendUser.id,
+        email: authenticatedEmail,
+        name: authenticatedName,
+        role: backendRole,
+        phone: typeof backendUser.phone === "string" ? backendUser.phone : undefined,
+        location:
+          typeof backendUser.location === "string" ? backendUser.location : undefined,
+        kycStatus:
+          backendUser.kycStatus === "approved" ||
+          backendUser.kycStatus === "rejected" ||
+          backendUser.kycStatus === "manual_review_required"
+            ? backendUser.kycStatus
+            : "pending",
+        emailVerifiedAt:
+          typeof backendUser.emailVerifiedAt === "string"
+            ? backendUser.emailVerifiedAt
+            : null,
+      });
+      setIsLoading(false);
+
+      if (mode === "register") {
+        setResendCooldown(60);
+        setOtpStatusBanner(
+          `We sent a 6-digit verification code to ${cleanEmail}.`
+        );
+        setRegStage("verify_email_otp");
+      } else {
+        continueAfterLogin(authenticatedEmail, backendRole);
+      }
+      return;
+    }
+
+    setIsPreviewAccount(true);
     setTimeout(() => {
       const resolvedRole: UserRole =
         mode === "register"
@@ -425,7 +492,7 @@ export function AuthForm({
         );
         setRegStage("verify_email_otp");
       } else {
-        onSubmitSuccess?.(cleanEmail);
+        continueAfterLogin(cleanEmail, resolvedRole);
       }
     }, 400);
   };
@@ -444,17 +511,36 @@ export function AuthForm({
     }
 
     setIsLoading(true);
-    await verifyEmailToken(code);
-    setIsLoading(false);
-    setRegStage("onboarding_ready");
+    try {
+      if (isPreviewAccount && code === DEMO_EMAIL_OTP) {
+        if (user) {
+          setUser({ ...user, emailVerifiedAt: new Date().toISOString() });
+        }
+      } else {
+        await verifyEmailToken(code);
+      }
+      setRegStage("onboarding_ready");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Email verification failed."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResendEmailOtp = async () => {
     if (resendCooldown > 0) return;
     setErrorMessage(null);
-    await resendVerificationEmail();
-    setResendCooldown(60);
-    setOtpStatusBanner(`New 6-digit OTP code dispatched to ${email.trim()}.`);
+    try {
+      await resendVerificationEmail();
+      setResendCooldown(60);
+      setOtpStatusBanner(`New verification code dispatched to ${email.trim()}.`);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to resend the verification code."
+      );
+    }
   };
 
   return (
@@ -558,17 +644,19 @@ export function AuthForm({
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="label">6-Digit Email OTP</label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtpDigits(DEMO_EMAIL_OTP.split(""));
-                    setErrorMessage(null);
-                  }}
-                  className="inline-flex items-center gap-1 font-mono text-[11px] text-[#FF5A25] hover:underline cursor-pointer"
-                >
-                  <Sparkles className="h-3 w-3" />
-                  <span>Auto-Fill Demo OTP ({DEMO_EMAIL_OTP})</span>
-                </button>
+                {isPreviewAccount && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpDigits(DEMO_EMAIL_OTP.split(""));
+                      setErrorMessage(null);
+                    }}
+                    className="inline-flex items-center gap-1 font-mono text-[11px] text-[#FF5A25] hover:underline cursor-pointer"
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    <span>Auto-Fill Demo OTP ({DEMO_EMAIL_OTP})</span>
+                  </button>
+                )}
               </div>
 
               <div className="grid grid-cols-6 gap-2">

@@ -128,10 +128,13 @@ export async function apiFetch<T = unknown>(
 export interface AuthUserDTO {
   id: string;
   email: string;
+  name?: string;
   phone?: string;
   full_name?: string;
   role: string;
+  kycStatus?: string;
   kyc_tier?: string;
+  emailVerifiedAt?: string | null;
   email_verified?: boolean;
 }
 
@@ -163,26 +166,31 @@ export const authApi = {
 
   oauth: (
     provider: "google" | "facebook",
-    payload: { email?: string; full_name?: string; role?: string; oauth_token?: string }
+    payload: { email: string; name: string; providerUid: string }
   ) =>
     apiFetch<AuthResponseDTO>(`/api/auth/oauth/${provider}`, {
       method: "POST",
       body: JSON.stringify(payload),
     }),
 
-  verifyEmail: (payload: { email: string; code: string }) =>
-    apiFetch<{ email: string; verified: boolean }>("/api/auth/verify-email", {
+  verifyEmail: (payload: { token: string }) =>
+    apiFetch<{ message: string }>("/api/auth/verify-email", {
       method: "POST",
       body: JSON.stringify(payload),
+    }),
+
+  resendVerification: () =>
+    apiFetch<{ message: string; token: string }>("/api/auth/resend-verification", {
+      method: "POST",
     }),
 
   requestPasswordReset: (payload: { email: string }) =>
-    apiFetch<{ reset_token_preview?: string }>("/api/auth/request-password-reset", {
+    apiFetch<{ message: string }>("/api/auth/request-password-reset", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
 
-  resetPassword: (payload: { email: string; token: string; new_password: string }) =>
+  resetPassword: (payload: { token: string; newPassword: string }) =>
     apiFetch<{ reset: boolean }>("/api/auth/reset-password", {
       method: "POST",
       body: JSON.stringify(payload),

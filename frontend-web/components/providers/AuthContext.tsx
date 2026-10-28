@@ -4,21 +4,32 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
 } from "react";
+import { authApi, clearAuthSession, setAuthSession } from "@/lib/api";
 
 /**
  * Types and Enums matching Scrowpoint Go Backend & Domain Models
  */
 export type UserRole = "buyer" | "seller" | "admin";
+export type OAuthProviderType = "google" | "facebook";
 
 export type KYCStatus =
   | "pending"
   | "approved"
   | "rejected"
   | "manual_review_required";
+
+function isKYCStatus(value: string | undefined): value is KYCStatus {
+  return (
+    value === "pending" ||
+    value === "approved" ||
+    value === "rejected" ||
+    value === "manual_review_required"
+  );
+}
 
 export interface UserProfile {
   id: string;
@@ -70,12 +81,52 @@ export interface AuthContextValue {
   /** Client-side state updater / setter */
   setUser: (user: UserProfile | null) => void;
   /** Login helper */
-  login: (email?: string, name?: string, role?: UserRole) => void;
+  login: (
+    email?: string,
+    name?: string,
+    role?: UserRole,
+    profile?: Partial<Omit<UserProfile, "id" | "email" | "name" | "role">>
+  ) => void;
+  oauthLogin: (
+    provider: OAuthProviderType,
+    profile: {
+      email: string;
+      name: string;
+      providerUid: string;
+      role?: UserRole;
+      avatarUrl?: string;
+    }
+  ) => Promise<UserProfile>;
+  verifyEmailToken: (token: string) => Promise<void>;
+  resendVerificationEmail: () => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  resetPasswordWithToken: (token: string, newPassword: string) => Promise<void>;
   /** Clear auth state */
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const AUTH_STORAGE_KEY = "sp_auth_user";
+
+function subscribeToAuthStorage(onChange: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", onChange);
+  window.addEventListener("scrowpoint-auth-change", onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener("scrowpoint-auth-change", onChange);
+  };
+}
+
+function getAuthStorageSnapshot() {
+  return typeof window === "undefined"
+    ? null
+    : window.localStorage.getItem(AUTH_STORAGE_KEY);
+}
+
+function getAuthStorageServerSnapshot() {
+  return null;
+}
 
 export interface AuthProviderProps {
   children: React.ReactNode;
@@ -84,20 +135,49 @@ export interface AuthProviderProps {
 }
 
 export function AuthProvider({ children, initialUser = null }: AuthProviderProps) {
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    if (initialUser) return initialUser;
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("sp_auth_user");
-        if (saved) {
-          return JSON.parse(saved);
-        }
-      } catch {}
+  const savedUserJson = useSyncExternalStore(
+    subscribeToAuthStorage,
+    getAuthStorageSnapshot,
+    getAuthStorageServerSnapshot
+  );
+  const [userOverride, setUserOverride] = useState<UserProfile | null | undefined>(
+    undefined
+  );
+  const savedUser = useMemo(() => {
+    if (!savedUserJson) return null;
+    try {
+      const parsed: unknown = JSON.parse(savedUserJson);
+      if (
+        typeof parsed === "object" &&
+        parsed !== null &&
+        "id" in parsed &&
+        "email" in parsed &&
+        "name" in parsed &&
+        "role" in parsed &&
+        "kycStatus" in parsed
+      ) {
+        return parsed as UserProfile;
+      }
+      console.error("The saved authentication session has an invalid shape.");
+    } catch (error) {
+      console.error("Unable to restore the saved authentication session.", error);
     }
     return null;
-  });
+  }, [savedUserJson]);
+  const user = initialUser ?? (userOverride !== undefined ? userOverride : savedUser);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const setUser = useCallback((nextUser: UserProfile | null) => {
+    setUserOverride(nextUser);
+    if (typeof window === "undefined") return;
+    if (nextUser) {
+      window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextUser));
+    } else {
+      window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+    window.dispatchEvent(new Event("scrowpoint-auth-change"));
+  }, []);
 
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -120,33 +200,106 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       }
 
       const json = await res.json();
-      if (json.data) {
-        setUser(json.data as UserProfile);
-      } else if (json.id) {
-        setUser(json as UserProfile);
+      const currentUser = json.data ?? json;
+      if (currentUser?.id && currentUser?.email && currentUser?.role) {
+        setUser({
+          ...currentUser,
+          name: currentUser.name ?? currentUser.full_name ?? currentUser.email,
+          kycStatus: currentUser.kycStatus ?? currentUser.kyc_tier ?? "pending",
+        } as UserProfile);
       }
-    } catch {
-      // Offline fallback
+    } catch (error) {
+      console.error("Unable to refresh the authenticated user.", error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [setUser]);
 
   const login = useCallback(
-    (email = "chidi.okafor@scrowpoint.com", name = "Chidi Okafor", role: UserRole = "seller") => {
+    (
+      email = "chidi.okafor@scrowpoint.com",
+      name = "Chidi Okafor",
+      role: UserRole = "seller",
+      profile: Partial<Omit<UserProfile, "id" | "email" | "name" | "role">> = {}
+    ) => {
       const newUser: UserProfile = {
         ...DEFAULT_DEMO_USER,
+        ...profile,
         id: `usr-${Date.now().toString(36)}`,
         email,
         name,
         role,
       };
       setUser(newUser);
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("sp_auth_user", JSON.stringify(newUser));
-        } catch {}
+    },
+    [setUser]
+  );
+
+  const oauthLogin = useCallback(
+    async (
+      provider: OAuthProviderType,
+      profile: {
+        email: string;
+        name: string;
+        providerUid: string;
+        role?: UserRole;
+        avatarUrl?: string;
       }
+    ) => {
+      const result = await authApi.oauth(provider, profile);
+      if (!result.ok || !result.data?.user) {
+        throw new Error(result.error || "Unable to complete sign-in.");
+      }
+
+      const { user: responseUser, token } = result.data;
+      const authenticatedUser: UserProfile = {
+        id: responseUser.id,
+        email: responseUser.email,
+        name: responseUser.name ?? responseUser.full_name ?? profile.name,
+        role: responseUser.role === "seller" || responseUser.role === "admin"
+          ? responseUser.role
+          : "buyer",
+        phone: responseUser.phone,
+        avatarUrl: profile.avatarUrl,
+        kycStatus: isKYCStatus(responseUser.kycStatus)
+          ? responseUser.kycStatus
+          : isKYCStatus(responseUser.kyc_tier)
+            ? responseUser.kyc_tier
+            : "pending",
+        emailVerifiedAt:
+          responseUser.emailVerifiedAt ??
+          (responseUser.email_verified ? new Date().toISOString() : null),
+      };
+
+      if (token) setAuthSession(token, { ...responseUser });
+      setUser(authenticatedUser);
+      return authenticatedUser;
+    },
+    [setUser]
+  );
+
+  const verifyEmailToken = useCallback(async (token: string) => {
+    const result = await authApi.verifyEmail({ token });
+    if (!result.ok) throw new Error(result.error || "Email verification failed.");
+    if (user) {
+      setUser({ ...user, emailVerifiedAt: new Date().toISOString() });
+    }
+  }, [setUser, user]);
+
+  const resendVerificationEmail = useCallback(async () => {
+    const result = await authApi.resendVerification();
+    if (!result.ok) throw new Error(result.error || "Unable to resend verification.");
+  }, []);
+
+  const requestPasswordReset = useCallback(async (email: string) => {
+    const result = await authApi.requestPasswordReset({ email });
+    if (!result.ok) throw new Error(result.error || "Unable to request a password reset.");
+  }, []);
+
+  const resetPasswordWithToken = useCallback(
+    async (token: string, newPassword: string) => {
+      const result = await authApi.resetPassword({ token, newPassword });
+      if (!result.ok) throw new Error(result.error || "Unable to reset the password.");
     },
     []
   );
@@ -161,13 +314,9 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       // Ignore network errors
     } finally {
       setUser(null);
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.removeItem("sp_auth_user");
-        } catch {}
-      }
+      clearAuthSession();
     }
-  }, []);
+  }, [setUser]);
 
   const value = useMemo<AuthContextValue>(() => {
     const userId = user?.id ?? null;
@@ -187,19 +336,28 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       isAdmin,
       isKYCVerified,
       refreshUser: fetchCurrentUser,
-      setUser: (u) => {
-        setUser(u);
-        if (typeof window !== "undefined") {
-          try {
-            if (u) localStorage.setItem("sp_auth_user", JSON.stringify(u));
-            else localStorage.removeItem("sp_auth_user");
-          } catch {}
-        }
-      },
+      setUser,
       login,
+      oauthLogin,
+      verifyEmailToken,
+      resendVerificationEmail,
+      requestPasswordReset,
+      resetPasswordWithToken,
       logout,
     };
-  }, [user, isLoading, fetchCurrentUser, login, logout]);
+  }, [
+    user,
+    isLoading,
+    fetchCurrentUser,
+    login,
+    oauthLogin,
+    verifyEmailToken,
+    resendVerificationEmail,
+    requestPasswordReset,
+    resetPasswordWithToken,
+    setUser,
+    logout,
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
