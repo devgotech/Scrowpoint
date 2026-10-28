@@ -2,26 +2,18 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Lock, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LegalSidebarNav } from "@/components/marketing/LegalSidebarNav";
 import { ProseTypography } from "@/components/marketing/ProseTypography";
-import { LiveChatWidget } from "@/components/support/LiveChatWidget";
 
 /**
  * Screen 3: Legal & Trust Shield Documents (Phase 1 §3)
  * Route: app/(marketing)/legal/[slug]/page.tsx
  *
- * Supported Slugs:
- * - buyer-protection, dispute-resolution, escrow-agreement, escrow-rules,
- *   kyc-policy, privacy, prohibited-items, seller-guarantee, terms.
- *
- * Architecture Requirements:
- * - Components: LegalSidebarNav, ProseTypography (Roboto typography).
- * - Architecture Link: Static policy content with zero database load on hit.
- * - Mobile Responsiveness: Collapsible/dropdown sidebar on mobile, full side-by-side
- *   layout on desktop.
+ * Design System Compliance (4_ui_system.md — Design Variation 7):
+ * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Deep Carbon Ink (#111113)
  */
 
 export interface LegalPageProps {
@@ -36,42 +28,48 @@ export default function LegalDocumentPage({
   const [currentSlug, setCurrentSlug] = useState<string>(slug);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#020617] flex flex-col font-secondary antialiased">
+    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full">
         {/* Breadcrumb Header */}
-        <div className="bg-white border-b border-[#e2e8f0] py-6 sm:py-8">
-          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-2 mb-2">
+        <div className="bg-white border-b border-[#111113]/12 py-8 sm:py-10">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
+            <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-3">
               <Link
                 href="/"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 text-xs font-mono text-[#64748b] hover:text-[#0f172a] transition-colors"
+                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Home</span>
               </Link>
-              <span className="text-[#64748b] text-xs">/</span>
-              <span className="font-mono text-xs text-[#64748b]">Trust & Legal</span>
-              <span className="text-[#64748b] text-xs">/</span>
-              <span className="font-mono text-xs font-semibold text-[#0f172a] capitalize">
+              <span aria-hidden="true" className="text-[#111113]/25">
+                /
+              </span>
+              <span className="text-[#111113]/65">Trust &amp; Legal</span>
+              <span aria-hidden="true" className="text-[#111113]/25">
+                /
+              </span>
+              <span className="font-bold text-[#111113]">
                 {currentSlug.replace("-", " ")}
               </span>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <h1 className="font-primary text-2xl sm:text-3xl font-bold tracking-tight text-[#020617]">
-                  Scrowpoint Trust & Legal Registry
+                <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
+                  SCROWPOINT TRUST &amp; LEGAL REGISTRY
+                  <span className="text-[#FF5A25]">.</span>
                 </h1>
-                <p className="font-secondary text-xs sm:text-sm text-[#64748b] mt-1">
-                  Enforceable statutory guidelines, custodial escrow protections, and diagnostic rules.
+                <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1.5">
+                  Enforceable statutory guidelines, custodial escrow
+                  protections, and diagnostic rules.
                 </p>
               </div>
 
-              <div className="inline-flex items-center gap-2 rounded-[4px] border border-[#22c55e]/30 bg-[#22c55e]/15 px-3 py-1.5 text-xs font-mono font-semibold text-[#15803d]">
-                <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3.5 py-1.5 text-[10px] font-mono uppercase tracking-wider font-bold text-[#15803d]">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
                 <span>Paystack Custodial Hold</span>
               </div>
             </div>
@@ -80,7 +78,7 @@ export default function LegalDocumentPage({
 
         {/* Content Body: Sidebar + Document */}
         <section className="py-8 sm:py-12">
-          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex flex-col md:flex-row gap-8 items-start">
               {/* Sidebar */}
               <LegalSidebarNav
@@ -96,7 +94,7 @@ export default function LegalDocumentPage({
           </div>
         </section>
       </main>
-          
+
       <Footer />
     </div>
   );
