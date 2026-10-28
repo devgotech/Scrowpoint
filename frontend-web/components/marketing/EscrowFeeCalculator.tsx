@@ -173,18 +173,18 @@ Inspection Window: 48 Hours Guarantee`;
           LEFT: INPUTS & CUSTOMIZATION (7 Cols)
           ===================================================================== */}
       <div className="lg:col-span-7 space-y-6">
-        <Card className="rounded-[8px] border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
-          <CardHeader className="pb-4 border-b border-[#e2e8f0]">
+        <Card className="border-[#111113]/12 bg-white">
+          <CardHeader className="pb-4 border-b border-[#111113]/12">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center bg-[#111113] text-white">
                   <Calculator className="h-4 w-4" />
                 </div>
                 <div>
-                  <CardTitle className="font-primary text-base font-bold text-[#020617]">
+                  <CardTitle className="font-primary text-base font-bold tracking-[-0.03em] text-[#111113]">
                     Escrow Protection Calculator
                   </CardTitle>
-                  <p className="font-secondary text-xs text-[#64748b]">
+                  <p className="font-secondary text-xs text-[#111113]/65">
                     Instant client-side mathematical simulation of escrow splits.
                   </p>
                 </div>
@@ -201,7 +201,7 @@ Inspection Window: 48 Hours Guarantee`;
               <div className="flex items-center justify-between mb-2">
                 <label
                   htmlFor="gadget-price-input"
-                  className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider"
+                  className="label text-[#111113]! opacity-80!"
                 >
                   Agreed Gadget Price (NGN)
                 </label>
@@ -211,7 +211,7 @@ Inspection Window: 48 Hours Guarantee`;
               </div>
 
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-[#64748b]">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-[#111113]/55">
                   ₦
                 </span>
                 <input
@@ -223,23 +223,23 @@ Inspection Window: 48 Hours Guarantee`;
                     setRawAmount(onlyNums);
                   }}
                   placeholder="e.g. 450,000"
-                  className="h-12 w-full rounded-[4px] border border-[#e2e8f0] bg-white pl-8 pr-4 font-mono text-lg font-bold text-[#020617] shadow-xs focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none transition-colors"
+                  className="h-12 w-full border border-[#111113]/15 bg-white pl-8 pr-4 font-mono text-lg font-bold text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none transition-colors"
                 />
               </div>
 
               {/* Preset Buttons */}
               <div className="flex flex-wrap items-center gap-2 mt-3">
-                <span className="text-[11px] font-secondary text-[#64748b] mr-1">Presets:</span>
+                <span className="text-[11px] font-secondary text-[#111113]/60 mr-1">Presets:</span>
                 {[85000, 250000, 450000, 850000, 1400000].map((presetVal) => (
                   <button
                     key={presetVal}
                     type="button"
                     onClick={() => setPreset(presetVal)}
                     className={cn(
-                      "px-2.5 py-1 rounded-[4px] border text-[11px] font-mono transition-all duration-200 ease-out",
+                      "px-3 py-1 rounded-full border text-[11px] font-mono transition-all duration-200 ease-out",
                       amount === presetVal
-                        ? "bg-[#0f172a] text-white border-[#0f172a]"
-                        : "bg-[#f8fafc] border-[#e2e8f0] text-[#020617] hover:bg-[#f1f5f9]"
+                        ? "bg-[#111113] text-white border-[#111113] font-semibold"
+                        : "bg-[#F8F7F4] border-[#111113]/12 text-[#111113] hover:border-[#111113]/40"
                     )}
                   >
                     ₦{(presetVal / 1000).toLocaleString()}k
@@ -248,13 +248,13 @@ Inspection Window: 48 Hours Guarantee`;
               </div>
             </div>
 
-            {/* 2. Fee Payer Toggle: Anti-Pill, strictly rounded-[4px] */}
+            {/* 2. Fee Payer Toggle */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider">
+                <label className="label text-[#111113]! opacity-80!">
                   Who Pays the Escrow Fee?
                 </label>
-                <span className="text-[11px] font-secondary text-[#64748b]">
+                <span className="text-[11px] font-secondary text-[#111113]/60">
                   Customizable prior to locking
                 </span>
               </div>
@@ -270,19 +270,19 @@ Inspection Window: 48 Hours Guarantee`;
                     type="button"
                     onClick={() => setPayer(opt.id as FeePayer)}
                     className={cn(
-                      "flex flex-col text-left p-3 rounded-[4px] border transition-all duration-200 ease-out min-h-[56px] justify-center",
+                      "flex flex-col text-left p-3 border transition-all duration-200 ease-out min-h-[56px] justify-center",
                       payer === opt.id
-                        ? "bg-[#0f172a] text-white border-[#0f172a] shadow-xs"
-                        : "bg-white border-[#e2e8f0] text-[#020617] hover:bg-[#f8fafc]"
+                        ? "bg-[#111113] text-white border-[#111113]"
+                        : "bg-white border-[#111113]/12 text-[#111113] hover:bg-[#F8F7F4]"
                     )}
                   >
-                    <span className="font-primary text-xs font-bold leading-tight">
+                    <span className="font-primary text-xs font-bold tracking-[-0.02em] leading-tight">
                       {opt.label}
                     </span>
                     <span
                       className={cn(
                         "text-[10px] mt-0.5",
-                        payer === opt.id ? "text-slate-300" : "text-[#64748b]"
+                        payer === opt.id ? "text-white/70" : "text-[#111113]/60"
                       )}
                     >
                       {opt.sub}
@@ -293,16 +293,16 @@ Inspection Window: 48 Hours Guarantee`;
             </div>
 
             {/* 3. Tracked Courier Toggle */}
-            <div className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-4 flex items-center justify-between">
+            <div className="border border-[#111113]/12 bg-[#F8F7F4] p-4 flex items-center justify-between">
               <div className="flex items-start gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-white border border-[#e2e8f0] text-[#0f172a] mt-0.5 shrink-0">
+                <div className="flex h-8 w-8 items-center justify-center bg-white border border-[#111113]/12 text-[#111113] mt-0.5 shrink-0">
                   <Truck className="h-4 w-4" />
                 </div>
                 <div>
-                  <div className="font-primary text-xs font-bold text-[#020617]">
+                  <div className="font-primary text-xs font-bold tracking-[-0.02em] text-[#111113]">
                     Include Insured Tracked Courier Waybill
                   </div>
-                  <div className="font-secondary text-[11px] text-[#64748b] leading-relaxed">
+                  <div className="font-secondary text-[11px] text-[#111113]/65 leading-relaxed">
                     Doorstep verification by GIG/DHL with tamper-evident seal and live signature capture.
                   </div>
                 </div>
@@ -314,7 +314,7 @@ Inspection Window: 48 Hours Guarantee`;
                   onClick={() => setIncludeShipping(!includeShipping)}
                   className={cn(
                     "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                    includeShipping ? "bg-[#22c55e]" : "bg-[#cbd5e1]"
+                    includeShipping ? "bg-[#22c55e]" : "bg-[#111113]/25"
                   )}
                 >
                   <span
@@ -334,18 +334,18 @@ Inspection Window: 48 Hours Guarantee`;
           RIGHT: LIVE LEDGER BREAKDOWN & SETTLEMENT RECEIPT (5 Cols)
           ===================================================================== */}
       <div className="lg:col-span-5 space-y-4">
-        <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_4px_8px_rgba(15,23,42,0.06)] space-y-5">
+        <div className="border border-[#111113]/12 bg-white p-6 space-y-5">
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#e2e8f0]">
+          <div className="flex items-center justify-between pb-4 border-b border-[#111113]/12">
             <div>
-              <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[#64748b]">
+              <span className="label">
                 Estimated Payout & Deposit
               </span>
-              <h3 className="font-primary text-base font-bold text-[#020617]">
+              <h3 className="font-primary text-base font-bold tracking-[-0.03em] text-[#111113] mt-0.5">
                 Escrow Settlement Ledger
               </h3>
             </div>
-            <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-[#15803d] bg-[#22c55e]/15 px-2.5 py-1 rounded-[4px] border border-[#22c55e]/30">
+            <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-[#15803d] bg-[#22c55e]/15 px-2.5 py-1 border border-[#22c55e]/30">
               <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
               <span>{tierInfo.percentage.toFixed(1)}% Rate</span>
             </div>
@@ -354,68 +354,68 @@ Inspection Window: 48 Hours Guarantee`;
           {/* Breakdown Rows */}
           <div className="space-y-3 font-secondary text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-[#64748b]">Gadget Agreed Price</span>
-              <span className="font-mono font-bold text-[#020617]">
+              <span className="text-[#111113]/65">Gadget Agreed Price</span>
+              <span className="font-mono font-bold text-[#111113]">
                 {formatNaira(amount)}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1 text-[#64748b]">
+              <div className="flex items-center gap-1 text-[#111113]/65">
                 <span>Escrow Protection Fee</span>
-                <span className="font-mono text-[10px] text-[#0f172a]">
+                <span className="font-mono text-[10px] text-[#111113]">
                   ({tierInfo.percentage}%)
                 </span>
               </div>
-              <span className="font-mono font-medium text-[#020617]">
+              <span className="font-mono font-medium text-[#111113]">
                 {formatNaira(calculatedFee)}
               </span>
             </div>
 
-            <div className="flex items-center justify-between pl-3 border-l-2 border-[#e2e8f0] text-[11px] text-[#64748b]">
+            <div className="flex items-center justify-between pl-3 border-l-2 border-[#111113]/15 text-[11px] text-[#111113]/65">
               <span>Buyer Contribution</span>
-              <span className="font-mono text-[#020617]">
+              <span className="font-mono text-[#111113]">
                 {formatNaira(buyerFeeContribution)}
               </span>
             </div>
 
-            <div className="flex items-center justify-between pl-3 border-l-2 border-[#e2e8f0] text-[11px] text-[#64748b]">
+            <div className="flex items-center justify-between pl-3 border-l-2 border-[#111113]/15 text-[11px] text-[#111113]/65">
               <span>Seller Contribution</span>
-              <span className="font-mono text-[#020617]">
+              <span className="font-mono text-[#111113]">
                 {formatNaira(sellerFeeContribution)}
               </span>
             </div>
 
             {includeShipping && (
               <div className="flex items-center justify-between">
-                <span className="text-[#64748b]">Tracked Insured Courier</span>
-                <span className="font-mono font-medium text-[#020617]">
+                <span className="text-[#111113]/65">Tracked Insured Courier</span>
+                <span className="font-mono font-medium text-[#111113]">
                   +{formatNaira(shippingFee)}
                 </span>
               </div>
             )}
 
             <div className="flex items-center justify-between text-[11px]">
-              <span className="text-[#64748b]">Paystack Custody Fee (Capped)</span>
-              <span className="font-mono text-[#020617]">
+              <span className="text-[#111113]/65">Paystack Custody Fee (Capped)</span>
+              <span className="font-mono text-[#111113]">
                 +{formatNaira(gatewayFee)}
               </span>
             </div>
           </div>
 
           {/* Dual Big Result Cards */}
-          <div className="pt-4 border-t border-[#e2e8f0] space-y-3">
+          <div className="pt-4 border-t border-[#111113]/12 space-y-3">
             {/* Buyer Total Card */}
-            <div className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-3.5">
+            <div className="border border-[#111113]/12 bg-[#F8F7F4] p-3.5">
               <div className="flex items-center justify-between">
-                <span className="font-secondary text-xs text-[#64748b]">
+                <span className="font-secondary text-xs text-[#111113]/65">
                   Buyer Total Locked Deposit:
                 </span>
-                <span className="font-mono text-xs text-[#0f172a] font-semibold">
+                <span className="font-mono text-xs text-[#111113] font-semibold">
                   (In Escrow)
                 </span>
               </div>
-              <div className="font-mono text-2xl font-bold text-[#020617] mt-1">
+              <div className="font-mono text-2xl font-bold text-[#111113] mt-1">
                 {formatNaira(totalBuyerDeposit)}
               </div>
               <div className="font-secondary text-[11px] text-[#15803d] flex items-center gap-1 mt-1">
@@ -425,7 +425,7 @@ Inspection Window: 48 Hours Guarantee`;
             </div>
 
             {/* Seller Net Payout Card */}
-            <div className="rounded-[4px] border border-[#22c55e]/30 bg-[#22c55e]/10 p-3.5">
+            <div className="border border-[#22c55e]/30 bg-[#22c55e]/10 p-3.5">
               <div className="flex items-center justify-between">
                 <span className="font-secondary text-xs text-[#15803d]">
                   Seller Net Payout:
@@ -437,8 +437,8 @@ Inspection Window: 48 Hours Guarantee`;
               <div className="font-mono text-2xl font-bold text-[#15803d] mt-1">
                 {formatNaira(totalSellerPayout)}
               </div>
-              <div className="font-secondary text-[11px] text-[#64748b] flex items-center gap-1 mt-1">
-                <Clock className="h-3 w-3 text-[#64748b]" />
+              <div className="font-secondary text-[11px] text-[#111113]/65 flex items-center gap-1 mt-1">
+                <Clock className="h-3 w-3 text-[#111113]/60" />
                 <span>Direct payout within 15 mins of buyer approval</span>
               </div>
             </div>
@@ -458,7 +458,7 @@ Inspection Window: 48 Hours Guarantee`;
                   buyerDeposit: totalBuyerDeposit,
                 })
               }
-              className="w-full h-11 text-xs font-semibold gap-2 shadow-xs"
+              className="w-full h-11 text-xs font-semibold gap-2"
             >
               <span>Initiate Protected Escrow Order</span>
               <ArrowRight className="h-4 w-4" />
@@ -467,7 +467,7 @@ Inspection Window: 48 Hours Guarantee`;
             <button
               type="button"
               onClick={handleCopySummary}
-              className="w-full h-9 rounded-[4px] border border-[#e2e8f0] bg-white text-[#020617] hover:bg-[#f8fafc] text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+              className="w-full h-9 rounded-full border border-[#111113]/15 bg-white text-[#111113] hover:bg-[#F8F7F4] text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
             >
               {copied ? (
                 <>
@@ -476,7 +476,7 @@ Inspection Window: 48 Hours Guarantee`;
                 </>
               ) : (
                 <>
-                  <Copy className="h-3.5 w-3.5 text-[#64748b]" />
+                  <Copy className="h-3.5 w-3.5 text-[#111113]/60" />
                   <span>Copy Settlement Summary</span>
                 </>
               )}

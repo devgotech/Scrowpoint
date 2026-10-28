@@ -42,23 +42,23 @@ export function VerdictActionGroup({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] space-y-4",
+        "border border-[#111113]/12 bg-white p-6 space-y-4",
         className
       )}
     >
-      <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
         <div className="flex items-center gap-2">
-          <Scale className="h-4 w-4 text-[#0f172a]" />
-          <h4 className="font-primary text-sm font-bold text-[#020617]">
+          <Scale className="h-4 w-4 text-[#111113]" />
+          <h4 className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">
             Arbitration Verdict Console ({caseId})
           </h4>
         </div>
-        <span className="font-mono text-xs font-bold text-[#020617]">
+        <span className="font-mono text-xs font-bold text-[#111113]">
           Locked: {formatNaira(orderAmount)}
         </span>
       </div>
 
-      <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
+      <p className="font-secondary text-xs text-[#111113]/65 leading-relaxed">
         Selecting a verdict will execute binding database triggers on the Paystack custodial holding account.
       </p>
 
@@ -70,7 +70,7 @@ export function VerdictActionGroup({
             setSelectedVerdict("refund_buyer");
             onExecuteVerdict?.("refund_buyer");
           }}
-          className="p-4 rounded-[4px] border border-[#f56565]/40 bg-[#f56565]/10 hover:bg-[#f56565]/20 text-left transition-all duration-200 ease-out space-y-1"
+          className="p-4 border border-[#f56565]/40 bg-[#f56565]/10 hover:bg-[#f56565]/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
         >
           <div className="flex items-center justify-between">
             <span className="font-primary text-xs font-bold text-[#c53030]">
@@ -93,7 +93,7 @@ export function VerdictActionGroup({
             setSelectedVerdict("release_seller");
             onExecuteVerdict?.("release_seller");
           }}
-          className="p-4 rounded-[4px] border border-[#22c55e]/40 bg-[#22c55e]/10 hover:bg-[#22c55e]/20 text-left transition-all duration-200 ease-out space-y-1"
+          className="p-4 border border-[#22c55e]/40 bg-[#22c55e]/10 hover:bg-[#22c55e]/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
         >
           <div className="flex items-center justify-between">
             <span className="font-primary text-xs font-bold text-[#15803d]">
@@ -116,18 +116,18 @@ export function VerdictActionGroup({
             setSelectedVerdict("split");
             onExecuteVerdict?.("split");
           }}
-          className="p-4 rounded-[4px] border border-[#0f172a] bg-[#f8fafc] hover:bg-[#f1f5f9] text-left transition-all duration-200 ease-out space-y-1"
+          className="p-4 border border-[#111113] bg-[#F8F7F4] hover:bg-[#F0EFEA] text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
         >
           <div className="flex items-center justify-between">
-            <span className="font-primary text-xs font-bold text-[#020617]">
+            <span className="font-primary text-xs font-bold text-[#111113]">
               50 / 50 Compromise
             </span>
-            <Scale className="h-4 w-4 text-[#0f172a]" />
+            <Scale className="h-4 w-4 text-[#111113]" />
           </div>
-          <div className="font-mono text-sm font-extrabold text-[#020617]">
+          <div className="font-mono text-sm font-extrabold text-[#111113]">
             {formatNaira(orderAmount / 2)} each
           </div>
-          <p className="font-secondary text-[11px] text-[#64748b] leading-tight">
+          <p className="font-secondary text-[11px] text-[#111113]/65 leading-tight">
             Split settlement to cover repair or battery replacement costs.
           </p>
         </button>

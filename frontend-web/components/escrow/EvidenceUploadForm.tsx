@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { disputesApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 /**
@@ -69,11 +70,18 @@ export function EvidenceUploadForm({
     ]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) return;
 
     setIsSubmitting(true);
+    await disputesApi.create({
+      order_id: orderId,
+      reason: category,
+      description: description.trim(),
+      evidence_urls: evidenceFiles,
+    });
+
     setTimeout(() => {
       setIsSubmitting(false);
       onSubmitDispute({
@@ -82,27 +90,27 @@ export function EvidenceUploadForm({
         evidenceCount: evidenceFiles.length,
       });
       onClose();
-    }, 1000);
+    }, 600);
   };
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111113]/60 backdrop-blur-xs animate-in fade-in duration-200"
     >
-      <div className="relative w-full max-w-lg rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-6">
+      <div className="relative w-full max-w-lg border border-[#111113]/15 bg-white p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-6">
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-[#e2e8f0]">
+        <div className="flex items-start justify-between pb-4 border-b border-[#111113]/12">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#ecc94b]/20 border border-[#ecc94b]/40 text-[#975a16]">
+            <div className="flex h-10 w-10 items-center justify-center bg-[#ecc94b]/20 border border-[#ecc94b]/40 text-[#975a16]">
               <ShieldAlert className="h-5 w-5 text-[#ecc94b]" />
             </div>
             <div>
               <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#975a16]">
                 48-Hour Inspection Safeguard
               </span>
-              <h2 className="font-primary text-lg font-bold text-[#020617]">
+              <h2 className="font-primary text-lg font-bold tracking-[-0.03em] text-[#111113]">
                 Open Dispute & Freeze Escrow
               </h2>
             </div>
@@ -111,14 +119,14 @@ export function EvidenceUploadForm({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-[4px] text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#020617]"
+            className="p-1.5 text-[#111113]/60 hover:bg-[#F0EFEA] hover:text-[#111113]"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Legal Freeze Warning Banner */}
-        <div className="rounded-[4px] border border-[#f56565]/40 bg-[#f56565]/10 p-3.5 flex items-start gap-2.5 text-xs text-[#c53030]">
+        <div className="border border-[#f56565]/40 bg-[#f56565]/10 p-3.5 flex items-start gap-2.5 text-xs text-[#c53030]">
           <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-[#f56565]" />
           <div>
             <strong className="block mb-0.5">Automated Escrow Lock:</strong>
@@ -129,7 +137,7 @@ export function EvidenceUploadForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Dispute Category Radio Group */}
           <div className="space-y-2">
-            <label className="font-primary text-xs font-bold text-[#020617] uppercase tracking-wider block">
+            <label className="label block">
               Issue Classification
             </label>
             <div className="space-y-1.5">
@@ -137,10 +145,10 @@ export function EvidenceUploadForm({
                 <label
                   key={cat.id}
                   className={cn(
-                    "flex items-start gap-3 p-3 rounded-[4px] border cursor-pointer transition-all duration-200 ease-out",
+                    "flex items-start gap-3 p-3 border cursor-pointer transition-all duration-200 ease-out",
                     category === cat.id
-                      ? "border-[#0f172a] bg-[#f8fafc] ring-1 ring-[#0f172a]"
-                      : "border-[#e2e8f0] bg-white hover:bg-[#f8fafc]"
+                      ? "border-[#111113] bg-[#F8F7F4] ring-1 ring-[#111113]"
+                      : "border-[#111113]/12 bg-white hover:bg-[#F8F7F4]"
                   )}
                 >
                   <input
@@ -148,13 +156,13 @@ export function EvidenceUploadForm({
                     name="dispute-category"
                     checked={category === cat.id}
                     onChange={() => setCategory(cat.id)}
-                    className="mt-0.5 text-[#0f172a] focus:ring-[#0f172a]"
+                    className="mt-0.5 text-[#111113] focus:ring-[#111113]"
                   />
                   <div>
-                    <span className="font-primary text-xs font-bold text-[#020617] block">
+                    <span className="font-primary text-xs font-bold text-[#111113] block">
                       {cat.label}
                     </span>
-                    <span className="font-secondary text-[11px] text-[#64748b] block mt-0.5">
+                    <span className="font-secondary text-[11px] text-[#111113]/65 block mt-0.5">
                       {cat.desc}
                     </span>
                   </div>
@@ -167,7 +175,7 @@ export function EvidenceUploadForm({
           <div className="space-y-1.5">
             <label
               htmlFor="dispute-desc"
-              className="font-primary text-xs font-bold text-[#020617] uppercase tracking-wider block"
+              className="label block"
             >
               Detailed Defect Description
             </label>
@@ -177,13 +185,13 @@ export function EvidenceUploadForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Explain exactly what is wrong (e.g. Battery health is 78% instead of 97% stated, screen digitizer has dead touch line)..."
-              className="w-full p-3 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]"
+              className="w-full p-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
             />
           </div>
 
           {/* Evidence Photo Strip */}
           <div className="space-y-2">
-            <label className="font-primary text-xs font-bold text-[#020617] uppercase tracking-wider block">
+            <label className="label block">
               Diagnostic & Photographic Evidence
             </label>
 
@@ -191,7 +199,7 @@ export function EvidenceUploadForm({
               {evidenceFiles.map((url, i) => (
                 <div
                   key={i}
-                  className="relative aspect-square rounded-[4px] overflow-hidden border border-[#e2e8f0]"
+                  className="relative aspect-square overflow-hidden border border-[#111113]/12"
                 >
                   <img src={url} alt="Dispute evidence" className="h-full w-full object-cover" />
                 </div>
@@ -200,7 +208,7 @@ export function EvidenceUploadForm({
               <button
                 type="button"
                 onClick={handleAddSampleEvidence}
-                className="aspect-square rounded-[4px] border border-dashed border-[#cbd5e1] hover:border-[#0f172a] flex flex-col items-center justify-center text-[#64748b] hover:text-[#0f172a] text-[10px] font-mono gap-1"
+                className="aspect-square border border-dashed border-[#111113]/25 hover:border-[#111113] flex flex-col items-center justify-center text-[#111113]/65 hover:text-[#111113] text-[10px] font-mono gap-1"
               >
                 <Upload className="h-4 w-4" />
                 <span>Add Proof</span>
@@ -209,13 +217,13 @@ export function EvidenceUploadForm({
           </div>
 
           {/* Action CTAs */}
-          <div className="pt-4 border-t border-[#e2e8f0] flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-[#111113]/12 flex items-center justify-end gap-3">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={onClose}
-              className="h-10 text-xs border-[#e2e8f0]"
+              className="h-10 text-xs"
             >
               Cancel
             </Button>
@@ -225,7 +233,7 @@ export function EvidenceUploadForm({
               variant="destructive"
               size="sm"
               disabled={isSubmitting || !description.trim()}
-              className="h-10 px-5 text-xs font-semibold gap-2 bg-[#f56565] hover:bg-[#e53e3e] text-white shadow-xs"
+              className="h-10 px-5 text-xs font-semibold gap-2 bg-[#f56565] hover:bg-[#e53e3e] text-white"
             >
               <Scale className="h-4 w-4" />
               <span>{isSubmitting ? "Locking Escrow..." : "Confirm & Freeze Escrow"}</span>

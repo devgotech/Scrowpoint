@@ -88,7 +88,7 @@ export function PricingTierCards({
 }: PricingTierCardsProps) {
   return (
     <div className={cn("grid grid-cols-1 md:grid-cols-3 gap-6", className)}>
-      {PRICING_TIERS.map((tier) => {
+      {PRICING_TIERS.map((tier, index) => {
         const isSelected = selectedTierId === tier.id;
 
         return (
@@ -96,16 +96,16 @@ export function PricingTierCards({
             key={tier.id}
             onClick={() => onSelectTier?.(tier)}
             className={cn(
-              "relative flex flex-col justify-between rounded-[8px] border bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] transition-all duration-200 ease-out cursor-pointer",
+              "v7-card relative flex flex-col justify-between transition-all duration-200 ease-out cursor-pointer",
               tier.isPopular
-                ? "border-[#0f172a] ring-1 ring-[#0f172a]"
-                : "border-[#e2e8f0] hover:border-[#cbd5e1]",
-              isSelected && "ring-2 ring-[#22c55e] border-[#22c55e]"
+                ? "border-[#111113] ring-1 ring-[#111113]"
+                : "border-[#111113]/12 hover:border-[#111113]/40",
+              isSelected && "ring-2 ring-[#FF5A25] border-[#FF5A25]"
             )}
           >
             {/* Popular Indicator */}
             {tier.isPopular && (
-              <div className="absolute -top-3 left-6 bg-[#0f172a] text-white px-2.5 py-0.5 rounded-[4px] font-mono text-[10px] font-bold tracking-wider uppercase shadow-xs">
+              <div className="absolute -top-3 left-6 bg-[#111113] text-white px-2.5 py-0.5 font-mono text-[10px] font-bold tracking-[0.12em] uppercase">
                 Most Common
               </div>
             )}
@@ -113,47 +113,48 @@ export function PricingTierCards({
             <div>
               {/* Header */}
               <div className="flex items-center justify-between mb-2">
-                <span className="font-primary text-base font-bold text-[#020617]">
-                  {tier.name}
-                </span>
-                <span className="font-mono text-xs font-semibold text-[#64748b]">
-                  {tier.minFeeText}
+                <span className="label">
+                  [0{index + 1}] {tier.minFeeText}
                 </span>
               </div>
 
+              <h3 className="font-primary text-xl font-bold tracking-[-0.04em] text-[#111113]">
+                {tier.name}
+              </h3>
+
               {/* Price / Rate */}
-              <div className="flex items-baseline gap-1 my-3">
-                <span className="font-mono text-3xl sm:text-4xl font-extrabold text-[#020617]">
+              <div className="flex items-baseline gap-1.5 my-3">
+                <span className="font-primary text-4xl font-bold tracking-[-0.04em] text-[#111113]">
                   {tier.feePercent.toFixed(1)}%
                 </span>
-                <span className="font-secondary text-xs text-[#64748b]">
+                <span className="font-secondary text-xs text-[#111113]/65">
                   of gadget value
                 </span>
               </div>
 
               {/* Range badge */}
-              <div className="inline-block bg-[#f1f5f9] border border-[#e2e8f0] px-2 py-0.5 rounded-[4px] font-mono text-[11px] font-medium text-[#0f172a] mb-4">
+              <div className="inline-block bg-[#F8F7F4] border border-[#111113]/12 px-2.5 py-1 font-mono text-[11px] font-semibold text-[#111113] mb-4">
                 {tier.range}
               </div>
 
-              <p className="font-secondary text-xs text-[#64748b] leading-relaxed mb-6">
+              <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed mb-6">
                 {tier.description}
               </p>
 
               {/* Target gadgets chip */}
-              <div className="mb-6 rounded-[4px] bg-[#f8fafc] border border-[#e2e8f0] p-2.5">
-                <div className="font-mono text-[10px] uppercase font-semibold text-[#64748b] mb-1">
+              <div className="mb-6 bg-[#F8F7F4] border border-[#111113]/12 p-3">
+                <div className="label mb-1">
                   Typical Devices
                 </div>
-                <div className="font-secondary text-xs font-medium text-[#020617]">
+                <div className="font-secondary text-xs font-semibold text-[#111113]">
                   {tier.targetGadgets}
                 </div>
               </div>
 
               {/* Features List */}
-              <ul className="space-y-2.5 border-t border-[#e2e8f0] pt-4 mb-6">
+              <ul className="space-y-2.5 border-t border-[#111113]/12 pt-4 mb-6">
                 {tier.features.map((feat, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs font-secondary text-[#020617]">
+                  <li key={idx} className="flex items-start gap-2 text-xs font-secondary text-[#111113]">
                     <Check className="h-4 w-4 text-[#22c55e] shrink-0 mt-0.5" />
                     <span>{feat}</span>
                   </li>
@@ -162,17 +163,17 @@ export function PricingTierCards({
             </div>
 
             {/* Bottom action cue */}
-            <div className="pt-4 border-t border-[#e2e8f0]">
+            <div className="pt-4 border-t border-[#111113]/12">
               <button
                 type="button"
                 className={cn(
-                  "w-full h-10 rounded-[4px] text-xs font-medium transition-all duration-200 ease-out flex items-center justify-center gap-1.5",
+                  "w-full h-10 rounded-full text-xs font-semibold transition-all duration-200 ease-out flex items-center justify-center gap-1.5",
                   tier.isPopular
-                    ? "bg-[#0f172a] text-white hover:bg-[#1e293b]"
-                    : "bg-[#f8fafc] border border-[#e2e8f0] text-[#020617] hover:bg-[#f1f5f9]"
+                    ? "bg-[#111113] text-white hover:bg-[#FF5A25]"
+                    : "bg-[#F8F7F4] border border-[#111113]/15 text-[#111113] hover:bg-[#111113] hover:text-white"
                 )}
               >
-                <Zap className="h-3.5 w-3.5 text-[#ecc94b]" />
+                <Zap className="h-3.5 w-3.5 text-[#FF5A25]" />
                 <span>Test this tier in calculator</span>
               </button>
             </div>

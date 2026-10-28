@@ -88,35 +88,35 @@ export function SellerStatsOverview({
           <div
             key={i}
             className={cn(
-              "rounded-[8px] border bg-white p-5 shadow-[0_2px_4px_rgba(15,23,42,0.06)] flex flex-col justify-between transition-all duration-200 ease-out hover:border-[#cbd5e1]",
-              card.isHighlight ? "border-[#22c55e]/40 ring-1 ring-[#22c55e]/20" : "border-[#e2e8f0]"
+              "border bg-white p-5 flex flex-col justify-between transition-all duration-200 ease-out hover:border-[#111113]/35",
+              card.isHighlight ? "border-[#22c55e]/40 ring-1 ring-[#22c55e]/20" : "border-[#111113]/12"
             )}
           >
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="font-secondary text-xs text-[#64748b]">
+                <span className="label">
                   {card.label}
                 </span>
                 <span
                   className={cn(
-                    "font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-[2px]",
+                    "font-mono text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider",
                     card.isHighlight
                       ? "bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30"
-                      : "bg-[#f1f5f9] text-[#64748b] border border-[#e2e8f0]"
+                      : "bg-[#F0EFEA] text-[#111113]/70 border border-[#111113]/12"
                   )}
                 >
                   {card.badgeText}
                 </span>
               </div>
 
-              <div className="font-mono text-2xl font-extrabold text-[#020617] tracking-tight">
+              <div className="font-mono text-2xl font-extrabold text-[#111113] tracking-[-0.04em]">
                 {card.value}
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#e2e8f0] flex items-center justify-between text-[11px] font-secondary text-[#64748b]">
+            <div className="mt-4 pt-3 border-t border-[#111113]/12 flex items-center justify-between text-[11px] font-secondary text-[#111113]/65">
               <span>{card.subtext}</span>
-              <Icon className="h-3.5 w-3.5 text-[#0f172a]" />
+              <Icon className="h-3.5 w-3.5 text-[#111113]" />
             </div>
           </div>
         );

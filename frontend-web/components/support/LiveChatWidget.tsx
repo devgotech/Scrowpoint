@@ -34,7 +34,7 @@ export function LiveChatWidget({ className }: LiveChatWidgetProps) {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0f172a] text-white shadow-xl hover:bg-slate-800 transition-all duration-200 ease-out hover:scale-105 active:scale-95 border border-slate-700"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-[#111113] text-white shadow-xl hover:bg-[#FF5A25] transition-all duration-200 ease-out hover:scale-105 active:scale-95 border border-white/15 cursor-pointer"
           title="Live Escrow Support Chat"
           aria-label="Open Escrow Support Chat"
         >

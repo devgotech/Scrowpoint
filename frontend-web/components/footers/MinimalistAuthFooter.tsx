@@ -75,46 +75,47 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
     // Dispatch event to open floating live chat widget if present
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
+      window.dispatchEvent(new CustomEvent("bh_open_live_chat"));
     }
   };
 
   return (
     <footer
       className={cn(
-        "w-full border-t border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] text-xs font-secondary py-3.5 px-4 sm:px-6 lg:px-8 transition-colors",
+        "w-full border-t border-[#111113]/12 bg-[#F8F7F4] text-[#111113]/65 text-xs font-secondary py-4 px-4 sm:px-6 lg:px-8 transition-colors",
         className
       )}
     >
-      <div className="mx-auto max-w-[1280px] flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+      <div className="mx-auto max-w-[1600px] flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         {/* Left: Brand Copyright & Trust Micro-Copy */}
         <div className="flex items-center gap-2 text-center sm:text-left">
-          <span className="font-mono text-[11px] text-[#475569]">
-            © {new Date().getFullYear()} Scrowpoint
+          <span className="label">
+            © {new Date().getFullYear()} Scrowpoint Technologies
           </span>
-          <span className="hidden md:inline text-slate-300">•</span>
-          <span className="hidden md:flex items-center gap-1 font-mono text-[10px] text-[#15803d]">
+          <span className="hidden md:inline text-[#111113]/25">•</span>
+          <span className="hidden md:flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.1em] text-[#15803d]">
             <Lock className="h-3 w-3 text-[#22c55e]" />
             <span>256-Bit SSL Escrow Protected</span>
           </span>
         </div>
 
         {/* Center: Compact Legal Links */}
-        <div className="flex items-center gap-4 sm:gap-6 text-xs">
+        <div className="flex items-center gap-4 sm:gap-6 label">
           <Link
             href="/legal/terms"
-            className="hover:text-[#0f172a] transition-colors duration-150"
+            className="hover:text-[#FF5A25] hover:opacity-100 transition-colors duration-150"
           >
             Terms of Service
           </Link>
           <Link
             href="/legal/privacy"
-            className="hover:text-[#0f172a] transition-colors duration-150"
+            className="hover:text-[#FF5A25] hover:opacity-100 transition-colors duration-150"
           >
             Privacy
           </Link>
           <Link
             href="/legal/buyer-protection"
-            className="hover:text-[#0f172a] transition-colors duration-150"
+            className="hover:text-[#FF5A25] hover:opacity-100 transition-colors duration-150"
           >
             Escrow Rules
           </Link>
@@ -127,19 +128,19 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
             <button
               type="button"
               onClick={() => setIsLocaleMenuOpen(!isLocaleMenuOpen)}
-              className="flex items-center gap-1.5 h-7 px-2 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-mono text-[#020617] hover:border-slate-400 transition-colors"
+              className="flex items-center gap-1.5 h-7 px-2.5 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] hover:border-[#111113]/40 transition-colors"
               aria-label="Select Language and Currency"
               aria-expanded={isLocaleMenuOpen}
             >
-              <Globe className="h-3.5 w-3.5 text-[#64748b]" />
+              <Globe className="h-3.5 w-3.5 text-[#111113]/60" />
               <span className="text-xs">{selectedLocale.flag}</span>
               <span className="hidden sm:inline text-[11px]">{selectedLocale.currency}</span>
-              <ChevronDown className={cn("h-3 w-3 text-[#64748b] transition-transform", isLocaleMenuOpen && "rotate-180")} />
+              <ChevronDown className={cn("h-3 w-3 text-[#111113]/60 transition-transform", isLocaleMenuOpen && "rotate-180")} />
             </button>
 
             {isLocaleMenuOpen && (
-              <div className="absolute right-0 bottom-full mb-2 w-52 rounded-[8px] border border-[#e2e8f0] bg-white p-1.5 shadow-lg z-50 text-[#020617] animate-in fade-in zoom-in-95 duration-150">
-                <div className="px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-[#64748b] font-semibold border-b border-[#e2e8f0] mb-1">
+              <div className="absolute right-0 bottom-full mb-2 w-52 border border-[#111113]/15 bg-white p-1.5 shadow-lg z-50 text-[#111113] animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-2 py-1 label border-b border-[#111113]/12 mb-1">
                   Region &amp; Currency
                 </div>
                 {SUPPORTED_LOCALES.map((loc) => {
@@ -153,17 +154,17 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
                         setIsLocaleMenuOpen(false);
                       }}
                       className={cn(
-                        "w-full flex items-center justify-between px-2.5 py-1.5 rounded-[4px] text-xs font-mono transition-colors text-left",
+                        "w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-mono transition-colors text-left",
                         isSelected
-                          ? "bg-[#0f172a] text-white font-bold"
-                          : "hover:bg-[#f8fafc] text-[#020617]"
+                          ? "bg-[#111113] text-white font-bold"
+                          : "hover:bg-[#F8F7F4] text-[#111113]"
                       )}
                     >
                       <div className="flex items-center gap-2">
                         <span>{loc.flag}</span>
                         <span className="text-[11px]">{loc.label}</span>
                       </div>
-                      <span className={cn("text-[10px]", isSelected ? "text-[#22c55e]" : "text-[#64748b]")}>
+                      <span className={cn("text-[10px]", isSelected ? "text-[#22c55e]" : "text-[#111113]/60")}>
                         {loc.currency}
                       </span>
                     </button>
@@ -177,7 +178,7 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
           <button
             type="button"
             onClick={handleTriggerHelp}
-            className="flex items-center gap-1.5 h-7 px-2.5 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-mono text-[#020617] hover:text-[#0f172a] hover:border-slate-400 transition-colors"
+            className="flex items-center gap-1.5 h-7 px-2.5 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] hover:border-[#111113]/40 transition-colors"
             title="Chat with Support or read KYC FAQ"
           >
             <HelpCircle className="h-3.5 w-3.5 text-[#22c55e]" />

@@ -2,14 +2,11 @@
 
 import React from "react";
 import {
-  AlertTriangle,
   CheckCircle2,
   Clock,
   Lock,
-  Package,
-  Shield,
   ShieldAlert,
-  ShieldCheck,
+  Sparkles,
   Truck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,10 +14,11 @@ import { cn } from "@/lib/utils";
 /**
  * SystemMilestoneBubble Component (Phase 3 §2)
  *
- * Requirements (5_screen_flows.md & 4_ui_system.md):
- * - Distinct, un-deletable chat bubbles triggered by backend events in the escrow ledger.
- * - Distinct styling for: FUNDED, SHIPPED, DELIVERED/INSPECTION, DISPUTED, SETTLED.
- * - Token Compliance: 8px container radius, 4px badges, Geist Mono timestamps and numbers.
+ * Friendly, human-centered Escrow Milestone card inside the Trade Conversation.
+ * Adheres strictly to Design Variation 7 (4_ui_system.md):
+ * - Sharp 0px architectural geometry (border-[#111113]/12)
+ * - WCAG-compliant trust green (#15803d) on light surfaces
+ * - Space Grotesk headings & monospace timestamps, Plus Jakarta Sans body
  */
 
 export type MilestoneType =
@@ -37,6 +35,7 @@ export interface SystemMilestone {
   title: string;
   description: string;
   timestamp: string;
+  nextStepHint?: string;
   actionText?: string;
 }
 
@@ -50,39 +49,53 @@ export function SystemMilestoneBubble({
   className,
 }: SystemMilestoneBubbleProps) {
   const isDispute = milestone.type === "DISPUTED";
-  const isSettled = milestone.type === "SETTLED" || milestone.type === "FUNDED";
-  const isTransit = milestone.type === "SHIPPED";
-  const isInspection = milestone.type === "INSPECTION_ACTIVE" || milestone.type === "DELIVERED";
+  const isSettled =
+    milestone.type === "SETTLED" || milestone.type === "FUNDED";
+  const isInspection =
+    milestone.type === "INSPECTION_ACTIVE" || milestone.type === "DELIVERED";
+
+  const stepBadgeLabel =
+    milestone.type === "FUNDED"
+      ? "Milestone 01 • Funds Secured"
+      : milestone.type === "SHIPPED"
+      ? "Milestone 02 • On the Way"
+      : milestone.type === "INSPECTION_ACTIVE" || milestone.type === "DELIVERED"
+      ? "Milestone 03 • 48H Test Window"
+      : milestone.type === "SETTLED"
+      ? "Milestone 04 • Trade Complete"
+      : "Escrow Protection Hold";
 
   return (
     <div
       className={cn(
-        "my-3 rounded-[8px] border p-4 shadow-2xs transition-all duration-200 ease-out",
+        "my-4 border bg-white p-4 sm:p-5 transition-all duration-200 ease-out",
         isDispute
-          ? "border-[#f56565]/40 bg-[#f56565]/10 text-[#c53030]"
+          ? "border-[#f56565]/50 bg-[#f56565]/5"
           : isSettled
-          ? "border-[#22c55e]/40 bg-[#22c55e]/10 text-[#15803d]"
+          ? "border-[#15803d]/25 bg-[#22c55e]/5"
           : isInspection
-          ? "border-[#ecc94b]/40 bg-[#ecc94b]/15 text-[#975a16]"
-          : "border-[#e2e8f0] bg-[#f8fafc] text-[#020617]",
+          ? "border-[#ecc94b]/60 bg-[#ecc94b]/10"
+          : "border-[#111113]/12 bg-[#F8F7F4]",
         className
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-3.5">
         <div
           className={cn(
-            "flex h-8 w-8 items-center justify-center rounded-[4px] shrink-0 mt-0.5",
+            "flex h-9 w-9 items-center justify-center shrink-0 mt-0.5",
             isDispute
-              ? "bg-[#f56565] text-white"
+              ? "bg-[#c53030] text-white"
               : isSettled
-              ? "bg-[#22c55e] text-white"
+              ? "bg-[#15803d] text-white"
               : isInspection
-              ? "bg-[#ecc94b] text-[#020617]"
-              : "bg-[#0f172a] text-white"
+              ? "bg-[#ecc94b] text-[#111113]"
+              : "bg-[#111113] text-white"
           )}
         >
           {isDispute ? (
             <ShieldAlert className="h-4 w-4" />
+          ) : milestone.type === "SETTLED" ? (
+            <CheckCircle2 className="h-4 w-4" />
           ) : isSettled ? (
             <Lock className="h-4 w-4" />
           ) : isInspection ? (
@@ -92,26 +105,49 @@ export function SystemMilestoneBubble({
           )}
         </div>
 
-        <div className="min-w-0 flex-1 space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-wider">
-              SYSTEM PROTOCOL MILESTONE
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span
+              className={cn(
+                "font-mono text-[10px] font-bold uppercase tracking-[0.14em]",
+                isDispute
+                  ? "text-[#c53030]"
+                  : isSettled
+                  ? "text-[#15803d]"
+                  : isInspection
+                  ? "text-[#975a16]"
+                  : "text-[#111113]/70"
+              )}
+            >
+              {stepBadgeLabel}
             </span>
-            <span className="font-mono text-[10px] opacity-75">
+            <span className="font-mono text-[10px] text-[#111113]/55">
               {milestone.timestamp}
             </span>
           </div>
 
-          <h4 className="font-primary text-xs font-bold leading-tight">
+          <h4 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] leading-snug">
             {milestone.title}
           </h4>
 
-          <p className="font-secondary text-xs opacity-90 leading-relaxed">
+          <p className="font-secondary text-xs text-[#111113]/75 leading-relaxed">
             {milestone.description}
           </p>
 
+          {milestone.nextStepHint && (
+            <div className="pt-2 mt-2 border-t border-[#111113]/10 flex items-center gap-1.5 text-[11px] font-secondary text-[#111113]/80">
+              <Sparkles className="h-3.5 w-3.5 text-[#FF5A25] shrink-0" />
+              <span>
+                <strong className="font-semibold text-[#111113]">
+                  What&apos;s next:
+                </strong>{" "}
+                {milestone.nextStepHint}
+              </span>
+            </div>
+          )}
+
           {milestone.actionText && (
-            <div className="pt-1 font-mono text-[11px] font-semibold underline underline-offset-2">
+            <div className="pt-1 font-mono text-[11px] font-semibold text-[#15803d] underline underline-offset-2">
               {milestone.actionText}
             </div>
           )}

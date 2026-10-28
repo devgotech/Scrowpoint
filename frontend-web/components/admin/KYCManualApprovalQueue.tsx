@@ -73,49 +73,49 @@ export function KYCManualApprovalQueue({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] overflow-hidden",
+        "border border-[#111113]/12 bg-white overflow-hidden",
         className
       )}
     >
-      <div className="flex items-center justify-between p-5 border-b border-[#e2e8f0]">
+      <div className="flex items-center justify-between p-5 border-b border-[#111113]/12">
         <div>
           <div className="flex items-center gap-2">
-            <IdCard className="h-4 w-4 text-[#0f172a]" />
-            <h3 className="font-primary text-base font-bold text-[#020617]">
+            <IdCard className="h-4 w-4 text-[#111113]" />
+            <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
               SmileID Biometric Review Queue
             </h3>
           </div>
-          <p className="font-secondary text-xs text-[#64748b] mt-0.5">
+          <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
             Manual inspection for ambiguous document crops or glare detections.
           </p>
         </div>
 
-        <span className="font-mono text-xs bg-[#f8fafc] border border-[#e2e8f0] px-2.5 py-1 rounded-[4px] font-bold text-[#0f172a]">
+        <span className="font-mono text-[11px] uppercase tracking-[0.12em] bg-[#F8F7F4] border border-[#111113]/12 px-2.5 py-1 font-bold text-[#111113]">
           {queue.length} Pending
         </span>
       </div>
 
-      <div className="divide-y divide-[#e2e8f0]">
+      <div className="divide-y divide-[#111113]/12">
         {queue.length === 0 ? (
-          <div className="p-8 text-center text-xs font-secondary text-[#64748b]">
+          <div className="p-8 text-center text-xs font-secondary text-[#111113]/60">
             All identity submissions cleared.
           </div>
         ) : (
           queue.map((item) => (
-            <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#f8fafc] transition-colors">
+            <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#F8F7F4] transition-colors">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-primary font-bold text-xs text-[#020617]">
+                  <span className="font-primary font-bold text-xs text-[#111113]">
                     {item.userName}
                   </span>
-                  <span className="font-mono text-[10px] bg-[#f1f5f9] text-[#64748b] px-1.5 py-0.2 rounded-[2px]">
+                  <span className="font-mono text-[10px] uppercase tracking-wider bg-[#F0EFEA] text-[#111113]/70 px-1.5 py-0.5">
                     {item.docType}
                   </span>
                 </div>
-                <div className="font-mono text-xs text-[#64748b]">
+                <div className="font-mono text-xs text-[#111113]/65">
                   NIN: {item.ninNumber} • {item.userEmail}
                 </div>
-                <div className="font-secondary text-[11px] text-[#975a16] bg-[#ecc94b]/15 px-2 py-0.5 rounded-[2px] inline-block">
+                <div className="font-secondary text-[11px] text-[#975a16] bg-[#ecc94b]/15 px-2 py-0.5 inline-block">
                   Flag: {item.flagReason}
                 </div>
               </div>
@@ -126,7 +126,7 @@ export function KYCManualApprovalQueue({
                   variant="outline"
                   size="sm"
                   onClick={() => handleReject(item.id)}
-                  className="h-9 px-3 rounded-[4px] text-xs font-mono border-[#f56565]/40 text-[#c53030] hover:bg-[#f56565]/10 gap-1"
+                  className="h-9 px-3.5 rounded-full text-xs font-mono border-[#f56565]/40 text-[#c53030] hover:bg-[#f56565]/10 gap-1"
                 >
                   <X className="h-3.5 w-3.5" />
                   <span>Reject</span>
@@ -137,7 +137,7 @@ export function KYCManualApprovalQueue({
                   variant="default"
                   size="sm"
                   onClick={() => handleApprove(item.id)}
-                  className="h-9 px-3 rounded-[4px] text-xs font-mono font-bold bg-[#15803d] hover:bg-[#166534] text-white gap-1"
+                  className="h-9 px-3.5 rounded-full text-xs font-mono font-bold bg-[#15803d] hover:bg-[#166534] text-white gap-1"
                 >
                   <Check className="h-3.5 w-3.5" />
                   <span>Approve KYC</span>

@@ -137,29 +137,29 @@ export function EscrowStatusBar({
       role="region"
       aria-label="Active Escrow Status"
       className={cn(
-        "relative w-full bg-slate-900 text-white border-b px-4 py-2 transition-all duration-300",
+        "relative w-full bg-[#111113] text-white border-b border-white/10 px-4 py-2 transition-all duration-300",
         statusConfig.barAccent,
-        isUrgent && "bg-slate-900 ring-inset ring-1 ring-amber-400/50 animate-pulse",
+        isUrgent && "bg-[#111113] ring-inset ring-1 ring-amber-400/50 animate-pulse",
         className
       )}
     >
-      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-2 sm:gap-4 text-xs font-secondary">
+      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-2 sm:gap-4 text-xs font-secondary">
         {/* Left: Escrow Order ID & Status Badge */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-          <div className="flex items-center gap-1.5 font-mono font-medium text-slate-300">
+          <div className="flex items-center gap-1.5 font-mono font-medium text-white/75">
             <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
-            <span className="hidden sm:inline text-slate-400">Order:</span>
+            <span className="hidden sm:inline text-white/50">Order:</span>
             <span className="text-white font-semibold">{orderShortId}</span>
           </div>
 
-          <span className="hidden md:inline text-slate-600">|</span>
+          <span className="hidden md:inline text-white/25">|</span>
 
           {/* Item Title context */}
-          <span className="hidden lg:inline text-slate-300 font-medium truncate max-w-xs font-primary">
+          <span className="hidden lg:inline text-white/80 font-medium truncate max-w-xs font-primary">
             {itemTitle}
           </span>
 
-          <span className="hidden lg:inline text-slate-600">|</span>
+          <span className="hidden lg:inline text-white/25">|</span>
 
           {/* Status Badge */}
           <Badge
@@ -176,19 +176,19 @@ export function EscrowStatusBar({
           {/* Countdown Clock */}
           <div
             className={cn(
-              "flex items-center gap-1.5 font-mono text-[11px] sm:text-xs px-2.5 py-0.5 rounded-[4px]",
+              "flex items-center gap-1.5 font-mono text-[11px] sm:text-xs px-2.5 py-0.5",
               isUrgent
                 ? "bg-[#ecc94b]/20 text-[#ecc94b] font-bold"
-                : "bg-slate-800/80 text-slate-200"
+                : "bg-white/10 text-white/90"
             )}
           >
             <Clock
               className={cn(
                 "h-3.5 w-3.5",
-                isUrgent ? "text-[#ecc94b] animate-spin" : "text-slate-400"
+                isUrgent ? "text-[#ecc94b] animate-spin" : "text-white/60"
               )}
             />
-            <span className="hidden sm:inline text-slate-400 font-secondary">
+            <span className="hidden sm:inline text-white/60 font-secondary">
               {statusConfig.timerLabel}:
             </span>
             <span>{formattedCountdown}</span>
@@ -197,7 +197,7 @@ export function EscrowStatusBar({
           {/* Escrow Status Link */}
           <Link
             href={`/escrow/${orderId}/status`}
-            className="group flex items-center gap-1 rounded-[4px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 text-[11px] font-secondary font-medium text-white transition-colors duration-200 ease-out"
+            className="group flex items-center gap-1 rounded-full bg-[#FF5A25] hover:bg-[#FF5A25]/90 px-3 py-1 text-[11px] font-primary uppercase tracking-[0.06em] font-semibold text-white transition-colors duration-200 ease-out"
           >
             <span>View Trade</span>
             <ArrowRight className="h-3 w-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />

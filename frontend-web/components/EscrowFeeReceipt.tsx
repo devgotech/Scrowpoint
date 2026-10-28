@@ -133,22 +133,22 @@ export function EscrowFeeReceipt({
   return (
     <Card
       className={cn(
-        "w-full max-w-xl mx-auto overflow-hidden rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)]",
+        "w-full max-w-xl mx-auto overflow-hidden border border-[#111113]/12 bg-white",
         className
       )}
     >
       {/* ====================================================================
           1. RECEIPT HEADER & STATUS
           ==================================================================== */}
-      <CardHeader className="bg-[#f8fafc] p-6 border-b border-[#e2e8f0]">
+      <CardHeader className="bg-[#F8F7F4] p-6 border-b border-[#111113]/12">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-[4px] bg-[#0f172a] text-white shadow-xs">
+            <div className="flex h-11 w-11 items-center justify-center bg-[#111113] text-white">
               <Receipt className="h-6 w-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-primary text-lg font-medium text-[#020617]">
+                <span className="font-primary text-lg font-bold tracking-[-0.04em] text-[#111113]">
                   Escrow Fee Receipt
                 </span>
                 {isLockedInEscrow && (
@@ -161,7 +161,7 @@ export function EscrowFeeReceipt({
                   </Badge>
                 )}
               </div>
-              <p className="font-secondary text-xs text-[#64748b] mt-0.5">
+              <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
                 Itemized transaction breakdown & custodial verification record
               </p>
             </div>
@@ -169,25 +169,25 @@ export function EscrowFeeReceipt({
         </div>
 
         {/* Receipt Number & Date Strip */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#e2e8f0] text-xs">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#111113]/12 text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-[#64748b] font-secondary">Receipt #:</span>
+            <span className="text-[#111113]/60 font-secondary">Receipt #:</span>
             <button
               type="button"
               onClick={handleCopyReceipt}
-              className="inline-flex items-center gap-1.5 font-mono font-medium text-[#020617] hover:text-[#0f172a] transition-colors cursor-pointer group"
+              className="inline-flex items-center gap-1.5 font-mono font-semibold text-[#111113] hover:text-[#FF5A25] transition-colors cursor-pointer group"
               title="Copy receipt number"
             >
               <span>{receiptNumber}</span>
               {copied ? (
                 <CheckCircle2 className="h-3.5 w-3.5 text-[#15803d]" />
               ) : (
-                <Copy className="h-3 w-3 text-[#64748b] group-hover:text-[#020617]" />
+                <Copy className="h-3 w-3 text-[#111113]/50 group-hover:text-[#111113]" />
               )}
             </button>
           </div>
 
-          <div className="font-mono text-[#64748b]">{createdAt}</div>
+          <div className="font-mono text-[#111113]/60">{createdAt}</div>
         </div>
       </CardHeader>
 
@@ -195,39 +195,39 @@ export function EscrowFeeReceipt({
         {/* ====================================================================
             2. ITEM & PARTIES SUMMARY
             ==================================================================== */}
-        <div className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-4 space-y-3">
+        <div className="border border-[#111113]/12 bg-[#F8F7F4] p-4 space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[#64748b]">
+              <span className="label">
                 Purchased Gadget
               </span>
-              <h4 className="font-primary text-sm font-medium text-[#020617]">
+              <h4 className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113] mt-0.5">
                 {itemTitle}
               </h4>
             </div>
             <div className="text-right">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[#64748b]">
+              <span className="label">
                 Order Ref
               </span>
-              <p className="font-mono text-xs font-semibold text-[#020617]">
+              <p className="font-mono text-xs font-semibold text-[#111113] mt-0.5">
                 {orderNumber}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-[#e2e8f0] text-xs font-mono text-[#64748b]">
+          <div className="flex items-center justify-between pt-2 border-t border-[#111113]/10 text-xs font-mono text-[#111113]/60">
             <span>SKU: {sku}</span>
             <span>Currency: {currency}</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-secondary text-[#64748b]">
+          <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-secondary text-[#111113]/65">
             <div>
-              <span className="text-[11px] block text-[#64748b]">Buyer:</span>
-              <span className="font-medium text-[#020617]">{buyerName}</span>
+              <span className="text-[11px] block text-[#111113]/55">Buyer:</span>
+              <span className="font-semibold text-[#111113]">{buyerName}</span>
             </div>
             <div className="text-right">
-              <span className="text-[11px] block text-[#64748b]">Seller:</span>
-              <span className="font-medium text-[#020617]">{sellerName}</span>
+              <span className="text-[11px] block text-[#111113]/55">Seller:</span>
+              <span className="font-semibold text-[#111113]">{sellerName}</span>
             </div>
           </div>
         </div>
@@ -236,7 +236,7 @@ export function EscrowFeeReceipt({
             3. ITEMIZED FINANCIAL LIST (Strict font-mono for numbers)
             ==================================================================== */}
         <div className="space-y-3 text-sm">
-          <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0] text-xs font-mono font-semibold uppercase tracking-wider text-[#64748b]">
+          <div className="flex items-center justify-between pb-2 border-b border-[#111113]/12 label">
             <span>Fee Itemization</span>
             <span>Amount</span>
           </div>
@@ -244,12 +244,12 @@ export function EscrowFeeReceipt({
           {/* Item 1: Gadget Price */}
           <div className="flex items-center justify-between py-1">
             <div className="flex items-center gap-2">
-              <span className="font-secondary text-[#020617]">Item Price</span>
-              <span className="text-[11px] text-[#64748b] font-mono">
+              <span className="font-secondary text-[#111113]">Item Price</span>
+              <span className="text-[11px] text-[#111113]/55 font-mono">
                 (Declared value)
               </span>
             </div>
-            <span className="font-mono text-[#020617] font-semibold">
+            <span className="font-mono text-[#111113] font-semibold">
               {formattedItemPrice}
             </span>
           </div>
@@ -258,16 +258,16 @@ export function EscrowFeeReceipt({
           <div className="flex items-center justify-between py-1">
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="font-secondary text-[#020617]">Escrow Protection Fee</span>
-                <span className="font-mono text-[11px] rounded-[4px] bg-[#f1f5f9] px-1.5 py-0.2 text-[#64748b] font-semibold">
+                <span className="font-secondary text-[#111113]">Escrow Protection Fee</span>
+                <span className="font-mono text-[10px] uppercase tracking-wider bg-[#F0EFEA] border border-[#111113]/12 px-1.5 py-0.2 text-[#111113]/75 font-semibold">
                   {feeRatePercent}% tier
                 </span>
               </div>
-              <span className="text-[11px] text-[#64748b] font-secondary">
+              <span className="text-[11px] text-[#111113]/60 font-secondary">
                 Custodial guarantee, fraud shielding & mediation coverage
               </span>
             </div>
-            <span className="font-mono text-[#020617] font-semibold">
+            <span className="font-mono text-[#111113] font-semibold">
               {formattedEscrowFee}
             </span>
           </div>
@@ -276,14 +276,14 @@ export function EscrowFeeReceipt({
           <div className="flex items-center justify-between py-1">
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="font-secondary text-[#020617]">Tracked Shipping</span>
-                <Truck className="h-3.5 w-3.5 text-[#64748b]" />
+                <span className="font-secondary text-[#111113]">Tracked Shipping</span>
+                <Truck className="h-3.5 w-3.5 text-[#111113]/60" />
               </div>
-              <span className="text-[11px] text-[#64748b] font-secondary">
+              <span className="text-[11px] text-[#111113]/60 font-secondary">
                 Doorstep dispatch with signature & inspection receipt
               </span>
             </div>
-            <span className="font-mono text-[#020617] font-semibold">
+            <span className="font-mono text-[#111113] font-semibold">
               {formattedShippingFee}
             </span>
           </div>
@@ -291,27 +291,27 @@ export function EscrowFeeReceipt({
           {/* Optional Gateway Fee */}
           {gatewayFeeKobo > 0 && (
             <div className="flex items-center justify-between py-1">
-              <span className="font-secondary text-[#020617]">Payment Processing Fee</span>
-              <span className="font-mono text-[#020617] font-semibold">
+              <span className="font-secondary text-[#111113]">Payment Processing Fee</span>
+              <span className="font-mono text-[#111113] font-semibold">
                 {formattedGatewayFee}
               </span>
             </div>
           )}
 
           {/* ================================================================
-              4. TOTAL LOCKED IN ESCROW HIGHLIGHT (Strict Contrast Rule)
+              4. TOTAL LOCKED IN ESCROW HIGHLIGHT
               ================================================================ */}
-          <div className="mt-4 rounded-[4px] border border-[#22c55e]/30 bg-[#22c55e]/15 p-4">
+          <div className="mt-4 border border-[#22c55e]/30 bg-[#22c55e]/15 p-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#22c55e]/25 text-[#15803d]">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center bg-[#22c55e]/25 text-[#15803d]">
                   <Lock className="h-4 w-4 text-[#22c55e]" />
                 </div>
                 <div>
-                  <span className="font-primary text-sm font-semibold text-[#020617]">
+                  <span className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113]">
                     Total Locked in Escrow
                   </span>
-                  <p className="text-[11px] font-secondary text-[#64748b]">
+                  <p className="text-[11px] font-secondary text-[#111113]/70">
                     Halted in vault until 48h inspection approval
                   </p>
                 </div>
@@ -321,7 +321,7 @@ export function EscrowFeeReceipt({
                 <span className="font-mono text-xl font-bold tracking-tight text-[#15803d]">
                   {formattedTotalLocked}
                 </span>
-                <span className="block font-mono text-[10px] text-[#64748b] uppercase">
+                <span className="block font-mono text-[10px] text-[#111113]/60 uppercase tracking-wider">
                   {currency} Guaranteed
                 </span>
               </div>
@@ -330,7 +330,7 @@ export function EscrowFeeReceipt({
         </div>
 
         {/* Trust Guarantee Advisory */}
-        <div className="flex items-start gap-2.5 rounded-[4px] bg-[#f8fafc] p-3 text-xs text-[#64748b] border border-[#e2e8f0]">
+        <div className="flex items-start gap-2.5 bg-[#F8F7F4] p-3 text-xs text-[#111113]/70 border border-[#111113]/12">
           <ShieldCheck className="h-4 w-4 text-[#22c55e] shrink-0 mt-0.5" />
           <p className="font-secondary leading-relaxed">
             The seller does not receive any payout until you receive the package, inspect the gadget,
@@ -342,8 +342,8 @@ export function EscrowFeeReceipt({
       {/* ====================================================================
           5. FOOTER UTILITIES (Print / Download)
           ==================================================================== */}
-      <CardFooter className="bg-[#f8fafc] p-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs font-mono text-[#64748b]">
+      <CardFooter className="bg-[#F8F7F4] p-4 border-t border-[#111113]/12 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs font-mono text-[#111113]/65">
           <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
           <span>Paystack Escrow Custody Hash: Verified</span>
         </div>
@@ -370,7 +370,7 @@ export function EscrowFeeReceipt({
               variant="default"
               size="sm"
               onClick={onDownloadReceipt}
-              className="flex-1 sm:flex-none gap-1.5 text-xs h-8 shadow-xs"
+              className="flex-1 sm:flex-none gap-1.5 text-xs h-8"
             >
               <Download className="h-3.5 w-3.5" />
               <span>Download PDF</span>

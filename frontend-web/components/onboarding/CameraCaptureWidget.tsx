@@ -67,17 +67,17 @@ export function CameraCaptureWidget({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] space-y-4",
+        "border border-[#111113]/12 bg-white p-6 space-y-4",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
+          <div className="flex h-7 w-7 items-center justify-center bg-[#111113] text-white">
             <Camera className="h-3.5 w-3.5" />
           </div>
-          <span className="font-primary text-xs font-bold text-[#020617]">
+          <span className="font-primary text-xs font-bold text-[#111113] tracking-[-0.02em]">
             SmileID 3D Liveness Selfie
           </span>
         </div>
@@ -87,7 +87,7 @@ export function CameraCaptureWidget({
       </div>
 
       {/* Viewfinder Canvas */}
-      <div className="relative aspect-4/3 w-full overflow-hidden rounded-[4px] bg-[#020617] flex items-center justify-center border border-[#e2e8f0]">
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-[#111113] flex items-center justify-center border border-[#111113]/12">
         {stage === "captured" && capturedImage ? (
           <img
             src={capturedImage}
@@ -96,7 +96,7 @@ export function CameraCaptureWidget({
           />
         ) : (
           /* Live Camera Viewfinder Simulation */
-          <div className="relative h-full w-full flex items-center justify-center bg-slate-900">
+          <div className="relative h-full w-full flex items-center justify-center bg-[#111113]">
             {/* Dark Grid Background */}
             <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:16px_16px] opacity-40" />
 
@@ -125,7 +125,7 @@ export function CameraCaptureWidget({
         )}
 
         {/* Liveness Guidance Prompt Banner */}
-        <div className="absolute bottom-3 inset-x-3 bg-[#020617]/80 backdrop-blur-xs text-white p-2.5 rounded-[4px] text-center font-mono text-xs flex items-center justify-center gap-2">
+        <div className="absolute bottom-3 inset-x-3 bg-[#111113]/85 backdrop-blur-xs text-white p-2.5 text-center font-mono text-xs flex items-center justify-center gap-2">
           {stage === "capturing" ? (
             <RefreshCw className="h-3.5 w-3.5 text-[#ecc94b] animate-spin" />
           ) : stage === "captured" ? (
@@ -146,13 +146,13 @@ export function CameraCaptureWidget({
               variant="outline"
               size="lg"
               onClick={handleRetake}
-              className="flex-1 h-11 text-xs font-semibold gap-1.5 border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-[#020617]"
+              className="flex-1 h-11 rounded-full text-xs font-semibold gap-1.5 border-[#111113]/20 bg-white hover:bg-[#F8F7F4] text-[#111113]"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Retake Photo</span>
             </Button>
 
-            <div className="flex-1 flex items-center justify-center rounded-[4px] bg-[#22c55e]/15 border border-[#22c55e]/30 text-[#15803d] font-mono text-xs font-bold gap-1.5 px-3">
+            <div className="flex-1 flex items-center justify-center rounded-full bg-[#22c55e]/15 border border-[#22c55e]/30 text-[#15803d] font-mono text-xs font-bold gap-1.5 px-3">
               <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
               <span>Liveness Verified</span>
             </div>
@@ -164,7 +164,7 @@ export function CameraCaptureWidget({
             size="lg"
             disabled={stage === "capturing"}
             onClick={handleStartCapture}
-            className="w-full h-11 text-xs font-semibold gap-2 shadow-xs"
+            className="w-full h-11 rounded-full text-xs font-semibold gap-2"
           >
             <Camera className="h-4 w-4" />
             <span>{stage === "capturing" ? "Scanning Biometrics..." : "Take Live 3D Selfie"}</span>
@@ -172,7 +172,7 @@ export function CameraCaptureWidget({
         )}
       </div>
 
-      <div className="text-[11px] font-secondary text-[#64748b] text-center leading-relaxed">
+      <div className="text-[11px] font-secondary text-[#111113]/60 text-center leading-relaxed">
         Photos are never stored publicly. Used strictly for one-time verification against national ID databases.
       </div>
     </div>

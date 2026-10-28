@@ -64,64 +64,64 @@ export function EvidenceViewer({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] flex flex-col h-[520px] overflow-hidden",
+        "border border-[#111113]/12 bg-white flex flex-col h-[520px] overflow-hidden",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] bg-[#f8fafc]">
+      <div className="flex items-center justify-between p-4 border-b border-[#111113]/12 bg-[#F8F7F4]">
         <div className="flex items-center gap-2">
-          <Camera className="h-4 w-4 text-[#0f172a]" />
-          <h4 className="font-primary text-xs font-bold text-[#020617]">
+          <Camera className="h-4 w-4 text-[#111113]" />
+          <h4 className="font-primary text-xs font-bold text-[#111113] tracking-[-0.02em]">
             Submitted Forensic Evidence ({evidence.length} Assets)
           </h4>
         </div>
-        <span className="font-mono text-[10px] text-[#64748b]">
+        <span className="label">
           High-Res Cloud Archive
         </span>
       </div>
 
       {/* Main Preview Area */}
-      <div className="flex-1 bg-black/95 relative flex items-center justify-center p-4 overflow-hidden">
+      <div className="flex-1 bg-[#111113] relative flex items-center justify-center p-4 overflow-hidden">
         {activeAsset && (
           <img
             src={activeAsset.url}
             alt={activeAsset.title}
-            className="max-h-full max-w-full object-contain rounded-[4px]"
+            className="max-h-full max-w-full object-contain"
           />
         )}
 
-        <div className="absolute bottom-3 inset-x-3 bg-black/80 backdrop-blur-xs text-white p-2.5 rounded-[4px] text-xs font-secondary flex items-center justify-between gap-2">
+        <div className="absolute bottom-3 inset-x-3 bg-[#111113]/85 backdrop-blur-xs text-white p-2.5 text-xs font-secondary flex items-center justify-between gap-2">
           <div>
             <span className="font-primary font-bold text-xs block">
               {activeAsset?.title}
             </span>
-            <span className="text-[11px] text-slate-300">
+            <span className="text-[11px] text-white/75">
               {activeAsset?.notes}
             </span>
           </div>
-          <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 rounded-[2px] bg-slate-800 text-[#22c55e]">
+          <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 bg-white/15 text-[#22c55e]">
             {activeAsset?.source} evidence
           </span>
         </div>
       </div>
 
       {/* Thumbnail Strip */}
-      <div className="p-3 bg-white border-t border-[#e2e8f0] flex items-center gap-2 overflow-x-auto">
+      <div className="p-3 bg-white border-t border-[#111113]/12 flex items-center gap-2 overflow-x-auto">
         {evidence.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setActiveAssetId(item.id)}
             className={cn(
-              "h-16 w-20 rounded-[4px] border overflow-hidden shrink-0 relative transition-all duration-200 ease-out",
+              "h-16 w-20 border overflow-hidden shrink-0 relative transition-all duration-200 ease-out cursor-pointer",
               activeAssetId === item.id
-                ? "border-[#0f172a] ring-2 ring-[#0f172a]"
-                : "border-[#e2e8f0] opacity-75 hover:opacity-100"
+                ? "border-[#111113] ring-2 ring-[#111113]"
+                : "border-[#111113]/15 opacity-75 hover:opacity-100"
             )}
           >
             <img src={item.url} alt={item.title} className="h-full w-full object-cover" />
-            <span className="absolute bottom-0 inset-x-0 bg-black/60 text-[8px] font-mono text-white text-center py-0.5 uppercase">
+            <span className="absolute bottom-0 inset-x-0 bg-[#111113]/75 text-[8px] font-mono text-white text-center py-0.5 uppercase">
               {item.source}
             </span>
           </button>

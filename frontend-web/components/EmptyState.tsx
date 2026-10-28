@@ -74,22 +74,22 @@ export function EmptyState({
       role="status"
       aria-live="polite"
       className={cn(
-        "flex flex-col items-center justify-center text-center p-8 sm:p-12 w-full rounded-[8px] border border-dashed border-[#e2e8f0] bg-white transition-all duration-200 ease-out",
+        "flex flex-col items-center justify-center text-center p-8 sm:p-12 w-full border border-dashed border-[#111113]/20 bg-white transition-all duration-200 ease-out",
         className
       )}
     >
-      {/* 1. Subtle, monochrome Lucide icon with soft circular backdrop */}
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#f1f5f9] text-[#64748b]">
-        <Icon className="h-8 w-8 text-[#64748b]" aria-hidden="true" />
+      {/* 1. Subtle, monochrome Lucide icon with warm circular backdrop */}
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#F0EFEA] text-[#111113]/65">
+        <Icon className="h-8 w-8 text-[#111113]/65" aria-hidden="true" />
       </div>
 
-      {/* 2. Heading (Roboto, 500) */}
-      <h3 className="font-primary text-lg font-medium tracking-normal text-[#020617]">
+      {/* 2. Heading (Space Grotesk) */}
+      <h3 className="font-primary text-lg font-bold tracking-[-0.03em] text-[#111113]">
         {title}
       </h3>
 
-      {/* 3. Descriptive Subtext in Muted Text (Geist) */}
-      <p className="mt-2 max-w-md font-secondary text-sm text-[#64748b] leading-relaxed">
+      {/* 3. Descriptive Subtext (Plus Jakarta Sans) */}
+      <p className="mt-2 max-w-md font-secondary text-sm text-[#111113]/65 leading-relaxed">
         {description}
       </p>
 

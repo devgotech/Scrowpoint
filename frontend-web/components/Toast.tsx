@@ -15,7 +15,11 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (UI Context Spec 2 Tier 2 & UI Context Spec 5, §5):
  * - Supports `info`, `error`, `warning`, and `success` variants.
- * - Semantic colors: state success, warning, error, and primary information.
+ * - Strict Color Enforcement:
+ *   - Success: `trust` (#22c55e / emerald-500)
+ *   - Warning: `warning` (#ecc94b / amber-500)
+ *   - Error: `destructive` (red-600)
+ *   - Info: `primary` / slate-900 / blue-500
  * - Auto-dismissible with configurable duration (default 5000ms).
  * - Fixed z-50 overlay positioning at top-right or bottom-right.
  * - Accessible and responsive with single-click manual dismiss.
@@ -159,29 +163,29 @@ export function ToastItem({
     info: {
       icon: Info,
       containerClasses:
-        "border-border/80 bg-card text-card-foreground shadow-md border-l-4 border-l-primary",
-      iconClasses: "text-primary bg-primary/10",
+        "border-[#111113]/15 bg-white text-[#111113] border-l-4 border-l-[#111113]",
+      iconClasses: "text-[#111113] bg-[#F0EFEA]",
       badgeLabel: "INFO",
     },
     error: {
       icon: AlertCircle,
       containerClasses:
-        "border-destructive/40 bg-card text-card-foreground shadow-md border-l-4 border-l-destructive",
-      iconClasses: "text-destructive bg-destructive/10",
+        "border-[#f56565]/40 bg-white text-[#111113] border-l-4 border-l-[#f56565]",
+      iconClasses: "text-[#f56565] bg-[#f56565]/10",
       badgeLabel: "ERROR",
     },
     warning: {
       icon: AlertTriangle,
       containerClasses:
-        "border-warning/40 bg-card text-card-foreground shadow-md border-l-4 border-l-warning",
-      iconClasses: "text-warning-text bg-warning/20",
+        "border-[#ecc94b]/50 bg-white text-[#111113] border-l-4 border-l-[#ecc94b]",
+      iconClasses: "text-[#ecc94b] bg-[#ecc94b]/15",
       badgeLabel: "WARNING",
     },
     success: {
       icon: CheckCircle2,
       containerClasses:
-        "border-state-success/40 bg-card text-card-foreground shadow-md border-l-4 border-l-state-success",
-      iconClasses: "text-state-success bg-state-success/10",
+        "border-[#22c55e]/40 bg-white text-[#111113] border-l-4 border-l-[#22c55e]",
+      iconClasses: "text-[#22c55e] bg-[#22c55e]/15",
       badgeLabel: "SUCCESS",
     },
   }[toast.type];
@@ -192,14 +196,14 @@ export function ToastItem({
     <div
       role="alert"
       className={cn(
-        "pointer-events-auto relative flex w-full items-start gap-3 rounded-lg border p-4 shadow-[var(--shadow-soft-md)] backdrop-blur-md transition-all duration-200 ease-out animate-in fade-in-50 slide-in-from-top-2 sm:slide-in-from-right-4",
+        "pointer-events-auto relative flex w-full items-start gap-3 border p-4 backdrop-blur-md transition-all duration-200 ease-out animate-in fade-in-50 slide-in-from-top-2 sm:slide-in-from-right-4",
         config.containerClasses
       )}
     >
       {/* Type Icon */}
       <div
         className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-md mt-0.5",
+          "flex h-8 w-8 shrink-0 items-center justify-center mt-0.5",
           config.iconClasses
         )}
       >
@@ -209,16 +213,16 @@ export function ToastItem({
       {/* Content */}
       <div className="flex-1 space-y-1 pr-6 min-w-0">
         <div className="flex items-center gap-2">
-          <h5 className="font-heading text-xs font-bold leading-tight text-foreground truncate">
+          <h5 className="font-primary text-xs font-bold tracking-[-0.02em] leading-tight text-[#111113] truncate">
             {toast.title}
           </h5>
-          <span className="label-caps text-muted-foreground px-1.5 py-0.5 rounded-md bg-muted/60">
+          <span className="font-mono text-[9px] uppercase tracking-wider text-[#111113]/65 px-1.5 py-0.2 bg-[#F0EFEA]">
             {config.badgeLabel}
           </span>
         </div>
 
         {toast.description && (
-          <p className="font-body text-sm leading-5 text-muted-foreground wrap-break-words">
+          <p className="font-secondary text-xs text-[#111113]/70 leading-5 break-words">
             {toast.description}
           </p>
         )}
@@ -227,7 +231,7 @@ export function ToastItem({
           <button
             type="button"
             onClick={toast.action.onClick}
-            className="mt-2 text-xs font-semibold text-primary underline underline-offset-2 hover:opacity-80 transition-opacity"
+            className="mt-2 text-xs font-secondary font-semibold text-[#111113] hover:text-[#FF5A25] underline underline-offset-2 transition-colors"
           >
             {toast.action.label}
           </button>
@@ -240,7 +244,7 @@ export function ToastItem({
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss notification"
-          className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center text-[#111113]/60 hover:bg-[#F0EFEA] hover:text-[#111113] transition-colors"
         >
           <X className="h-3.5 w-3.5" />
         </button>

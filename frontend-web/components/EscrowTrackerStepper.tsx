@@ -161,22 +161,22 @@ export function EscrowTrackerStepper({
       role="region"
       aria-label="Escrow Transaction Stepper"
       className={cn(
-        "w-full rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] transition-all duration-200 ease-out",
+        "w-full border border-[#111113]/12 bg-white p-6 transition-all duration-200 ease-out",
         className
       )}
     >
       {/* Header Metadata */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[#e2e8f0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[#111113]/12">
         <div>
-          <span className="font-mono text-xs uppercase tracking-wider text-[#64748b]">
+          <span className="label">
             Escrow Timeline Tracker
           </span>
-          <h2 className="font-primary text-lg font-medium text-[#020617] mt-0.5">
-            Order Reference: <span className="font-mono font-medium text-[#0f172a]">{orderNumber}</span>
+          <h2 className="font-primary text-lg font-bold tracking-[-0.03em] text-[#111113] mt-0.5">
+            Order Reference: <span className="font-mono font-semibold text-[#111113]">{orderNumber}</span>
           </h2>
         </div>
 
-        {/* Current State Highlight Pill (Trust badges ONLY use rounded-full) */}
+        {/* Current State Highlight Pill */}
         <div className="flex items-center gap-2">
           {currentState === "funds_held" ? (
             <Badge
@@ -217,7 +217,7 @@ export function EscrowTrackerStepper({
       <div className="hidden md:block pt-8 pb-4">
         <div className="relative flex items-center justify-between">
           {/* Background Connecting Bar */}
-          <div className="absolute top-5 left-6 right-6 h-1 bg-[#f1f5f9] -z-0" />
+          <div className="absolute top-5 left-6 right-6 h-0.5 bg-[#111113]/12 -z-0" />
 
           {/* Stepper Node Items */}
           {steps.map((step) => {
@@ -233,14 +233,14 @@ export function EscrowTrackerStepper({
                   className={cn(
                     "flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-200 ease-out",
                     step.isCompleted
-                      ? "border-[#22c55e] bg-[#22c55e] text-white shadow-xs"
+                      ? "border-[#22c55e] bg-[#22c55e] text-white"
                       : isFundsHeld
-                      ? "border-[#22c55e] bg-[#22c55e]/15 text-[#15803d] shadow-sm ring-4 ring-[#22c55e]/20 animate-pulse"
+                      ? "border-[#22c55e] bg-[#22c55e]/15 text-[#15803d] ring-4 ring-[#22c55e]/20 animate-pulse"
                       : step.isCurrent && step.isWarning
                       ? "border-[#ecc94b] bg-[#ecc94b]/20 text-[#975a16] ring-4 ring-[#ecc94b]/20"
                       : step.isCurrent
-                      ? "border-[#0f172a] bg-[#0f172a] text-white shadow-xs ring-4 ring-[#0f172a]/10"
-                      : "border-[#e2e8f0] bg-white text-[#64748b]"
+                      ? "border-[#111113] bg-[#111113] text-white ring-4 ring-[#111113]/10"
+                      : "border-[#111113]/15 bg-white text-[#111113]/50"
                   )}
                 >
                   {step.isCompleted ? (
@@ -263,14 +263,14 @@ export function EscrowTrackerStepper({
                 {/* Title & Short Label */}
                 <span
                   className={cn(
-                    "mt-3 font-primary text-xs font-medium leading-tight",
+                    "mt-3 font-primary text-xs font-medium tracking-[-0.02em] leading-tight",
                     step.isCurrent
                       ? isFundsHeld
-                        ? "text-[#15803d] font-semibold"
-                        : "text-[#020617] font-semibold"
+                        ? "text-[#15803d] font-bold"
+                        : "text-[#111113] font-bold"
                       : step.isCompleted
-                      ? "text-[#020617]"
-                      : "text-[#64748b]"
+                      ? "text-[#111113]"
+                      : "text-[#111113]/55"
                   )}
                 >
                   {step.title}
@@ -278,11 +278,11 @@ export function EscrowTrackerStepper({
 
                 {/* Subtitle / Timestamp */}
                 {step.timestamp ? (
-                  <span className="mt-1 font-mono text-[10px] text-[#64748b]">
+                  <span className="mt-1 font-mono text-[10px] text-[#111113]/55">
                     {step.timestamp.split("•")[1] || step.timestamp}
                   </span>
                 ) : (
-                  <span className="mt-1 text-[10px] text-[#64748b] font-secondary">Pending</span>
+                  <span className="mt-1 text-[10px] text-[#111113]/45 font-secondary">Pending</span>
                 )}
               </div>
             );
@@ -290,19 +290,19 @@ export function EscrowTrackerStepper({
         </div>
 
         {/* Active Stage Callout Box */}
-        <div className="mt-8 rounded-[4px] bg-[#f8fafc] border border-[#e2e8f0] p-4">
+        <div className="mt-8 bg-[#F8F7F4] border border-[#111113]/12 p-4">
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] bg-[#22c55e]/15 text-[#15803d]">
+            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center bg-[#22c55e]/15 text-[#15803d]">
               <Lock className="h-4 w-4 text-[#22c55e]" />
             </div>
             <div>
-              <h4 className="font-primary text-sm font-medium text-[#020617]">
+              <h4 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
                 Current Escrow Status:{" "}
                 <span className="text-[#15803d] font-semibold">
                   {currentState === "funds_held" ? "Funds Held in Institutional Vault" : currentState.replace("_", " ").toUpperCase()}
                 </span>
               </h4>
-              <p className="mt-1 font-secondary text-xs text-[#64748b] leading-relaxed">
+              <p className="mt-1 font-secondary text-xs text-[#111113]/70 leading-relaxed">
                 {steps.find((s) => s.isCurrent)?.description ||
                   "Funds are protected by Scrowpoint escrow. Both buyer and seller are shielded from fraudulent chargebacks and counterfeit items."}
               </p>
@@ -317,7 +317,7 @@ export function EscrowTrackerStepper({
       <div className="block md:hidden pt-6">
         <div className="relative pl-6 space-y-6">
           {/* Vertical Connecting Line */}
-          <div className="absolute top-2 bottom-4 left-[21px] w-0.5 bg-[#e2e8f0]" />
+          <div className="absolute top-2 bottom-4 left-[21px] w-0.5 bg-[#111113]/12" />
 
           {steps.map((step) => {
             const isFundsHeld = step.id === "step_funds_held" && step.isCurrent;
@@ -329,14 +329,14 @@ export function EscrowTrackerStepper({
                   className={cn(
                     "absolute -left-6 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-all duration-200 ease-out",
                     step.isCompleted
-                      ? "border-[#22c55e] bg-[#22c55e] text-white shadow-xs"
+                      ? "border-[#22c55e] bg-[#22c55e] text-white"
                       : isFundsHeld
                       ? "border-[#22c55e] bg-[#22c55e]/15 text-[#15803d] ring-4 ring-[#22c55e]/20 animate-pulse"
                       : step.isCurrent && step.isWarning
                       ? "border-[#ecc94b] bg-[#ecc94b]/20 text-[#975a16] ring-4 ring-[#ecc94b]/20"
                       : step.isCurrent
-                      ? "border-[#0f172a] bg-[#0f172a] text-white ring-4 ring-[#0f172a]/10"
-                      : "border-[#e2e8f0] bg-white text-[#64748b]"
+                      ? "border-[#111113] bg-[#111113] text-white ring-4 ring-[#111113]/10"
+                      : "border-[#111113]/15 bg-white text-[#111113]/50"
                   )}
                 >
                   {step.isCompleted ? (
@@ -355,25 +355,25 @@ export function EscrowTrackerStepper({
                   <div className="flex items-center justify-between">
                     <h4
                       className={cn(
-                        "font-primary text-sm font-medium",
+                        "font-primary text-sm font-medium tracking-[-0.02em]",
                         isFundsHeld
-                          ? "text-[#15803d] font-semibold"
+                          ? "text-[#15803d] font-bold"
                           : step.isCurrent
-                          ? "text-[#020617] font-semibold"
-                          : "text-[#020617]"
+                          ? "text-[#111113] font-bold"
+                          : "text-[#111113]"
                       )}
                     >
                       {step.title}
                     </h4>
 
                     {step.timestamp && (
-                      <span className="font-mono text-[10px] text-[#64748b]">
+                      <span className="font-mono text-[10px] text-[#111113]/55">
                         {step.timestamp.split("•")[1] || step.timestamp}
                       </span>
                     )}
                   </div>
 
-                  <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
+                  <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
                     {step.description}
                   </p>
                 </div>

@@ -103,35 +103,35 @@ export function RecentOrdersTable({
     switch (status) {
       case "FUNDED":
         return (
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2 py-0.5 rounded-[4px]">
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2 py-0.5 uppercase tracking-wider">
             <Lock className="h-3 w-3 text-[#22c55e]" />
             <span>FUNDS HELD</span>
           </span>
         );
       case "SHIPPED":
         return (
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#f1f5f9] text-[#0f172a] border border-[#e2e8f0] px-2 py-0.5 rounded-[4px]">
-            <Truck className="h-3 w-3 text-[#64748b]" />
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#F0EFEA] text-[#111113] border border-[#111113]/12 px-2 py-0.5 uppercase tracking-wider">
+            <Truck className="h-3 w-3 text-[#111113]/60" />
             <span>IN TRANSIT</span>
           </span>
         );
       case "INSPECTION":
         return (
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#ecc94b]/20 text-[#975a16] border border-[#ecc94b]/40 px-2 py-0.5 rounded-[4px]">
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#ecc94b]/20 text-[#975a16] border border-[#ecc94b]/40 px-2 py-0.5 uppercase tracking-wider">
             <Clock className="h-3 w-3 text-[#ecc94b]" />
             <span>{time || "48H SLA"}</span>
           </span>
         );
       case "SETTLED":
         return (
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2 py-0.5 rounded-[4px]">
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2 py-0.5 uppercase tracking-wider">
             <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
             <span>SETTLED</span>
           </span>
         );
       case "DISPUTED":
         return (
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#f56565]/15 text-[#c53030] border border-[#f56565]/30 px-2 py-0.5 rounded-[4px]">
+          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold bg-[#f56565]/15 text-[#c53030] border border-[#f56565]/30 px-2 py-0.5 uppercase tracking-wider">
             <ShieldAlert className="h-3 w-3 text-[#f56565]" />
             <span>DISPUTED</span>
           </span>
@@ -142,21 +142,21 @@ export function RecentOrdersTable({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] overflow-hidden",
+        "border border-[#111113]/12 bg-white overflow-hidden",
         className
       )}
     >
-      <div className="flex items-center justify-between p-5 border-b border-[#e2e8f0]">
+      <div className="flex items-center justify-between p-5 border-b border-[#111113]/12">
         <div>
-          <h3 className="font-primary text-base font-bold text-[#020617]">
+          <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
             Active & Recent Escrow Trades
           </h3>
-          <p className="font-secondary text-xs text-[#64748b] mt-0.5">
+          <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
             Real-time status of orders awaiting dispatch, in transit, or undergoing 48h inspection.
           </p>
         </div>
 
-        <span className="font-mono text-xs bg-[#f8fafc] border border-[#e2e8f0] px-2.5 py-1 rounded-[4px] font-bold text-[#0f172a]">
+        <span className="font-mono text-[11px] uppercase tracking-[0.12em] bg-[#F8F7F4] border border-[#111113]/12 px-2.5 py-1 font-bold text-[#111113]">
           {orders.length} Trades
         </span>
       </div>
@@ -165,7 +165,7 @@ export function RecentOrdersTable({
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[#e2e8f0] bg-[#f8fafc] font-mono text-[11px] uppercase font-bold text-[#64748b]">
+            <tr className="border-b border-[#111113]/12 bg-[#F8F7F4] font-mono text-[10px] uppercase tracking-[0.15em] font-bold text-[#111113]/60">
               <th className="p-3.5">Order ID</th>
               <th className="p-3.5">Gadget Item</th>
               <th className="p-3.5">Buyer</th>
@@ -174,33 +174,33 @@ export function RecentOrdersTable({
               <th className="p-3.5 text-right">Escrow Room</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e2e8f0]">
+          <tbody className="divide-y divide-[#111113]/12">
             {orders.map((ord) => (
-              <tr key={ord.id} className="hover:bg-[#f8fafc] transition-colors">
-                <td className="p-3.5 font-mono font-bold text-[#0f172a]">
+              <tr key={ord.id} className="hover:bg-[#F8F7F4] transition-colors">
+                <td className="p-3.5 font-mono font-bold text-[#111113]">
                   {ord.orderNumber}
-                  <span className="block font-secondary text-[10px] text-[#64748b] font-normal">
+                  <span className="block font-secondary text-[10px] text-[#111113]/60 font-normal">
                     {ord.createdAt}
                   </span>
                 </td>
 
                 <td className="p-3.5">
-                  <span className="font-primary font-bold text-[#020617] block">
+                  <span className="font-primary font-bold text-[#111113] tracking-[-0.02em] block">
                     {ord.gadgetTitle}
                   </span>
-                  <span className="font-mono text-[10px] text-[#64748b]">
+                  <span className="font-mono text-[10px] text-[#111113]/60">
                     {ord.condition} Grade {ord.trackingNumber ? `• ${ord.trackingNumber}` : ""}
                   </span>
                 </td>
 
                 <td className="p-3.5">
-                  <span className="font-medium text-[#020617] block">{ord.buyerName}</span>
-                  <span className="font-secondary text-[11px] text-[#64748b]">
+                  <span className="font-medium text-[#111113] block">{ord.buyerName}</span>
+                  <span className="font-secondary text-[11px] text-[#111113]/60">
                     {ord.buyerCity}
                   </span>
                 </td>
 
-                <td className="p-3.5 font-mono font-bold text-[#020617] text-sm">
+                <td className="p-3.5 font-mono font-bold text-[#111113] text-sm">
                   {formatNaira(ord.amountNaira)}
                 </td>
 
@@ -212,7 +212,7 @@ export function RecentOrdersTable({
                   <button
                     type="button"
                     onClick={() => onSelectOrder?.(ord.orderNumber)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#0f172a] text-white hover:bg-slate-800 font-mono text-xs font-semibold transition-colors shadow-2xs"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] font-mono text-xs font-semibold transition-colors cursor-pointer"
                   >
                     <span>Open Room</span>
                     <ArrowRight className="h-3 w-3" />
@@ -225,34 +225,34 @@ export function RecentOrdersTable({
       </div>
 
       {/* Mobile Stacked Cards View */}
-      <div className="md:hidden divide-y divide-[#e2e8f0]">
+      <div className="md:hidden divide-y divide-[#111113]/12">
         {orders.map((ord) => (
           <div key={ord.id} className="p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="font-mono font-bold text-xs text-[#0f172a]">
+              <span className="font-mono font-bold text-xs text-[#111113]">
                 {ord.orderNumber}
               </span>
               {getStatusBadge(ord.status, ord.timeRemaining)}
             </div>
 
             <div>
-              <h4 className="font-primary text-sm font-bold text-[#020617]">
+              <h4 className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">
                 {ord.gadgetTitle}
               </h4>
-              <p className="font-secondary text-xs text-[#64748b]">
+              <p className="font-secondary text-xs text-[#111113]/65">
                 Buyer: {ord.buyerName} ({ord.buyerCity})
               </p>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-[#e2e8f0]">
-              <span className="font-mono font-bold text-sm text-[#020617]">
+            <div className="flex items-center justify-between pt-2 border-t border-[#111113]/12">
+              <span className="font-mono font-bold text-sm text-[#111113]">
                 {formatNaira(ord.amountNaira)}
               </span>
 
               <button
                 type="button"
                 onClick={() => onSelectOrder?.(ord.orderNumber)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[4px] bg-[#0f172a] text-white text-xs font-mono font-semibold"
+                className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] text-xs font-mono font-semibold transition-colors cursor-pointer"
               >
                 <span>Escrow Room</span>
                 <ArrowRight className="h-3 w-3" />

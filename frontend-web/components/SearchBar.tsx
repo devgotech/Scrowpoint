@@ -105,20 +105,20 @@ export function SearchBar({
           ==================================================================== */}
       <div className="relative flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#111113]/50 pointer-events-none" />
           <Input
             type="text"
             value={internalQuery}
             onChange={handleInputChange}
             placeholder={placeholder}
-            className="h-11 pl-10 pr-10 text-sm bg-background border-border shadow-xs focus-visible:ring-1 focus-visible:ring-ring"
+            className="h-11 pl-10 pr-10 text-sm bg-white border-[#111113]/15 focus-visible:ring-1 focus-visible:ring-[#111113]"
           />
           {internalQuery && (
             <button
               type="button"
               onClick={handleClear}
               aria-label="Clear search query"
-              className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center rounded-full text-[#111113]/50 hover:text-[#111113] transition-colors"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -132,7 +132,7 @@ export function SearchBar({
             variant="outline"
             size="default"
             onClick={onOpenAdvancedFilters}
-            className="h-11 gap-2 shrink-0 border-border text-foreground hover:bg-accent"
+            className="h-11 gap-2 shrink-0 border-[#111113]/15 text-[#111113] hover:bg-[#111113]/5"
           >
             <SlidersHorizontal className="h-4 w-4" />
             <span className="hidden sm:inline">Filters</span>
@@ -142,8 +142,6 @@ export function SearchBar({
 
       {/* ====================================================================
           2. HORIZONTALLY SCROLLING FILTER CHIPS ROW
-          - Mobile (<768px): Horizontal swipeable row with scroll fading.
-          - Desktop (>=768px): Flex container with navigation hints.
           ==================================================================== */}
       <div className="relative flex items-center">
         {/* Left Scroll Trigger Button (Desktop) */}
@@ -151,7 +149,7 @@ export function SearchBar({
           type="button"
           onClick={() => scrollChips("left")}
           aria-label="Scroll filters left"
-          className="hidden md:flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground hover:text-foreground shadow-xs transition-colors mr-1 z-10"
+          className="hidden md:flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#111113]/15 bg-white text-[#111113]/60 hover:text-[#111113] transition-colors mr-1 z-10"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -173,12 +171,12 @@ export function SearchBar({
                 type="button"
                 onClick={() => handleChipClick(chip.id)}
                 className={cn(
-                  "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-[4px] px-3 text-xs font-secondary font-medium transition-colors duration-200 ease-out select-none cursor-pointer border",
+                  "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-full px-3.5 text-xs font-primary uppercase tracking-[0.06em] font-medium transition-colors duration-200 ease-out select-none cursor-pointer border",
                   isSelected
-                    ? "bg-[#0f172a] text-white border-[#0f172a] shadow-xs font-semibold"
+                    ? "bg-[#111113] text-white border-[#111113] font-semibold"
                     : isMint || isVerified
                     ? "bg-[#22c55e]/15 text-[#15803d] border-[#22c55e]/30 hover:bg-[#22c55e]/25 font-semibold"
-                    : "bg-white text-[#64748b] border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#020617]"
+                    : "bg-white text-[#111113]/70 border-[#111113]/12 hover:border-[#111113]/40 hover:text-[#111113]"
                 )}
               >
                 {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
@@ -186,10 +184,10 @@ export function SearchBar({
                 {chip.count !== undefined && (
                   <span
                     className={cn(
-                      "font-mono text-[10px] rounded-[2px] px-1.5 py-0.2",
+                      "font-mono text-[10px] rounded-full px-1.5 py-0.2",
                       isSelected
                         ? "bg-white/20 text-white"
-                        : "bg-[#f1f5f9] text-[#64748b]"
+                        : "bg-[#F0EFEA] text-[#111113]/70"
                     )}
                   >
                     {chip.count}
@@ -205,7 +203,7 @@ export function SearchBar({
           type="button"
           onClick={() => scrollChips("right")}
           aria-label="Scroll filters right"
-          className="hidden md:flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground hover:text-foreground shadow-xs transition-colors ml-1 z-10"
+          className="hidden md:flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#111113]/15 bg-white text-[#111113]/60 hover:text-[#111113] transition-colors ml-1 z-10"
         >
           <ChevronRight className="h-4 w-4" />
         </button>

@@ -32,12 +32,12 @@ export function KYCStatusBadge({
     return (
       <div
         className={cn(
-          "grid grid-cols-[40px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 rounded-[4px] border border-[#22c55e]/30 bg-[#22c55e]/10 p-4 sm:grid-cols-[40px_minmax(0,1fr)_auto] sm:gap-y-1",
+          "grid grid-cols-[40px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 border border-[#22c55e]/30 bg-[#22c55e]/10 p-4 sm:grid-cols-[40px_minmax(0,1fr)_auto] sm:gap-y-1",
           className
         )}
       >
         {/* Verification icon */}
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[4px] bg-[#22c55e] text-white sm:row-span-2">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#22c55e] text-white sm:row-span-2">
           <ShieldCheck className="h-5 w-5" aria-hidden="true" />
         </div>
 
@@ -47,13 +47,13 @@ export function KYCStatusBadge({
             Government ID Verified
           </span>
 
-          <span className="shrink-0 whitespace-nowrap rounded-[2px] border border-[#22c55e]/30 bg-white px-1.5 py-0.5 font-mono text-[9px] font-bold leading-3 text-[#15803d]">
+          <span className="shrink-0 whitespace-nowrap border border-[#22c55e]/30 bg-white px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider font-bold leading-3 text-[#15803d]">
             SmileID NIN
           </span>
         </div>
 
         {/* Details: separate lines on mobile, single line on desktop */}
-        <div className="col-span-2 m-0 flex min-w-0 flex-col gap-1 font-mono text-[11px] leading-4 text-[#64748b] sm:col-span-1 sm:col-start-2 sm:row-start-2 sm:flex-row sm:flex-wrap sm:gap-x-1.5">
+        <div className="col-span-2 m-0 flex min-w-0 flex-col gap-1 font-mono text-[11px] leading-4 text-[#111113]/65 sm:col-span-1 sm:col-start-2 sm:row-start-2 sm:flex-row sm:flex-wrap sm:gap-x-1.5">
           <span className="whitespace-nowrap">NIN: •••••••{ninLast4}</span>
           <span className="hidden sm:inline" aria-hidden="true">
             •
@@ -79,19 +79,19 @@ export function KYCStatusBadge({
     return (
       <div
         className={cn(
-          "rounded-[4px] border border-[#ecc94b]/40 bg-[#ecc94b]/15 p-4 flex items-center justify-between",
+          "border border-[#ecc94b]/40 bg-[#ecc94b]/15 p-4 flex items-center justify-between",
           className
         )}
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#ecc94b] text-[#020617]">
+          <div className="flex h-10 w-10 items-center justify-center bg-[#ecc94b] text-[#111113]">
             <Clock className="h-5 w-5" />
           </div>
           <div>
             <span className="font-primary text-xs font-bold text-[#975a16]">
               Verification Under Review
             </span>
-            <p className="font-secondary text-[11px] text-[#64748b] mt-0.5">
+            <p className="font-secondary text-[11px] text-[#111113]/65 mt-0.5">
               SmileID is processing your 3D selfie and NIN records.
             </p>
           </div>
@@ -103,19 +103,19 @@ export function KYCStatusBadge({
   return (
     <div
       className={cn(
-        "rounded-[4px] border border-[#f56565]/30 bg-[#f56565]/10 p-4 flex items-center justify-between",
+        "border border-[#f56565]/30 bg-[#f56565]/10 p-4 flex items-center justify-between",
         className
       )}
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#f56565] text-white">
+        <div className="flex h-10 w-10 items-center justify-center bg-[#f56565] text-white">
           <ShieldAlert className="h-5 w-5" />
         </div>
         <div>
           <span className="font-primary text-xs font-bold text-[#c53030]">
             Identity Unverified
           </span>
-          <p className="font-secondary text-[11px] text-[#64748b] mt-0.5">
+          <p className="font-secondary text-[11px] text-[#111113]/65 mt-0.5">
             Complete biometric KYC to enable gadget listings.
           </p>
         </div>

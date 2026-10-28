@@ -94,41 +94,41 @@ export function PolicyAccordion({ className }: PolicyAccordionProps) {
         return (
           <div
             key={policy.id}
-            className="rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.04)] overflow-hidden transition-all duration-200 ease-out"
+            className="border border-[#111113]/12 bg-white overflow-hidden transition-all duration-200 ease-out"
           >
             <button
               type="button"
               onClick={() => toggle(policy.id)}
-              className="w-full flex items-center justify-between p-5 text-left hover:bg-[#f8fafc] transition-colors"
+              className="w-full flex items-center justify-between p-5 text-left hover:bg-[#F8F7F4] transition-colors"
             >
               <div className="flex items-center gap-3 pr-4">
-                <div className="flex h-7 w-7 items-center justify-center rounded-[4px] bg-[#f1f5f9] text-[#0f172a] shrink-0">
+                <div className="flex h-8 w-8 items-center justify-center bg-[#F0EFEA] text-[#111113] shrink-0">
                   <FileText className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="font-mono text-[10px] uppercase font-bold text-[#64748b] block">
+                  <span className="label block">
                     {policy.category}
                   </span>
-                  <h4 className="font-primary text-sm font-bold text-[#020617]">
+                  <h4 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] mt-0.5">
                     {policy.title}
                   </h4>
                 </div>
               </div>
 
               {isOpen ? (
-                <ChevronUp className="h-4 w-4 text-[#64748b] shrink-0" />
+                <ChevronUp className="h-4 w-4 text-[#111113]/60 shrink-0" />
               ) : (
-                <ChevronDown className="h-4 w-4 text-[#64748b] shrink-0" />
+                <ChevronDown className="h-4 w-4 text-[#111113]/60 shrink-0" />
               )}
             </button>
 
             {isOpen && (
-              <div className="px-5 pb-5 pt-1 border-t border-[#e2e8f0] bg-[#f8fafc]/50 space-y-3">
-                <p className="font-secondary text-xs sm:text-sm text-[#020617] font-medium leading-relaxed">
+              <div className="px-5 pb-5 pt-3 border-t border-[#111113]/12 bg-[#F8F7F4]/60 space-y-3">
+                <p className="font-secondary text-xs sm:text-sm text-[#111113] font-medium leading-relaxed">
                   {policy.summary}
                 </p>
 
-                <ul className="space-y-2 pt-1 font-secondary text-xs text-[#64748b]">
+                <ul className="space-y-2 pt-1 font-secondary text-xs text-[#111113]/75">
                   {policy.details.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <ShieldCheck className="h-4 w-4 text-[#22c55e] shrink-0 mt-0.5" />

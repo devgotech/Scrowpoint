@@ -105,7 +105,7 @@ export function NotificationFeed({
       case "ESCROW_LOCKED":
         return <Lock className="h-4 w-4 text-[#22c55e]" />;
       case "SHIPPED":
-        return <Truck className="h-4 w-4 text-[#0f172a]" />;
+        return <Truck className="h-4 w-4 text-[#111113]" />;
       case "PAYOUT":
         return <ShieldCheck className="h-4 w-4 text-[#22c55e]" />;
       case "DISPUTE":
@@ -116,27 +116,27 @@ export function NotificationFeed({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] overflow-hidden",
+        "border border-[#111113]/12 bg-white overflow-hidden",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] bg-[#f8fafc]">
+      <div className="flex items-center justify-between p-4 border-b border-[#111113]/12 bg-[#F8F7F4]">
         <div className="flex items-center gap-2">
-          <Bell className="h-4 w-4 text-[#0f172a]" />
-          <h3 className="font-primary text-sm font-bold text-[#020617]">
+          <Bell className="h-4 w-4 text-[#111113]" />
+          <h3 className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">
             Notification Activity
           </h3>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex bg-white border border-[#e2e8f0] p-0.5 rounded-[4px] text-xs font-mono">
+          <div className="flex bg-white border border-[#111113]/12 p-0.5 text-xs font-mono">
             <button
               type="button"
               onClick={() => setFilter("all")}
               className={cn(
-                "px-2 py-0.5 rounded-[2px]",
-                filter === "all" ? "bg-[#0f172a] text-white font-bold" : "text-[#64748b]"
+                "px-2.5 py-0.5 cursor-pointer",
+                filter === "all" ? "bg-[#111113] text-white font-bold" : "text-[#111113]/60"
               )}
             >
               All
@@ -145,8 +145,8 @@ export function NotificationFeed({
               type="button"
               onClick={() => setFilter("unread")}
               className={cn(
-                "px-2 py-0.5 rounded-[2px]",
-                filter === "unread" ? "bg-[#0f172a] text-white font-bold" : "text-[#64748b]"
+                "px-2.5 py-0.5 cursor-pointer",
+                filter === "unread" ? "bg-[#111113] text-white font-bold" : "text-[#111113]/60"
               )}
             >
               Unread
@@ -156,7 +156,7 @@ export function NotificationFeed({
           <button
             type="button"
             onClick={markAllRead}
-            className="text-[11px] font-mono text-[#64748b] hover:text-[#0f172a]"
+            className="text-[11px] font-mono text-[#111113]/60 hover:text-[#FF5A25] transition-colors cursor-pointer"
           >
             Mark all read
           </button>
@@ -164,9 +164,9 @@ export function NotificationFeed({
       </div>
 
       {/* Feed List */}
-      <div className="divide-y divide-[#e2e8f0]">
+      <div className="divide-y divide-[#111113]/12">
         {filteredItems.length === 0 ? (
-          <div className="p-8 text-center text-xs font-secondary text-[#64748b]">
+          <div className="p-8 text-center text-xs font-secondary text-[#111113]/60">
             No unread notifications.
           </div>
         ) : (
@@ -176,34 +176,34 @@ export function NotificationFeed({
               onClick={() => onSelectNotification?.(n)}
               className={cn(
                 "p-4 flex items-start gap-3 transition-colors cursor-pointer",
-                !n.isRead ? "bg-[#f8fafc] hover:bg-[#f1f5f9]" : "bg-white hover:bg-[#f8fafc]"
+                !n.isRead ? "bg-[#F8F7F4] hover:bg-[#F0EFEA]" : "bg-white hover:bg-[#F8F7F4]"
               )}
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-white border border-[#e2e8f0] shrink-0 mt-0.5 shadow-2xs">
+              <div className="flex h-9 w-9 items-center justify-center bg-white border border-[#111113]/12 shrink-0 mt-0.5">
                 {getIcon(n.type)}
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between mb-0.5">
-                  <h4 className="font-primary text-xs font-bold text-[#020617] flex items-center gap-2">
+                  <h4 className="font-primary text-xs font-bold text-[#111113] flex items-center gap-2">
                     <span>{n.title}</span>
                     {!n.isRead && (
-                      <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
+                      <span className="h-2 w-2 rounded-full bg-[#FF5A25]" />
                     )}
                   </h4>
-                  <span className="font-mono text-[10px] text-[#64748b]">
+                  <span className="font-mono text-[10px] text-[#111113]/60">
                     {n.timestamp}
                   </span>
                 </div>
 
-                <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
+                <p className="font-secondary text-xs text-[#111113]/65 leading-relaxed">
                   {n.message}
                 </p>
 
                 {n.orderNumber && (
-                  <div className="mt-2 flex items-center gap-1 font-mono text-[10px] font-bold text-[#0f172a]">
+                  <div className="mt-2 flex items-center gap-1 font-mono text-[10px] font-bold text-[#111113]">
                     <span>Order {n.orderNumber}</span>
-                    <ArrowRight className="h-3 w-3 text-[#64748b]" />
+                    <ArrowRight className="h-3 w-3 text-[#111113]/60" />
                   </div>
                 )}
               </div>

@@ -60,17 +60,17 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] space-y-6",
+        "border border-[#111113]/12 bg-white p-6 space-y-6",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
+          <div className="flex h-7 w-7 items-center justify-center bg-[#111113] text-white">
             <IdCard className="h-3.5 w-3.5" />
           </div>
-          <span className="font-primary text-xs font-bold text-[#020617]">
+          <span className="font-primary text-xs font-bold text-[#111113] tracking-[-0.02em]">
             Government Identity Verification
           </span>
         </div>
@@ -81,7 +81,7 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
 
       {/* 1. Document Type Selector */}
       <div className="space-y-2">
-        <label className="font-primary text-xs font-bold text-[#020617] uppercase tracking-wider block">
+        <label className="label block">
           Select Identity Document
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -94,10 +94,10 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
                 setDocNumber("");
               }}
               className={cn(
-                "p-2.5 rounded-[4px] border text-center text-xs font-medium transition-all duration-200 ease-out",
+                "p-2.5 border text-center text-xs font-medium transition-all duration-200 ease-out cursor-pointer",
                 docType === opt.id
-                  ? "bg-[#0f172a] text-white border-[#0f172a] shadow-xs"
-                  : "bg-white border-[#e2e8f0] text-[#020617] hover:bg-[#f8fafc]"
+                  ? "bg-[#111113] text-white border-[#111113]"
+                  : "bg-white border-[#111113]/15 text-[#111113] hover:bg-[#F8F7F4]"
               )}
             >
               {opt.label}
@@ -110,7 +110,7 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
       <div className="space-y-1.5">
         <label
           htmlFor="doc-num-input"
-          className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block"
+          className="label block"
         >
           {docType === "nin" ? "11-Digit NIN Number" : "Document Reference Number"}
         </label>
@@ -122,31 +122,31 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
             onChange={(e) => setDocNumber(e.target.value)}
             placeholder={currentOption.placeholder}
             maxLength={docType === "nin" ? 11 : 20}
-            className="w-full h-11 pl-3 pr-4 rounded-[4px] border border-[#e2e8f0] bg-white font-mono text-xs font-bold text-[#020617] outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]"
+            className="w-full h-11 pl-3 pr-4 border border-[#111113]/15 bg-white font-mono text-xs font-bold text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
           />
         </div>
-        <p className="font-secondary text-[11px] text-[#64748b]">
+        <p className="font-secondary text-[11px] text-[#111113]/60">
           Verified against national databases in real-time.
         </p>
       </div>
 
       {/* 3. Document Front Dropzone */}
       <div className="space-y-1.5">
-        <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block">
+        <label className="label block">
           Upload Clear Photo of {currentOption.label}
         </label>
 
         {frontFile ? (
-          <div className="relative rounded-[4px] border border-[#22c55e]/40 bg-[#22c55e]/10 p-3 flex items-center justify-between">
+          <div className="relative border border-[#22c55e]/40 bg-[#22c55e]/10 p-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#22c55e] text-white">
+              <div className="flex h-10 w-10 items-center justify-center bg-[#22c55e] text-white">
                 <FileCheck className="h-5 w-5" />
               </div>
               <div>
                 <span className="font-primary text-xs font-bold text-[#15803d] block">
                   Document Captured & Scanned
                 </span>
-                <span className="font-mono text-[10px] text-[#64748b]">
+                <span className="font-mono text-[10px] text-[#111113]/65">
                   {docType.toUpperCase()}_SCAN_VERIFIED.JPEG (1.4 MB)
                 </span>
               </div>
@@ -155,7 +155,7 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
             <button
               type="button"
               onClick={() => setFrontFile(null)}
-              className="p-1 rounded-[4px] hover:bg-black/10 text-[#64748b]"
+              className="p-1 hover:bg-black/10 text-[#111113]/60"
             >
               <X className="h-4 w-4" />
             </button>
@@ -174,19 +174,19 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
               handleSimulateUpload();
             }}
             className={cn(
-              "rounded-[8px] border-2 border-dashed p-6 text-center cursor-pointer transition-all duration-200 ease-out",
+              "border-2 border-dashed p-6 text-center cursor-pointer transition-all duration-200 ease-out",
               isDragging
-                ? "border-[#0f172a] bg-[#f8fafc]"
-                : "border-[#cbd5e1] hover:border-[#0f172a] hover:bg-[#f8fafc]"
+                ? "border-[#111113] bg-[#F8F7F4]"
+                : "border-[#111113]/25 hover:border-[#111113] hover:bg-[#F8F7F4]"
             )}
           >
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#f1f5f9] text-[#0f172a] mb-2">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#F0EFEA] text-[#111113] mb-2">
               <UploadCloud className="h-5 w-5" />
             </div>
-            <span className="font-primary text-xs font-bold text-[#020617] block">
+            <span className="font-primary text-xs font-bold text-[#111113] block">
               Click to select or drop {currentOption.label} photo
             </span>
-            <span className="font-secondary text-[11px] text-[#64748b] block mt-1">
+            <span className="font-secondary text-[11px] text-[#111113]/60 block mt-1">
               Supports JPEG, PNG or PDF up to 10MB. Must not be blurry or cut off.
             </span>
           </div>
@@ -194,7 +194,7 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
       </div>
 
       {/* Anti-Glare Advice */}
-      <div className="rounded-[4px] border border-[#ecc94b]/40 bg-[#ecc94b]/15 p-3 flex items-start gap-2.5 text-xs text-[#975a16]">
+      <div className="border border-[#ecc94b]/40 bg-[#ecc94b]/15 p-3 flex items-start gap-2.5 text-xs text-[#975a16]">
         <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
         <span>
           <strong>Avoid Rejection:</strong> Place your card on a flat surface in good lighting. Flash glare or cropped corners will cause the automated OCR validator to fail.
