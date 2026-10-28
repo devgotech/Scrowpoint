@@ -69,6 +69,6 @@ scrowpoint_workspace/
 1. Push the repository to GitHub (no `.git` directory is pre-created so you can initialize your own repo cleanly).
 2. In the [Render Dashboard](https://dashboard.render.com), click **New +** → **Blueprint**.
 3. Connect your GitHub repository:
-   - Use the root `/render.yaml` to deploy the **React/Vite Frontend (`scrowpoint-web`) + Go Backend (`scrowpoint-core-backend`) + Python Media Service (`scrowpoint-media-service`) + PostgreSQL 16 (`scrowpoint-db`)** together.
+   - Use the root `/render.yaml` to deploy the **Go Backend (`scrowpoint-core-backend`) + Python Media Service (`scrowpoint-media-service`) + PostgreSQL 16 (`scrowpoint-db`)** together. Deploy the Next.js frontend in `frontend-web` as a Node web service and set `CORE_BACKEND_URL` to the Go backend service URL.
    - Or use `scrowpoint_workspace/render.yaml` if deploying the backend microservices from a dedicated backend repository.
 4. Set your `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`, `SMILE_ID_PARTNER_ID`, and `SMILE_ID_API_KEY` environment variables in Render and click **Apply**.

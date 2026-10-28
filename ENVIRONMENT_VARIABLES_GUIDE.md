@@ -1,21 +1,18 @@
 # Scrowpoint — Complete Environment Variables Reference & Environment Usage Guide
 
-This guide lists every environment variable used across the **Scrowpoint** stack—covering the **React/Vite Frontend**, the **Go Core Escrow Backend**, the **Python EXIF-Stripping Media Microservice**, and **PostgreSQL**—along with exact instructions on when and how to configure them in **Local Development**, **Test / Staging (Sandbox)**, and **Production (Render)** environments.
+This guide lists environment variables used across the **Scrowpoint** stack—covering the **Next.js frontend**, the **Go Core Escrow Backend**, the **Python EXIF-Stripping Media Microservice**, and **PostgreSQL**—along with exact instructions on when and how to configure them in **Local Development**, **Test / Staging (Sandbox)**, and **Production (Render)** environments.
 
 ---
 
-## 1. Frontend Web Application (`/` — `.env` / `.env.local`)
+## 1. Frontend Web Application (`frontend-web` — `.env.local` / deployment environment)
 
-> **Important Note on Vite Variables:** Any variable prefixed with `VITE_` is embedded into the client browser bundle at build time (`npm run build`). **Never** place secret keys (like `PAYSTACK_SECRET_KEY` or `FACEBOOK_APP_SECRET`) in `VITE_*` variables.
+The frontend is a Next.js application. API requests use same-origin `/api/*` paths, which Next.js rewrites to the Go backend.
 
 | Variable Name | Purpose | Local Development (`development`) | Test / Staging (`test` / `staging`) | Production (`Render`) |
 | :--- | :--- | :--- | :--- | :--- |
-| `APP_URL` | Canonical base URL of the frontend app for OAuth redirect callbacks & email links | `http://localhost:3000` | `https://staging.scrowpoint.com` (or Render preview URL) | `https://scrowpoint.com` (or `https://scrowpoint-web.onrender.com`) |
-| `VITE_API_BASE_URL` | Base URL for the Go Core Escrow Backend (`:8080`) | `http://localhost:8080` *(Optional: Frontend automatically falls back to local state ledger if Go server isn't running)* | `https://scrowpoint-core-backend-staging.onrender.com` | Auto-injected by `render.yaml` from `scrowpoint-core-backend` |
-| `VITE_MEDIA_SERVICE_URL` | Base URL for the Python FastAPI EXIF-Stripping Media Service (`:8000`) | `http://localhost:8000` | `https://scrowpoint-media-staging.onrender.com` | Auto-injected by `render.yaml` from `scrowpoint-media-service` |
-| `VITE_PAYSTACK_PUBLIC_KEY` | Paystack client public key used to initialize the escrow checkout modal | `pk_test_...` (Paystack Test Public Key) | `pk_test_...` (Paystack Test Public Key) | `pk_live_...` (Paystack Live Public Key) |
-| `VITE_GOOGLE_OAUTH_CLIENT_ID` | Google OAuth 2.0 Web Client ID for "Google Sign In" | Your Google Cloud Console Web Client ID (`...apps.googleusercontent.com`) or leave default to use built-in preset OAuth chooser | Dedicated Staging Google OAuth Client ID with staging domain authorized | Production Google OAuth Client ID restricted to `https://scrowpoint.com` |
-| `VITE_FACEBOOK_APP_ID` | Meta / Facebook App ID for "Facebook Sign In" (`POST /api/auth/oauth/facebook`) | Facebook Test App ID (or leave default to use built-in Facebook OAuth preset chooser) | Facebook Test App ID (App Mode: *Development* or *Staging*) | Live Facebook App ID (App Mode: *Live* with `email` & `public_profile` permissions approved) |
+| `CORE_BACKEND_URL` | Server-side destination for Next.js `/api/*` rewrites to the Go backend | `http://localhost:8080` (default; override in `frontend-web/.env.local` if needed) | The staging Go backend URL | The deployed Go backend URL, e.g. the Render service URL |
+
+`CORE_BACKEND_URL` is read by `next.config.ts` on the server and is not exposed to browser code. Restart/redeploy Next.js after changing it.
 
 ---
 
@@ -43,9 +40,9 @@ This guide lists every environment variable used across the **Scrowpoint** stack
 | :--- | :--- | :--- | :--- | :--- |
 | `JWT_SECRET` | HMAC-SHA256 signing secret for session tokens | Any local random string (e.g. `dev-jwt-secret-key`) | Distinct 32-byte staging secret | Cryptographically generated on Render (`generateValue: true`) |
 | `JWT_EXPIRATION_HOURS` | Token lifespan before re-authentication is required | `168` (7 days) | `24` (1 day — shorter to test token expiry flows) | `168` (7 days) |
-| `GOOGLE_OAUTH_CLIENT_ID` | Server-side verification of Google ID tokens on `POST /api/auth/oauth/google` | Matches `VITE_GOOGLE_OAUTH_CLIENT_ID` | Staging Google Client ID | Production Google Client ID |
+| `GOOGLE_OAUTH_CLIENT_ID` | Server-side verification of Google ID tokens on `POST /api/auth/oauth/google` | Local Google Client ID | Staging Google Client ID | Production Google Client ID |
 | `GOOGLE_OAUTH_CLIENT_SECRET` | Google OAuth Client Secret for authorization code exchange | Local/Dev Google Client Secret | Staging Google Client Secret | Production Google Client Secret |
-| `FACEBOOK_APP_ID` | Server-side verification of Facebook tokens on `POST /api/auth/oauth/facebook` | Matches `VITE_FACEBOOK_APP_ID` | Facebook Test App ID | Production Facebook App ID |
+| `FACEBOOK_APP_ID` | Server-side verification of Facebook tokens on `POST /api/auth/oauth/facebook` | Facebook Test App ID | Facebook Test App ID | Production Facebook App ID |
 | `FACEBOOK_APP_SECRET` | Meta App Secret used to validate `input_token` against Facebook Graph API | Facebook Test App Secret | Facebook Test App Secret | Production Facebook App Secret |
 
 ### C. Transactional Email & 6-Digit OTP Delivery (Registration & Forgot Password)

@@ -50,10 +50,10 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Step B: Start Frontend Application (Port 3000)
-From the repository root:
+From the workspace root:
 ```bash
-cp .env.example .env
-npm install
+cd frontend-web
+npm ci
 npm run dev
 ```
 Open `http://localhost:3000` in your browser.
@@ -68,21 +68,15 @@ Both the repository root (`/render.yaml`) and `/scrowpoint_workspace/render.yaml
 2. Go to [Render Dashboard](https://dashboard.render.com/) and click **New +** → **Blueprint**.
 3. Select your GitHub repository.
 4. Render will automatically read `render.yaml` and create:
-   - **`scrowpoint-web`**: Static site (`npm install && npm run build`, publishes `./dist` with SPA rewrite `/* -> /index.html`).
    - **`scrowpoint-core-backend`**: Docker web service built from `scrowpoint_workspace/core-backend/Dockerfile` with `/health` probe.
    - **`scrowpoint-media-service`**: Docker web service built from `scrowpoint_workspace/media-service/Dockerfile` with dynamic `$PORT` binding.
    - **`scrowpoint-db`**: Managed PostgreSQL 16 database automatically wired to `scrowpoint-core-backend` via `DATABASE_URL`.
 5. Enter your Paystack (`PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`) and SmileID (`SMILE_ID_PARTNER_ID`, `SMILE_ID_API_KEY`) keys when prompted (or use test keys) and click **Apply**.
 
-### Option B: Manual Render Static Site Deployment (Frontend Only)
-If you want to deploy the interactive React/Vite frontend first as a standalone Static Site on Render:
-1. In Render Dashboard, click **New +** → **Static Site**.
+### Option B: Deploy the Next.js Frontend on Render
+Deploy `frontend-web` as a Node web service; Next.js must run as a server because its `/api/*` rewrites forward requests to the Go backend.
+1. In Render Dashboard, click **New +** → **Web Service**.
 2. Connect your GitHub repository.
-3. Configure the build settings:
-   - **Build Command:** `npm install && npm run build`
-   - **Publish Directory:** `dist`
-4. Under **Redirects / Rewrites**, add a rule so client-side routes (`/waitlist`, `/marketplace`, `/login`, `/register`, `/forgot-password`, `/escrow/*`) resolve cleanly:
-   - **Source:** `/*`
-   - **Destination:** `/index.html`
-   - **Action:** `Rewrite`
-5. Click **Create Static Site**.
+3. Set the **Root Directory** to `frontend-web`, the **Build Command** to `npm ci && npm run build`, and the **Start Command** to `npm run start`.
+4. Add `CORE_BACKEND_URL` with the URL of the deployed `scrowpoint-core-backend` service.
+5. Click **Create Web Service**.

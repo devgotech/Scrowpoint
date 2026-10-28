@@ -6,7 +6,7 @@ import type { NextRequest } from "next/server";
  *
  * Requirements (UI Context Spec 5, §3):
  * - Intercepts requests to protected routes: /dashboard, /escrow, /admin (and their nested paths).
- * - Checks for the presence of the secure HTTP-only JWT authentication cookie (e.g. `sp_token` or `auth_token`).
+ * - Checks for a frontend session marker or an existing backend auth cookie.
  * - If missing or empty, preserves the attempted destination URL via `?redirect=` and redirects to `/login`.
  * - Passes through all public routes, static assets, and auth flows without interruption.
  */
@@ -14,7 +14,10 @@ import type { NextRequest } from "next/server";
 // Protected path prefixes
 const PROTECTED_PREFIXES = ["/dashboard", "/escrow", "/admin"];
 
-// Name of the HTTP-only cookie set by the Go core backend
+// The frontend manages auth state in localStorage and mirrors its presence here
+// so protected page requests can pass the proxy. API authorization remains the
+// backend's responsibility.
+const SESSION_COOKIE_NAME = "sp_session";
 const AUTH_COOKIE_NAME = "sp_token";
 const FALLBACK_COOKIE_NAME = "auth_token";
 
@@ -28,6 +31,7 @@ export function proxy(request: NextRequest) {
 
   if (isProtected) {
     const token =
+      request.cookies.get(SESSION_COOKIE_NAME)?.value ||
       request.cookies.get(AUTH_COOKIE_NAME)?.value ||
       request.cookies.get(FALLBACK_COOKIE_NAME)?.value;
 

@@ -1,6 +1,6 @@
 /**
  * Scrowpoint Centralized Typed API Client
- * Connects the React/Next frontend to the Go Core Backend (/api/*)
+ * Connects the Next.js frontend to the Go Core Backend (/api/*)
  * with automatic Bearer token injection and graceful offline/preview fallback.
  */
 
@@ -29,6 +29,11 @@ export function setAuthSession(token: string, user?: Record<string, unknown>) {
     localStorage.setItem("sp_user", JSON.stringify(user));
     localStorage.setItem("sp_auth_user", JSON.stringify(user));
   }
+
+  // Synchronize session cookie for Next.js middleware route protection
+  const isSecure = window.location.protocol === "https:";
+  document.cookie = `sp_token=${encodeURIComponent(token)}; path=/; max-age=604800; SameSite=Lax${isSecure ? "; Secure" : ""}`;
+  document.cookie = `sp_session=active; path=/; max-age=604800; SameSite=Lax${isSecure ? "; Secure" : ""}`;
 }
 
 export function clearAuthSession() {
@@ -38,18 +43,10 @@ export function clearAuthSession() {
   localStorage.removeItem("bh_access_token");
   localStorage.removeItem("sp_user");
   localStorage.removeItem("sp_auth_user");
-}
 
-function getApiBaseUrl(): string {
-  try {
-    const metaEnv = (import.meta as unknown as { env?: Record<string, string> }).env;
-    if (metaEnv?.VITE_API_URL) {
-      return metaEnv.VITE_API_URL.replace(/\/+$/, "");
-    }
-  } catch {
-    // ignore
-  }
-  return "";
+  // Invalidate session cookies
+  document.cookie = "sp_token=; path=/; max-age=0; SameSite=Lax";
+  document.cookie = "sp_session=; path=/; max-age=0; SameSite=Lax";
 }
 
 /**
@@ -61,9 +58,7 @@ export async function apiFetch<T = unknown>(
   path: string,
   options: RequestInit = {}
 ): Promise<{ ok: boolean; status: number; data: T | null; error?: string }> {
-  const baseUrl = getApiBaseUrl();
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const url = `${baseUrl}${normalizedPath}`;
 
   const token = getAuthToken();
   const headers: Record<string, string> = {
@@ -76,7 +71,7 @@ export async function apiFetch<T = unknown>(
   }
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(normalizedPath, {
       ...options,
       headers,
     });

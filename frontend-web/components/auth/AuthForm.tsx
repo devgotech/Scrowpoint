@@ -202,13 +202,25 @@ export function AuthForm({
       return;
     }
 
-    router.push(
+    const defaultPath =
       authenticatedRole === "admin"
         ? "/admin/dashboard"
         : authenticatedRole === "seller"
           ? "/seller/dashboard"
-          : "/marketplace"
-    );
+          : "/marketplace";
+    const requestedPath = new URLSearchParams(window.location.search).get("redirect");
+    const safeRequestedPath =
+      requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
+        ? requestedPath
+        : null;
+    const roleMatchesPath =
+      authenticatedRole === "admin"
+        ? safeRequestedPath?.startsWith("/admin/")
+        : authenticatedRole === "seller"
+          ? safeRequestedPath?.startsWith("/seller/")
+          : safeRequestedPath === "/marketplace";
+
+    router.push(roleMatchesPath && safeRequestedPath ? safeRequestedPath : defaultPath);
   };
 
   useEffect(() => {

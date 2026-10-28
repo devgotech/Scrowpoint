@@ -173,8 +173,11 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     if (typeof window === "undefined") return;
     if (nextUser) {
       window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextUser));
+      const secure = window.location.protocol === "https:" ? "; Secure" : "";
+      document.cookie = `sp_session=1; Path=/; Max-Age=604800; SameSite=Lax${secure}`;
     } else {
       window.localStorage.removeItem(AUTH_STORAGE_KEY);
+      document.cookie = "sp_session=; Path=/; Max-Age=0; SameSite=Lax";
     }
     window.dispatchEvent(new Event("scrowpoint-auth-change"));
   }, []);

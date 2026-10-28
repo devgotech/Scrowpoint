@@ -16,9 +16,10 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The login and sign-up routes proxy authentication requests to the Go backend.
-Set `CORE_BACKEND_URL` in `frontend-web/.env.local` if the backend is not
-available at the default `http://localhost:8080`.
+All `/api/*` requests are forwarded to the Go backend by the Next.js rewrite
+configured in `next.config.ts`. The default backend URL is
+`http://localhost:8080`; set `CORE_BACKEND_URL` in `.env.local` or the hosting
+environment to override it. Restart Next.js after changing this value.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
