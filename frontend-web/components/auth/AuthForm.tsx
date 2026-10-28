@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowRight,
@@ -25,7 +26,6 @@ import {
   type OAuthProviderType,
   type UserRole,
 } from "@/components/providers/AuthContext";
-import { navigate } from "@/next/navigation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -161,6 +161,7 @@ export function AuthForm({
   onForgotPasswordClick,
   className,
 }: AuthFormProps) {
+  const router = useRouter();
   const [regStage, setRegStage] = useState<RegistrationStage>("credentials");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -710,7 +711,7 @@ export function AuthForm({
                 if (onSubmitSuccess) {
                   onSubmitSuccess(email);
                 } else {
-                  navigate("/verify-identity");
+                  router.push("/verify-identity");
                 }
               }}
               className="w-full h-12 rounded-full text-xs font-semibold gap-2"
@@ -723,7 +724,7 @@ export function AuthForm({
             <button
               type="button"
               onClick={() => {
-                navigate(
+                router.push(
                   role === "seller" ? "/seller/dashboard" : "/marketplace"
                 );
               }}
@@ -1130,7 +1131,7 @@ export function AuthForm({
                       if (onForgotPasswordClick) {
                         onForgotPasswordClick(email);
                       } else {
-                        navigate("/forgot-password");
+                        router.push("/forgot-password");
                       }
                     }}
                     className="font-mono text-xs text-[#111113]/65 hover:text-[#FF5A25] underline underline-offset-4 transition-colors cursor-pointer"

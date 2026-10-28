@@ -116,7 +116,7 @@ import { EvidenceViewer } from "@/components/admin/EvidenceViewer";
 import { ReadonlyChatTranscript } from "@/components/admin/ReadonlyChatTranscript";
 import { VerdictActionGroup } from "@/components/admin/VerdictActionGroup";
 
-import { AuthProvider } from "@/src/context/AuthContext";
+import { AuthProvider } from "@/components/providers/AuthContext";
 import { formatCurrency } from "@/lib/currency";
 import type { AdminDisputeData } from "@/types/dispute";
 import { cn } from "@/lib/utils";

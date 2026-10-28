@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
@@ -18,8 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MinimalistAuthFooter } from "@/components/footers";
-import { useAuth } from "@/src/context/AuthContext";
-import { navigate } from "@/next/navigation";
+import { useAuth } from "@/components/providers/AuthContext";
 import { cn } from "@/lib/utils";
 
 /**
@@ -51,6 +51,7 @@ export default function ForgotPasswordPage({
   onResetSuccess,
   onNavigateHome,
 }: ForgotPasswordPageProps) {
+  const router = useRouter();
   const { requestPasswordReset, resetPasswordWithToken, login } = useAuth();
 
   const [step, setStep] = useState<RecoveryStep>("request");
@@ -193,7 +194,7 @@ export default function ForgotPasswordPage({
               if (onBackToLogin) {
                 onBackToLogin();
               } else {
-                navigate("/login");
+                router.push("/login");
               }
             }}
             className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.12em] text-[#111113]/65 hover:text-[#FF5A25] transition-colors cursor-pointer"
@@ -625,7 +626,7 @@ export default function ForgotPasswordPage({
                     if (onResetSuccess) {
                       onResetSuccess(email);
                     } else {
-                      navigate("/marketplace");
+                      router.push("/marketplace");
                     }
                   }}
                   className="w-full h-12 rounded-full text-xs font-semibold gap-2"
@@ -640,7 +641,7 @@ export default function ForgotPasswordPage({
                     if (onBackToLogin) {
                       onBackToLogin();
                     } else {
-                      navigate("/login");
+                      router.push("/login");
                     }
                   }}
                   className="w-full py-2.5 text-xs font-mono uppercase tracking-wider text-[#111113]/70 hover:text-[#111113] cursor-pointer"

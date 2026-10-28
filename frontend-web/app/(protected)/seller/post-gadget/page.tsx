@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { MinimalistAuthFooter } from "@/components/footers";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuth } from "@/components/providers/AuthContext";
 import { cn } from "@/lib/utils";
 
 /**
