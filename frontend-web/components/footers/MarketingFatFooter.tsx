@@ -3,14 +3,15 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-  ArrowRight,
   CheckCircle2,
   ChevronDown,
-  Instagram,
-  Linkedin,
   Mail,
-  Twitter,
 } from "lucide-react";
+import {
+  IconBrandInstagram,
+  IconBrandLinkedin,
+  IconBrandX,
+} from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -162,7 +163,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                 aria-label="Twitter / X"
                 className="h-9 w-9 border border-[#111113]/15 bg-white flex items-center justify-center text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors"
               >
-                <Twitter className="h-4 w-4" />
+                <IconBrandX className="h-4 w-4" />
               </a>
               <a
                 href="https://linkedin.com"
@@ -171,7 +172,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                 aria-label="LinkedIn"
                 className="h-9 w-9 border border-[#111113]/15 bg-white flex items-center justify-center text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors"
               >
-                <Linkedin className="h-4 w-4" />
+                <IconBrandLinkedin className="h-4 w-4" />
               </a>
               <a
                 href="https://instagram.com"
@@ -180,7 +181,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                 aria-label="Instagram"
                 className="h-9 w-9 border border-[#111113]/15 bg-white flex items-center justify-center text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors"
               >
-                <Instagram className="h-4 w-4" />
+                <IconBrandInstagram className="h-4 w-4" />
               </a>
               <a
                 href="mailto:compliance@scrowpoint.com"

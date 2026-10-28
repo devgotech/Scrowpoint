@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
 import "./globals.css";
 
@@ -8,15 +8,17 @@ import Navbar from "@/components/Navbar";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const roboto = Roboto({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-roboto",
-  weight: ["400", "500", "700"],
+  variable: "--font-primary",
 });
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
-const geistMono = Geist_Mono({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-secondary",
+});
+const spaceMono = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -30,14 +32,14 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${roboto.variable} ${geist.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} ${spaceMono.variable}`}>
       {/* flex flex-col min-h-screen ensures the footer always pushes to the bottom */}
       <body className="antialiased flex flex-col min-h-screen">
         
         {/* The AuthProvider wraps the entire app so all components know the user's login state */}
         <AuthProvider>
           <TooltipProvider delayDuration={300}>
-            <main className="mx-auto w-full max-w-[var(--page-max-width)] flex-1 px-4 py-6 pb-24 md:px-8 md:pb-6">
+            <main>
               {children}
             </main>
             <Suspense fallback={null}>
