@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/google/uuid"
@@ -75,9 +76,26 @@ func (rt *Router) RegisterExtendedHandlers(
 func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	origin := r.Header.Get("Origin")
+	allowedOrigin := os.Getenv("CORS_ALLOWED_ORIGIN")
+	if allowedOrigin == "" {
+		if os.Getenv("ENV") == "production" {
+			allowedOrigin = "https://buyershigh.com"
+		} else if origin != "" {
+			allowedOrigin = origin
+		} else {
+			allowedOrigin = "*"
+		}
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-paystack-signature")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("X-Frame-Options", "DENY")
+	w.Header().Set("X-XSS-Protection", "1; mode=block")
+
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -187,9 +205,13 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Allow Escrow Room P2P Trade Chat when accessed without Bearer token in preview/demo mode
+	// Allow Escrow Room P2P Trade Chat when accessed without Bearer token ONLY in development preview mode
 	if len(parts) == 4 && parts[0] == "api" && parts[1] == "orders" && parts[3] == "messages" && r.Header.Get("Authorization") == "" {
-		rt.orderHandler.HandleOrderMessages(w, r, uuid.Nil)
+		if os.Getenv("ENV") != "production" {
+			rt.orderHandler.HandleOrderMessages(w, r, uuid.Nil)
+			return
+		}
+		handlers.JSONError(w, http.StatusUnauthorized, "Authentication required to access order trade chat")
 		return
 	}
 

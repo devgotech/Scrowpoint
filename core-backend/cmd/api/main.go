@@ -19,6 +19,11 @@ import (
 )
 
 func main() {
+	env := os.Getenv("ENV")
+	if env == "" {
+		env = "development"
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -26,18 +31,26 @@ func main() {
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
-		jwtSecret = "super-secret-buyers-high-production-jwt-key-2026"
+		if env == "production" {
+			log.Fatalf("[FATAL] JWT_SECRET environment variable must be set in production mode")
+		}
+		jwtSecret = "dev-insecure-buyers-high-local-jwt-key-do-not-use-in-prod"
+		log.Println("[WARN] Running with fallback dev JWT secret. Do NOT use in production!")
 	}
 
 	paystackSecret := os.Getenv("PAYSTACK_SECRET_KEY")
 	if paystackSecret == "" {
+		if env == "production" {
+			log.Fatalf("[FATAL] PAYSTACK_SECRET_KEY must be configured in production mode")
+		}
 		paystackSecret = "sk_test_buyers_high_mock_paystack_secret_key"
+		log.Println("[WARN] Running with mock Paystack test secret key for development")
 	}
 
 	smilePartnerID := os.Getenv("SMILE_ID_PARTNER_ID")
 	smileAPIKey := os.Getenv("SMILE_ID_API_KEY")
 
-	log.Println("[INFO] Initializing Buyer's High Escrow Core Backend...")
+	log.Printf("[INFO] Initializing Buyer's High Escrow Core Backend (Environment: %s)...", env)
 
 	jwtMw := middleware.NewAuthMiddleware(jwtSecret)
 
@@ -58,19 +71,34 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	adminUser, err := authService.SignUp(ctx, services.SignUpInput{
-		Email:    "admin@buyershigh.com",
-		Password: "AdminPassword123!",
-		Name:     "Lead Compliance Officer",
-		Role:     db.RoleAdmin,
-		Phone:    "+2348000000001",
-		Location: "Lagos, Nigeria",
-	})
-	if err == nil {
-		now := adminUser.CreatedAt
-		adminUser.EmailVerifiedAt = &now
-		adminUser.KYCStatus = db.KYCApproved
-		log.Printf("[SEED] Default Admin seeded: %s (%s)", adminUser.Email, adminUser.ID)
+	// SEC-03 Hardening: Admin account is only auto-seeded during local development.
+	// In production, administrative accounts must be provisioned via migration or secure CLI.
+	if env != "production" && os.Getenv("SEED_DEV_ADMIN") != "false" {
+		devAdminEmail := os.Getenv("DEV_ADMIN_EMAIL")
+		if devAdminEmail == "" {
+			devAdminEmail = "admin@buyershigh.com"
+		}
+		devAdminPass := os.Getenv("DEV_ADMIN_PASSWORD")
+		if devAdminPass == "" {
+			devAdminPass = "AdminPassword123!"
+		}
+
+		adminUser, err := authService.SignUp(ctx, services.SignUpInput{
+			Email:    devAdminEmail,
+			Password: devAdminPass,
+			Name:     "Lead Compliance Officer (Dev Seed)",
+			Role:     db.RoleAdmin,
+			Phone:    "+2348000000001",
+			Location: "Lagos, Nigeria",
+		})
+		if err == nil {
+			now := adminUser.CreatedAt
+			adminUser.EmailVerifiedAt = &now
+			adminUser.KYCStatus = db.KYCApproved
+			log.Printf("[DEV-SEED] Development Admin seeded: %s", adminUser.Email)
+		}
+	} else if env == "production" {
+		log.Println("[INFO] Production mode active: Automatic admin account seeding is disabled.")
 	}
 
 	authHandler := handlers.NewAuthHandler(authService, jwtMw)

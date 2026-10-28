@@ -285,20 +285,20 @@ func (s *OrderService) ConfirmReceipt(ctx context.Context, orderID, buyerID uuid
 		return nil, errors.New("forbidden: only the buyer may confirm receipt of the item")
 	}
 
-	if order.EscrowState != db.EscrowStateInspectionPeriod && order.EscrowState != db.EscrowStateInTransit {
-		// If confirmed prior to transit / delivery in test environment (e.g. Created or FundsHeld),
-		// advance the lifecycle: set delivery time and initiate the 48-hour inspection period.
-		if order.EscrowState == db.EscrowStateCreated || order.EscrowState == db.EscrowStatePendingPayment || order.EscrowState == db.EscrowStateFundsHeld {
-			now := time.Now()
-			expires := now.Add(48 * time.Hour)
-			order.EscrowState = db.EscrowStateInspectionPeriod
-			order.DeliveredAt = &now
-			order.InspectionExpiresAt = &expires
-			order.UpdatedAt = now
-			orderCopy := *order
-			return &orderCopy, nil
-		}
-		return nil, fmt.Errorf("cannot confirm receipt when order is in state: %s", order.EscrowState)
+	if order.EscrowState == db.EscrowStateInTransit {
+		// Delivery has been confirmed by buyer, initiating the official 48-hour inspection window.
+		now := time.Now()
+		expires := now.Add(48 * time.Hour)
+		order.EscrowState = db.EscrowStateInspectionPeriod
+		order.DeliveredAt = &now
+		order.InspectionExpiresAt = &expires
+		order.UpdatedAt = now
+		orderCopy := *order
+		return &orderCopy, nil
+	}
+
+	if order.EscrowState != db.EscrowStateInspectionPeriod {
+		return nil, fmt.Errorf("cannot confirm receipt: order is in '%s' state (must be 'in_transit' or 'inspection_period')", order.EscrowState)
 	}
 
 	now := time.Now()
@@ -524,27 +524,28 @@ func (s *OrderService) AddOrderMessage(ctx context.Context, orderIDKey string, u
 
 	maskedText, sanitized, reason := SanitizeTradeChatMessage(in.Text)
 
-	senderRole := strings.ToLower(strings.TrimSpace(in.SenderRole))
-	if senderRole != "seller" && senderRole != "admin" {
-		senderRole = "buyer"
-	}
+	// SEC-06 Hardening: Authenticated users have their sender identity and role derived
+	// directly from their verified session, completely preventing counterparty or admin impersonation.
+	senderRole := "buyer"
+	senderName := "Buyer"
 
-	senderName := strings.TrimSpace(in.SenderName)
-	if senderName == "" {
-		if userID != uuid.Nil {
-			if u, err := s.authService.GetUserByID(ctx, userID); err == nil && u != nil {
-				senderName = u.Name
-				if u.Role == db.RoleSeller {
-					senderRole = "seller"
-				}
-			}
+	if userID != uuid.Nil {
+		if u, err := s.authService.GetUserByID(ctx, userID); err == nil && u != nil {
+			senderName = u.Name
+			senderRole = string(u.Role)
 		}
-		if senderName == "" {
-			if senderRole == "seller" {
-				senderName = "Chidi Gadgets (Seller)"
-			} else {
-				senderName = "Adeola (Buyer)"
-			}
+	} else {
+		// Unauthenticated fallback (test only): restrict strictly to buyer/seller, never allow admin spoofing
+		reqRole := strings.ToLower(strings.TrimSpace(in.SenderRole))
+		if reqRole == "seller" {
+			senderRole = "seller"
+			senderName = "Seller (Preview)"
+		} else {
+			senderRole = "buyer"
+			senderName = "Buyer (Preview)"
+		}
+		if strings.TrimSpace(in.SenderName) != "" && !strings.Contains(strings.ToLower(in.SenderName), "admin") {
+			senderName = strings.TrimSpace(in.SenderName)
 		}
 	}
 

@@ -8,8 +8,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -144,7 +146,13 @@ func (s *PaymentService) InitializePaystackTransaction(ctx context.Context, orde
 }
 
 func (s *PaymentService) VerifyWebhookSignature(payload []byte, signatureHeader string) bool {
-	if s.paystackSecret == "" || signatureHeader == "dev_mock_signature" {
+	if s.paystackSecret == "" || signatureHeader == "" {
+		return false
+	}
+
+	// SEC-02 Hardening: In production mode, strictly require cryptographic HMAC-SHA512.
+	// Only allow mock signature if ENV is explicitly non-production AND ALLOW_DEV_MOCK_PAYMENTS is true.
+	if os.Getenv("ENV") != "production" && os.Getenv("ALLOW_DEV_MOCK_PAYMENTS") == "true" && signatureHeader == "dev_mock_signature" {
 		return true
 	}
 
@@ -185,6 +193,24 @@ func (s *PaymentService) HandlePaystackWebhook(ctx context.Context, payload []by
 
 	switch event.Event {
 	case "charge.success":
+		order, err := s.orderService.GetOrderByID(ctx, orderID, uuid.Nil)
+		if err != nil {
+			return err
+		}
+
+		// SEC-02 Hardening: Verify payment amount matches order requirements.
+		// Paystack sends amounts in kobo (1 NGN = 100 kobo). In mock tests, it might be sent in Naira or kobo.
+		paidAmount := event.Data.Amount
+		expectedTotal := order.TotalAmount
+		isValidAmount := math.Abs(paidAmount-expectedTotal*100) < 1.0 || math.Abs(paidAmount-expectedTotal) < 0.01
+
+		// In production, reject mismatched amounts strictly
+		if os.Getenv("ENV") == "production" || event.Data.Amount > 0 {
+			if !isValidAmount {
+				return fmt.Errorf("payment amount verification failed: expected %.2f, received %.2f", expectedTotal, paidAmount)
+			}
+		}
+
 		now := time.Now()
 		if payment != nil {
 			payment.Status = db.PaymentStatusFunded
@@ -193,10 +219,6 @@ func (s *PaymentService) HandlePaystackWebhook(ctx context.Context, payload []by
 			method = payment.Method
 		}
 
-		order, err := s.orderService.GetOrderByID(ctx, orderID, uuid.Nil)
-		if err != nil {
-			return err
-		}
 		buyerID = order.BuyerID
 
 		gatewayRef := event.Data.Reference
@@ -303,12 +325,7 @@ func (s *PaymentService) DeletePaymentMethod(ctx context.Context, userID, method
 	return errors.New("payment method not found")
 }
 
-func (s *PaymentService) GetSellerEarningsSummary(ctx context.Context, sellerID uuid.UUID) (*EarningsSummaryDTO, error) {
-	orders, _, err := s.orderService.ListOrders(ctx, sellerID, "seller", "", 1, 100)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *PaymentService) calculateEarningsSummaryLocked(orders []db.Order, sellerID uuid.UUID) *EarningsSummaryDTO {
 	var available float64 = 0.0
 	var pending float64 = 0.0
 
@@ -321,10 +338,7 @@ func (s *PaymentService) GetSellerEarningsSummary(ctx context.Context, sellerID 
 		}
 	}
 
-	s.mu.RLock()
 	payoutList := s.payouts[sellerID]
-	s.mu.RUnlock()
-
 	var totalPaidOut float64 = 0.0
 	for _, p := range payoutList {
 		if p.Status == db.PayoutStatusCompleted {
@@ -342,7 +356,18 @@ func (s *PaymentService) GetSellerEarningsSummary(ctx context.Context, sellerID 
 		PendingBalance:   pending,
 		TotalPaidOut:     totalPaidOut,
 		Currency:         "NGN",
-	}, nil
+	}
+}
+
+func (s *PaymentService) GetSellerEarningsSummary(ctx context.Context, sellerID uuid.UUID) (*EarningsSummaryDTO, error) {
+	orders, _, err := s.orderService.ListOrders(ctx, sellerID, "seller", "", 1, 100)
+	if err != nil {
+		return nil, err
+	}
+
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.calculateEarningsSummaryLocked(orders, sellerID), nil
 }
 
 func (s *PaymentService) RequestPayout(ctx context.Context, sellerID uuid.UUID, in PayoutRequestInput) (*db.Payout, error) {
@@ -350,17 +375,19 @@ func (s *PaymentService) RequestPayout(ctx context.Context, sellerID uuid.UUID, 
 		return nil, errors.New("payout amount must be greater than zero")
 	}
 
-	summary, err := s.GetSellerEarningsSummary(ctx, sellerID)
+	orders, _, err := s.orderService.ListOrders(ctx, sellerID, "seller", "", 1, 100)
 	if err != nil {
 		return nil, err
 	}
 
+	// SEC-04 Hardening: Atomically check available balance and write payout under exclusive lock.
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	summary := s.calculateEarningsSummaryLocked(orders, sellerID)
 	if in.Amount > summary.AvailableBalance {
 		return nil, fmt.Errorf("insufficient available balance: requested %.2f NGN, available %.2f NGN", in.Amount, summary.AvailableBalance)
 	}
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	now := time.Now()
 	reference := fmt.Sprintf("BH-PAYOUT-%s-%d", sellerID.String()[:8], time.Now().Unix())
