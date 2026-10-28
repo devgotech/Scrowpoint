@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils";
  *   - Gateway Processing (Paystack 1.5% max ₦2,000)
  *   - Optional Tracked Insured Waybill
  * - Split options: Buyer Pays 100%, Seller Pays 100%, 50/50 Shared.
- * - Token Compliance: 8px card radius, 4px controls, Roboto headers, Geist body, Geist Mono currency.
+ * - Token Compliance: 8px card radius, 4px controls, Geist headers, Inter body, Inter Tabular currency.
  */
 
 export type FeePayer = "buyer" | "seller" | "split";

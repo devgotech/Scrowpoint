@@ -8,7 +8,9 @@ import {
   Building2,
   CheckCircle2,
   Clock,
+  Cpu,
   CreditCard,
+  Eye,
   Fingerprint,
   Lock,
   Search,
@@ -53,7 +55,8 @@ export interface HeroSectionProps {
 }
 
 export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
-  const [activeTab, setActiveTab] = useState<"timeline" | "checklist">("timeline");
+  const [activeTab, setActiveTab] = useState<"timeline" | "checklist">("checklist");
+  const [selectedHotspot, setSelectedHotspot] = useState<string | null>(null);
 
   return (
     <section
@@ -84,9 +87,9 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
               </div>
             </div>
 
-            {/* 2. Punchy, Minimal Headline (Roboto 700) */}
-            <h1 className="font-primary text-3xl sm:text-4xl lg:text-[52px] xl:text-[64px] font-bold tracking-tight text-[#020617] leading-[1.15]">
-              Secondhand Gadgets Protected by{" "}
+            {/* 2. Punchy, Minimal Headline (Geist 700 - font-primary) */}
+            <h1 className="font-primary text-3xl sm:text-4xl lg:text-[46px] xl:text-[52px] font-bold tracking-tight text-[#020617] leading-[1.15]">
+              Secondhand Gadgets, Protected by{" "}
               <span className="relative inline-block text-[#15803d] whitespace-nowrap">
                 Escrow
                 <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-[#22c55e] rounded-full" />
@@ -95,8 +98,8 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
               .
             </h1>
 
-            {/* 3. Streamlined, Non-Chunky Subtext (Geist font-secondary) */}
-            <p className="font-secondary text-base sm:text-base text-[#64748b] leading-relaxed max-w-xl mx-auto lg:mx-0">
+            {/* 3. Streamlined, Non-Chunky Subtext (Inter - font-secondary) */}
+            <p className="font-secondary text-base sm:text-lg text-[#64748b] leading-relaxed max-w-xl mx-auto lg:mx-0">
               Nigeria’s verified peer-to-peer exchange. Buyer funds stay locked in custodial
               trust until delivery and a guaranteed 48-hour hardware inspection.
             </p>
@@ -129,9 +132,9 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: INTERACTIVE ESCROW PROTOCOL PREVIEW CARD */}
+          {/* RIGHT COLUMN: INTERACTIVE ESCROW GADGET INSPECTION SHOWCASE */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="w-full max-w-md rounded-[8px] border border-[#e2e8f0] bg-white p-5 shadow-[0_4px_12px_rgba(15,23,42,0.05)] space-y-4 transition-all duration-200 hover:shadow-[0_8px_20px_rgba(15,23,42,0.07)]">
+            <div className="w-full max-w-md lg:max-w-lg rounded-[8px] border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-[0_4px_16px_rgba(15,23,42,0.06)] space-y-3.5 transition-all duration-200 hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
               {/* Card Header with Protocol Badge & Micro-tabs */}
               <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
                 <div className="flex items-center gap-2">
@@ -140,7 +143,7 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
                   </div>
                   <div>
                     <span className="font-primary text-xs font-semibold text-[#020617] block leading-none">
-                      Live Protocol
+                      Live Inspection Protocol
                     </span>
                     <span className="font-mono text-[10px] text-[#64748b] leading-none">
                       SP-ORD-7842
@@ -152,129 +155,208 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
                 <div className="flex items-center rounded-[4px] bg-[#f1f5f9] p-0.5 text-[11px] font-mono">
                   <button
                     type="button"
-                    onClick={() => setActiveTab("timeline")}
-                    className={cn(
-                      "px-2 py-0.5 rounded-[3px] transition-all duration-150 cursor-pointer",
-                      activeTab === "timeline"
-                        ? "bg-white text-[#020617] shadow-2xs font-semibold"
-                        : "text-[#64748b] hover:text-[#020617]"
-                    )}
-                  >
-                    Status
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => setActiveTab("checklist")}
                     className={cn(
-                      "px-2 py-0.5 rounded-[3px] transition-all duration-150 cursor-pointer",
+                      "px-2.5 py-1 rounded-[3px] transition-all duration-150 cursor-pointer",
                       activeTab === "checklist"
                         ? "bg-white text-[#020617] shadow-2xs font-semibold"
                         : "text-[#64748b] hover:text-[#020617]"
                     )}
                   >
-                    48h Tests
+                    48h Diagnostic
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("timeline")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-[3px] transition-all duration-150 cursor-pointer",
+                      activeTab === "timeline"
+                        ? "bg-white text-[#020617] shadow-2xs font-semibold"
+                        : "text-[#64748b] hover:text-[#020617]"
+                    )}
+                  >
+                    Vault State
                   </button>
                 </div>
               </div>
 
-              {/* Verified Gadget Snapshot Card */}
-              <div className="group rounded-[6px] border border-[#e2e8f0] bg-[#f8fafc] p-3 flex items-center gap-3 transition-colors duration-150 hover:bg-slate-50">
+              {/* HERO GADGET MEDIA SHOWCASE: Crisp, High-Resolution Hardware Inspection Photo */}
+              <div className="relative h-48 sm:h-52 w-full rounded-[6px] overflow-hidden border border-[#e2e8f0] bg-slate-950 group">
+                {/* High-res authentic titanium iPhone gadget photography */}
                 <img
-                  src="https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?w=200&auto=format&fit=crop&q=80"
-                  alt="iPhone 14 Pro Max"
-                  className="h-14 w-14 object-cover rounded-[4px] border border-[#e2e8f0] shrink-0"
+                  src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=900&q=85"
+                  alt="Apple iPhone 15 Pro Max Titanium Hardware Inspection"
+                  className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="min-w-0 flex-1 space-y-0.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-[10px] text-[#64748b]">PHN-APL-IP14PM</span>
-                    <span className="font-mono text-[9px] bg-white border border-[#e2e8f0] px-1.5 py-0.2 rounded-[2px] text-[#0f172a] font-semibold">
-                      Mint Grade
+
+                {/* Subtle vignette gradient for legibility */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-black/35 pointer-events-none" />
+
+                {/* Top-Left: Mint Grade Certification Seal */}
+                <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-[#0f172a]/90 backdrop-blur-md text-white text-[11px] font-mono font-semibold shadow-xs border border-white/15">
+                  <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+                  <span>Grade A+ Mint</span>
+                </div>
+
+                {/* Top-Right: 48h Inspection SLA Live Countdown */}
+                <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-white/95 backdrop-blur-md text-[#020617] text-[11px] font-mono font-semibold shadow-xs border border-[#e2e8f0]">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ecc94b] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ecc94b]" />
+                  </span>
+                  <span>48h SLA: 36h 42m</span>
+                </div>
+
+                {/* Interactive Hardware Checkpoint Hotspots on Device */}
+                {/* Hotspot 1: Camera Array */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedHotspot(selectedHotspot === "camera" ? null : "camera")}
+                  title="Click to inspect 48MP Triple Camera System"
+                  className="absolute top-[28%] left-[28%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group/hotspot focus:outline-none"
+                >
+                  <span className="relative flex h-5 w-5 items-center justify-center">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-white shadow-md border border-[#0f172a]" />
+                  </span>
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-[3px] bg-[#0f172a]/95 px-2 py-0.5 text-[10px] font-mono text-white opacity-0 group-hover/hotspot:opacity-100 transition-opacity pointer-events-none shadow-md">
+                    Triple 48MP OEM Lenses: Passed
+                  </span>
+                </button>
+
+                {/* Hotspot 2: Battery & Logic */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedHotspot(selectedHotspot === "battery" ? null : "battery")}
+                  title="Click to inspect Battery & Logic Board"
+                  className="absolute top-[68%] left-[48%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group/hotspot focus:outline-none"
+                >
+                  <span className="relative flex h-5 w-5 items-center justify-center">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-60" />
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#22c55e] shadow-md border border-white" />
+                  </span>
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-[3px] bg-[#0f172a]/95 px-2 py-0.5 text-[10px] font-mono text-white opacity-0 group-hover/hotspot:opacity-100 transition-opacity pointer-events-none shadow-md">
+                    Battery: 94% OEM Peak
+                  </span>
+                </button>
+
+                {/* Bottom-Left: Custodial Escrow Vault Pill */}
+                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-white/95 backdrop-blur-md text-[#0f172a] text-[11px] font-mono font-bold shadow-xs border border-[#e2e8f0]">
+                  <Lock className="h-3 w-3 text-[#15803d]" />
+                  <span>₦850,000 Custody Vault</span>
+                </div>
+
+                {/* Bottom-Right: Clean IMEI Micro-Tag */}
+                <div className="absolute bottom-2.5 right-2.5 hidden sm:flex items-center gap-1 px-2 py-1 rounded-[4px] bg-black/75 backdrop-blur-md text-white/90 text-[10px] font-mono border border-white/10">
+                  <Fingerprint className="h-3 w-3 text-[#22c55e]" />
+                  <span>IMEI: 354892***841 Clean</span>
+                </div>
+              </div>
+
+              {/* Device Metadata Bar */}
+              <div className="flex items-center justify-between px-0.5">
+                <div className="min-w-0 pr-2">
+                  <h4 className="font-primary text-xs font-semibold text-[#020617] truncate">
+                    Apple iPhone 15 Pro Max 256GB — Natural Titanium
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#64748b] font-secondary">
+                    <span className="truncate">Seller: Tunde A.</span>
+                    <span>•</span>
+                    <span className="text-[#15803d] font-medium flex items-center gap-0.5 font-mono text-[10px]">
+                      <ShieldCheck className="h-2.5 w-2.5" />
+                      SmileID NIN
                     </span>
                   </div>
-                  <h4 className="font-primary text-xs font-semibold text-[#020617] truncate">
-                    Apple iPhone 14 Pro Max 256GB
-                  </h4>
-                  <div className="flex items-center justify-between pt-0.5">
-                    <span className="font-mono text-xs font-bold text-[#020617]">
-                      ₦850,000 NGN
-                    </span>
-                    <span className="flex items-center gap-1 font-mono text-[10px] font-semibold text-[#15803d]">
-                      <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
-                      <span>KYC Passed</span>
-                    </span>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-mono text-xs font-bold text-[#020617]">
+                    ₦850,000
+                  </div>
+                  <div className="font-mono text-[9px] text-[#15803d] font-medium">
+                    100% Payout Guaranteed
                   </div>
                 </div>
               </div>
 
-              {/* Interactive Content: Status Timeline vs 48h Inspection Checklist */}
-              {activeTab === "timeline" ? (
-                <div className="space-y-2 pt-0.5 font-secondary text-xs">
-                  {/* Step 1: Escrow Funded */}
-                  <div className="flex items-center justify-between p-2.5 rounded-[4px] bg-[#22c55e]/10 border border-[#22c55e]/30 text-[#15803d] transition-transform duration-150 hover:scale-[1.01]">
+              {/* Tabbed Interactive Content: 48h Inspection Diagnostics vs Escrow Vault State */}
+              {activeTab === "checklist" ? (
+                <div className="space-y-1.5 pt-0.5 font-secondary text-xs">
+                  <div
+                    className={cn(
+                      "flex items-center justify-between p-2 rounded-[4px] bg-[#f8fafc] border transition-colors",
+                      selectedHotspot === "battery" ? "border-emerald-500 bg-emerald-50/60" : "border-[#e2e8f0]"
+                    )}
+                  >
+                    <div className="flex items-center gap-2 text-[#020617]">
+                      <BatteryCharging className="h-3.5 w-3.5 text-[#15803d]" />
+                      <span className="font-medium">Battery Health Verification</span>
+                    </div>
+                    <span className="font-mono text-[10.5px] text-[#15803d] font-semibold bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5 rounded-[2px]">
+                      94% OEM Peak
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2 rounded-[4px] bg-[#f8fafc] border border-[#e2e8f0]">
+                    <div className="flex items-center gap-2 text-[#020617]">
+                      <Lock className="h-3.5 w-3.5 text-[#15803d]" />
+                      <span className="font-medium">iCloud & Carrier Activation Lock</span>
+                    </div>
+                    <span className="font-mono text-[10.5px] text-[#15803d] font-semibold bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5 rounded-[2px]">
+                      Clean & Unlocked
+                    </span>
+                  </div>
+
+                  <div
+                    className={cn(
+                      "flex items-center justify-between p-2 rounded-[4px] bg-[#f8fafc] border transition-colors",
+                      selectedHotspot === "camera" ? "border-emerald-500 bg-emerald-50/60" : "border-[#e2e8f0]"
+                    )}
+                  >
+                    <div className="flex items-center gap-2 text-[#020617]">
+                      <Eye className="h-3.5 w-3.5 text-[#15803d]" />
+                      <span className="font-medium">Face ID & TrueTone OLED Display</span>
+                    </div>
+                    <span className="font-mono text-[10.5px] text-[#15803d] font-semibold bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.5 rounded-[2px]">
+                      OEM Verified
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-1.5 pt-0.5 font-secondary text-xs">
+                  {/* Step 1: Escrow Vault Funded */}
+                  <div className="flex items-center justify-between p-2 rounded-[4px] bg-[#22c55e]/10 border border-[#22c55e]/30 text-[#15803d]">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#22c55e] shrink-0" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-[#22c55e] shrink-0" />
                       <span className="font-medium">1. Escrow Vault Locked</span>
                     </div>
                     <span className="font-mono text-[11px] font-bold">₦850,000 HELD</span>
                   </div>
 
-                  {/* Step 2: Tracked Dispatch */}
-                  <div className="flex items-center justify-between p-2.5 rounded-[4px] bg-white border border-[#e2e8f0] text-[#020617] transition-transform duration-150 hover:scale-[1.01]">
+                  {/* Step 2: Tracked Courier Dispatch */}
+                  <div className="flex items-center justify-between p-2 rounded-[4px] bg-[#f8fafc] border border-[#e2e8f0] text-[#020617]">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#22c55e] shrink-0" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-[#22c55e] shrink-0" />
                       <span className="font-medium">2. Tracked Courier Dispatch</span>
                     </div>
                     <span className="font-mono text-[10px] text-[#64748b]">DHL-NG-9482</span>
                   </div>
 
                   {/* Step 3: 48-Hour Inspection Active */}
-                  <div className="flex items-center justify-between p-2.5 rounded-[4px] bg-[#ecc94b]/15 border border-[#ecc94b]/40 text-[#975a16] transition-transform duration-150 hover:scale-[1.01]">
+                  <div className="flex items-center justify-between p-2 rounded-[4px] bg-[#ecc94b]/15 border border-[#ecc94b]/40 text-[#975a16]">
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-[#ecc94b] animate-spin" />
+                      <Clock className="h-3.5 w-3.5 text-[#ecc94b] animate-spin" />
                       <span className="font-medium">3. 48h Inspection Active</span>
                     </div>
-                    <span className="font-mono text-[11px] font-bold">42h 15m left</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-1.5 pt-0.5 font-secondary text-xs">
-                  <div className="flex items-center justify-between p-2 rounded-[4px] bg-white border border-[#e2e8f0]">
-                    <div className="flex items-center gap-2 text-[#020617]">
-                      <BatteryCharging className="h-3.5 w-3.5 text-[#15803d]" />
-                      <span>Battery Health Verification</span>
-                    </div>
-                    <span className="font-mono text-[10px] text-[#15803d] font-semibold bg-emerald-50 px-1.5 py-0.5 rounded-[2px]">
-                      92% Peak
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-2 rounded-[4px] bg-white border border-[#e2e8f0]">
-                    <div className="flex items-center gap-2 text-[#020617]">
-                      <Lock className="h-3.5 w-3.5 text-[#15803d]" />
-                      <span>iCloud / Activation Lock</span>
-                    </div>
-                    <span className="font-mono text-[10px] text-[#15803d] font-semibold bg-emerald-50 px-1.5 py-0.5 rounded-[2px]">
-                      Unlocked
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-2 rounded-[4px] bg-white border border-[#e2e8f0]">
-                    <div className="flex items-center gap-2 text-[#020617]">
-                      <Fingerprint className="h-3.5 w-3.5 text-[#15803d]" />
-                      <span>Face ID / True Tone</span>
-                    </div>
-                    <span className="font-mono text-[10px] text-[#15803d] font-semibold bg-emerald-50 px-1.5 py-0.5 rounded-[2px]">
-                      Passed
-                    </span>
+                    <span className="font-mono text-[11px] font-bold">36h 42m left</span>
                   </div>
                 </div>
               )}
 
               {/* Guarantee Disclaimer Footer */}
               <div className="pt-2 border-t border-[#e2e8f0] flex items-center justify-between text-[11px] text-[#64748b] font-secondary">
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
-                  Buyer payout release required
+                  Buyer approval required for payout
                 </span>
                 <span className="font-mono font-medium text-[#0f172a]">Paystack Custody</span>
               </div>

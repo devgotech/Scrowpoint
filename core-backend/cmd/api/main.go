@@ -26,18 +26,18 @@ func main() {
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
-		jwtSecret = "super-secret-scrowpoint-production-jwt-key-2026"
+		jwtSecret = "super-secret-buyers-high-production-jwt-key-2026"
 	}
 
 	paystackSecret := os.Getenv("PAYSTACK_SECRET_KEY")
 	if paystackSecret == "" {
-		paystackSecret = "sk_test_scrowpoint_mock_paystack_secret_key"
+		paystackSecret = "sk_test_buyers_high_mock_paystack_secret_key"
 	}
 
 	smilePartnerID := os.Getenv("SMILE_ID_PARTNER_ID")
 	smileAPIKey := os.Getenv("SMILE_ID_API_KEY")
 
-	log.Println("[INFO] Initializing Scrowpoint Escrow Core Backend...")
+	log.Println("[INFO] Initializing Buyer's High Escrow Core Backend...")
 
 	jwtMw := middleware.NewAuthMiddleware(jwtSecret)
 
@@ -52,12 +52,14 @@ func main() {
 	disputeService := services.NewDisputeService(orderService, escrowService, authService)
 	moderationService := services.NewModerationService(authService, disputeService, orderService, kycService)
 	notificationService := services.NewNotificationService()
+	waitlistService := services.NewWaitlistService()
+	supportService := services.NewSupportService()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	adminUser, err := authService.SignUp(ctx, services.SignUpInput{
-		Email:    "admin@scrowpoint.com",
+		Email:    "admin@buyershigh.com",
 		Password: "AdminPassword123!",
 		Name:     "Lead Compliance Officer",
 		Role:     db.RoleAdmin,
@@ -81,6 +83,8 @@ func main() {
 	disputeHandler := handlers.NewDisputeHandler(disputeService)
 	adminHandler := handlers.NewAdminHandler(disputeService, moderationService)
 	notificationHandler := handlers.NewNotificationHandler(notificationService)
+	waitlistHandler := handlers.NewWaitlistHandler(waitlistService)
+	supportHandler := handlers.NewSupportHandler(supportService)
 
 	router := api.NewRouter(
 		authHandler,
@@ -95,6 +99,7 @@ func main() {
 		notificationHandler,
 		jwtMw,
 	)
+	router.RegisterExtendedHandlers(waitlistHandler, supportHandler)
 
 	cronInterval := 30 * time.Second
 	escrowWorker := workers.NewEscrowWorker(
@@ -126,7 +131,6 @@ func main() {
 	}()
 
 	log.Printf("[READY] Core Backend API listening on %s", serverAddr)
-	log.Printf("[DOCS]   Interactive Swagger UI → http://localhost:%s/docs", port)
 	log.Println("[WORKER] 48-Hour Inspection Auto-Release & Dispute SLA Timer ACTIVE")
 
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

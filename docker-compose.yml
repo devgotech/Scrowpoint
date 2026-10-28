@@ -1,10 +1,10 @@
 # ============================================================================
-# Scrowpoint ESCROW - LOCAL DEVELOPMENT DOCKER COMPOSE
+# SCROWPOINT ESCROW — LOCAL DEVELOPMENT DOCKER COMPOSE
 # ============================================================================
 version: '3.8'
 
 services:
-  # 1. PostgreSQL Database with Escrow Ledger Schema
+  # 1. PostgreSQL 16 Database with Append-Only Escrow Ledger Schema
   postgres:
     image: postgres:16-alpine
     container_name: scrowpoint_postgres
@@ -24,7 +24,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # 2. Go Core Escrow Backend
+  # 2. Go Core Escrow & State Machine Backend
   core-backend:
     build:
       context: ./core-backend
@@ -43,7 +43,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: scrowpoint
-      JWT_SECRET: super-secret-scrowpoint-production-jwt-key-2026
+      JWT_SECRET: scrowpoint-local-dev-jwt-secret-2026
       JWT_EXPIRATION_HOURS: 168
       PAYSTACK_SECRET_KEY: sk_test_scrowpoint_mock_paystack_secret_key
       PAYSTACK_PUBLIC_KEY: pk_test_scrowpoint_mock_paystack_public_key

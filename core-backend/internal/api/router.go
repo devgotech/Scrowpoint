@@ -1,15 +1,17 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
 
-	"core-backend/internal/api/docs"
 	"core-backend/internal/api/handlers"
 	"core-backend/internal/api/middleware"
 	"core-backend/internal/db"
+	"core-backend/internal/services"
 )
 
 type Router struct {
@@ -23,6 +25,8 @@ type Router struct {
 	disputeHandler      *handlers.DisputeHandler
 	adminHandler        *handlers.AdminHandler
 	notificationHandler *handlers.NotificationHandler
+	waitlistHandler     *handlers.WaitlistHandler
+	supportHandler      *handlers.SupportHandler
 	jwtMw               *middleware.AuthMiddleware
 }
 
@@ -50,7 +54,21 @@ func NewRouter(
 		disputeHandler:      disputeHandler,
 		adminHandler:        adminHandler,
 		notificationHandler: notificationHandler,
+		waitlistHandler:     handlers.NewWaitlistHandler(services.NewWaitlistService()),
+		supportHandler:      handlers.NewSupportHandler(services.NewSupportService()),
 		jwtMw:               jwtMw,
+	}
+}
+
+func (rt *Router) RegisterExtendedHandlers(
+	waitlistHandler *handlers.WaitlistHandler,
+	supportHandler *handlers.SupportHandler,
+) {
+	if waitlistHandler != nil {
+		rt.waitlistHandler = waitlistHandler
+	}
+	if supportHandler != nil {
+		rt.supportHandler = supportHandler
 	}
 }
 
@@ -65,19 +83,12 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Interactive Swagger UI (same pattern as media-service /docs)
-	if docs.IsDocsPath(path) {
-		docs.Handler(w, r)
-		return
-	}
-
 	// Health Probes & Root
 	if path == "/health" || path == "/api/health" || path == "/" {
 		handlers.JSONSuccess(w, http.StatusOK, map[string]interface{}{
 			"status":  "healthy",
-			"service": "scrowpoint-core-backend",
+			"service": "buyers-high-core-backend",
 			"version": "1.0.0",
-			"docs":    "http://localhost:8080/docs",
 		})
 		return
 	}
@@ -122,6 +133,39 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rt.authHandler.ResetPassword(w, r)
 		return
 	}
+
+	// Founding Cohort 01 Waitlist & Referral Queue
+	if path == "/api/waitlist" {
+		rt.waitlistHandler.HandleWaitlist(w, r)
+		return
+	}
+	if path == "/api/waitlist/status" {
+		rt.waitlistHandler.GetWaitlistStatus(w, r)
+		return
+	}
+
+	// Customer Support Live Chat Tickets & Messages
+	if path == "/api/support/messages" {
+		rt.supportHandler.HandleSupportMessages(w, r)
+		return
+	}
+	if path == "/api/support/tickets" {
+		rt.supportHandler.CreateSupportTicket(w, r)
+		return
+	}
+
+	// Automated IMEI / Serial Number Blacklist & Duplicate Lookup
+	if path == "/api/listings/verify-imei" {
+		rt.listingHandler.VerifyIMEI(w, r)
+		return
+	}
+
+	// Nigerian Bank Account Name Enquiry / NUBAN Resolution (supports public or authenticated calls)
+	if path == "/api/payments/paystack/resolve-account" && r.Header.Get("Authorization") == "" {
+		rt.paymentHandler.ResolveBankAccount(w, r, uuid.Nil)
+		return
+	}
+
 	if strings.HasPrefix(path, "/api/users/") && strings.HasSuffix(path, "/public-profile") {
 		rt.userHandler.GetPublicProfile(w, r)
 		return
@@ -141,6 +185,45 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			rt.listingHandler.HandleSingleListing(w, r, [16]byte{})
 			return
 		}
+	}
+
+	// Allow Escrow Room P2P Trade Chat when accessed without Bearer token in preview/demo mode
+	if len(parts) == 4 && parts[0] == "api" && parts[1] == "orders" && parts[3] == "messages" && r.Header.Get("Authorization") == "" {
+		rt.orderHandler.HandleOrderMessages(w, r, uuid.Nil)
+		return
+	}
+
+	if path == "/api/media/presign" && r.Method == http.MethodPost {
+		var req struct {
+			FileName    string `json:"fileName"`
+			FileType    string `json:"fileType"`
+			ReferenceID string `json:"referenceId"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			handlers.JSONError(w, http.StatusBadRequest, "Invalid request payload")
+			return
+		}
+		if req.FileName == "" {
+			req.FileName = "upload_" + uuid.NewString()[:8]
+		}
+		cleanName := strings.ReplaceAll(req.FileName, " ", "_")
+		s3Key := fmt.Sprintf("evidence/%s/%s", req.ReferenceID, cleanName)
+		if req.ReferenceID == "" {
+			s3Key = fmt.Sprintf("uploads/%s", cleanName)
+		}
+
+		// Provide S3 upload URL or direct media URL for local / test environments
+		uploadURL := fmt.Sprintf("http://localhost:8000/media/%s", s3Key)
+		fileURL := uploadURL
+
+		handlers.JSONSuccess(w, http.StatusOK, map[string]interface{}{
+			"uploadUrl":   uploadURL,
+			"fileUrl":     fileURL,
+			"key":         s3Key,
+			"s3Key":       s3Key,
+			"referenceId": req.ReferenceID,
+		})
+		return
 	}
 
 	// Authenticated Routes
@@ -225,6 +308,8 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			rt.orderHandler.GetOrderDetail(w, r, userID)
 		case len(parts) == 4 && parts[1] == "orders" && parts[3] == "receipt":
 			rt.orderHandler.GetReceipt(w, r, userID)
+		case len(parts) == 4 && parts[1] == "orders" && parts[3] == "messages":
+			rt.orderHandler.HandleOrderMessages(w, r, userID)
 		case path == "/api/orders" && r.Method == http.MethodPost:
 			rt.orderHandler.CreateOrder(w, r, userID)
 		case path == "/api/orders" && r.Method == http.MethodGet:
@@ -241,6 +326,8 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		case path == "/api/payments/paystack/initialize" || path == "/api/payments/initialize":
 			rt.paymentHandler.InitializePaystack(w, r, userID)
+		case path == "/api/payments/paystack/resolve-account":
+			rt.paymentHandler.ResolveBankAccount(w, r, userID)
 		case path == "/api/seller/earnings-summary":
 			rt.paymentHandler.GetEarningsSummary(w, r, userID)
 		case path == "/api/payouts" && r.Method == http.MethodPost:

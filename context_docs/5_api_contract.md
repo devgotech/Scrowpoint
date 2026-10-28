@@ -1,4 +1,4 @@
-# 5_api_contract.md: API Contract — Scrowpoint
+# 5_api_contract.md: API Contract — Buyer's High
 
 Conventions:
 - All responses: `{ data: T, error: string | null }`

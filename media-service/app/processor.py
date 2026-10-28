@@ -1,11 +1,13 @@
 """
-Scrowpoint Image Processing Microservice Component
+Buyer's High Image Processing Microservice Component
 Handles image optimization, resolution downscaling, and total EXIF metadata stripping
 to preserve buyer and seller privacy (removes GPS coordinates, device serials, camera models).
+Supports dynamic configuration via environment variables for testing and production.
 """
 
 import io
-from typing import Tuple, Optional
+import os
+from typing import Tuple
 from PIL import Image, ImageOps
 
 ALLOWED_IMAGE_TYPES = {
@@ -17,12 +19,12 @@ ALLOWED_IMAGE_TYPES = {
     "image/heif",
 }
 
-# 15 MB max file upload size limit
-MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024
-
-# Default target dimensions and compression quality
-DEFAULT_MAX_DIMENSION = 2048
-COMPRESSION_QUALITY = 82
+# Image Processing Limits loaded dynamically from environment
+MAX_UPLOAD_SIZE_MB = int(os.getenv("MAX_UPLOAD_SIZE_MB", "15"))
+MAX_FILE_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024
+DEFAULT_MAX_DIMENSION = int(os.getenv("MAX_IMAGE_DIMENSION_PX", "2048"))
+COMPRESSION_QUALITY = int(os.getenv("COMPRESSION_QUALITY", "85"))
+STRIP_EXIF_ENABLED = os.getenv("STRIP_EXIF", "true").lower() in ("true", "1", "yes")
 
 
 class ImageProcessingError(Exception):
@@ -49,7 +51,7 @@ def process_and_strip_exif(
 
     if len(image_bytes) > MAX_FILE_SIZE_BYTES:
         raise ImageProcessingError(
-            f"Image exceeds maximum allowable size of {MAX_FILE_SIZE_BYTES // (1024 * 1024)}MB."
+            f"Image exceeds maximum allowable size of {MAX_UPLOAD_SIZE_MB}MB."
         )
 
     try:
@@ -72,8 +74,11 @@ def process_and_strip_exif(
                 img = img.convert(target_mode)
 
             # 3. Create a brand-new in-memory image container without metadata dictionaries
-            # Using frombytes + tobytes is fast, memory-safe, and guaranteed zero metadata leakage
-            clean_image = Image.frombytes(img.mode, img.size, img.tobytes())
+            # If STRIP_EXIF is enabled, using frombytes + tobytes completely purges EXIF, GPS, and serials
+            if STRIP_EXIF_ENABLED:
+                clean_image = Image.frombytes(img.mode, img.size, img.tobytes())
+            else:
+                clean_image = img.copy()
 
             # 4. Proportional downscaling if width or height exceeds maximum allowed bound
             width, height = clean_image.size

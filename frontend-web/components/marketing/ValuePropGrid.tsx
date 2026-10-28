@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
  * - 6-item Value Proposition Grid outlining core architectural escrow pillars.
  * - Corner Radius: --radius-card (8px -> rounded-[8px]) on feature cards; --radius-control (4px -> rounded-[4px]) on icon holders.
  * - Shadows: --shadow-soft-sm (0 2px 4px rgba(15,23,42,0.06)).
- * - Typography: font-primary (Roboto) for headings, font-secondary (Geist) for copy, font-mono for metrics.
+ * - Typography: font-primary (Geist) for headings, font-secondary (Inter) for copy, font-mono (Inter Tabular) for metrics.
  * - Responsive: 1-col on mobile, 2-col on sm/md, 3-col on lg screens.
  */
 

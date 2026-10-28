@@ -16,9 +16,9 @@
   --color-trust: #22c55e;
   --color-trust-strong: #15803d;
 
-  --font-primary: "Roboto", sans-serif;
-  --font-secondary: "Geist", sans-serif;
-  --font-mono: "Geist Mono", monospace;
+  --font-primary: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-secondary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Inter", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-newsreader: "Newsreader", serif;
   --font-inter: "Inter", sans-serif;
   --font-space-mono: "Space Mono", monospace;
@@ -63,9 +63,9 @@
     --color-trust-strong: #15803d;       /* Text on white backgrounds (WCAG contrast) */
 
     /* Typography */
-    --font-primary: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-secondary: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-primary: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-secondary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "Inter", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
     /* Spacing */
     --space-xs: 4px;
@@ -147,6 +147,8 @@
 
 .font-mono {
   font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .type-headline-xl {

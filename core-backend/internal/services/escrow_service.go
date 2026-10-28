@@ -124,17 +124,6 @@ func (s *EscrowService) FundEscrow(
 		return nil, fmt.Errorf("order cannot be funded from current state: %s", order.EscrowState)
 	}
 
-	// State machine requires created -> pending_payment -> funds_held.
-	if order.EscrowState == db.EscrowStateCreated {
-		if err := db.ValidateStateTransition(order.EscrowState, db.EscrowStatePendingPayment); err != nil {
-			return nil, err
-		}
-		s.orderService.Mu.Lock()
-		order.EscrowState = db.EscrowStatePendingPayment
-		order.UpdatedAt = time.Now()
-		s.orderService.Mu.Unlock()
-	}
-
 	if err := db.ValidateStateTransition(order.EscrowState, db.EscrowStateFundsHeld); err != nil {
 		return nil, err
 	}

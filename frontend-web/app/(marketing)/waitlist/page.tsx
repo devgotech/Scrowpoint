@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
+  { value: "Port Harcourt (Rivers State)", label: "Port Harcourt (Rivers State)" },
  * Screen: Early Access Waitlist & Pre-Launch Founding Cohort Portal
  * Route: app/(marketing)/waitlist/page.tsx
  *
@@ -84,6 +85,7 @@ const LOCATION_PRESETS = [
   { value: "Lagos (Lekki / Victoria Island / Ajah)", label: "Lagos (Lekki / VI / Ajah)" },
   { value: "Lagos (Surulere / Yaba / Mainland)", label: "Lagos (Yaba / Surulere / Mainland)" },
   { value: "Abuja (Wuse / Maitama / Garki)", label: "Abuja (FCT)" },
+  { value: "Port Harcourt (Rivers State)", label: "Port Harcourt (Rivers State)" },
   { value: "Port Harcourt (Rivers State)", label: "Port Harcourt (Rivers State)" },
   { value: "Ibadan (Oyo State)", label: "Ibadan (Oyo State)" },
   { value: "Enugu / Onitsha / Southeast", label: "Enugu / Onitsha (Southeast)" },
