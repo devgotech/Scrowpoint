@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -44,14 +44,100 @@ export interface DashboardUtilityBarProps {
   buildId?: string;
 }
 
+type BackendHealth = {
+  state: "checking" | "online" | "down";
+  checkedAt: string | null;
+  paystackMode: "not_configured" | "mock" | "test" | "live" | "configured" | "unknown";
+};
+
 export function DashboardUtilityBar({
   className,
   appVersion = "v2.4.1",
   buildId = "Build 2026.10",
 }: DashboardUtilityBarProps) {
+  const [health, setHealth] = useState<BackendHealth>({
+    state: "checking",
+    checkedAt: null,
+    paystackMode: "unknown",
+  });
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isReleaseNotesOpen, setIsReleaseNotesOpen] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const checkHealth = async () => {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 5000);
+      try {
+        const response = await fetch("/api/health", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const payload = await response.json();
+        const data = payload?.data ?? payload;
+        if (!response.ok || data?.status !== "healthy") {
+          throw new Error("Backend health check failed.");
+        }
+        if (!active) return;
+        const mode = data.paystack?.mode;
+        setHealth({
+          state: "online",
+          checkedAt: new Date().toISOString(),
+          paystackMode:
+            mode === "live" || mode === "test" || mode === "configured" || mode === "mock"
+              ? mode
+              : mode === "not_configured"
+                ? mode
+                : "unknown",
+        });
+      } catch {
+        if (active) {
+          setHealth((current) => ({
+            ...current,
+            state: "down",
+            checkedAt: new Date().toISOString(),
+          }));
+        }
+      } finally {
+        window.clearTimeout(timeout);
+      }
+    };
+
+    void checkHealth();
+    const interval = window.setInterval(checkHealth, 30000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const backendStatusLabel =
+    health.state === "online"
+      ? "Core API online"
+      : health.state === "down"
+        ? "Core API down"
+        : "Checking core API";
+  const paystackStatusLabel =
+    health.state === "down" && health.paystackMode === "unknown"
+      ? "Paystack status unavailable"
+      : health.paystackMode === "live"
+        ? "Paystack live keys configured"
+        : health.paystackMode === "test"
+          ? "Paystack test keys configured"
+          : health.paystackMode === "mock"
+            ? "Paystack mock mode; keys pending"
+          : health.paystackMode === "configured"
+            ? "Paystack credentials configured"
+            : health.paystackMode === "not_configured"
+              ? "Paystack setup pending"
+              : "Paystack status unknown";
+  const statusColor =
+    health.state === "online"
+      ? "bg-[#22c55e]"
+      : health.state === "down"
+        ? "bg-[#c53030]"
+        : "bg-[#ecc94b]";
 
   return (
     <>
@@ -71,14 +157,16 @@ export function DashboardUtilityBar({
               title="Click to view detailed system health"
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22c55e]" />
+                {health.state === "online" && (
+                  <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", statusColor)} />
+                )}
+                <span className={cn("relative inline-flex rounded-full h-2 w-2", statusColor)} />
               </span>
               <span className="font-semibold text-[#111113] text-[11px] group-hover:underline">
-                All systems operational
+                {backendStatusLabel}
               </span>
               <span className="hidden md:inline text-[10px] text-[#111113]/65 bg-white px-2 py-0.5 border border-[#111113]/12">
-                Escrow Vault 99.99% Uptime
+                {paystackStatusLabel}
               </span>
             </button>
           </div>
@@ -89,7 +177,9 @@ export function DashboardUtilityBar({
             <span className="text-[#111113]/25">•</span>
             <span>{buildId}</span>
             <span className="text-[#111113]/25">•</span>
-            <span className="text-[#15803d]">Paystack API Live</span>
+            <span className={health.state === "online" ? "text-[#15803d]" : "text-[#c53030]"}>
+              {backendStatusLabel}
+            </span>
           </div>
 
           {/* Right: Productivity Shortcuts & Utility Links */}
@@ -225,9 +315,12 @@ export function DashboardUtilityBar({
                   <h3 className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113]">
                     System Infrastructure Health
                   </h3>
-                  <p className="text-[11px] text-[#15803d] font-mono font-bold flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
-                    <span>All services operational (99.99%)</span>
+                  <p className={cn(
+                    "text-[11px] font-mono font-bold flex items-center gap-1",
+                    health.state === "online" ? "text-[#15803d]" : health.state === "down" ? "text-[#c53030]" : "text-[#975a16]"
+                  )}>
+                    <span className={cn("h-1.5 w-1.5 rounded-full", statusColor)} />
+                    <span>{backendStatusLabel}</span>
                   </p>
                 </div>
               </div>
@@ -241,31 +334,37 @@ export function DashboardUtilityBar({
             </div>
 
             <div className="space-y-2 text-xs font-mono">
-              {[
-                { name: "Paystack Payment Gateway", status: "Operational", lat: "14ms", ok: true },
-                { name: "Escrow Vault & Ledger Engine", status: "Operational", lat: "8ms", ok: true },
-                { name: "SmileID Biometric KYC Service", status: "Operational", lat: "42ms", ok: true },
-                { name: "FastAPI Media & Video Store", status: "Operational", lat: "19ms", ok: true },
-                { name: "48-Hour Auto-Release Cron", status: "Active (Next run 5m)", lat: "0ms", ok: true },
-              ].map((svc) => (
-                <div
-                  key={svc.name}
-                  className="flex items-center justify-between p-2 bg-[#F8F7F4] border border-[#111113]/12"
-                >
-                  <div>
-                    <div className="font-primary text-xs font-bold text-[#111113]">{svc.name}</div>
-                    <div className="text-[10px] text-[#111113]/60">Response latency: {svc.lat}</div>
-                  </div>
-                  <Badge variant="trust" className="text-[10px] py-0 font-mono">
-                    {svc.status}
-                  </Badge>
+              <div className="flex items-center justify-between p-2 bg-[#F8F7F4] border border-[#111113]/12">
+                <div>
+                  <div className="font-primary text-xs font-bold text-[#111113]">Core Backend API</div>
+                  <div className="text-[10px] text-[#111113]/60">GET /api/health</div>
                 </div>
-              ))}
+                <Badge
+                  variant={health.state === "online" ? "trust" : health.state === "down" ? "destructive" : "warning"}
+                  className="text-[10px] py-0 font-mono"
+                >
+                  {health.state === "online" ? "Operational" : health.state === "down" ? "Unavailable" : "Checking"}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-2 bg-[#F8F7F4] border border-[#111113]/12">
+                <div>
+                  <div className="font-primary text-xs font-bold text-[#111113]">Paystack Configuration</div>
+                  <div className="text-[10px] text-[#111113]/60">Key presence only; gateway not probed</div>
+                </div>
+                <Badge
+                  variant={health.paystackMode === "live" || health.paystackMode === "test" ? "trust" : "warning"}
+                  className="text-[10px] py-0 font-mono"
+                >
+                  {paystackStatusLabel}
+                </Badge>
+              </div>
             </div>
 
             <div className="pt-2 border-t border-[#111113]/12 flex items-center justify-between">
               <span className="text-[11px] font-mono text-[#111113]/60">
-                Real-time heartbeat checked 10s ago
+                {health.checkedAt
+                  ? `Last checked ${new Date(health.checkedAt).toLocaleTimeString()}`
+                  : "Waiting for first health check"}
               </span>
               <Button
                 variant="outline"

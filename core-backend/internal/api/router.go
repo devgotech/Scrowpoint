@@ -103,10 +103,26 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Health Probes & Root
 	if path == "/health" || path == "/api/health" || path == "/" {
+		paystackSecret := os.Getenv("PAYSTACK_SECRET_KEY")
+		paystackMode := "not_configured"
+		if strings.Contains(strings.ToLower(paystackSecret), "mock") {
+			paystackMode = "mock"
+		} else if strings.HasPrefix(paystackSecret, "sk_live_") {
+			paystackMode = "live"
+		} else if strings.HasPrefix(paystackSecret, "sk_test_") {
+			paystackMode = "test"
+		} else if paystackSecret != "" {
+			paystackMode = "configured"
+		}
+
 		handlers.JSONSuccess(w, http.StatusOK, map[string]interface{}{
 			"status":  "healthy",
 			"service": "buyers-high-core-backend",
 			"version": "1.0.0",
+			"paystack": map[string]interface{}{
+				"configured": paystackSecret != "" && paystackMode != "mock",
+				"mode":       paystackMode,
+			},
 		})
 		return
 	}
