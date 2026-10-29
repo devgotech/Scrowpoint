@@ -389,6 +389,69 @@ type Payout struct {
 	DeletedAt           *time.Time   `json:"deletedAt,omitempty" db:"deleted_at"`
 }
 
+type WaitlistEntry struct {
+	ID               uuid.UUID `json:"id" db:"id"`
+	FullName         string    `json:"fullName" db:"full_name"`
+	Email            string    `json:"email" db:"email"`
+	Phone            string    `json:"phone" db:"phone"`
+	Role             string    `json:"role" db:"role"`
+	City             string    `json:"city" db:"city"`
+	FavoriteGadgets  []string  `json:"favoriteGadgets" db:"-"`
+	MonthlyVolume    string    `json:"monthlyVolume" db:"monthly_volume"`
+	ReferralCode     string    `json:"referralCode" db:"referral_code"`
+	ReferredBy       string    `json:"referredBy,omitempty" db:"referred_by"`
+	ReferralCount    int       `json:"referralCount" db:"referral_count"`
+	QueuePosition    int       `json:"queuePosition" db:"queue_position"`
+	PriorityUnlocked bool      `json:"priorityUnlocked" db:"priority_unlocked"`
+	CreatedAt        time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt        time.Time `json:"updatedAt" db:"updated_at"`
+}
+
+type OrderChatMessage struct {
+	ID                   uuid.UUID `json:"id" db:"id"`
+	OrderID              string    `json:"orderId" db:"order_id"`
+	SenderID             string    `json:"senderId,omitempty" db:"sender_id"`
+	SenderRole           string    `json:"sender" db:"sender_role"`
+	SenderName           string    `json:"senderName" db:"sender_name"`
+	Text                 string    `json:"text" db:"message_text"`
+	AttachmentURL        string    `json:"attachmentUrl,omitempty" db:"attachment_url"`
+	AttachmentCaption    string    `json:"attachmentCaption,omitempty" db:"attachment_caption"`
+	Sanitized            bool      `json:"sanitized" db:"sanitized"`
+	SanitizedReason      string    `json:"sanitizedReason,omitempty" db:"sanitized_reason"`
+	IsMilestone          bool      `json:"isMilestone" db:"is_milestone"`
+	MilestoneType        string    `json:"milestoneType,omitempty" db:"milestone_type"`
+	MilestoneTitle       string    `json:"milestoneTitle,omitempty" db:"milestone_title"`
+	MilestoneDescription string    `json:"milestoneDescription,omitempty" db:"milestone_description"`
+	MilestoneNextStep    string    `json:"milestoneNextStepHint,omitempty" db:"milestone_next_step"`
+	Timestamp            string    `json:"timestamp" db:"-"`
+	CreatedAt            time.Time `json:"createdAt" db:"created_at"`
+}
+
+type SupportTicket struct {
+	ID           uuid.UUID `json:"id" db:"id"`
+	TicketNumber string    `json:"ticketNumber" db:"ticket_number"`
+	SessionID    string    `json:"sessionId" db:"session_id"`
+	UserID       string    `json:"userId,omitempty" db:"user_id"`
+	UserEmail    string    `json:"userEmail,omitempty" db:"user_email"`
+	UserName     string    `json:"userName,omitempty" db:"user_name"`
+	OrderID      string    `json:"orderId,omitempty" db:"order_id"`
+	Category     string    `json:"category" db:"category"`
+	Status       string    `json:"status" db:"status"`
+	CreatedAt    time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt    time.Time `json:"updatedAt" db:"updated_at"`
+}
+
+type SupportMessage struct {
+	ID         uuid.UUID `json:"id" db:"id"`
+	TicketID   string    `json:"ticketId,omitempty" db:"ticket_id"`
+	SessionID  string    `json:"sessionId" db:"session_id"`
+	Sender     string    `json:"sender" db:"sender"`
+	SenderName string    `json:"senderName" db:"sender_name"`
+	Text       string    `json:"text" db:"message_text"`
+	Time       string    `json:"time" db:"-"`
+	CreatedAt  time.Time `json:"createdAt" db:"created_at"`
+}
+
 type EscrowQuote struct {
 	ItemPrice   float64 `json:"itemPrice"`
 	FeeTierRate float64 `json:"feeTierRate"`
@@ -469,6 +532,7 @@ func ValidateStateTransition(current EscrowState, next EscrowState) error {
 var validTransitions = map[EscrowState][]EscrowState{
 	EscrowStateCreated: {
 		EscrowStatePendingPayment,
+		EscrowStateFundsHeld,
 	},
 	EscrowStatePendingPayment: {
 		EscrowStateFundsHeld,

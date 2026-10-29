@@ -1,0 +1,80 @@
+# ============================================================================
+# SCROWPOINT WORKSPACE — RENDER CLOUD BLUEPRINT SPECIFICATION (render.yaml)
+#
+# Use this Blueprint if you push `scrowpoint_workspace/` as its own standalone
+# backend repository on GitHub and connect it to Render ("New +" -> "Blueprint").
+# (If pushing the entire project root including the React frontend, use the
+# root `/render.yaml` instead.)
+# ============================================================================
+
+services:
+  # --------------------------------------------------------------------------
+  # 1. CORE ESCROW & STATE MACHINE BACKEND (Go 1.22 Docker Service)
+  # --------------------------------------------------------------------------
+  - type: web
+    name: scrowpoint-core-backend
+    runtime: docker
+    rootDir: core-backend
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: scrowpoint-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_HOURS
+        value: 168
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: SMILE_ID_PARTNER_ID
+        sync: false
+      - key: SMILE_ID_API_KEY
+        sync: false
+      - key: MEDIA_SERVICE_URL
+        fromService:
+          type: web
+          name: scrowpoint-media-service
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # --------------------------------------------------------------------------
+  # 2. MEDIA & EXIF-STRIPPING MICROSERVICE (Python 3.11 FastAPI Docker Service)
+  # --------------------------------------------------------------------------
+  - type: web
+    name: scrowpoint-media-service
+    runtime: docker
+    rootDir: media-service
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: ENVIRONMENT
+        value: production
+      - key: STORAGE_BACKEND
+        value: local
+      - key: LOCAL_STORAGE_DIR
+        value: /tmp/scrowpoint_media
+      - key: STRIP_EXIF
+        value: "true"
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "15"
+
+databases:
+  # --------------------------------------------------------------------------
+  # 3. MANAGED POSTGRESQL 16 DATABASE
+  # --------------------------------------------------------------------------
+  - name: scrowpoint-db
+    databaseName: scrowpoint
+    user: scrowpoint_user
+    plan: starter
+    postgresMajorVersion: "16"

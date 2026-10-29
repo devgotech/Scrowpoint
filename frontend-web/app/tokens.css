@@ -1,0 +1,427 @@
+/* ==========================================================================
+   tokens.css - Gadget Escrow App design system
+   Source: Figma file "Gadget Escrow App" (variables + styles) merged with 4_ui_system.md
+   Frontend bundle copy: frontend-web/app/tokens.css (keep both files in sync)
+   Tags:  [ASSUMED] derived by us   [PLACEHOLDER] no source yet   [CONFIRM] needs a decision
+   Untagged values were read directly from Figma or the previous 4_ui_system.md.
+   ========================================================================== */
+
+:root {
+
+  /* === PRIMITIVE COLOURS === */
+  --brand-1000: #0f172a; /* Figma main swatch */
+  --brand-950: #192543;
+  --brand-900: #26375f;
+  --brand-800: #34487a;
+  --brand-700: #435b94;
+  --brand-600: #526dad;
+  --brand-500: #7085b7;
+  --brand-400: #8e9dc3;
+  --brand-300: #aab5d0;
+  --brand-200: #c5ccdd;
+  --brand-100: #dce0ea;
+  --brand-50: #eceef3;
+  --brand-25: #f6f7f9;
+  --secondary-1000: #181d25;
+  --secondary-950: #252c37;
+  --secondary-900: #36404f;
+  --secondary-800: #475466;
+  --secondary-700: #59687d;
+  --secondary-600: #64748b; /* Figma main swatch */
+  --secondary-500: #7e90a9;
+  --secondary-400: #97a5ba;
+  --secondary-300: #afbaca;
+  --secondary-200: #c8cfda;
+  --secondary-100: #dde2e9;
+  --secondary-50: #edeff3;
+  --secondary-25: #f6f7f9;
+  --accent-1000: #053918;
+  --accent-950: #095324;
+  --accent-900: #0f7635;
+  --accent-800: #169746;
+  --accent-700: #22c55e; /* Figma main swatch */
+  --accent-600: #2ad569;
+  --accent-500: #50d882;
+  --accent-400: #74dc9b;
+  --accent-300: #97e2b3;
+  --accent-200: #b9e9cb;
+  --accent-100: #d5f1df;
+  --accent-50: #e9f7ee;
+  --accent-25: #f4fbf6;
+  --neutral-1000: #0b1f32;
+  --neutral-950: #112e4a;
+  --neutral-900: #1b426a;
+  --neutral-800: #245789;
+  --neutral-700: #2f6ba7;
+  --neutral-600: #3b7fc4;
+  --neutral-500: #5c94cc;
+  --neutral-400: #7da8d4;
+  --neutral-300: #9dbddd;
+  --neutral-200: #bcd1e6;
+  --neutral-100: #d7e3ef;
+  --neutral-50: #e9f0f6;
+  --neutral-25: #f8fafc; /* Figma main swatch */
+  --success-1000: #0d301c;
+  --success-950: #15472a;
+  --success-900: #1f653d;
+  --success-800: #2b824f;
+  --success-700: #389f63;
+  --success-600: #48bb78; /* Figma main swatch */
+  --success-500: #65c38c;
+  --success-400: #85cca2;
+  --success-300: #a3d7b8;
+  --success-200: #c0e2ce;
+  --success-100: #d9ede1;
+  --success-50: #ebf5ef;
+  --success-25: #f5faf7;
+  --error-1000: #3d0000;
+  --error-950: #5c0000;
+  --error-900: #850000;
+  --error-800: #ad0000;
+  --error-700: #d60000;
+  --error-600: #fb0404;
+  --error-500: #f73131;
+  --error-400: #f56565; /* Figma main swatch */
+  --error-300: #f48585;
+  --error-200: #f5adad;
+  --error-100: #f8cece;
+  --error-50: #fae5e5;
+  --error-25: #fcf2f2;
+  --warning-1000: #3d3000;
+  --warning-950: #5c4800;
+  --warning-900: #836702;
+  --warning-800: #a78406;
+  --warning-700: #caa10c;
+  --warning-600: #ecbd13;
+  --warning-500: #ecc94b; /* Figma main swatch */
+  --warning-400: #ebce66;
+  --warning-300: #edd88c;
+  --warning-200: #f1e3b2;
+  --warning-100: #f5edd1;
+  --warning-50: #f9f5e6;
+  --warning-25: #fcfaf3;
+  --brand-alpha-90: rgba(15,23,42,0.9); /* Subset of Figma alpha ramp (Figma has 1-95) */
+  --brand-alpha-80: rgba(15,23,42,0.8);
+  --brand-alpha-70: rgba(15,23,42,0.7);
+  --brand-alpha-60: rgba(15,23,42,0.6);
+  --brand-alpha-50: rgba(15,23,42,0.5);
+  --brand-alpha-40: rgba(15,23,42,0.4);
+  --brand-alpha-30: rgba(15,23,42,0.3);
+  --brand-alpha-20: rgba(15,23,42,0.2);
+  --brand-alpha-10: rgba(15,23,42,0.1);
+  --brand-alpha-5: rgba(15,23,42,0.05);
+  --secondary-alpha-90: rgba(100,116,139,0.9); /* Subset of Figma alpha ramp (Figma has 1-95) */
+  --secondary-alpha-80: rgba(100,116,139,0.8);
+  --secondary-alpha-70: rgba(100,116,139,0.7);
+  --secondary-alpha-60: rgba(100,116,139,0.6);
+  --secondary-alpha-50: rgba(100,116,139,0.5);
+  --secondary-alpha-40: rgba(100,116,139,0.4);
+  --secondary-alpha-30: rgba(100,116,139,0.3);
+  --secondary-alpha-20: rgba(100,116,139,0.2);
+  --secondary-alpha-10: rgba(100,116,139,0.1);
+  --secondary-alpha-5: rgba(100,116,139,0.05);
+  --white: #ffffff;
+  --black: #000000;
+  --page-background: #f8fafc;
+  --card-tint: #ffffff;
+  --volt: #d4ff3d; /* Figma "rare 2nd accent" (volt-13). [PLACEHOLDER: confirm if used in product UI] */
+
+  /* === SEMANTIC COLOURS === */
+  --color-bg-base: var(--neutral-25); /* Page background (Off-white Slate) */
+  --color-bg-surface: var(--white); /* Artboard / panel surface (Figma frames are #FFFFFF) */
+  --color-bg-card: var(--white); /* Listing card fill */
+  --color-bg-subtle: var(--brand-25); /* [ASSUMED] hover / secondary surface */
+  --color-bg-overlay: var(--brand-alpha-60); /* [ASSUMED] modal scrim */
+  --color-text-primary: #020617; /* Headings, high emphasis */
+  --color-text-secondary: var(--secondary-600); /* Body copy, meta, placeholders */
+  --color-text-tertiary: var(--secondary-400); /* [ASSUMED] disabled / muted */
+  --color-text-invert: var(--white); /* Text on brand / state fills */
+  --color-action-primary: var(--brand-1000); /* Primary CTA. [CONFIRM] - no button component found in file */
+  --color-action-primary-hover: var(--brand-900); /* [ASSUMED] one step up the brand ramp */
+  --color-action-primary-active: var(--brand-950); /* [ASSUMED] */
+  --color-action-primary-text: var(--white); /* [ASSUMED] */
+  --color-border-default: #e2e8f0;
+  --color-border-subtle: var(--secondary-100); /* [ASSUMED] dividers */
+  --color-focus-ring: var(--color-action-primary);
+  --color-state-success: #088235; /* Success (Escrow Funded). Carried from previous doc; NOT in Figma ramp (success-600 = #48BB78) */
+  --color-state-warning: var(--warning-500); /* Warning (Dispute Open) = Figma warning main */
+  --color-state-error: var(--error-400); /* Error (Verification Failed) = Figma error main */
+  --color-state-info: var(--brand-1000); /* Info toast fill is brand navy in Figma. [CONFIRM] */
+  --color-trust: var(--accent-700); /* Trust Green. RESERVED for escrow signals only */
+  --color-trust-subtle: var(--accent-50); /* [ASSUMED] tint behind trust badges */
+  --color-trust-strong: #15803d; /* Trust text on light backgrounds (contrast) */
+
+  /* === TYPOGRAPHY === */
+  --font-primary: var(--font-roboto, "Roboto"), -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-secondary: var(--font-geist, "Geist"), "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono, "Geist Mono"), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+  --type-headline-xl: 700 48px/56px var(--font-primary); /* Figma headline/xl */
+  --type-headline-xl-letter-spacing: 0;
+  --type-headline-lg: 600 32px/40px var(--font-primary); /* Figma headline/lg */
+  --type-headline-lg-letter-spacing: 0;
+  --type-headline-lg-mobile: 600 24px/32px var(--font-primary); /* Figma headline/lg-mobile */
+  --type-headline-lg-mobile-letter-spacing: 0;
+  --type-headline-md: 500 16px/24px var(--font-primary);
+  --type-headline-md-letter-spacing: 0;
+  --type-body-lg: 400 18px/28px var(--font-primary); /* Figma body/lg */
+  --type-body-lg-letter-spacing: 0;
+  --type-body-md: 400 16px/24px var(--font-primary); /* Figma body/md */
+  --type-body-md-letter-spacing: 0;
+  --type-body-sm: 400 14px/20px var(--font-secondary);
+  --type-body-sm-letter-spacing: 0;
+  --type-body-xs: 400 12px/16px var(--font-primary); /* Observed on listing meta (Roboto 12). Line-height [ASSUMED] */
+  --type-body-xs-letter-spacing: 0;
+  --type-label-caps: 600 12px/16px var(--font-mono); /* Figma label/caps. Letter-spacing [PLACEHOLDER]; set text-transform: uppercase */
+  --type-label-caps-letter-spacing: 0.04em;
+  --type-mono-data: 500 14px/20px var(--font-mono);
+  --type-mono-data-letter-spacing: 0;
+  --scale-display-2xlarge-size: 57px; /* Extended scale (Figma variable collection). Line-height is 150% */
+  --scale-display-2xlarge-line-height: 85.5px;
+  --scale-display-xlarge-size: 48px;
+  --scale-display-xlarge-line-height: 72px;
+  --scale-display-large-size: 40px;
+  --scale-display-large-line-height: 60px;
+  --scale-display-medium-size: 33px;
+  --scale-display-medium-line-height: 49.5px;
+  --scale-display-small-size: 28px;
+  --scale-display-small-line-height: 42px;
+  --scale-headline-large-size: 25px;
+  --scale-headline-large-line-height: 37.5px;
+  --scale-headline-medium-size: 23px;
+  --scale-headline-medium-line-height: 34.5px;
+  --scale-headline-small-size: 21px;
+  --scale-headline-small-line-height: 31.5px;
+  --scale-title-large-size: 19px;
+  --scale-title-large-line-height: 28.5px;
+  --scale-title-medium-size: 18px;
+  --scale-title-medium-line-height: 27px;
+  --scale-title-small-size: 18px;
+  --scale-title-small-line-height: 27px;
+  --scale-body-large-size: 17px;
+  --scale-body-large-line-height: 25.5px;
+  --scale-body-medium-size: 16px;
+  --scale-body-medium-line-height: 24px;
+  --scale-body-small-size: 15px;
+  --scale-body-small-line-height: 22.5px;
+  --scale-label-large-size: 15px;
+  --scale-label-large-line-height: 22.5px;
+  --scale-label-medium-size: 14px;
+  --scale-label-medium-line-height: 21px;
+  --scale-label-small-size: 13px;
+  --scale-label-small-line-height: 19.5px;
+
+  /* === SPACING === */
+  --space-2xs: 2px; /* Figma spacing/base */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+  --space-4xl: 40px;
+  --space-half-2xs: 1px; /* Figma spacing/half (fine adjustments) */
+  --space-half-xs: 2px;
+  --space-half-sm: 4px;
+  --space-half-md: 6px;
+  --space-half-lg: 8px;
+  --space-half-xl: 10px;
+  --space-half-2xl: 12px;
+  --space-half-3xl: 16px;
+  --space-half-4xl: 20px;
+  --padding-container-sm: 16px; /* Page / container inline padding */
+  --padding-container-md: 24px;
+  --padding-container-lg: 32px;
+  --padding-content-tight: 4px;
+  --padding-content-normal: 8px;
+  --padding-content-loose: 12px;
+  --gap-grid-tight: 4px;
+  --gap-grid-normal: 8px;
+  --gap-grid-loose: 12px;
+  --gap-stack-tight: 8px;
+  --gap-stack-normal: 16px;
+  --gap-stack-loose: 24px;
+  --gap-cluster-tight: 4px;
+  --gap-cluster-normal: 8px;
+  --gap-cluster-loose: 12px;
+  --section-gap-sm: 32px; /* Vertical rhythm between page sections */
+  --section-gap-md: 48px;
+  --section-gap-lg: 64px;
+  --card-padding: 16px; /* Figma spacing/component */
+  --card-gap: 8px;
+  --card-header-spacing: 12px;
+  --form-field-spacing: 12px;
+  --form-group-spacing: 20px;
+  --form-label-spacing: 4px;
+  --list-item-spacing: 8px;
+  --list-nested-indent: 16px;
+  --modal-padding: 24px;
+  --modal-header-spacing: 12px;
+  --modal-footer-spacing: 16px;
+
+  /* === RADIUS === */
+  --radius-none: 0px;
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px; /* Off Figma scale: listing image container */
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-20: 20px; /* Off Figma scale: toast */
+  --radius-pill: 9999px;
+  --radius-circle: 50%;
+  --radius-control: var(--radius-4); /* Buttons and form controls (rule). Figma search input is 8px - see open items */
+  --radius-card: var(--radius-8); /* Cards and containers */
+  --radius-badge: var(--radius-pill); /* Trust badges ONLY */
+  --radius-media: var(--radius-6); /* Image inside a card (observed) */
+  --radius-toast: var(--radius-card);
+
+  /* === LAYOUT === */
+  --header-height: 64px;
+  --header-padding: 16px;
+  --sidebar-width: 240px;
+  --sidebar-padding: 12px;
+  --page-max-width: 1280px; /* [PLACEHOLDER] desktop artboard width */
+  --prose-max-width: 680px; /* [PLACEHOLDER] long-form (terms, FAQ) */
+  --grid-columns: 12; /* [PLACEHOLDER] */
+  --grid-gutter: 24px; /* [PLACEHOLDER] */
+  --min-tap-size: 44px; /* [ASSUMED] WCAG target size */
+  --artboard-mobile: 390px; /* Figma frame width */
+  --artboard-tablet: 744px; /* Figma frame width */
+  --artboard-desktop: 1280px; /* Figma frame width */
+  --breakpoint-mobile: 320px; /* Figma breakpoint/sizes (min-width). CSS vars cannot be used inside @media */
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1440px;
+
+  /* === ELEVATION === */
+  --shadow-color: rgba(15,23,42,0.06);
+  --shadow-sharp-color: rgba(15,23,42,0.12);
+  --shadow-soft-xs: 1px 1px 2px 0px var(--shadow-color);
+  --shadow-soft-sm: 2px 2px 4px 0px var(--shadow-color);
+  --shadow-soft-md: 4px 4px 8px 0px var(--shadow-color);
+  --shadow-soft-lg: 6px 6px 16px 0px var(--shadow-color);
+  --shadow-soft-xl: 8px 8px 24px 0px var(--shadow-color);
+  --shadow-soft-2xl: 12px 12px 32px 0px var(--shadow-color);
+  --shadow-sharp-xs: 1px 1px 0px 0px var(--shadow-sharp-color);
+  --shadow-sharp-sm: 2px 2px 0px 0px var(--shadow-sharp-color);
+  --shadow-sharp-md: 4px 4px 0px 0px var(--shadow-sharp-color);
+  --shadow-sharp-lg: 6px 6px 0px 0px var(--shadow-sharp-color);
+  --shadow-sharp-xl: 8px 8px 0px 0px var(--shadow-sharp-color);
+  --shadow-sharp-2xl: 12px 12px 0px 0px var(--shadow-sharp-color);
+
+  /* === MOTION AND LAYERS === */
+  --duration-quick: 100ms; /* [PLACEHOLDER] not defined in Figma */
+  --duration-regular: 200ms; /* [PLACEHOLDER] */
+  --ease-standard: ease-out;
+  --layer-base: 0; /* [PLACEHOLDER] z-index scale */
+  --layer-dropdown: 1000;
+  --layer-sticky: 1100;
+  --layer-modal: 1300;
+  --layer-toast: 1400;
+
+  /* === COMPONENT TOKENS === */
+  --input-bg: var(--color-bg-surface); /* Search input */
+  --input-border: var(--color-border-default);
+  --input-border-width: 1px;
+  --input-border-focus: var(--color-focus-ring);
+  --input-border-width-focus: 2px;
+  --input-radius: var(--radius-control); /* Rule = 4px; Figma = 8px (open item) */
+  --input-padding-y: 12px;
+  --input-padding-x: 16px;
+  --input-min-height: 44px;
+  --input-placeholder: var(--color-text-secondary);
+  --input-text: var(--secondary-700); /* Observed #59687D */
+  --listing-bg: var(--color-bg-card); /* Listing card */
+  --listing-border: var(--color-border-default);
+  --listing-radius: var(--radius-card);
+  --listing-width: 190px; /* Observed; [PLACEHOLDER] fluid behaviour */
+  --listing-media-padding: 4px;
+  --listing-media-height: 184px;
+  --listing-media-radius: var(--radius-media);
+  --listing-body-padding-y: 12px;
+  --listing-body-padding-x: 8px;
+  --listing-meta-text: var(--color-text-secondary);
+  --listing-favorite-size: 24px;
+  --listing-favorite-bg: var(--color-action-primary);
+  --badge-size: 24px; /* Trust badge icon box */
+  --badge-icon-inner: 16px; /* Shield-check glyph inside Escrow badge */
+  --badge-escrow-color: var(--color-trust);
+  --badge-verified-color: var(--color-trust); /* [ASSUMED] from Trust Green rule; fill not captured */
+  --badge-hover-bg: rgba(0,0,0,0.18); /* Hover Info pill, observed */
+  --badge-hover-radius: var(--radius-badge);
+  --badge-hover-padding-y: 2px;
+  --badge-hover-padding-x: 4px;
+  --badge-hover-height: 14px;
+  --toast-width: 391px;
+  --toast-min-height: 81px;
+  --toast-radius: var(--radius-toast);
+  --toast-padding-y: var(--space-sm);
+  --toast-padding-x: var(--space-xl);
+  --toast-gap: 8px;
+  --toast-success-bg: #0e5328; /* Observed; not on a Figma ramp (nearest accent-950 #095324) */
+  --toast-error-bg: var(--error-800); /* Observed #AD0000 */
+  --toast-warning-bg: var(--warning-700); /* Observed #CAA10C */
+  --toast-info-bg: var(--brand-1000); /* Observed #0F172A */
+  --toast-text: var(--white); /* Title white; body observed #DAD4D4-#E3E3E3. [ASSUMED] */
+  --btn-radius: var(--radius-control); /* Rule from previous doc */
+  --btn-min-height: var(--min-tap-size); /* [PLACEHOLDER] no button component in file */
+  --btn-padding-y: var(--space-md); /* [PLACEHOLDER] */
+  --btn-padding-x: var(--space-2xl); /* [PLACEHOLDER] */
+  --btn-primary-bg: var(--color-action-primary); /* [PLACEHOLDER] */
+  --btn-primary-text: var(--color-action-primary-text); /* [PLACEHOLDER] */
+}
+
+/* === CORE TOKENS — Gadget Escrow App (4_ui_system.md) === */
+:root {
+  /* Colour (Hex codes optimized for Tailwind opacity modifiers) */
+  --color-bg-base: #f8fafc;            /* Page background (Off-white Slate) */
+  --color-bg-surface: #ffffff;         /* Panels, artboards */
+  --color-bg-card: #ffffff;            /* Listing card fill */
+  --color-text-primary: #020617;       /* Deep Slate */
+  --color-text-secondary: #64748b;     /* Muted Slate */
+  --color-action-primary: #0f172a;     /* Primary Button/CTA */
+  --color-border-default: #e2e8f0;
+  
+  /* Semantic Escrow States */
+  --color-state-success: #088235;      /* Escrow Funded */
+  --color-state-warning: #ecc94b;      /* Dispute Open / Action Required */
+  --color-state-error: #f56565;        /* Verification Failed */
+  
+  /* Trust Signals (Strict Usage) */
+  --color-trust: #22c55e;              /* Backgrounds, badges, icons */
+  --color-trust-strong: #15803d;       /* Text on white backgrounds (WCAG contrast) */
+
+  /* Typography */
+  --font-primary: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-secondary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Inter", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Spacing */
+  --space-xs: 4px;  --space-sm: 8px;  --space-md: 12px; --space-lg: 16px;
+  --space-xl: 20px; --space-2xl: 24px; --space-3xl: 32px; --space-4xl: 40px;
+
+  /* Radius */
+  --radius-control: 4px;   /* Buttons, form controls */
+  --radius-card: 8px;      /* Cards, containers */
+  --radius-badge: 9999px;  /* Trust badges ONLY */
+
+  /* Shadows */
+  --shadow-soft-sm: 0 2px 4px rgba(15, 23, 42, 0.06);
+  --shadow-soft-md: 0 4px 8px rgba(15, 23, 42, 0.06);
+  --shadow-soft-lg: 0 6px 16px rgba(15, 23, 42, 0.06);
+  --shadow-sharp-sm: 0 2px 2px rgba(15, 23, 42, 0.12);
+  --shadow-sharp-md: 0 4px 4px rgba(15, 23, 42, 0.12);
+  --shadow-sharp-lg: 0 6px 6px rgba(15, 23, 42, 0.12);
+
+  /* Motion */
+  --duration-regular: 200ms;
+  --ease-standard: ease-out;
+}
+

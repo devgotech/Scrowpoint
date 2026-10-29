@@ -1,4 +1,4 @@
-# AI Studio Execution Guide: Buyer's High Frontend
+# AI Studio Execution Guide: Scrowpoint Frontend
 
 ## Phase 1: Environment & API Bridge
 *These establish the rules for how data moves through your app.*
@@ -10,6 +10,12 @@
   > **CURRENT TASK:** Generate `middleware.ts` for Next.js App Router. It must check for an HTTP-only JWT cookie. Protect the `/dashboard`, `/escrow`, and `/admin` routes. Redirect unauthenticated users to `/login`.
 - **Generation 3 (Auth Context):**
   > **CURRENT TASK:** Generate a React Context provider `AuthContext.tsx` (Client Component) that stores the user's ID, Role, and KYC tier. Include a custom hook `useAuth()`.
+- **Generation 4 (S3 Config for fileuploader)**
+  >**CURRENT TASK**: Generate a frontend client utility file lib/s3.ts. It must export an async function uploadToPresignedUrl(file: File, referenceId: string). The function must perform two steps:
+  >1. Make a POST request to our Go backend (e.g., /api/media/presign) sending the file name, file type, and reference ID (like a Dispute ID) to receive an AWS S3 presigned URL.
+  >2. Execute a direct PUT request to that received presigned URL containing the actual file object.
+  >3. Include proper TypeScript types, error handling (throwing standard errors if the upload fails), and return the final uploaded file URL or S3 Key. Do not use AWS SDKs; use native fetch()
+
 - **Generation 4 (System States):**
   > **CURRENT TASK:** Generate a global `error.tsx` (must include a "Try Again" recovery button) and a global `loading.tsx` (using Shadcn skeletons) for the root `app` directory.
 

@@ -1,45 +1,53 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import { Space_Grotesk, Plus_Jakarta_Sans } from "next/font/google";
+import { Suspense, type ReactNode } from "react";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 
-const robotoHeading = Roboto({subsets:['latin'],variable:'--font-roboto-heading',weight:['400','500','700']});
+import { AuthProvider } from "@/components/providers/AuthContext";
+import MobileBottomNav from "@/components/MobileBottomNav";
+import { LiveChatWidget } from "@/components/support/LiveChatWidget";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  variable: "--font-primary",
 });
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  variable: "--font-secondary",
+});
+const spaceMono = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
-  title: "Buyer's High | Safe Peer-to-Peer Gadget Trading",
-  description: "Buy and sell secondhand gadgets safely using escrow.",
+  title: "Scrowpoint | Premium Gadget Escrow",
+  description: "Secure, high-trust P2P escrow marketplace for secondhand gadgets.",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={cn(
-        "light", 
-        "h-full", 
-        "antialiased", 
-        geistSans.variable, 
-        geistMono.variable, 
-        robotoHeading.variable
-      )}
-      style={{ colorScheme: "light" }}
-    >
-      <body className="min-h-full flex flex-col bg-background text-foreground font-body">
-        {children}
+    <html lang="en" className={`${spaceGrotesk.variable} ${plusJakartaSans.variable} ${spaceMono.variable}`}>
+      {/* flex flex-col min-h-screen ensures the footer always pushes to the bottom */}
+      <body className="antialiased flex flex-col min-h-screen">
+        
+        {/* The AuthProvider wraps the entire app so all components know the user's login state */}
+        <AuthProvider>
+          <TooltipProvider delayDuration={300}>
+            <main>
+              {children}
+            </main>
+            <Suspense fallback={null}>
+              <MobileBottomNav />
+            </Suspense>
+            <LiveChatWidget />
+          </TooltipProvider>
+        </AuthProvider>
       </body>
     </html>
   );

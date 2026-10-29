@@ -264,3 +264,25 @@ func (h *ListingHandler) GetSavedListings(w http.ResponseWriter, r *http.Request
 	}
 	JSONSuccess(w, http.StatusOK, saved)
 }
+
+func (h *ListingHandler) VerifyIMEI(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+
+	var req services.IMEIVerificationInput
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		JSONError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	res, err := h.listingService.VerifyIMEI(r.Context(), req)
+	if err != nil {
+		JSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	JSONSuccess(w, http.StatusOK, res)
+}
+

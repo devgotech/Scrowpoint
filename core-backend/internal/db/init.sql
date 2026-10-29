@@ -261,3 +261,68 @@ CREATE TABLE payouts (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMPTZ
 );
+
+-- Waitlist & Referral Queue (Founding Cohort 01)
+CREATE TABLE waitlist_entries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(50) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'both',
+    city VARCHAR(100) NOT NULL DEFAULT 'Lagos',
+    favorite_gadgets TEXT[] DEFAULT '{}',
+    monthly_volume VARCHAR(100),
+    referral_code VARCHAR(50) NOT NULL UNIQUE,
+    referred_by VARCHAR(50),
+    referral_count INT NOT NULL DEFAULT 0,
+    queue_position INT NOT NULL,
+    priority_unlocked BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Escrow Room P2P Trade Chat & System Milestones
+CREATE TABLE order_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id VARCHAR(100) NOT NULL,
+    sender_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    sender_role VARCHAR(30) NOT NULL DEFAULT 'buyer',
+    sender_name VARCHAR(255) NOT NULL,
+    message_text TEXT NOT NULL,
+    attachment_url TEXT,
+    attachment_caption TEXT,
+    sanitized BOOLEAN NOT NULL DEFAULT FALSE,
+    sanitized_reason TEXT,
+    is_milestone BOOLEAN NOT NULL DEFAULT FALSE,
+    milestone_type VARCHAR(50),
+    milestone_title VARCHAR(255),
+    milestone_description TEXT,
+    milestone_next_step TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Customer Support Live Chat Tickets & Messages
+CREATE TABLE support_tickets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticket_number VARCHAR(50) NOT NULL UNIQUE,
+    session_id VARCHAR(100) NOT NULL,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    user_email VARCHAR(255),
+    user_name VARCHAR(255),
+    order_id VARCHAR(100),
+    category VARCHAR(100) NOT NULL DEFAULT 'general_escrow',
+    status VARCHAR(30) NOT NULL DEFAULT 'open',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE support_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticket_id VARCHAR(100),
+    session_id VARCHAR(100) NOT NULL,
+    sender VARCHAR(30) NOT NULL DEFAULT 'user',
+    sender_name VARCHAR(255) NOT NULL,
+    message_text TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+

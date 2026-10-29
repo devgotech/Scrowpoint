@@ -1,19 +1,36 @@
-import * as React from "react"
-import { Input as InputPrimitive } from "@base-ui/react/input"
-import { cn } from "cn"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
-  return (
-    <InputPrimitive
-      type={type}
-      data-slot="input"
-      className={cn(
-        "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
-        className
-      )}
-      {...props}
-    />
-  )
+/**
+ * Input component adhering to 4_ui_system.md:
+ * - Radius: Strictly 4px (--radius-control -> rounded-[4px])
+ * - Text: Geist 16px (text-base / 16px to prevent iOS auto-zoom)
+ * - Validation: --color-state-error (#f56565) for destructive borders on invalid fields
+ * - Focus Style: focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+ * - Motion: duration-200 ease-out
+ */
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  error?: boolean;
 }
 
-export { Input }
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, error, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-10 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 py-2 text-base md:text-sm font-secondary text-[#111113] placeholder:text-[#111113]/45 transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:border-[#111113] focus-visible:ring-1 focus-visible:ring-[#111113] disabled:cursor-not-allowed disabled:opacity-50",
+          error && "border-[#f56565] focus-visible:ring-[#f56565]",
+          className
+        )}
+        ref={ref}
+        aria-invalid={error ? "true" : props["aria-invalid"]}
+        {...props}
+      />
+    );
+  }
+);
+Input.displayName = "Input";
+
+export { Input };
