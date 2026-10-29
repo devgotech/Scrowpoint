@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { SupportChatWindow } from "./SupportChatWindow";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,16 @@ export interface LiveChatWidgetProps {
 export function LiveChatWidget({ className }: LiveChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("sp_open_live_chat", handleOpen);
+    window.addEventListener("bh_open_live_chat", handleOpen);
+    return () => {
+      window.removeEventListener("sp_open_live_chat", handleOpen);
+      window.removeEventListener("bh_open_live_chat", handleOpen);
+    };
+  }, []);
+
   return (
     <div
       className={cn(
@@ -34,7 +44,7 @@ export function LiveChatWidget({ className }: LiveChatWidgetProps) {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0f172a] text-white shadow-xl hover:bg-slate-800 transition-all duration-200 ease-out hover:scale-105 active:scale-95 border border-slate-700"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-[#111113] text-white shadow-xl hover:bg-[#FF5A25] transition-all duration-200 ease-out hover:scale-105 active:scale-95 border border-white/15 cursor-pointer"
           title="Live Escrow Support Chat"
           aria-label="Open Escrow Support Chat"
         >

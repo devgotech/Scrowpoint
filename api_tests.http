@@ -1,5 +1,5 @@
 ### ============================================================================
-### Scrowpoint - VS CODE REST CLIENT API TEST SUITE
+### BUYER'S HIGH - VS CODE REST CLIENT API TEST SUITE
 ### Extension: "REST Client" (humao.rest-client)
 ### ============================================================================
 ###
@@ -28,10 +28,6 @@
 @baseUrl = http://localhost:8080
 @mediaUrl = http://localhost:8000
 
-### Interactive Swagger docs (browser):
-###   Core Backend → http://localhost:8080/docs
-###   Media Service → http://localhost:8000/docs
-
 
 ### ----------------------------------------------------------------------------
 ### 1. SYSTEM HEALTH PROBES (Public - No Token Required)
@@ -40,12 +36,6 @@
 # @name GoBackendHealth
 GET {{baseUrl}}/health
 Content-Type: application/json
-
-###
-
-# @name GoBackendSwaggerDocs
-# Opens the OpenAPI YAML used by http://localhost:8080/docs
-GET {{baseUrl}}/openapi.yaml
 
 ###
 
@@ -128,7 +118,7 @@ POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@scrowpoint.com",
+  "email": "admin@buyershigh.com",
   "password": "AdminPassword123!"
 }
 
@@ -289,11 +279,7 @@ Content-Type: application/json
 
 ###
 
-###(Simulates Escrow Funding)
-# Requires InitializePaystackPayment first (moves escrow: created -> pending_payment).
-# Use the real gateway reference from that response so the payment record is found.
-# @name SimulatePaystackWebhookSuccess
-
+# @name SimulatePaystackWebhookSuccess (Simulates Escrow Funding)
 POST {{baseUrl}}/api/payments/paystack/webhook
 Content-Type: application/json
 x-paystack-signature: dev_mock_signature
@@ -301,7 +287,7 @@ x-paystack-signature: dev_mock_signature
 {
   "event": "charge.success",
   "data": {
-    "reference": "{{InitializePaystackPayment.response.body.data.reference}}",
+    "reference": "BH-PAY-ORD-MOCK-REF",
     "amount": 147500000,
     "currency": "NGN",
     "status": "success",
@@ -396,4 +382,104 @@ Content-Type: application/json
   "approve": true,
   "reason": "All government database records and face match verified successfully"
 }
+
+
+### ----------------------------------------------------------------------------
+### 12. FOUNDING COHORT 01 WAITLIST & REFERRAL QUEUE
+### ----------------------------------------------------------------------------
+
+# @name GetWaitlistStatus
+GET {{baseUrl}}/api/waitlist/status
+
+###
+
+# @name JoinWaitlist
+POST {{baseUrl}}/api/waitlist
+Content-Type: application/json
+
+{
+  "fullName": "Tunde Bakare",
+  "email": "tunde.bakare@example.com",
+  "phone": "+2348039998877",
+  "role": "both",
+  "city": "Lagos (Lekki / Victoria Island / Ajah)",
+  "favoriteGadgets": ["iPhones & iPads", "MacBooks & Pro Laptops"],
+  "monthlyVolume": "₦500k - ₦2,500,000",
+  "referredBy": "SP-C1-CHIDI"
+}
+
+
+### ----------------------------------------------------------------------------
+### 13. ESCROW ROOM P2P TRADE CHAT & SYSTEM MILESTONES
+### ----------------------------------------------------------------------------
+
+# @name GetOrderChatMessages
+GET {{baseUrl}}/api/orders/ORD-90210/messages
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+
+###
+
+# @name SendOrderChatMessageWithRegexShield
+POST {{baseUrl}}/api/orders/ORD-90210/messages
+Authorization: Bearer {{LoginBuyer.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "sender": "buyer",
+  "senderName": "Adeola (Buyer)",
+  "text": "Package arrived! Call me on 08031234567 or pay 0123456789 — just kidding, keeping everything inside Scrowpoint!"
+}
+
+
+### ----------------------------------------------------------------------------
+### 14. CUSTOMER SUPPORT LIVE CHAT & TICKETS
+### ----------------------------------------------------------------------------
+
+# @name CreateSupportTicket
+POST {{baseUrl}}/api/support/tickets
+Content-Type: application/json
+
+{
+  "sessionId": "sess-demo-001",
+  "category": "escrow_concierge",
+  "message": "How does the 48-hour inspection window work after courier delivery?"
+}
+
+###
+
+# @name GetSupportMessages
+GET {{baseUrl}}/api/support/messages?sessionId=sess-demo-001
+
+
+### ----------------------------------------------------------------------------
+### 15. NIGERIAN BANK ACCOUNT NAME ENQUIRY (PAYSTACK NUBAN RESOLUTION)
+### ----------------------------------------------------------------------------
+
+# @name ResolveNubanAccount
+POST {{baseUrl}}/api/payments/paystack/resolve-account
+Authorization: Bearer {{LoginSeller.response.body.data.token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "0238491029",
+  "bankCode": "058",
+  "bankName": "Guaranty Trust Bank (GTBank)"
+}
+
+
+### ----------------------------------------------------------------------------
+### 16. AUTOMATED IMEI / SERIAL NUMBER BLACKLIST & DUPLICATE LOOKUP
+### ----------------------------------------------------------------------------
+
+# @name VerifyGadgetIMEI
+POST {{baseUrl}}/api/listings/verify-imei
+Content-Type: application/json
+
+{
+  "imei": "358941092837461",
+  "category": "smartphone",
+  "brand": "Apple",
+  "model": "iPhone 15 Pro Max"
+}
+
 

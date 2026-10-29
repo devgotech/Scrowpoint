@@ -18,7 +18,7 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   ({ className, variant = "default", ...props }, ref) => {
     const variantStyles = {
-      default: "bg-white text-[#020617] border-[#e2e8f0]",
+      default: "bg-white text-[#111113] border-[#111113]/12",
       destructive:
         "border-[#f56565]/40 text-[#c53030] [&>svg]:text-[#f56565] bg-[#f56565]/10",
       warning:
@@ -32,7 +32,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         ref={ref}
         role="alert"
         className={cn(
-          "relative w-full rounded-[8px] border p-4 [&>svg~*]:pl-8 [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 transition-colors duration-200 ease-out",
+          "relative w-full rounded-none border p-4 [&>svg~*]:pl-8 [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 transition-colors duration-200 ease-out",
           variantStyles[variant],
           className
         )}
@@ -49,7 +49,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("mb-1 font-primary font-medium text-sm leading-5 tracking-normal text-[#020617]", className)}
+    className={cn("mb-1 font-primary font-medium text-sm leading-5 tracking-[-0.03em] text-[#111113]", className)}
     {...props}
   />
 ));
@@ -61,7 +61,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("font-secondary text-xs font-normal leading-5 text-[#64748b] [&_p]:leading-5", className)}
+    className={cn("font-secondary text-xs font-normal leading-5 text-[#111113]/70 [&_p]:leading-5", className)}
     {...props}
   />
 ));

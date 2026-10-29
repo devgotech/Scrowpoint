@@ -167,3 +167,37 @@ func (h *PaymentHandler) GetPayouts(w http.ResponseWriter, r *http.Request, sell
 	}
 	JSONSuccess(w, http.StatusOK, payouts)
 }
+
+func (h *PaymentHandler) ResolveBankAccount(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	var in services.NUBANResolutionInput
+
+	if r.Method == http.MethodGet {
+		q := r.URL.Query()
+		in.AccountNumber = q.Get("account_number")
+		if in.AccountNumber == "" {
+			in.AccountNumber = q.Get("accountNumber")
+		}
+		in.BankCode = q.Get("bank_code")
+		if in.BankCode == "" {
+			in.BankCode = q.Get("bankCode")
+		}
+		in.BankName = q.Get("bank_name")
+	} else if r.Method == http.MethodPost {
+		if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+			JSONError(w, http.StatusBadRequest, "Invalid request payload")
+			return
+		}
+	} else {
+		JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+
+	res, err := h.paymentService.ResolveBankAccount(r.Context(), userID, in)
+	if err != nil {
+		JSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	JSONSuccess(w, http.StatusOK, res)
+}
+

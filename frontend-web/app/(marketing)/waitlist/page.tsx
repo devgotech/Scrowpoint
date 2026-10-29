@@ -1,43 +1,46 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
+  ArrowLeft,
   ArrowRight,
   Award,
   Check,
   CheckCircle2,
   Clock,
   Copy,
+  CreditCard,
+  Fingerprint,
   Gift,
-  HelpCircle,
   Lock,
   Mail,
   MapPin,
   MessageCircle,
   Percent,
   RefreshCw,
+  Scale,
   Share2,
-  Shield,
+  ShieldAlert,
   ShieldCheck,
-  Sparkles,
-  TrendingUp,
+  Smartphone,
+  Truck,
   Users,
-  Zap,
+  XCircle,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ProtocolComparisonWidget } from "@/components/marketing/ProtocolComparisonWidget";
+import { GadgetVectorPattern } from "@/components/marketing/GadgetVectorPattern";
 
 /**
- * Screen: Early Access Waitlist & Pre-Launch Founding Cohort Portal
+ * Screen: Founding Waitlist & Cohort 01 Priority Allocation Portal
  * Route: app/(marketing)/waitlist/page.tsx
  *
- * Pre-Launch Isolated Sandbox Rules:
- * - The rest of the app is still in private production development.
- * - This waitlist is public-facing: visitors must NOT access core parts of the business
- *   (e.g., marketplace catalog, seller hub, auth logins, active escrow room).
- * - Focused Pre-Launch Navbar & Footer containing only what is needed during the waitlist phase.
- * - Flexible Trading Location selector with custom dynamic input when "Other" is chosen.
+ * Design System Compliance (4_ui_system.md — Design Variation 7):
+ * - Warm Editorial Paper canvas (#F8F7F4), Deep Carbon Ink (#111113), Vermilion Orange accent (#FF5A25).
+ * - Space Grotesk headings (tracking-[-0.04em]), Plus Jakarta Sans body copy, Space Grotesk Mono (.label / font-mono) for ledger metadata, queue IDs, and NGN figures.
+ * - Sharp 0px architectural cards (border-[#111113]/12 bg-white) paired with 999px pill primary CTAs (.btn-primary).
+ * - Unboxed typographic metadata lines (no compound pill slop).
  */
 
 export type UserRoleChoice = "buyer" | "seller" | "both";
@@ -63,27 +66,62 @@ const TOTAL_SLOTS = 500;
 const INITIAL_CLAIMED = 412;
 
 const RECENT_SIGNUPS = [
-  { name: "Chidi O.", location: "Computer Village, Ikeja", role: "Seller", time: "3m ago" },
-  { name: "Fatima B.", location: "Wuse 2, Abuja", role: "Buyer", time: "8m ago" },
-  { name: "Babatunde A.", location: "Lekki Phase 1, Lagos", role: "Power Trader", time: "14m ago" },
-  { name: "David K.", location: "GRA, Port Harcourt", role: "Seller", time: "22m ago" },
-  { name: "Ngozi M.", location: "Bodija, Ibadan", role: "Buyer", time: "34m ago" },
+  {
+    id: "SP-C1-412",
+    name: "Chidi Okafor",
+    location: "Computer Village, Ikeja",
+    role: "Verified Merchant",
+    volume: "₦1M+ / mo",
+    time: "3m ago",
+  },
+  {
+    id: "SP-C1-411",
+    name: "Fatima Bello",
+    location: "Wuse 2, Abuja",
+    role: "Gadget Buyer",
+    volume: "₦200k–₦1M",
+    time: "8m ago",
+  },
+  {
+    id: "SP-C1-410",
+    name: "Babatunde Adeleke",
+    location: "Lekki Phase 1, Lagos",
+    role: "Buyer & Seller",
+    volume: "₦1M+ / mo",
+    time: "14m ago",
+  },
+  {
+    id: "SP-C1-409",
+    name: "David Kalu",
+    location: "GRA, Port Harcourt",
+    role: "Verified Merchant",
+    volume: "₦1M+ / mo",
+    time: "22m ago",
+  },
+  {
+    id: "SP-C1-408",
+    name: "Ngozi Madu",
+    location: "Bodija, Ibadan",
+    role: "Gadget Buyer",
+    volume: "₦200k–₦1M",
+    time: "34m ago",
+  },
 ];
 
 const GADGET_OPTIONS = [
   "iPhones & iPads",
-  "MacBooks & Windows Laptops",
-  "PlayStation 5 & Xbox Series",
+  "MacBooks & Pro Laptops",
+  "PlayStation 5 & Consoles",
   "Mirrorless Cameras & Lenses",
-  "Smartwatches & AirPods",
-  "Drones & Audio Equipment",
+  "Apple Watch & Audio",
+  "Starlink & Creator Gear",
 ];
 
 const LOCATION_PRESETS = [
-  { value: "Lagos (Ikeja / Computer Village)", label: "Lagos (Ikeja / Computer Village)" },
-  { value: "Lagos (Lekki / Victoria Island / Ajah)", label: "Lagos (Lekki / VI / Ajah)" },
-  { value: "Lagos (Surulere / Yaba / Mainland)", label: "Lagos (Yaba / Surulere / Mainland)" },
-  { value: "Abuja (Wuse / Maitama / Garki)", label: "Abuja (FCT)" },
+  { value: "Lagos (Ikeja / Computer Village)", label: "Lagos — Ikeja / Computer Village" },
+  { value: "Lagos (Lekki / Victoria Island / Ajah)", label: "Lagos — Lekki / VI / Ajah" },
+  { value: "Lagos (Surulere / Yaba / Mainland)", label: "Lagos — Yaba / Surulere / Mainland" },
+  { value: "Abuja (Wuse / Maitama / Garki)", label: "Abuja (FCT) — Wuse / Maitama / Garki" },
   { value: "Port Harcourt (Rivers State)", label: "Port Harcourt (Rivers State)" },
   { value: "Ibadan (Oyo State)", label: "Ibadan (Oyo State)" },
   { value: "Enugu / Onitsha / Southeast", label: "Enugu / Onitsha (Southeast)" },
@@ -91,12 +129,62 @@ const LOCATION_PRESETS = [
   { value: "other", label: "Other City / State (Specify below)" },
 ];
 
+const COMPARISON_ROWS = [
+  {
+    dimension: "01. Payment Security",
+    unprotected: "Buyer sends direct bank transfer hoping seller ships; or seller falls for a fake SMS alert / reversed transfer.",
+    scrowpoint: "Buyer funds lock in a segregated Paystack custodial vault. Seller receives cryptographic proof of funds before dispatch.",
+  },
+  {
+    dimension: "02. Hardware Integrity",
+    unprotected: "Buyer discovers swapped screens, boosted 3uTools battery health, or hidden iCloud MDM locks after cash is gone.",
+    scrowpoint: "Mandatory 48-Hour Hardware Diagnostic Window starts upon courier delivery. Funds remain frozen until buyer approves.",
+  },
+  {
+    dimension: "03. Counterparty Identity",
+    unprotected: "Anonymous Jiji/WhatsApp accounts and burner SIM cards that block you immediately after payment.",
+    scrowpoint: "Every participant passes SmileID 3D biometric liveness + government NIN/BVN verification before trading.",
+  },
+  {
+    dimension: "04. Dispute Resolution",
+    unprotected: "Zero recourse, police station delays, or unmoderated social media callouts when a device arrives defective.",
+    scrowpoint: "1-click dispute freeze within 48 hours. Hardware engineers arbitrate using unboxing video, IMEI serials, and diagnostic logs.",
+  },
+];
+
+const WAITLIST_FAQS = [
+  {
+    index: "01",
+    question: "How does the Founding Cohort 0% escrow fee waiver work?",
+    answer:
+      "Standard Scrowpoint escrow fees range from 2.5% (trades above ₦500,000) to 5.0% (trades under ₦100,000). The first 500 founding members receive a fee waiver across their first 5 settled transactions—saving up to ₦125,000 in platform fees when buying or selling MacBooks, iPhones, or cameras.",
+  },
+  {
+    index: "02",
+    question: "How does Scrowpoint protect both the buyer and the gadget seller?",
+    answer:
+      "Buyers never lose money to 'what I ordered vs. what I got' because funds stay locked in our Paystack custodial vault until they physically inspect the device for 48 hours. Sellers never lose inventory to fake bank alerts or payment-on-delivery no-shows because 100% of the buyer's deposit is verified in escrow before the courier picks up the package.",
+  },
+  {
+    index: "03",
+    question: "What happens during the 48-hour hardware diagnostic window?",
+    answer:
+      "The moment our logistics partner (DHL, GIG, or Fez) logs delivery at your address, a 48-hour countdown begins. You can test FaceID, TrueTone, cellular baseband, battery cycle count, and iCloud status. Tapping 'Confirm & Release' triggers an instant NIBSS NIP payout to the seller. If a hidden defect is found, tapping 'Raise Dispute' freezes the vault for engineering arbitration.",
+  },
+  {
+    index: "04",
+    question: "When will Cohort 01 invitation tokens be dispatched?",
+    answer:
+      "Founding Cohort 01 access tokens are dispatched in rolling waves based on queue position. Once your slot is called, you will receive an email and WhatsApp link to complete your 2-minute SmileID biometric KYC and activate your Founding Merchant or Buyer seal.",
+  },
+];
+
 export interface WaitlistPageProps {
   onNavigateHome?: () => void;
   onNavigateMarketplace?: () => void;
 }
 
-export default function WaitlistPage({}: WaitlistPageProps) {
+export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
   const formRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState<{
@@ -111,7 +199,7 @@ export default function WaitlistPage({}: WaitlistPageProps) {
     email: "",
     phone: "",
     role: "both",
-    favoriteGadgets: ["iPhones & iPads", "MacBooks & Windows Laptops"],
+    favoriteGadgets: ["iPhones & iPads", "MacBooks & Pro Laptops"],
     monthlyVolume: "₦200k - ₦1,000,000",
   });
 
@@ -127,16 +215,53 @@ export default function WaitlistPage({}: WaitlistPageProps) {
     customCity?: string;
   }>({});
 
-  // Restore saved waitlist reservation from localStorage
+  const [liveClaimedCount, setLiveClaimedCount] = useState<number>(INITIAL_CLAIMED);
+
+  // Restore saved waitlist reservation from localStorage and sync live queue telemetry from GET /api/waitlist/status
   useEffect(() => {
+    let savedEmail = "";
     if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("sp_waitlist_user") || localStorage.getItem("bh_waitlist_user");
+        const saved =
+          localStorage.getItem("sp_waitlist_user") ||
+          localStorage.getItem("bh_waitlist_user");
         if (saved) {
-          setSubmittedData(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          setSubmittedData(parsed);
+          savedEmail = parsed?.email || "";
         }
       } catch {}
     }
+
+    const fetchWaitlistStatus = async () => {
+      try {
+        const query = savedEmail ? `?email=${encodeURIComponent(savedEmail)}` : "";
+        const res = await fetch(`/api/waitlist/status${query}`);
+        if (res.ok) {
+          const payload = await res.json();
+          const data = payload?.data || payload;
+          if (typeof data?.claimedSlots === "number") {
+            setLiveClaimedCount(data.claimedSlots);
+          }
+          if (data?.entry) {
+            setSubmittedData((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    queuePosition: data.entry.queuePosition ?? prev.queuePosition,
+                    referralCode: data.entry.referralCode ?? prev.referralCode,
+                    referralCount: data.entry.referralCount ?? prev.referralCount,
+                  }
+                : prev
+            );
+          }
+        }
+      } catch {
+        // Fallback to local waitlist state when offline
+      }
+    };
+
+    fetchWaitlistStatus();
   }, []);
 
   const handleGadgetToggle = (gadget: string) => {
@@ -159,23 +284,23 @@ export default function WaitlistPage({}: WaitlistPageProps) {
     const errors: { fullName?: string; email?: string; customCity?: string } = {};
 
     if (!formData.fullName.trim()) {
-      errors.fullName = "Please enter your full legal or trade name";
+      errors.fullName = "Enter your full legal or registered merchant name";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim() || !emailRegex.test(formData.email)) {
-      errors.email = "Please enter a valid email address for queue alerts";
+      errors.email = "Enter a valid email address to receive your Cohort 01 token";
     }
 
     if (locationPreset === "other" && !customCity.trim()) {
-      errors.customCity = "Please enter your city and state name";
+      errors.customCity = "Specify your primary trading city and state";
     }
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -186,44 +311,79 @@ export default function WaitlistPage({}: WaitlistPageProps) {
         ? customCity.trim() || "Other Location"
         : locationPreset;
 
-    setTimeout(() => {
-      const newQueueNumber = INITIAL_CLAIMED + Math.floor(Math.random() * 4) + 1;
-      const refCode = `SP-${Math.floor(1000 + Math.random() * 9000)}`;
+    const urlParams =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search)
+        : null;
+    const referredBy = urlParams?.get("ref") || undefined;
 
-      const record: WaitlistRecord = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        role: formData.role,
-        city: resolvedCity,
-        favoriteGadgets: formData.favoriteGadgets,
-        monthlyVolume: formData.monthlyVolume,
-        queuePosition: newQueueNumber,
-        referralCode: refCode,
-        joinedAt: new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
+    let newQueueNumber = liveClaimedCount + 1;
+    let refCode = `SP-C1-${Math.floor(1000 + Math.random() * 9000)}`;
+    let referralCount = 0;
+
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          role: formData.role,
+          city: resolvedCity,
+          favoriteGadgets: formData.favoriteGadgets,
+          monthlyVolume: formData.monthlyVolume,
+          referredBy,
         }),
-        referralCount: 0,
-      };
-
-      setSubmittedData(record);
-      setIsSubmitting(false);
-
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("sp_waitlist_user", JSON.stringify(record));
-        } catch {}
+      });
+      if (res.ok) {
+        const payload = await res.json();
+        const data = payload?.data || payload;
+        const entry = data?.entry || data;
+        if (entry?.queuePosition) newQueueNumber = entry.queuePosition;
+        if (entry?.referralCode) refCode = entry.referralCode;
+        if (typeof entry?.referralCount === "number") referralCount = entry.referralCount;
+        if (typeof data?.claimedSlots === "number") {
+          setLiveClaimedCount(data.claimedSlots);
+        }
       }
+    } catch {
+      // Fallback to local generation when offline
+    }
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 600);
+    const record: WaitlistRecord = {
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      role: formData.role,
+      city: resolvedCity,
+      favoriteGadgets: formData.favoriteGadgets,
+      monthlyVolume: formData.monthlyVolume,
+      queuePosition: newQueueNumber,
+      referralCode: refCode,
+      joinedAt: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+      referralCount,
+    };
+
+    setSubmittedData(record);
+    setIsSubmitting(false);
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("sp_waitlist_user", JSON.stringify(record));
+      } catch {}
+    }
+
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
   const handleCopyReferral = () => {
     if (!submittedData) return;
-    const shareUrl = `https://scrowpoint.com/waitlist?ref=${submittedData.referralCode}`;
+    const shareUrl = `https://scrowpoint.ng/waitlist?ref=${submittedData.referralCode}`;
     if (navigator?.clipboard) {
       navigator.clipboard.writeText(shareUrl);
       setCopiedLink(true);
@@ -242,7 +402,7 @@ export default function WaitlistPage({}: WaitlistPageProps) {
       email: "",
       phone: "",
       role: "both",
-      favoriteGadgets: ["iPhones & iPads", "MacBooks & Windows Laptops"],
+      favoriteGadgets: ["iPhones & iPads", "MacBooks & Pro Laptops"],
       monthlyVolume: "₦200k - ₦1,000,000",
     });
     setLocationPreset("Lagos (Ikeja / Computer Village)");
@@ -250,68 +410,78 @@ export default function WaitlistPage({}: WaitlistPageProps) {
     setFormErrors({});
   };
 
+  const currentClaimed = submittedData ? submittedData.queuePosition : INITIAL_CLAIMED;
+  const remainingSlots = TOTAL_SLOTS - currentClaimed;
+  const capacityPercentage = Math.min(100, Math.round((currentClaimed / TOTAL_SLOTS) * 100));
+
   const referralUrl = submittedData
-    ? `https://scrowpoint.com/waitlist?ref=${submittedData.referralCode}`
-    : "https://scrowpoint.com/waitlist";
+    ? `https://scrowpoint.ng/waitlist?ref=${submittedData.referralCode}`
+    : "https://scrowpoint.ng/waitlist";
 
   const whatsappShareText = encodeURIComponent(
-    `I just reserved my early spot on Scrowpoint — Nigeria's zero-fraud secondhand gadget escrow with a 48-hour hardware diagnostic countdown! The first 500 traders get 0% escrow fees on their first 5 transactions: ${referralUrl}`
+    `I just secured my Founding Cohort 01 spot on Scrowpoint — Nigeria's P2P gadget escrow engine with Paystack custody & a 48-hour hardware diagnostic window. First 500 traders get 0% escrow fees on their first 5 trades: ${referralUrl}`
   );
 
   const twitterShareText = encodeURIComponent(
-    `No more fake bank alerts or bad phone deliveries. Just joined @scrowpoint founding waitlist! 48h hardware inspection + CBN-licensed vault escrow: ${referralUrl}`
+    `No more fake bank alerts or defective gadget deliveries. Just joined @scrowpoint Founding Cohort 01! 48H hardware inspection SLA + segregated Paystack escrow: ${referralUrl}`
   );
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#020617] flex flex-col font-secondary antialiased selection:bg-[#22c55e]/20 selection:text-[#15803d]">
+    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-[#F8F7F4]">
       {/* =====================================================================
-          PRE-LAUNCH WAITLIST NAVBAR
-          Strictly contained: No links to marketplace, seller dashboard, or auth.
+          1. VARIATION 7 EDITORIAL WAITLIST HEADER
           ===================================================================== */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#e2e8f0] bg-[#f8fafc]/95 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Brand Mark */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-[#0f172a] text-white shadow-xs">
-              <Shield className="h-5 w-5 fill-current" />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-8">
-                <span className="font-primary text-lg font-bold tracking-tight text-[#020617] leading-none">
-                  Scrowpoint
-                </span>
-                <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[9px] uppercase tracking-wider bg-[#22c55e]/15 text-[#15803d] font-bold px-2 py-0.5 rounded-[3px] border border-[#22c55e]/30">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-                  Pre-Launch
-                </span>
-              </div>
+      <header className="sticky top-0 z-40 w-full border-b border-[#111113]/12 bg-[#F8F7F4]/95 backdrop-blur-md">
+        <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-4 sm:px-8">
+          {/* Left: Brand Wordmark + Back to Overview */}
+          <div className="flex items-center gap-6">
+            <Link
+              href="/"
+              onClick={onNavigateHome}
+              className="flex items-center gap-2 focus:outline-none"
+            >
+              <span className="font-primary text-2xl font-extrabold tracking-[-0.05em] text-[#111113] leading-none">
+                SCROWPOINT<span className="text-[#FF5A25]">.</span>
+              </span>
+            </Link>
+
+            <div className="hidden md:flex items-center gap-2.5 pl-6 border-l border-[#111113]/15">
+              <span className="h-2 w-2 rounded-full bg-[#FF5A25] animate-pulse" />
+              <span className="label !opacity-80">
+                Founding Cohort 01
+              </span>
+              <span className="text-[#111113]/25">•</span>
+              <span className="font-mono text-[11px] uppercase tracking-wider text-[#15803d] font-bold">
+                {remainingSlots} of {TOTAL_SLOTS} Slots Open
+              </span>
             </div>
           </div>
 
-          {/* Right Header Status / Action */}
-          <div className="flex items-center gap-3">
-            {/* Live Capacity Tracker */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-[4px] bg-white border border-[#e2e8f0] text-xs font-mono text-[#64748b]">
-              <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
-              <span>
-                Cohort 1 •{" "}
-                <strong className="text-[#020617]">
-                  {submittedData ? submittedData.queuePosition : INITIAL_CLAIMED}/{TOTAL_SLOTS}
-                </strong>{" "}
-                Slots Claimed
-              </span>
-            </div>
+          {/* Right: Navigation & Primary Pill Action */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link
+              href="/"
+              onClick={onNavigateHome}
+              className="hidden sm:inline-flex items-center gap-1.5 nav-link text-[#111113]/70 hover:text-[#111113] transition-colors"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Platform Overview</span>
+            </Link>
 
-            {!submittedData && (
-              <Button
-                variant="default"
-                size="sm"
+            {!submittedData ? (
+              <button
+                type="button"
                 onClick={scrollToForm}
-                className="h-9 px-4 text-xs font-semibold gap-1.5 bg-[#0f172a] text-white hover:bg-slate-800 rounded-[4px] shadow-xs cursor-pointer"
+                className="btn-primary !py-2.5 !px-5 text-xs uppercase tracking-wider inline-flex items-center gap-2"
               >
-                <span>Join Waitlist</span>
+                <span>Reserve Founding Slot</span>
                 <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
+              </button>
+            ) : (
+              <span className="font-mono text-xs uppercase tracking-wider text-[#15803d] font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-[#22c55e]" />
+                <span>Queue #{submittedData.queuePosition} Secured</span>
+              </span>
             )}
           </div>
         </div>
@@ -320,658 +490,792 @@ export default function WaitlistPage({}: WaitlistPageProps) {
       {/* =====================================================================
           MAIN CONTENT
           ===================================================================== */}
-      <main className="flex-1 w-full py-8 sm:py-14">
-        <div className="mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Pre-launch Status Pill (No leaking backlink to app) */}
-          <div className="flex flex-col items-start gap-1.5 pb-2 text-left">
-            <div className="inline-flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2 px-3 py-1.5 rounded-[4px] bg-white border border-[#e2e8f0] text-xs font-mono text-[#64748b] text-left">
-              <div className="flex items-center gap-1.5">
-                <Lock className="h-3 w-3 text-[#22c55e]" />
-                <span>Invite-Only Protocol</span>
-              </div>
-              <span className="text-[#cbd5e1] hidden sm:inline">•</span>
-              <span className="text-[#020617] font-semibold">Founding Cohort Registration</span>
-            </div>
-          </div>
+      <main className="flex-1 w-full">
+        {/* ===================================================================
+            2. ASYMMETRIC TWO-COLUMN HERO & FOUNDING RESERVATION DESK
+            Left (7 cols): Editorial Pitch, Core Business Model, & Cohort Perks
+            Right (5 cols): Sticky Architectural Reservation Form / Pass
+            =================================================================== */}
+        <section className="relative overflow-hidden border-b border-[#111113]/12 py-12 sm:py-20">
+          {/* Seamless Repeating Gadget Vector Pattern Background */}
+          <GadgetVectorPattern idPrefix="sp-waitlist-hero" variant="split" />
 
-          {/* Hero Header */}
-          <div className="text-left max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/30 text-xs font-mono font-semibold text-[#15803d] shadow-2xs text-left">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22c55e]" />
-              </span>
-              <span>
-                Early Access • {TOTAL_SLOTS - (submittedData ? submittedData.queuePosition : INITIAL_CLAIMED)} Slots Remaining
-              </span>
-            </div>
+          <div className="relative z-10 mx-auto max-w-[1600px] px-4 sm:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
+              {/* -------------------------------------------------------------
+                  LEFT COLUMN (7 COLS): EDITORIAL HIERARCHY & BUSINESS MODEL
+                  ------------------------------------------------------------- */}
+              <div className="lg:col-span-7 space-y-8">
+                {/* Unboxed Editorial Kicker & Metadata Line */}
+                <div className="space-y-5">
+                  <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono uppercase tracking-[0.15em] text-[#111113]/70">
+                    <span className="text-[#111113] font-bold">P2P Escrow Engine v.2026</span>
+                    <span aria-hidden="true" className="text-[#111113]/25">•</span>
+                    <span>Wave 1 Priority Access</span>
+                    <span aria-hidden="true" className="text-[#111113]/25">•</span>
+                    <span className="text-[#FF5A25] font-bold">
+                      {remainingSlots} Founding Slots Remaining
+                    </span>
+                  </div>
 
-            <h1 className="font-primary text-4xl sm:text-5xl font-extrabold text-[#020617] tracking-tight leading-tight text-left">
-              Trade Secondhand Gadgets With <span className="text-[#15803d]">Zero Risk</span>.
-            </h1>
+                  <h1 className="font-primary text-5xl sm:text-6xl xl:text-[5.25rem] font-bold tracking-[-0.04em] text-[#111113] leading-[0.92] uppercase">
+                    END FAKE ALERTS.
+                    <br />
+                    END DEFECTIVE TECH<span className="text-[#FF5A25]">.</span>
+                  </h1>
 
-            <p className="font-secondary text-sm sm:text-base text-[#64748b] max-w-2xl leading-relaxed text-left">
-              We&apos;re preparing the public release of Nigeria&apos;s first escrow marketplace with 48-hour hardware diagnostic verification. The first 500 traders get 0% escrow fees on their first 5 high-value trades.
-            </p>
-          </div>
-
-          {/* Founding Perks */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_4px_rgba(15,23,42,0.04)] space-y-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#22c55e]/15 text-[#15803d]">
-                <Percent className="h-5 w-5 text-[#22c55e]" />
-              </div>
-              <h3 className="font-primary text-sm font-bold text-[#020617]">
-                0% Escrow Fee Waiver
-              </h3>
-              <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                Enjoy 100% free platform escrow on your first 5 high-value trades (save up to ₦125,000 in fees).
-              </p>
-            </div>
-
-            <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_4px_rgba(15,23,42,0.04)] space-y-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
-                <Award className="h-5 w-5 text-[#ecc94b]" />
-              </div>
-              <h3 className="font-primary text-sm font-bold text-[#020617]">
-                Founding Merchant Seal
-              </h3>
-              <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                Permanent cryptographic gold seal on your profile and listings, signaling day-one verified authenticity.
-              </p>
-            </div>
-
-            <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_4px_rgba(15,23,42,0.04)] space-y-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#22c55e]/15 text-[#15803d]">
-                <Clock className="h-5 w-5 text-[#22c55e]" />
-              </div>
-              <h3 className="font-primary text-sm font-bold text-[#020617]">
-                Priority 48-Hour SLA
-              </h3>
-              <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                Fast-track diagnostic reviews and dedicated hardware arbitration officers for quick dispute turnaround.
-              </p>
-            </div>
-
-            <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_4px_rgba(15,23,42,0.04)] space-y-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
-                <ShieldCheck className="h-5 w-5 text-[#22c55e]" />
-              </div>
-              <h3 className="font-primary text-sm font-bold text-[#020617]">
-                SmileID VIP Fast-Track
-              </h3>
-              <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                Skip standard identity review queues with priority 3D biometric NIN liveness clearance.
-              </p>
-            </div>
-          </div>
-
-          {/* ===================================================================
-              MAIN WAITLIST CARD: FORM OR SUCCESS STATE
-              =================================================================== */}
-          <div ref={formRef} id="waitlist-form" className="max-w-2xl mx-auto scroll-mt-24">
-            {!submittedData ? (
-              /* FORM STATE */
-              <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-6 sm:p-8 shadow-[0_4px_12px_rgba(15,23,42,0.06)] space-y-6">
-                <div className="pb-4 border-b border-[#e2e8f0] text-center sm:text-left">
-                  <h2 className="font-primary text-xl font-bold text-[#020617]">
-                    Reserve Your Founding Position
-                  </h2>
-                  <p className="font-secondary text-xs sm:text-sm text-[#64748b] mt-1">
-                    Takes 30 seconds. No credit card required. Invitation codes roll out for early access.
+                  <p className="font-secondary text-base sm:text-lg text-[#111113]/75 max-w-xl leading-relaxed">
+                    Buyer funds lock in segregated Paystack custody while sellers dispatch via tracked courier—releasing payout only after a{" "}
+                    <strong className="font-semibold text-[#111113]">
+                      48-hour hardware inspection
+                    </strong>
+                    .
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  {/* Trader Role Selector */}
-                  <div>
-                    <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-2">
-                      I Primarily Plan To
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, role: "buyer" })}
-                        className={cn(
-                          "py-2.5 px-3 rounded-[4px] text-xs font-medium border text-center transition-all duration-200 cursor-pointer",
-                          formData.role === "buyer"
-                            ? "border-[#0f172a] bg-[#0f172a] text-white shadow-xs"
-                            : "border-[#e2e8f0] bg-[#f8fafc] text-[#020617] hover:bg-slate-100"
-                        )}
-                      >
-                        Buy Gadgets
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, role: "seller" })}
-                        className={cn(
-                          "py-2.5 px-3 rounded-[4px] text-xs font-medium border text-center transition-all duration-200 cursor-pointer",
-                          formData.role === "seller"
-                            ? "border-[#0f172a] bg-[#0f172a] text-white shadow-xs"
-                            : "border-[#e2e8f0] bg-[#f8fafc] text-[#020617] hover:bg-slate-100"
-                        )}
-                      >
-                        Sell Gadgets
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, role: "both" })}
-                        className={cn(
-                          "py-2.5 px-3 rounded-[4px] text-xs font-medium border text-center transition-all duration-200 cursor-pointer",
-                          formData.role === "both"
-                            ? "border-[#0f172a] bg-[#0f172a] text-white shadow-xs"
-                            : "border-[#e2e8f0] bg-[#f8fafc] text-[#020617] hover:bg-slate-100"
-                        )}
-                      >
-                        Both / Merchant
-                      </button>
-                    </div>
+                {/* Compact 3-Pillar Protocol Strip */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="label">Core Protocol Architecture</span>
+                    <span className="label !opacity-100 text-[#15803d]">Zero Counterparty Risk</span>
                   </div>
 
-                  {/* Name and Email */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
-                        Full Name <span className="text-[#c53030]">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.fullName}
-                        onChange={(e) => {
-                          setFormData({ ...formData, fullName: e.target.value });
-                          if (formErrors.fullName) setFormErrors({ ...formErrors, fullName: undefined });
-                        }}
-                        placeholder="e.g. Babatunde Adeleke"
-                        className={cn(
-                          "w-full h-11 px-3.5 rounded-[4px] border bg-white text-xs font-secondary text-[#020617] placeholder:text-[#94a3b8] transition-colors outline-none",
-                          formErrors.fullName
-                            ? "border-[#f56565] focus:ring-1 focus:ring-[#f56565]"
-                            : "border-[#e2e8f0] focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]"
-                        )}
-                      />
-                      {formErrors.fullName && (
-                        <p className="font-secondary text-[11px] text-[#c53030] mt-1">
-                          {formErrors.fullName}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 sm:divide-x divide-[#111113]/12">
+                    <div className="p-4 flex items-center gap-3">
+                      <div className="h-9 w-9 shrink-0 border border-[#111113]/12 bg-[#F8F7F4] flex items-center justify-center">
+                        <CreditCard className="h-4 w-4 text-[#111113]" />
+                      </div>
+                      <div>
+                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                          Paystack Custody
                         </p>
-                      )}
+                        <p className="font-mono text-[11px] text-[#111113]/60 uppercase tracking-wider">
+                          100% Locked Upfront
+                        </p>
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
-                        Email Address <span className="text-[#c53030]">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => {
-                          setFormData({ ...formData, email: e.target.value });
-                          if (formErrors.email) setFormErrors({ ...formErrors, email: undefined });
-                        }}
-                        placeholder="you@company.ng"
-                        className={cn(
-                          "w-full h-11 px-3.5 rounded-[4px] border bg-white text-xs font-secondary text-[#020617] placeholder:text-[#94a3b8] transition-colors outline-none",
-                          formErrors.email
-                            ? "border-[#f56565] focus:ring-1 focus:ring-[#f56565]"
-                            : "border-[#e2e8f0] focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]"
-                        )}
-                      />
-                      {formErrors.email && (
-                        <p className="font-secondary text-[11px] text-[#c53030] mt-1">
-                          {formErrors.email}
+                    <div className="p-4 flex items-center gap-3">
+                      <div className="h-9 w-9 shrink-0 border border-[#111113]/12 bg-[#F8F7F4] flex items-center justify-center">
+                        <Fingerprint className="h-4 w-4 text-[#FF5A25]" />
+                      </div>
+                      <div>
+                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                          SmileID Biometrics
                         </p>
-                      )}
+                        <p className="font-mono text-[11px] text-[#111113]/60 uppercase tracking-wider">
+                          Mandatory NIN / BVN
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 flex items-center gap-3">
+                      <div className="h-9 w-9 shrink-0 border border-[#111113]/12 bg-[#F8F7F4] flex items-center justify-center">
+                        <Clock className="h-4 w-4 text-[#15803d]" />
+                      </div>
+                      <div>
+                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                          48H Diagnostic SLA
+                        </p>
+                        <p className="font-mono text-[11px] text-[#111113]/60 uppercase tracking-wider">
+                          Verify Before Payout
+                        </p>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Phone & Location */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
-                        WhatsApp Number
-                      </label>
-                      <input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="+234 803 000 0000"
-                        className="w-full h-11 px-3.5 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] placeholder:text-[#94a3b8] focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none"
-                      />
-                    </div>
-
-                    {/* Flexible Trading Location Selector */}
-                    <div>
-                      <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
-                        Trading Location
-                      </label>
-                      <select
-                        value={locationPreset}
-                        onChange={(e) => {
-                          setLocationPreset(e.target.value);
-                          if (formErrors.customCity) {
-                            setFormErrors({ ...formErrors, customCity: undefined });
-                          }
-                        }}
-                        className="w-full h-11 px-3 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none cursor-pointer"
-                      >
-                        {LOCATION_PRESETS.map((preset) => (
-                          <option key={preset.value} value={preset.value}>
-                            {preset.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                {/* Compact Founding Cohort 01 Value Metrics Strip */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="label">Cohort 01 Value Proposition (First 500)</span>
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#FF5A25] font-bold">
+                      Priority Allocation
+                    </span>
                   </div>
 
-                  {/* DYNAMIC TEXT INPUT WHEN USER CHOOSES 'OTHER' */}
-                  {locationPreset === "other" && (
-                    <div className="rounded-[6px] border border-[#22c55e]/30 bg-[#22c55e]/5 p-3.5 space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <label className="font-primary text-xs font-bold text-[#15803d] flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-[#22c55e]" />
-                        <span>Specify Your Trading City / State / Region <span className="text-[#c53030]">*</span></span>
-                      </label>
-                      <input
-                        type="text"
-                        value={customCity}
-                        onChange={(e) => {
-                          setCustomCity(e.target.value);
-                          if (formErrors.customCity) {
-                            setFormErrors({ ...formErrors, customCity: undefined });
-                          }
-                        }}
-                        placeholder="e.g. Asaba, Delta State (or London, UK / Accra, Ghana)"
-                        className={cn(
-                          "w-full h-10 px-3 rounded-[4px] border bg-white text-xs font-secondary text-[#020617] placeholder:text-[#94a3b8] outline-none",
-                          formErrors.customCity
-                            ? "border-[#f56565] focus:ring-1 focus:ring-[#f56565]"
-                            : "border-[#22c55e]/40 focus:border-[#15803d] focus:ring-1 focus:ring-[#15803d]"
-                        )}
-                        autoFocus
-                      />
-                      {formErrors.customCity && (
-                        <p className="font-secondary text-[11px] text-[#c53030]">
-                          {formErrors.customCity}
-                        </p>
-                      )}
-                      <p className="font-secondary text-[10px] text-[#64748b]">
-                        We use this to establish localized courier pickup hubs and hardware diagnostic depots in your area.
+                  <div className="grid grid-cols-2 sm:grid-cols-4 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 divide-x divide-[#111113]/12">
+                    <div className="p-4 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#15803d] font-bold">
+                          Fee Waiver
+                        </span>
+                        <Percent className="h-3.5 w-3.5 text-[#15803d]" />
+                      </div>
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                        0% FEE
+                      </p>
+                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                        On first 5 trades
                       </p>
                     </div>
-                  )}
 
-                  {/* Favorite Gadgets Checklist */}
-                  <div>
-                    <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1.5">
-                      Gadgets You Frequently Buy or Sell
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {GADGET_OPTIONS.map((gadget) => {
-                        const checked = formData.favoriteGadgets.includes(gadget);
-                        return (
+                    <div className="p-4 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#FF5A25] font-bold">
+                          Max Savings
+                        </span>
+                        <Award className="h-3.5 w-3.5 text-[#FF5A25]" />
+                      </div>
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                        ₦125K
+                      </p>
+                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                        Escrow fee cap saved
+                      </p>
+                    </div>
+
+                    <div className="p-4 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#111113]/60 font-bold">
+                          Settlement
+                        </span>
+                        <Truck className="h-3.5 w-3.5 text-[#111113]" />
+                      </div>
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                        INSTANT
+                      </p>
+                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                        Direct NIBSS payout
+                      </p>
+                    </div>
+
+                    <div className="p-4 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#15803d] font-bold">
+                          Trust Badge
+                        </span>
+                        <ShieldCheck className="h-3.5 w-3.5 text-[#15803d]" />
+                      </div>
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                        TIER 01
+                      </p>
+                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                        Founding profile seal
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* -------------------------------------------------------------
+                  RIGHT COLUMN (5 COLS): FOUNDING RESERVATION DESK / PASS
+                  ------------------------------------------------------------- */}
+              <div
+                ref={formRef}
+                id="waitlist-form"
+                className="lg:col-span-5 lg:sticky lg:top-28 scroll-mt-24"
+              >
+                {!submittedData ? (
+                  /* ARCHITECTURAL RESERVATION FORM CARD */
+                  <div className="border border-[#111113]/15 bg-white">
+                    {/* Top Ledger Header Bar */}
+                    <div className="border-b border-[#111113]/12 bg-[#111113] text-white px-6 py-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-[#FF5A25]" />
+                        <span className="font-mono text-[11px] uppercase tracking-[0.15em] font-bold">
+                          Cohort 01 Reservation Desk
+                        </span>
+                      </div>
+                      <span className="font-mono text-[11px] text-white/80">
+                        {currentClaimed}/{TOTAL_SLOTS} Claimed
+                      </span>
+                    </div>
+
+                    {/* Capacity Bar */}
+                    <div className="px-6 pt-5 pb-4 border-b border-[#111113]/12 bg-[#F8F7F4]">
+                      <div className="flex items-center justify-between text-xs font-mono mb-2">
+                        <span className="text-[#111113] font-bold uppercase tracking-wider">
+                          0% Fee Allocation Capacity
+                        </span>
+                        <span className="text-[#FF5A25] font-bold">
+                          {capacityPercentage}% Filled ({remainingSlots} left)
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full bg-[#111113]/10 overflow-hidden">
+                        <div
+                          className="h-full bg-[#111113] transition-all duration-500"
+                          style={{ width: `${capacityPercentage}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Form Body */}
+                    <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
+                      <div>
+                        <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                          Reserve Your Founding Position
+                        </h2>
+                        <p className="font-secondary text-xs text-[#111113]/65 mt-1">
+                          Lock in your 0% fee voucher for your first 5 escrow trades. No credit card required.
+                        </p>
+                      </div>
+
+                      {/* Role Selector */}
+                      <div>
+                        <label className="label !opacity-90 block mb-2">
+                          01. Primary Trading Role
+                        </label>
+                        <div className="grid grid-cols-3 border border-[#111113]/15 bg-[#F8F7F4] p-1 gap-1">
+                          {[
+                            { value: "buyer" as UserRoleChoice, label: "Buy Tech" },
+                            { value: "seller" as UserRoleChoice, label: "Sell Tech" },
+                            { value: "both" as UserRoleChoice, label: "Both / Merchant" },
+                          ].map((option) => {
+                            const active = formData.role === option.value;
+                            return (
+                              <button
+                                key={option.value}
+                                type="button"
+                                onClick={() => setFormData({ ...formData, role: option.value })}
+                                className={cn(
+                                  "min-h-[40px] px-2 py-2 text-xs font-secondary font-semibold transition-colors cursor-pointer text-center",
+                                  active
+                                    ? "bg-[#111113] text-white"
+                                    : "text-[#111113]/70 hover:text-[#111113] hover:bg-white/60"
+                                )}
+                              >
+                                {option.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Full Name & Email */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="label !opacity-90 block mb-1.5">
+                            02. Full Name / Store Name <span className="text-[#FF5A25]">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.fullName}
+                            onChange={(e) => {
+                              setFormData({ ...formData, fullName: e.target.value });
+                              if (formErrors.fullName) {
+                                setFormErrors({ ...formErrors, fullName: undefined });
+                              }
+                            }}
+                            placeholder="e.g. Adeola Tech Hub"
+                            className={cn(
+                              "w-full h-11 px-3.5 border bg-white text-xs font-secondary text-[#111113] placeholder:text-[#111113]/40 transition-colors outline-none",
+                              formErrors.fullName
+                                ? "border-[#f56565] focus:border-[#c53030]"
+                                : "border-[#111113]/15 focus:border-[#111113]"
+                            )}
+                          />
+                          {formErrors.fullName && (
+                            <p className="font-secondary text-[11px] text-[#c53030] mt-1">
+                              {formErrors.fullName}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="label !opacity-90 block mb-1.5">
+                            03. Email Address <span className="text-[#FF5A25]">*</span>
+                          </label>
+                          <input
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => {
+                              setFormData({ ...formData, email: e.target.value });
+                              if (formErrors.email) {
+                                setFormErrors({ ...formErrors, email: undefined });
+                              }
+                            }}
+                            placeholder="you@domain.ng"
+                            className={cn(
+                              "w-full h-11 px-3.5 border bg-white text-xs font-secondary text-[#111113] placeholder:text-[#111113]/40 transition-colors outline-none",
+                              formErrors.email
+                                ? "border-[#f56565] focus:border-[#c53030]"
+                                : "border-[#111113]/15 focus:border-[#111113]"
+                            )}
+                          />
+                          {formErrors.email && (
+                            <p className="font-secondary text-[11px] text-[#c53030] mt-1">
+                              {formErrors.email}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* WhatsApp Phone & Primary Trading Hub */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="label !opacity-90 block mb-1.5">
+                            04. WhatsApp Alert Number
+                          </label>
+                          <input
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="+234 803 000 0000"
+                            className="w-full h-11 px-3.5 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] placeholder:text-[#111113]/40 focus:border-[#111113] outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="label !opacity-90 block mb-1.5">
+                            05. Primary Trading Hub
+                          </label>
+                          <select
+                            value={locationPreset}
+                            onChange={(e) => {
+                              setLocationPreset(e.target.value);
+                              if (formErrors.customCity) {
+                                setFormErrors({ ...formErrors, customCity: undefined });
+                              }
+                            }}
+                            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] outline-none cursor-pointer"
+                          >
+                            {LOCATION_PRESETS.map((preset) => (
+                              <option key={preset.value} value={preset.value}>
+                                {preset.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Dynamic Custom City Input */}
+                      {locationPreset === "other" && (
+                        <div className="border border-[#111113]/20 bg-[#F8F7F4] p-4 space-y-2">
+                          <label className="font-mono text-[11px] uppercase tracking-wider font-bold text-[#111113] flex items-center gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-[#FF5A25]" />
+                            <span>
+                              Specify Trading City &amp; State <span className="text-[#FF5A25]">*</span>
+                            </span>
+                          </label>
+                          <input
+                            type="text"
+                            value={customCity}
+                            onChange={(e) => {
+                              setCustomCity(e.target.value);
+                              if (formErrors.customCity) {
+                                setFormErrors({ ...formErrors, customCity: undefined });
+                              }
+                            }}
+                            placeholder="e.g. Benin City, Edo State / Uyo, Akwa Ibom"
+                            className={cn(
+                              "w-full h-10 px-3 border bg-white text-xs font-secondary text-[#111113] placeholder:text-[#111113]/40 outline-none",
+                              formErrors.customCity
+                                ? "border-[#f56565]"
+                                : "border-[#111113]/15 focus:border-[#111113]"
+                            )}
+                            autoFocus
+                          />
+                          {formErrors.customCity && (
+                            <p className="font-secondary text-[11px] text-[#c53030]">
+                              {formErrors.customCity}
+                            </p>
+                          )}
+                          <p className="font-secondary text-[11px] text-[#111113]/65">
+                            Used to prioritize DHL/GIG dispatch hubs in your state for Wave 1.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Hardware Categories Checklist */}
+                      <div>
+                        <label className="label !opacity-90 block mb-2">
+                          06. Hardware Categories Traded
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {GADGET_OPTIONS.map((gadget) => {
+                            const checked = formData.favoriteGadgets.includes(gadget);
+                            return (
+                              <button
+                                type="button"
+                                key={gadget}
+                                onClick={() => handleGadgetToggle(gadget)}
+                                className={cn(
+                                  "flex items-center gap-2.5 px-3 py-2.5 border text-left text-xs font-secondary transition-colors cursor-pointer",
+                                  checked
+                                    ? "border-[#111113] bg-[#F8F7F4] text-[#111113] font-semibold"
+                                    : "border-[#111113]/12 bg-white text-[#111113]/65 hover:border-[#111113]/30"
+                                )}
+                              >
+                                <span
+                                  className={cn(
+                                    "flex h-4 w-4 shrink-0 items-center justify-center border transition-colors",
+                                    checked
+                                      ? "border-[#111113] bg-[#111113] text-white"
+                                      : "border-[#111113]/25 bg-white"
+                                  )}
+                                >
+                                  {checked && <Check className="h-3 w-3 stroke-[3]" />}
+                                </span>
+                                <span className="truncate">{gadget}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Monthly Trade Volume */}
+                      <div>
+                        <label className="label !opacity-90 block mb-2">
+                          07. Estimated Monthly Escrow Volume
+                        </label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {["< ₦200,000", "₦200k - ₦1,000,000", "₦1,000,000+"].map((tier) => {
+                            const active = formData.monthlyVolume === tier;
+                            return (
+                              <button
+                                type="button"
+                                key={tier}
+                                onClick={() => setFormData({ ...formData, monthlyVolume: tier })}
+                                className={cn(
+                                  "py-2.5 px-2 text-[11px] border font-mono transition-colors text-center cursor-pointer",
+                                  active
+                                    ? "border-[#111113] bg-[#111113] text-white font-bold"
+                                    : "border-[#111113]/15 bg-white text-[#111113]/70 hover:bg-[#F8F7F4]"
+                                )}
+                              >
+                                {tier}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Submit Pill CTA */}
+                      <div className="pt-2 space-y-2.5">
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="btn-primary w-full inline-flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              <span>Locking Founding Slot...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Claim Founding Cohort Slot</span>
+                              <ArrowRight className="h-4 w-4" />
+                            </>
+                          )}
+                        </button>
+                        <p className="font-mono text-[10px] uppercase tracking-wider text-center text-[#111113]/60">
+                          0% Fee Voucher • SmileID Priority • NDPR Protected
+                        </p>
+                      </div>
+                    </form>
+                  </div>
+                ) : (
+                  /* ===========================================================
+                     CONFIRMED FOUNDING COHORT ALLOCATION PASS
+                     =========================================================== */
+                  <div className="border border-[#111113] bg-white">
+                    {/* Pass Header */}
+                    <div className="bg-[#111113] text-white px-6 py-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-[#22c55e]" />
+                        <span className="font-mono text-xs uppercase tracking-[0.15em] font-bold">
+                          Founding Pass Issued
+                        </span>
+                      </div>
+                      <span className="font-mono text-xs text-[#FF5A25] font-bold">
+                        REF: {submittedData.referralCode}
+                      </span>
+                    </div>
+
+                    <div className="p-6 sm:p-8 space-y-6">
+                      {/* Queue Number Ledger Box */}
+                      <div className="border border-[#111113]/15 bg-[#F8F7F4] p-6 text-center space-y-2">
+                        <span className="label block">
+                          Verified Cohort 01 Queue Position
+                        </span>
+                        <div className="font-mono text-5xl sm:text-6xl font-bold text-[#111113] tracking-[-0.04em]">
+                          #{submittedData.queuePosition}
+                        </div>
+                        <div className="pt-1 flex items-center justify-center gap-2 text-xs font-mono text-[#15803d] font-bold">
+                          <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                          <span>0% Escrow Fee Waiver Locked (First 5 Trades)</span>
+                        </div>
+                      </div>
+
+                      {/* Holder Metadata Ledger */}
+                      <div className="border border-[#111113]/12 divide-y divide-[#111113]/12 text-xs">
+                        <div className="flex items-center justify-between py-2.5 px-3.5">
+                          <span className="font-mono uppercase text-[#111113]/60">Registered Holder</span>
+                          <span className="font-primary font-bold text-[#111113]">{submittedData.fullName}</span>
+                        </div>
+                        <div className="flex items-center justify-between py-2.5 px-3.5">
+                          <span className="font-mono uppercase text-[#111113]/60">Token Delivery</span>
+                          <span className="font-mono font-semibold text-[#111113]">{submittedData.email}</span>
+                        </div>
+                        <div className="flex items-center justify-between py-2.5 px-3.5">
+                          <span className="font-mono uppercase text-[#111113]/60">Primary Hub</span>
+                          <span className="font-secondary font-semibold text-[#111113]">{submittedData.city}</span>
+                        </div>
+                        <div className="flex items-center justify-between py-2.5 px-3.5">
+                          <span className="font-mono uppercase text-[#111113]/60">Est. Volume</span>
+                          <span className="font-mono font-bold text-[#15803d]">{submittedData.monthlyVolume}</span>
+                        </div>
+                      </div>
+
+                      {/* Referral Priority Boost */}
+                      <div className="border border-[#111113]/15 bg-[#F8F7F4] p-5 space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span className="font-mono text-[11px] uppercase tracking-wider font-bold text-[#111113] flex items-center gap-1.5">
+                              <Gift className="h-3.5 w-3.5 text-[#FF5A25]" />
+                              <span>Priority Queue Jump (+25 Spots)</span>
+                            </span>
+                            <p className="font-secondary text-xs text-[#111113]/70 mt-1">
+                              Invite fellow gadget buyers or Computer Village merchants to advance into Wave 1 immediate access.
+                            </p>
+                          </div>
+                          <span className="font-mono text-[11px] font-bold bg-white border border-[#111113]/15 px-2 py-0.5 text-[#111113] shrink-0">
+                            {submittedData.referralCount} Referred
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            readOnly
+                            value={referralUrl}
+                            className="flex-1 h-10 px-3 bg-white border border-[#111113]/15 font-mono text-xs text-[#111113] select-all outline-none"
+                          />
                           <button
                             type="button"
-                            key={gadget}
-                            onClick={() => handleGadgetToggle(gadget)}
-                            className={cn(
-                              "flex items-center gap-2 px-3 py-2 rounded-[4px] border text-left text-xs transition-colors cursor-pointer",
-                              checked
-                                ? "border-[#22c55e] bg-[#22c55e]/10 text-[#15803d] font-semibold"
-                                : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f8fafc]"
-                            )}
+                            onClick={handleCopyReferral}
+                            className="h-10 px-4 bg-[#111113] text-white hover:bg-[#FF5A25] transition-colors font-mono text-xs uppercase tracking-wider font-bold inline-flex items-center gap-1.5 cursor-pointer"
                           >
-                            <div
-                              className={cn(
-                                "flex h-4 w-4 shrink-0 items-center justify-center rounded-[2px] border transition-colors",
-                                checked
-                                  ? "border-[#22c55e] bg-[#22c55e] text-white"
-                                  : "border-[#cbd5e1] bg-white"
-                              )}
-                            >
-                              {checked && <Check className="h-3 w-3 stroke-[3]" />}
-                            </div>
-                            <span className="truncate">{gadget}</span>
+                            {copiedLink ? (
+                              <>
+                                <Check className="h-3.5 w-3.5 text-[#22c55e]" />
+                                <span>Copied</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-3.5 w-3.5" />
+                                <span>Copy</span>
+                              </>
+                            )}
                           </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                        </div>
 
-                  {/* Monthly Volume */}
-                  <div>
-                    <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
-                      Estimated Monthly Trade Volume
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {["< ₦200,000", "₦200k - ₦1,000,000", "₦1,000,000+"].map((tier) => (
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          <a
+                            href={`https://wa.me/?text=${whatsappShareText}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-[#15803d] hover:bg-[#166534] text-white text-xs font-secondary font-semibold transition-colors"
+                          >
+                            <MessageCircle className="h-3.5 w-3.5" />
+                            <span>Share via WhatsApp</span>
+                          </a>
+
+                          <a
+                            href={`https://twitter.com/intent/tweet?text=${twitterShareText}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 border border-[#111113]/20 bg-white hover:border-[#111113] text-[#111113] text-xs font-secondary font-semibold transition-colors"
+                          >
+                            <Share2 className="h-3.5 w-3.5" />
+                            <span>Post on X</span>
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="pt-1 flex items-center justify-between text-xs">
                         <button
                           type="button"
-                          key={tier}
-                          onClick={() => setFormData({ ...formData, monthlyVolume: tier })}
-                          className={cn(
-                            "py-2 px-2 text-[11px] rounded-[4px] border font-mono transition-colors text-center cursor-pointer",
-                            formData.monthlyVolume === tier
-                              ? "border-[#0f172a] bg-[#0f172a] text-white font-bold"
-                              : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f8fafc]"
-                          )}
+                          onClick={handleResetForNew}
+                          className="font-mono text-[11px] uppercase tracking-wider text-[#111113]/65 hover:text-[#111113] underline inline-flex items-center gap-1.5 cursor-pointer"
                         >
-                          {tier}
+                          <RefreshCw className="h-3 w-3" />
+                          <span>Register Another Trader</span>
                         </button>
-                      ))}
+
+                        <Link
+                          href="/pricing"
+                          className="font-mono text-[11px] uppercase tracking-wider text-[#FF5A25] font-bold hover:underline inline-flex items-center gap-1"
+                        >
+                          <span>Preview Fee Calculator</span>
+                          <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-2">
-                    <Button
-                      type="submit"
-                      variant="default"
-                      size="lg"
-                      disabled={isSubmitting}
-                      className="w-full h-12 text-sm font-semibold gap-2 bg-[#0f172a] text-white hover:bg-slate-800 rounded-[4px] shadow-sm cursor-pointer"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>Securing Your Queue Spot...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Claim Founding Slot</span>
-                          <ArrowRight className="h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                    <p className="font-secondary text-[11px] text-center text-[#64748b] mt-2">
-                      🔒 Pre-launch reservation. You will receive an invitation code prior to Wave 1 onboarding.
-                    </p>
-                  </div>
-                </form>
+                )}
               </div>
-            ) : (
-              /* ===============================================================
-                 SUCCESS / QUEUE CONFIRMATION STATE (No leaking app navigation)
-                 =============================================================== */
-              <div className="rounded-[8px] border border-[#22c55e]/40 bg-white p-6 sm:p-8 shadow-[0_8px_20px_rgba(34,197,94,0.08)] space-y-6 text-center animate-in fade-in zoom-in-95 duration-300">
-                {/* Success Icon */}
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#22c55e]/15 text-[#15803d]">
-                  <CheckCircle2 className="h-8 w-8 text-[#22c55e]" />
-                </div>
-
-                <div className="space-y-1.5">
-                  <span className="font-mono text-xs uppercase tracking-wider text-[#15803d] font-bold bg-[#22c55e]/10 px-3 py-1 rounded-full">
-                    Founding Cohort Confirmed
-                  </span>
-                  <h2 className="font-primary text-2xl sm:text-3xl font-extrabold text-[#020617] tracking-tight">
-                    You&apos;re On The Waitlist!
-                  </h2>
-                  <p className="font-secondary text-xs sm:text-sm text-[#64748b] max-w-md mx-auto">
-                    Welcome aboard, <strong className="text-[#020617]">{submittedData.fullName}</strong>. A confirmation has been registered for <span className="font-mono text-[#0f172a] font-semibold">{submittedData.email}</span>.
-                  </p>
-                </div>
-
-                {/* Queue Position Ticket */}
-                <div className="rounded-[8px] border-2 border-dashed border-[#22c55e]/50 bg-[#22c55e]/5 p-5 text-center space-y-2">
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-[#64748b] block font-semibold">
-                    Your Queue Position
-                  </span>
-                  <div className="font-mono text-4xl sm:text-5xl font-extrabold text-[#020617]">
-                    #{submittedData.queuePosition}
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 text-xs font-mono text-[#15803d] font-bold">
-                    <Sparkles className="h-3.5 w-3.5 text-[#22c55e]" />
-                    <span>Eligible for Wave 1 VIP Launch Access</span>
-                  </div>
-                  <p className="font-secondary text-[11px] text-[#64748b]">
-                    Trading Location: <span className="font-semibold text-[#020617]">{submittedData.city}</span>
-                  </p>
-                </div>
-
-                {/* Viral Referral Mechanic: Move up the queue */}
-                <div className="rounded-[8px] border border-[#e2e8f0] bg-[#f8fafc] p-4 text-left space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-primary text-xs font-bold text-[#020617] flex items-center gap-1.5">
-                        <Gift className="h-4 w-4 text-[#0f172a]" />
-                        <span>Move Up 25 Spots Per Colleague Referred</span>
-                      </h4>
-                      <p className="font-secondary text-[11px] text-[#64748b] mt-0.5">
-                        Share your unique invite link with friends, tech enthusiasts, or gadget merchants.
-                      </p>
-                    </div>
-                    <span className="font-mono text-xs font-bold text-[#0f172a] bg-white border border-[#e2e8f0] px-2 py-1 rounded-[4px]">
-                      {submittedData.referralCount} referred
-                    </span>
-                  </div>
-
-                  {/* Share Link Input */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      readOnly
-                      value={referralUrl}
-                      className="flex-1 h-10 px-3 bg-white border border-[#e2e8f0] rounded-[4px] font-mono text-xs text-[#0f172a] select-all outline-none"
-                    />
-                    <Button
-                      type="button"
-                      variant="default"
-                      size="sm"
-                      onClick={handleCopyReferral}
-                      className="gap-1.5 h-10 px-4 text-xs font-semibold bg-[#0f172a] text-white hover:bg-slate-800 rounded-[4px]"
-                    >
-                      {copiedLink ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 text-[#22c55e]" />
-                          <span>Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-3.5 w-3.5" />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </Button>
-                  </div>
-
-                  {/* 1-Click Social Triggers */}
-                  <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
-                    <a
-                      href={`https://wa.me/?text=${whatsappShareText}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[4px] bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-semibold transition-colors shadow-xs"
-                    >
-                      <MessageCircle className="h-3.5 w-3.5 fill-current" />
-                      <span>Share on WhatsApp (+25 Spots)</span>
-                    </a>
-
-                    <a
-                      href={`https://twitter.com/intent/tweet?text=${twitterShareText}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[4px] bg-black/5 hover:bg-black/10 text-[#020617] text-xs font-semibold transition-colors"
-                    >
-                      <Share2 className="h-3.5 w-3.5" />
-                      <span>Share on X</span>
-                    </a>
-                  </div>
-                </div>
-
-                {/* Pre-launch Next Steps (No leaking marketplace buttons) */}
-                <div className="rounded-[6px] border border-[#e2e8f0] bg-white p-4 text-xs text-left space-y-2">
-                  <div className="font-primary font-bold text-[#020617] flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-[#22c55e]" />
-                    <span>What Happens Next?</span>
-                  </div>
-                  <ul className="space-y-1.5 text-[#64748b] list-disc list-inside">
-                    <li>Your 0% escrow fee voucher has been reserved under your email.</li>
-                    <li>As Wave 1 draws near, we will send an exclusive VIP registration token to your inbox.</li>
-                    <li>SmileID biometric verification takes under 2 minutes when your cohort is called.</li>
-                  </ul>
-                </div>
-
-                {/* Actions */}
-                <div className="pt-2 flex items-center justify-center">
-                  <button
-                    type="button"
-                    onClick={handleResetForNew}
-                    className="text-xs text-[#64748b] hover:text-[#020617] underline transition-colors cursor-pointer flex items-center gap-1.5"
-                  >
-                    <RefreshCw className="h-3 w-3" />
-                    <span>Register another trader or business partner</span>
-                  </button>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
+        </section>
 
-          {/* ===================================================================
-              LIVE SOCIAL PROOF TICKER
-              =================================================================== */}
-          <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_4px_rgba(15,23,42,0.04)] space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-[#0f172a]" />
-                <h3 className="font-primary text-xs font-bold uppercase tracking-wider text-[#020617]">
-                  Recent Nigerian Traders Joining The Waitlist
-                </h3>
+        {/* ===================================================================
+            3. THE BUSINESS MODEL LEDGER: WHY SCROWPOINT REPLACES DIRECT P2P
+            =================================================================== */}
+        <section className="border-b border-[#111113]/12 py-16 sm:py-24 bg-[#F8F7F4]">
+          <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div>
+                <span className="label block mb-3">Market Problem vs. Custodial Protocol</span>
+                <h2 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] leading-none uppercase">
+                  UNPROTECTED P2P VS. SCROWPOINT CUSTODY<span className="text-[#FF5A25]">.</span>
+                </h2>
               </div>
-              <span className="font-mono text-[10px] text-[#22c55e] font-semibold flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-                Live Pre-Launch Feed
-              </span>
+              <p className="font-secondary text-sm sm:text-base text-[#111113]/70 max-w-md">
+                Click through the 4 trade stages below to see how Scrowpoint protects each step compared to direct WhatsApp or classified transfers.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-              {RECENT_SIGNUPS.map((signup, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-3 text-xs space-y-1"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-primary font-bold text-[#020617] truncate">
+            <ProtocolComparisonWidget />
+          </div>
+        </section>
+
+        {/* ===================================================================
+            4. LIVE COHORT 01 ENROLLMENT LEDGER
+            =================================================================== */}
+        <section className="border-b border-[#111113]/12 py-16 bg-[#F8F7F4]">
+          <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <span className="label block mb-1">Live Enrollment Feed</span>
+                <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                  Recent Nigerian Buyers &amp; Merchants in Cohort 01
+                </h3>
+              </div>
+              <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#15803d] font-bold">
+                <span className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
+                <span>Verified Pre-Launch Queue</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 sm:divide-x divide-[#111113]/12">
+              {RECENT_SIGNUPS.map((signup) => (
+                <div key={signup.id} className="p-5 space-y-2.5 flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-[#111113]/55">
+                      <span>{signup.id}</span>
+                      <span>{signup.time}</span>
+                    </div>
+                    <div className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">
                       {signup.name}
-                    </span>
-                    <span className="font-mono text-[10px] text-[#64748b]">
-                      {signup.time}
-                    </span>
+                    </div>
+                    <p className="font-secondary text-xs text-[#111113]/65">
+                      {signup.location}
+                    </p>
                   </div>
-                  <p className="font-secondary text-[11px] text-[#64748b] truncate">
-                    {signup.location}
-                  </p>
-                  <span className="inline-block text-[10px] font-mono font-medium px-1.5 py-0.2 rounded-[2px] bg-white border border-[#e2e8f0] text-[#0f172a]">
-                    {signup.role}
-                  </span>
+
+                  <div className="pt-2 border-t border-[#111113]/10 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider">
+                    <span className="text-[#111113] font-semibold">{signup.role}</span>
+                    <span className="text-[#15803d] font-bold">{signup.volume}</span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
+        </section>
 
-          {/* ===================================================================
-              FAQ ACCORDION SECTION
-              =================================================================== */}
-          <div className="max-w-3xl mx-auto space-y-6 pt-4">
-            <div className="text-center space-y-1.5">
-              <h2 className="font-primary text-2xl font-bold text-[#020617] tracking-tight">
-                Frequently Asked Questions
-              </h2>
-              <p className="font-secondary text-xs sm:text-sm text-[#64748b]">
-                Everything you need to know about the Scrowpoint pre-launch waitlist.
-              </p>
+        {/* ===================================================================
+            5. FOUNDING COHORT FAQ LEDGER
+            =================================================================== */}
+        <section className="py-16 sm:py-24 bg-[#F8F7F4]">
+          <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-10">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div>
+                <span className="label block mb-3">Protocol Clarifications</span>
+                <h2 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
+                  FOUNDING WAITLIST &amp; ESCROW FAQ<span className="text-[#FF5A25]">.</span>
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={scrollToForm}
+                className="btn-primary self-start md:self-auto text-xs uppercase tracking-wider inline-flex items-center gap-2"
+              >
+                <span>Claim Your 0% Fee Slot</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
             </div>
 
-            <div className="space-y-3">
-              <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-4 space-y-2">
-                <h4 className="font-primary text-sm font-bold text-[#020617]">
-                  How does the 0% escrow fee waiver work?
-                </h4>
-                <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                  The first 500 waitlist members receive a permanent waiver voucher for their first 5 transactions. When you buy or sell a gadget (e.g., iPhone 15 Pro or MacBook Pro), the standard 2.5% platform fee is completely ₦0.
-                </p>
-              </div>
-
-              <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-4 space-y-2">
-                <h4 className="font-primary text-sm font-bold text-[#020617]">
-                  What happens when Wave 1 unlocks?
-                </h4>
-                <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                  You will receive an exclusive VIP onboarding token via email and WhatsApp. You will be able to complete your SmileID biometric KYC in under 2 minutes and begin posting or purchasing verified gadgets.
-                </p>
-              </div>
-
-              <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-4 space-y-2">
-                <h4 className="font-primary text-sm font-bold text-[#020617]">
-                  How does the 48-hour inspection countdown work?
-                </h4>
-                <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                  When a courier delivers the gadget to your doorstep, a 48-hour hardware diagnostic timer starts. Your funds remain locked in our segregated CBN partner vault. If the device passes hardware tests (battery health, TrueTone, FaceID, iCloud unlock), you release the funds. If defective, you open a 1-click dispute.
-                </p>
-              </div>
-
-              <div className="rounded-[8px] border border-[#e2e8f0] bg-white p-4 space-y-2">
-                <h4 className="font-primary text-sm font-bold text-[#020617]">
-                  Can merchants outside Lagos or major hubs apply?
-                </h4>
-                <p className="font-secondary text-xs text-[#64748b] leading-relaxed">
-                  Yes! By selecting &quot;Other&quot; and specifying your city, our logistics operations team assesses parcel routing and trusted diagnostic hubs for your region before Wave 1 goes live.
-                </p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {WAITLIST_FAQS.map((faq) => (
+                <div
+                  key={faq.index}
+                  className="border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-3"
+                >
+                  <span className="label block text-[#FF5A25] !opacity-100">
+                    [FAQ {faq.index}]
+                  </span>
+                  <h4 className="font-primary text-lg sm:text-xl font-bold tracking-[-0.03em] text-[#111113]">
+                    {faq.question}
+                  </h4>
+                  <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed">
+                    {faq.answer}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       {/* =====================================================================
-          FOCUSED PRE-LAUNCH WAITLIST FOOTER
-          Contains only essential pre-launch trust badges and contact info.
-          Does not leak links to core unlaunched pages.
+          6. VARIATION 7 EDITORIAL FOOTER
           ===================================================================== */}
-      <footer className="border-t border-[#e2e8f0] bg-white py-8">
-        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 space-y-6">
-          {/* Trust Badges Strip */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 pb-6 border-b border-[#e2e8f0] text-xs font-mono text-[#64748b]">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
-              <span>CBN-Licensed Escrow Partner</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
-              <span>SmileID Biometric KYC</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
-              <span>NDPR Data Privacy Compliant</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Lock className="h-4 w-4 text-[#22c55e]" />
-              <span>256-Bit Bank-Grade Encryption</span>
-            </span>
-          </div>
-
-          {/* Bottom Bar: Copyright & Inquiries */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-xs font-secondary text-[#64748b]">
-            <div>
-              <p className="font-medium text-[#020617]">
-                Scrowpoint
-              </p>
-              <p className="text-[11px] mt-0.5">
-                Pre-launch enrollment phase. All rights reserved &copy; {new Date().getFullYear()}.
-              </p>
+      <footer className="border-t border-[#111113]/12 bg-[#F8F7F4] py-12">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-8">
+          {/* Top Compliance Strip */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-[#111113]/12">
+            <div className="flex items-center gap-3">
+              <span className="font-primary text-xl font-extrabold tracking-[-0.05em] text-[#111113]">
+                SCROWPOINT<span className="text-[#FF5A25]">.</span>
+              </span>
+              <span className="text-[#111113]/25">•</span>
+              <span className="label">P2P Gadget Escrow Engine</span>
             </div>
 
-            {/* Inquiries */}
-            <div className="flex items-center gap-4 text-xs font-mono">
+            <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] uppercase tracking-wider text-[#111113]/75">
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                <span>Paystack Segregated Custody</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Fingerprint className="h-4 w-4 text-[#FF5A25]" />
+                <span>SmileID Biometric KYC</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Lock className="h-4 w-4 text-[#111113]" />
+                <span>48H Hardware Audit SLA</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom Copyright & Desk Links */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <div className="label">
+              © {new Date().getFullYear()} Scrowpoint Technologies Limited. All rights reserved.
+            </div>
+
+            <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] uppercase tracking-wider">
+              <Link href="/pricing" className="text-[#111113]/70 hover:text-[#111113] transition-colors">
+                Fee Calculator
+              </Link>
+              <Link href="/trust-and-safety" className="text-[#111113]/70 hover:text-[#111113] transition-colors">
+                Trust &amp; Safety
+              </Link>
               <a
-                href="mailto:early@scrowpoint.com?subject=Founding%20Waitlist%20Inquiry"
-                className="hover:text-[#0f172a] transition-colors flex items-center gap-1"
+                href="mailto:early@scrowpoint.ng?subject=Founding%20Cohort%2001%20Inquiry"
+                className="text-[#111113]/70 hover:text-[#111113] transition-colors inline-flex items-center gap-1"
               >
                 <Mail className="h-3.5 w-3.5" />
-                <span>early@scrowpoint.com</span>
+                <span>early@scrowpoint.ng</span>
               </a>
-              <span className="text-[#cbd5e1]">•</span>
               <a
-                href="https://wa.me/2348103202050?text=Hello%20Scrowpoint%20Team%2C%20I%20have%20an%20inquiry%20about%20the%20Waitlist"
+                href="https://wa.me/2348000000000?text=Hello%20Scrowpoint%20Team%2C%20I%20have%20an%20inquiry%20about%20Founding%20Cohort%2001"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-[#15803d] transition-colors flex items-center gap-1 text-[#15803d]"
+                className="text-[#15803d] font-bold hover:underline inline-flex items-center gap-1"
               >
                 <MessageCircle className="h-3.5 w-3.5" />
                 <span>WhatsApp Desk</span>

@@ -1,4 +1,4 @@
-# Master Prompt: Peer-to-Peer Gadget Escrow Platform (Scrowpoint)
+# Master Prompt: Peer-to-Peer Gadget Escrow Platform (Buyer's High)
 
 Execute modular phases:
 Phase 1: Database & Models (init.sql, models.go, 5%/2.5%/1.5% tiered math, append-only escrow_transactions)

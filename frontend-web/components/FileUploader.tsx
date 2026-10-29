@@ -247,21 +247,21 @@ export function FileUploader({
         onDrop={handleDrop}
         onClick={() => galleryInputRef.current?.click()}
         className={cn(
-          "group relative flex flex-col items-center justify-center p-8 rounded-[8px] border-2 border-dashed transition-all duration-200 ease-out cursor-pointer text-center select-none",
+          "group relative flex flex-col items-center justify-center p-8 border-2 border-dashed transition-all duration-200 ease-out cursor-pointer text-center select-none",
           isDragOver
-            ? "border-[#0f172a] bg-[#0f172a]/5"
-            : "border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+            ? "border-[#111113] bg-[#111113]/5"
+            : "border-[#111113]/20 bg-white hover:border-[#111113]/45 hover:bg-[#F8F7F4]"
         )}
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-[4px] bg-[#f1f5f9] text-[#64748b] group-hover:text-[#020617] group-hover:bg-[#e2e8f0] transition-colors duration-200 ease-out shadow-xs">
+        <div className="flex h-12 w-12 items-center justify-center bg-[#F0EFEA] text-[#111113]/65 group-hover:text-[#111113] group-hover:bg-[#111113]/10 transition-colors duration-200 ease-out">
           <UploadCloud className="h-6 w-6" />
         </div>
 
-        <h4 className="mt-3 font-primary text-sm font-medium text-[#020617]">
+        <h4 className="mt-3 font-primary text-sm font-bold tracking-[-0.03em] text-[#111113]">
           {title}
         </h4>
 
-        <p className="mt-1 max-w-sm font-secondary text-xs text-[#64748b] leading-relaxed">
+        <p className="mt-1 max-w-sm font-secondary text-xs text-[#111113]/65 leading-relaxed">
           {description}
         </p>
 
@@ -280,7 +280,7 @@ export function FileUploader({
             <Upload className="h-3.5 w-3.5" />
             <span>Select Files</span>
           </Button>
-          <span className="text-[11px] font-mono text-[#64748b]">
+          <span className="text-[11px] font-mono text-[#111113]/60">
             Max {maxSizeMB}MB per file
           </span>
         </div>
@@ -295,7 +295,7 @@ export function FileUploader({
           variant="default"
           size="default"
           onClick={() => cameraInputRef.current?.click()}
-          className="h-11 gap-2 text-xs font-medium shadow-xs"
+          className="h-11 gap-2 text-xs font-medium"
         >
           <Camera className="h-4 w-4" />
           <span>Take Photo</span>
@@ -315,7 +315,7 @@ export function FileUploader({
 
       {/* Global Error Banner */}
       {globalError && (
-        <div className="flex items-center gap-2 rounded-[4px] bg-[#f56565]/10 border border-[#f56565]/30 p-3 text-xs text-[#c53030]">
+        <div className="flex items-center gap-2 bg-[#f56565]/10 border border-[#f56565]/30 p-3 text-xs text-[#c53030]">
           <AlertCircle className="h-4 w-4 shrink-0 text-[#f56565]" />
           <span>{globalError}</span>
         </div>
@@ -326,11 +326,11 @@ export function FileUploader({
           ==================================================================== */}
       {files.length > 0 && (
         <div className="space-y-2 pt-2">
-          <div className="flex items-center justify-between text-xs text-[#64748b]">
-            <span className="font-primary font-medium text-[#020617]">
+          <div className="flex items-center justify-between text-xs text-[#111113]/65">
+            <span className="font-primary font-bold text-[#111113]">
               Uploaded Files ({files.length}/{maxFiles})
             </span>
-            <span className="font-mono text-[11px]">S3 Presigned Direct</span>
+            <span className="label">S3 Presigned Direct</span>
           </div>
 
           <div className="space-y-2">
@@ -341,11 +341,11 @@ export function FileUploader({
               return (
                 <div
                   key={item.file.name}
-                  className="flex items-center justify-between gap-3 p-3 rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)]"
+                  className="flex items-center justify-between gap-3 p-3 border border-[#111113]/12 bg-white"
                 >
                   {/* File Thumbnail or Icon */}
                   <div className="flex items-center gap-3 overflow-hidden flex-1">
-                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-[4px] bg-[#f1f5f9] overflow-hidden border border-[#e2e8f0]">
+                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center bg-[#F0EFEA] overflow-hidden border border-[#111113]/12">
                       {item.previewUrl ? (
                         <img
                           src={item.previewUrl}
@@ -353,19 +353,19 @@ export function FileUploader({
                           className="h-full w-full object-cover"
                         />
                       ) : isVideo ? (
-                        <Film className="h-5 w-5 text-[#64748b]" />
+                        <Film className="h-5 w-5 text-[#111113]/60" />
                       ) : (
-                        <FileText className="h-5 w-5 text-[#64748b]" />
+                        <FileText className="h-5 w-5 text-[#111113]/60" />
                       )}
                     </div>
 
                     {/* Metadata & Status */}
                     <div className="min-w-0 flex-1 space-y-0.5">
-                      <p className="font-primary text-xs font-medium text-[#020617] truncate">
+                      <p className="font-primary text-xs font-medium text-[#111113] truncate">
                         {item.file.name}
                       </p>
 
-                      <div className="flex items-center gap-2 text-[11px] font-mono text-[#64748b]">
+                      <div className="flex items-center gap-2 text-[11px] font-mono text-[#111113]/60">
                         <span>{fileSizeMB} MB</span>
                         <span>•</span>
                         {/* Dynamic Status Badges */}
@@ -377,8 +377,8 @@ export function FileUploader({
                         )}
 
                         {item.status === "uploading" && (
-                          <span className="flex items-center gap-1 text-[#0f172a]">
-                            <Loader2 className="h-3 w-3 animate-spin text-[#0f172a]" />
+                          <span className="flex items-center gap-1 text-[#111113]">
+                            <Loader2 className="h-3 w-3 animate-spin text-[#111113]" />
                             <span>Streaming to S3...</span>
                           </span>
                         )}
@@ -405,7 +405,7 @@ export function FileUploader({
                     type="button"
                     onClick={() => removeFile(item.file.name)}
                     aria-label={`Remove ${item.file.name}`}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] text-[#64748b] hover:text-[#c53030] hover:bg-[#f56565]/10 transition-colors duration-200 ease-out"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center text-[#111113]/60 hover:text-[#c53030] hover:bg-[#f56565]/10 transition-colors duration-200 ease-out"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

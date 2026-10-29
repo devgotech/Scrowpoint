@@ -205,20 +205,20 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
   return (
     <article
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white p-6 sm:p-10 shadow-[0_2px_4px_rgba(15,23,42,0.04)]",
+        "border border-[#111113]/12 bg-white p-6 sm:p-10",
         className
       )}
     >
       {/* Document Metadata Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-[#e2e8f0]">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-[#111113]/12">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
+          <span className="flex h-7 w-7 items-center justify-center bg-[#111113] text-white">
             <ShieldCheck className="h-4 w-4" />
           </span>
-          <span className="font-mono text-xs font-bold text-[#0f172a]">{doc.docId}</span>
+          <span className="font-mono text-xs font-bold text-[#111113]">{doc.docId}</span>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-mono text-[#64748b]">
+        <div className="flex items-center gap-4 label">
           <span>Effective: {doc.effectiveDate}</span>
           <span className="hidden sm:inline">•</span>
           <span className="hidden sm:inline">{doc.jurisdiction}</span>
@@ -227,18 +227,18 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
 
       {/* Main Title & Executive Summary */}
       <div className="py-6 space-y-4">
-        <h1 className="font-primary text-2xl sm:text-3xl font-bold tracking-tight text-[#020617] leading-snug">
+        <h1 className="font-primary text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113] leading-snug">
           {doc.title}
         </h1>
 
-        <div className="rounded-[4px] border border-[#22c55e]/30 bg-[#22c55e]/10 p-4">
+        <div className="border border-[#22c55e]/30 bg-[#22c55e]/10 p-4">
           <div className="flex items-start gap-2.5">
             <Lock className="h-4 w-4 text-[#22c55e] shrink-0 mt-0.5" />
             <div>
-              <span className="font-mono text-[10px] uppercase font-bold text-[#15803d] tracking-wider block mb-1">
+              <span className="font-mono text-[10px] uppercase font-bold text-[#15803d] tracking-[0.12em] block mb-1">
                 Executive Trust Summary
               </span>
-              <p className="font-primary text-xs sm:text-sm text-[#020617] leading-relaxed">
+              <p className="font-secondary text-xs sm:text-sm text-[#111113] leading-relaxed">
                 {doc.summary}
               </p>
             </div>
@@ -250,15 +250,15 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
       <div className="space-y-8 pt-4">
         {doc.clauses.map((clause, idx) => (
           <div key={idx} className="space-y-3">
-            <h2 className="font-primary text-base sm:text-lg font-bold text-[#020617]">
+            <h2 className="font-primary text-base sm:text-lg font-bold tracking-[-0.03em] text-[#111113]">
               {clause.title}
             </h2>
-            <p className="font-primary text-xs sm:text-sm text-[#334155] leading-relaxed">
+            <p className="font-secondary text-xs sm:text-sm text-[#111113]/75 leading-relaxed">
               {clause.body}
             </p>
 
             {clause.callout && (
-              <div className="rounded-[4px] border border-[#ecc94b]/40 bg-[#ecc94b]/15 p-3.5 font-primary text-xs text-[#975a16] font-medium leading-relaxed">
+              <div className="border border-[#ecc94b]/40 bg-[#ecc94b]/15 p-3.5 font-secondary text-xs text-[#975a16] font-medium leading-relaxed">
                 {clause.callout}
               </div>
             )}
@@ -267,7 +267,7 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
       </div>
 
       {/* Document Footer Verification */}
-      <div className="mt-12 pt-6 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#64748b]">
+      <div className="mt-12 pt-6 border-t border-[#111113]/12 flex flex-col sm:flex-row items-center justify-between gap-4 label">
         <div className="flex items-center gap-2">
           <Shield className="h-4 w-4 text-[#22c55e]" />
           <span>Legally binding under Nigerian Commercial Law</span>
@@ -277,7 +277,7 @@ export function ProseTypography({ slug, className }: ProseTypographyProps) {
           <button
             type="button"
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 hover:text-[#020617] transition-colors"
+            className="flex items-center gap-1.5 hover:text-[#FF5A25] hover:opacity-100 transition-colors"
           >
             <Printer className="h-3.5 w-3.5" />
             <span>Print Policy</span>

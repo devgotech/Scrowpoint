@@ -25,33 +25,33 @@ export function SecuritySettings({ className }: SecuritySettingsProps) {
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] space-y-6",
+        "border border-[#111113]/12 bg-white p-6 space-y-6",
         className
       )}
     >
-      <div className="pb-4 border-b border-[#e2e8f0]">
+      <div className="pb-4 border-b border-[#111113]/12">
         <div className="flex items-center gap-2">
-          <KeyRound className="h-4 w-4 text-[#0f172a]" />
-          <h3 className="font-primary text-base font-bold text-[#020617]">
+          <KeyRound className="h-4 w-4 text-[#111113]" />
+          <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
             Security & Authentication
           </h3>
         </div>
-        <p className="font-secondary text-xs text-[#64748b] mt-1">
+        <p className="font-secondary text-xs text-[#111113]/65 mt-1">
           Manage multi-factor authentication and active escrow authorization protocols.
         </p>
       </div>
 
       {/* 2FA Toggle */}
-      <div className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-4 flex items-center justify-between">
+      <div className="border border-[#111113]/12 bg-[#F8F7F4] p-4 flex items-center justify-between">
         <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-white border border-[#e2e8f0] text-[#0f172a] shrink-0 mt-0.5">
+          <div className="flex h-8 w-8 items-center justify-center bg-white border border-[#111113]/12 text-[#111113] shrink-0 mt-0.5">
             <Smartphone className="h-4 w-4" />
           </div>
           <div>
-            <div className="font-primary text-xs font-bold text-[#020617]">
+            <div className="font-primary text-xs font-bold text-[#111113]">
               Two-Factor Authentication (2FA)
             </div>
-            <div className="font-secondary text-[11px] text-[#64748b] leading-relaxed">
+            <div className="font-secondary text-[11px] text-[#111113]/65 leading-relaxed">
               Require SMS / Authenticator confirmation when releasing escrow funds or withdrawing.
             </div>
           </div>
@@ -62,7 +62,7 @@ export function SecuritySettings({ className }: SecuritySettingsProps) {
           onClick={() => setTwoFactorEnabled(!twoFactorEnabled)}
           className={cn(
             "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-            twoFactorEnabled ? "bg-[#22c55e]" : "bg-[#cbd5e1]"
+            twoFactorEnabled ? "bg-[#22c55e]" : "bg-[#111113]/25"
           )}
         >
           <span
@@ -75,16 +75,16 @@ export function SecuritySettings({ className }: SecuritySettingsProps) {
       </div>
 
       {/* Session Protection */}
-      <div className="rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] p-4 flex items-center justify-between">
+      <div className="border border-[#111113]/12 bg-[#F8F7F4] p-4 flex items-center justify-between">
         <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-white border border-[#e2e8f0] text-[#0f172a] shrink-0 mt-0.5">
+          <div className="flex h-8 w-8 items-center justify-center bg-white border border-[#111113]/12 text-[#111113] shrink-0 mt-0.5">
             <Lock className="h-4 w-4" />
           </div>
           <div>
-            <div className="font-primary text-xs font-bold text-[#020617]">
+            <div className="font-primary text-xs font-bold text-[#111113]">
               Strict Escrow Session Locking
             </div>
-            <div className="font-secondary text-[11px] text-[#64748b] leading-relaxed">
+            <div className="font-secondary text-[11px] text-[#111113]/65 leading-relaxed">
               Automatically logs out sessions after 30 minutes of inactivity to protect vault funds.
             </div>
           </div>
@@ -95,7 +95,7 @@ export function SecuritySettings({ className }: SecuritySettingsProps) {
           onClick={() => setSessionProtection(!sessionProtection)}
           className={cn(
             "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-            sessionProtection ? "bg-[#22c55e]" : "bg-[#cbd5e1]"
+            sessionProtection ? "bg-[#22c55e]" : "bg-[#111113]/25"
           )}
         >
           <span

@@ -80,25 +80,25 @@ export function ReadonlyChatTranscript({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] flex flex-col h-[520px] overflow-hidden",
+        "border border-[#111113]/12 bg-white flex flex-col h-[520px] overflow-hidden",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] bg-[#f8fafc]">
+      <div className="flex items-center justify-between p-4 border-b border-[#111113]/12 bg-[#F8F7F4]">
         <div className="flex items-center gap-2">
-          <MessageSquare className="h-4 w-4 text-[#0f172a]" />
-          <h4 className="font-primary text-xs font-bold text-[#020617]">
+          <MessageSquare className="h-4 w-4 text-[#111113]" />
+          <h4 className="font-primary text-xs font-bold text-[#111113] tracking-[-0.02em]">
             Forensic P2P Chat Transcript
           </h4>
         </div>
-        <span className="font-mono text-[10px] bg-[#0f172a] text-white px-2 py-0.5 rounded-[2px] font-bold">
+        <span className="font-mono text-[10px] uppercase tracking-wider bg-[#111113] text-white px-2 py-0.5 font-bold">
           Immutable Evidence Record
         </span>
       </div>
 
       {/* Stream */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f8fafc]/50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8F7F4]/60">
         {messages.map((m) => {
           const isSystem = m.sender === "system";
           const isBuyer = m.sender === "buyer";
@@ -107,12 +107,12 @@ export function ReadonlyChatTranscript({
             <div
               key={m.id}
               className={cn(
-                "p-3 rounded-[6px] text-xs font-secondary shadow-2xs space-y-1",
+                "p-3 text-xs font-secondary space-y-1",
                 isSystem
                   ? "bg-[#ecc94b]/20 border border-[#ecc94b]/40 text-[#975a16]"
                   : isBuyer
-                  ? "bg-[#0f172a] text-white ml-6"
-                  : "bg-white text-[#020617] border border-[#e2e8f0] mr-6"
+                  ? "bg-[#111113] text-white ml-6"
+                  : "bg-white text-[#111113] border border-[#111113]/12 mr-6"
               )}
             >
               <div className="flex items-center justify-between text-[10px]">

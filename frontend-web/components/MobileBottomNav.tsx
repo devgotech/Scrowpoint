@@ -47,12 +47,14 @@ export function MobileBottomNav({
       icon: Home,
       href: "/marketplace",
       isActive: currentPath === "/" || currentPath.startsWith("/marketplace") || currentPath.startsWith("/gadget"),
+      show: true,
     },
     {
       label: "Trust Hub",
       icon: ShieldCheck,
       href: "/trust-and-safety",
       isActive: currentPath.startsWith("/trust-and-safety") || currentPath.startsWith("/legal"),
+      show: true,
     },
     {
       label: "Escrow",
@@ -60,12 +62,14 @@ export function MobileBottomNav({
       href: "/escrow/SP-ORD-9421",
       isActive: currentPath.startsWith("/escrow") || currentPath.startsWith("/checkout"),
       badgeCount: activeEscrowTradesCount,
+      show: true,
     },
     {
       label: "Seller Hub",
       icon: Package,
       href: "/seller/dashboard",
       isActive: currentPath.startsWith("/seller"),
+      show: isAuthenticated,
     },
     {
       label: "Profile",
@@ -77,14 +81,15 @@ export function MobileBottomNav({
         currentPath === "/login" ||
         currentPath === "/register" ||
         currentPath.startsWith("/verify-identity"),
+      show: true,
     },
-  ];
+  ].filter((item) => item.show);
 
   return (
     <nav
       aria-label="Mobile Navigation"
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-40 flex h-16 w-full items-center justify-around border-t border-[#e2e8f0] bg-[#f8fafc]/95 backdrop-blur-md md:hidden px-1 pb-safe",
+        "fixed bottom-0 left-0 right-0 z-40 flex h-16 w-full items-center justify-around border-t border-[#111113]/12 bg-[#F8F7F4]/95 backdrop-blur-md md:hidden px-1 pb-safe",
         className
       )}
     >
@@ -105,26 +110,26 @@ export function MobileBottomNav({
             className={cn(
               "relative flex flex-1 flex-col items-center justify-center py-1 transition-colors duration-200 ease-out select-none min-h-[44px]",
               isActive
-                ? "text-[#0f172a] font-semibold"
-                : "text-[#64748b] hover:text-[#020617]"
+                ? "text-[#111113] font-bold"
+                : "text-[#111113]/55 hover:text-[#111113]"
             )}
           >
             <div className="relative">
               <Icon className="h-5 w-5" />
               {item.badgeCount && item.badgeCount > 0 ? (
-                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#22c55e] text-[9px] font-mono font-bold text-[#020617] shadow-xs">
+                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#22c55e] text-[9px] font-mono font-bold text-[#111113]">
                   {item.badgeCount}
                 </span>
               ) : null}
             </div>
 
-            <span className="mt-1 text-[10px] font-secondary leading-none tracking-tight">
+            <span className="mt-1 text-[10px] font-primary uppercase tracking-[0.06em] leading-none">
               {item.label}
             </span>
 
             {/* Active Indicator Bar */}
             {isActive && (
-              <span className="absolute bottom-1 h-0.5 w-6 rounded-full bg-[#0f172a]" />
+              <span className="absolute bottom-1 h-0.5 w-6 rounded-full bg-[#FF5A25]" />
             )}
           </Link>
         );

@@ -34,6 +34,20 @@ export function SupportChatWindow({
   className,
 }: SupportChatWindowProps) {
   const [inputText, setInputText] = useState("");
+  const [ticketNumber, setTicketNumber] = useState<string | null>(null);
+  const [sessionId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const existing = localStorage.getItem("sp_support_session_id");
+      if (existing) return existing;
+      const generated = `sp-sup-${Date.now()}`;
+      try {
+        localStorage.setItem("sp_support_session_id", generated);
+      } catch {}
+      return generated;
+    }
+    return "default-concierge-session";
+  });
+
   const [messages, setMessages] = useState<SupportChatMessage[]>([
     {
       id: "sup-1",
@@ -43,9 +57,45 @@ export function SupportChatWindow({
     },
   ]);
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    let isMounted = true;
+
+    const fetchSupportHistory = async () => {
+      try {
+        const res = await fetch(
+          `/api/support/messages?sessionId=${encodeURIComponent(sessionId)}`
+        );
+        if (!res.ok || !isMounted) return;
+        const payload = await res.json();
+        const data = payload?.data || payload;
+        if (data?.ticket?.ticketNumber) {
+          setTicketNumber(String(data.ticket.ticketNumber));
+        }
+        if (Array.isArray(data?.messages) && data.messages.length > 0) {
+          setMessages(
+            data.messages.map((m: Record<string, unknown>, idx: number) => ({
+              id: String(m.id || `sup-${idx}`),
+              sender: m.sender === "user" ? "user" : "agent",
+              text: String(m.text || ""),
+              time: String(m.time || "Just now"),
+            }))
+          );
+        }
+      } catch {
+        // Fallback to local support state when backend is unreachable
+      }
+    };
+
+    fetchSupportHistory();
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, sessionId]);
+
   if (!isOpen) return null;
 
-  const handleSend = (textToSend?: string) => {
+  const handleSend = async (textToSend?: string) => {
     const text = textToSend || inputText;
     if (!text.trim()) return;
 
@@ -58,6 +108,43 @@ export function SupportChatWindow({
 
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputText("");
+
+    try {
+      const endpoint = ticketNumber
+        ? "/api/support/messages"
+        : "/api/support/tickets";
+      const bodyPayload = ticketNumber
+        ? { sessionId, ticketId: ticketNumber, text }
+        : { sessionId, category: "escrow_concierge", message: text };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyPayload),
+      });
+
+      if (res.ok) {
+        const payload = await res.json();
+        const data = payload?.data || payload;
+        if (data?.ticket?.ticketNumber) {
+          setTicketNumber(String(data.ticket.ticketNumber));
+        }
+        if (data?.agentReply?.text) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: String(data.agentReply.id || `msg-agent-${Date.now()}`),
+              sender: "agent",
+              text: String(data.agentReply.text),
+              time: String(data.agentReply.time || "Just now"),
+            },
+          ]);
+          return;
+        }
+      }
+    } catch {
+      // Fallback to local concierge reply below
+    }
 
     setTimeout(() => {
       let reply =
@@ -82,27 +169,27 @@ export function SupportChatWindow({
           time: "Just now",
         },
       ]);
-    }, 700);
+    }, 550);
   };
 
   return (
     <div
       className={cn(
-        "w-[340px] sm:w-[380px] h-[520px] rounded-[8px] border border-[#e2e8f0] bg-white shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50",
+        "w-[340px] sm:w-[380px] h-[520px] border border-[#111113]/15 bg-white shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50",
         className
       )}
     >
       {/* Header */}
-      <div className="bg-[#0f172a] text-white p-3.5 flex items-center justify-between shrink-0">
+      <div className="bg-[#111113] text-white p-3.5 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#22c55e] text-[#020617] font-bold">
+          <div className="flex h-8 w-8 items-center justify-center bg-[#22c55e] text-[#111113] font-bold">
             <ShieldCheck className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="font-primary text-xs font-bold leading-tight">
+            <h4 className="font-primary text-xs font-bold leading-tight tracking-[-0.02em]">
               Scrowpoint Escrow Support
             </h4>
-            <span className="font-mono text-[10px] text-slate-300 flex items-center gap-1">
+            <span className="font-mono text-[10px] text-white/70 flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
               <span>Officers Online (SLA 3m)</span>
             </span>
@@ -112,7 +199,7 @@ export function SupportChatWindow({
         <button
           type="button"
           onClick={onClose}
-          className="text-slate-400 hover:text-white p-1 rounded-[4px] transition-colors"
+          className="text-white/60 hover:text-white p-1 transition-colors cursor-pointer"
           aria-label="Close Support Window"
         >
           <X className="h-5 w-5" />
@@ -123,7 +210,7 @@ export function SupportChatWindow({
       <FAQQuickLinks onSelect={(faq) => handleSend(faq)} />
 
       {/* Messages Stream */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f8fafc]/60">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8F7F4]/70">
         {messages.map((msg) => {
           const isUser = msg.sender === "user";
 
@@ -137,15 +224,15 @@ export function SupportChatWindow({
             >
               <div
                 className={cn(
-                  "p-3 rounded-[6px] text-xs font-secondary leading-relaxed shadow-2xs",
+                  "p-3 text-xs font-secondary leading-relaxed",
                   isUser
-                    ? "bg-[#0f172a] text-white"
-                    : "bg-white text-[#020617] border border-[#e2e8f0]"
+                    ? "bg-[#111113] text-white"
+                    : "bg-white text-[#111113] border border-[#111113]/12"
                 )}
               >
                 {msg.text}
               </div>
-              <span className="font-mono text-[9px] text-[#64748b] mt-0.5 px-1">
+              <span className="font-mono text-[9px] text-[#111113]/55 mt-0.5 px-1">
                 {msg.time}
               </span>
             </div>
@@ -154,7 +241,7 @@ export function SupportChatWindow({
       </div>
 
       {/* Input Dock */}
-      <div className="p-3 bg-white border-t border-[#e2e8f0] flex items-center gap-2 shrink-0">
+      <div className="p-3 bg-white border-t border-[#111113]/12 flex items-center gap-2 shrink-0">
         <input
           type="text"
           value={inputText}
@@ -163,14 +250,14 @@ export function SupportChatWindow({
             if (e.key === "Enter") handleSend();
           }}
           placeholder="Ask an escrow specialist..."
-          className="flex-1 h-9 px-3 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]"
+          className="flex-1 h-9 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
         />
         <Button
           type="button"
           variant="default"
           size="sm"
           onClick={() => handleSend()}
-          className="h-9 px-3 text-xs font-semibold"
+          className="h-9 px-3.5 rounded-full text-xs font-semibold"
         >
           <Send className="h-3.5 w-3.5" />
         </Button>

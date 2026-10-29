@@ -1,35 +1,34 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
-  ArrowRight,
-  Filter,
-  Lock,
   Search,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { GadgetListingCard, type GadgetListingData } from "@/components/GadgetListingCard";
+import {
+  GadgetListingCard,
+  type GadgetListingData,
+} from "@/components/GadgetListingCard";
 import { GadgetListingSkeleton } from "@/components/GadgetListingSkeleton";
 import { EmptyState } from "@/components/EmptyState";
-import { FilterSidebar, type FilterState } from "@/components/marketplace/FilterSidebar";
-import { Button } from "@/components/ui/button";
+import {
+  FilterSidebar,
+  type FilterState,
+} from "@/components/marketplace/FilterSidebar";
+import { listingsApi, type BackendListingDTO } from "@/lib/api";
 
 /**
  * Screen 4: Public Marketplace Catalog (Phase 1 §4)
  * Route: app/(public)/marketplace/page.tsx
  *
- * Requirements (5_screen_flows.md & 4_ui_system.md):
- * - Components: SearchInput, FilterSidebar, GadgetListingCard, TrustBadge.
- * - Architecture Link: Calls public gadget feed. Media served from Python/S3.
- * - States: LoadingSkeleton for the masonry grid, EmptyState ("No gadgets found").
- * - Responsive: Mobile-first layout with slide-out filter drawer, 1-col on mobile,
- *   2-col on sm/md, 3-col on lg/xl.
+ * Design System Compliance (4_ui_system.md — Design Variation 7):
+ * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Deep Carbon Ink (#111113)
+ * - Sharp 0px architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
  */
 
 export const INITIAL_GADGETS: GadgetListingData[] = [
@@ -54,7 +53,8 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
       "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=800&auto=format&fit=crop&q=80",
     ],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
   },
   {
     id: "g-002",
@@ -76,7 +76,8 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
       "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&auto=format&fit=crop&q=80",
     ],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
   },
   {
     id: "g-003",
@@ -97,7 +98,8 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
       "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=800&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
     ],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
   },
   {
     id: "g-004",
@@ -118,7 +120,8 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
       "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1567581935884-3349723552ca?w=800&auto=format&fit=crop&q=80",
     ],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
   },
   {
     id: "g-005",
@@ -138,7 +141,8 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
       "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=800&auto=format&fit=crop&q=80",
     ],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
   },
   {
     id: "g-006",
@@ -158,9 +162,44 @@ export const INITIAL_GADGETS: GadgetListingData[] = [
       "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80",
     ],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
   },
 ];
+
+function mapBackendListingToCard(dto: BackendListingDTO): GadgetListingData {
+  const rawCond = (dto.condition_grade || "mint").toLowerCase();
+  const condition: "mint" | "good" | "fair" =
+    rawCond === "good" || rawCond === "fair" ? rawCond : "mint";
+  const rawCat = (dto.category || "smartphone").toLowerCase();
+  const category =
+    rawCat === "laptop" || rawCat === "tablet" || rawCat === "wearable" || rawCat === "gaming"
+      ? rawCat
+      : "smartphone";
+
+  return {
+    id: dto.id,
+    title: dto.title,
+    brand: dto.title.split(" ")[0] || "Apple",
+    model: dto.title,
+    category,
+    price: dto.price_kobo,
+    isPriceInKobo: true,
+    condition,
+    batteryHealth: dto.battery_health || 96,
+    storage: dto.storage_capacity || "256GB",
+    location: dto.location_city
+      ? `${dto.location_city}${dto.location_state ? `, ${dto.location_state}` : ""}`
+      : "Ikeja, Lagos",
+    sellerName: dto.seller_name || "SmileID Verified Seller",
+    sellerVerified: true,
+    images:
+      dto.image_urls && dto.image_urls.length > 0
+        ? dto.image_urls
+        : INITIAL_GADGETS[0].images,
+    videoUrl: INITIAL_GADGETS[0].videoUrl,
+  };
+}
 
 export interface MarketplacePageProps {
   onSelectGadget?: (gadgetId: string) => void;
@@ -172,8 +211,10 @@ export default function MarketplacePage({
   onNavigateHome,
 }: MarketplacePageProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [catalogListings, setCatalogListings] =
+    useState<GadgetListingData[]>(INITIAL_GADGETS);
 
   const [filters, setFilters] = useState<FilterState>({
     category: "all",
@@ -183,6 +224,25 @@ export default function MarketplacePage({
     maxPrice: 1500000,
     kycOnly: true,
   });
+
+  useEffect(() => {
+    let mounted = true;
+    listingsApi.list().then((res) => {
+      if (!mounted || !res.ok || !Array.isArray(res.data) || res.data.length === 0) {
+        return;
+      }
+      const mapped = res.data.map(mapBackendListingToCard);
+      const existingIds = new Set(mapped.map((m) => m.id));
+      const combined = [
+        ...mapped,
+        ...INITIAL_GADGETS.filter((g) => !existingIds.has(g.id)),
+      ];
+      setCatalogListings(combined);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleResetFilters = () => {
     setFilters({
@@ -198,8 +258,7 @@ export default function MarketplacePage({
 
   // Filter listings
   const filteredListings = useMemo(() => {
-    return INITIAL_GADGETS.filter((item) => {
-      // Query filter
+    return catalogListings.filter((item) => {
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchesTitle = item.title.toLowerCase().includes(q);
@@ -208,27 +267,22 @@ export default function MarketplacePage({
         if (!matchesTitle && !matchesBrand && !matchesModel) return false;
       }
 
-      // Category
       if (filters.category !== "all" && item.category !== filters.category) {
         return false;
       }
 
-      // Brand
       if (filters.brand !== "all" && item.brand !== filters.brand) {
         return false;
       }
 
-      // Condition
       if (filters.condition !== "all" && item.condition !== filters.condition) {
         return false;
       }
 
-      // KYC
       if (filters.kycOnly && !item.sellerVerified) {
         return false;
       }
 
-      // Price
       const itemPriceNaira = item.price / 100;
       if (itemPriceNaira > filters.maxPrice) {
         return false;
@@ -236,78 +290,83 @@ export default function MarketplacePage({
 
       return true;
     });
-  }, [searchQuery, filters]);
+  }, [catalogListings, searchQuery, filters]);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#020617] flex flex-col font-secondary antialiased">
+    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full">
         {/* Marketplace Header Strip */}
-        <div className="bg-white border-b border-[#e2e8f0] py-6 sm:py-8">
-          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-2 mb-2">
+        <div className="bg-white border-b border-[#111113]/12 py-8 sm:py-10">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
+            <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-3">
               <Link
                 href="/"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 text-xs font-mono text-[#64748b] hover:text-[#0f172a] transition-colors"
+                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Home</span>
               </Link>
-              <span className="text-[#64748b] text-xs">/</span>
-              <span className="font-mono text-xs font-semibold text-[#0f172a]">
+              <span aria-hidden="true" className="text-[#111113]/25">
+                /
+              </span>
+              <span className="font-bold text-[#111113]">
                 Verified Marketplace
               </span>
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <h1 className="font-primary text-2xl sm:text-3xl font-bold tracking-tight text-[#020617]">
-                  Verified Secondhand Gadgets
+                <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] uppercase leading-[0.95]">
+                  VERIFIED SECONDHAND GADGETS
+                  <span className="text-[#FF5A25]">.</span>
                 </h1>
-                <p className="font-secondary text-xs sm:text-sm text-[#64748b] mt-1">
-                  100% Escrow Protected • 48-Hour Hardware Diagnostic SLA • SmileID Checked Sellers
+                <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-2">
+                  100% Paystack Escrow Custody • 48-Hour Hardware Diagnostic SLA
+                  • SmileID Biometric Merchants
                 </p>
               </div>
 
               {/* Mobile Filter Toggle Button */}
               <div className="flex items-center gap-2 lg:hidden">
-                <Button
-                  variant="outline"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className="h-10 px-4 rounded-[4px] border-[#e2e8f0] text-xs font-medium gap-2"
+                  className="h-11 px-4 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] flex items-center gap-2"
                 >
-                  <SlidersHorizontal className="h-4 w-4 text-[#0f172a]" />
-                  <span>Filter Options</span>
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0f172a] text-white text-[10px] font-mono">
-                    {[
-                      filters.category !== "all",
-                      filters.brand !== "all",
-                      filters.condition !== "all",
-                      filters.kycOnly,
-                    ].filter(Boolean).length}
+                  <SlidersHorizontal className="h-4 w-4 text-[#FF5A25]" />
+                  <span>Filter Catalog</span>
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#111113] text-white text-[10px] font-mono">
+                    {
+                      [
+                        filters.category !== "all",
+                        filters.brand !== "all",
+                        filters.condition !== "all",
+                        filters.kycOnly,
+                      ].filter(Boolean).length
+                    }
                   </span>
-                </Button>
+                </button>
               </div>
             </div>
 
             {/* Live Search Input Bar */}
-            <div className="mt-5 relative max-w-2xl">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+            <div className="mt-6 relative max-w-2xl">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#111113]/50" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by brand, model, SKU or condition (e.g. iPhone 14 Pro, M2 MacBook)..."
-                className="w-full h-11 pl-10 pr-4 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] text-xs font-secondary text-[#020617] placeholder:text-[#94a3b8] focus:bg-white focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none transition-all shadow-2xs"
+                className="w-full h-11 pl-10 pr-16 rounded-none border border-[#111113]/15 bg-[#F8F7F4] text-xs sm:text-sm font-secondary text-[#111113] placeholder:text-[#111113]/45 focus:bg-white focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none transition-colors"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-[#64748b] hover:text-[#020617]"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono uppercase tracking-wider font-bold text-[#FF5A25] hover:text-[#111113]"
                 >
                   Clear
                 </button>
@@ -318,7 +377,7 @@ export default function MarketplacePage({
 
         {/* Catalog Body: Filters + Grid */}
         <section className="py-8 sm:py-12">
-          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex flex-col lg:flex-row gap-8 items-start">
               {/* Filter Sidebar */}
               <FilterSidebar
@@ -332,17 +391,18 @@ export default function MarketplacePage({
               {/* Main Catalog View Area */}
               <div className="flex-1 w-full min-w-0">
                 {/* Result Status Strip */}
-                <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#e2e8f0]">
-                  <span className="font-mono text-xs text-[#64748b]">
+                <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#111113]/12">
+                  <span className="font-mono text-xs uppercase tracking-wider text-[#111113]/65">
                     Showing{" "}
-                    <strong className="text-[#020617]">{filteredListings.length}</strong> verified
-                    gadgets
+                    <strong className="text-[#111113] font-bold">
+                      {filteredListings.length}
+                    </strong>{" "}
+                    verified gadgets
                   </span>
 
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[11px] text-[#15803d] bg-[#22c55e]/15 px-2 py-0.5 rounded-[4px] border border-[#22c55e]/30 font-semibold">
-                      Vault Protection Active
-                    </span>
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+                    <span>Vault Protection Active</span>
                   </div>
                 </div>
 
@@ -354,7 +414,6 @@ export default function MarketplacePage({
                     ))}
                   </div>
                 ) : filteredListings.length === 0 ? (
-                  /* Empty State when zero results match */
                   <EmptyState
                     title="No Verified Gadgets Found"
                     description="We couldn't find any gadgets matching your filter criteria. Try broadening your price range or clearing manufacturer filters."
@@ -362,7 +421,6 @@ export default function MarketplacePage({
                     onAction={handleResetFilters}
                   />
                 ) : (
-                  /* Grid of Verified Gadget Listings */
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredListings.map((item) => (
                       <GadgetListingCard

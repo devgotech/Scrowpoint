@@ -196,7 +196,7 @@ func (s *DisputeService) RespondToDispute(ctx context.Context, disputeID, seller
 	if in.Decision == "accept_fault" {
 		returnDeadline := now.Add(72 * time.Hour)
 		dispute.ReturnDeadline = &returnDeadline
-		dispute.ReturnLabelURL = fmt.Sprintf("https://shipping.scrowpoint.internal/labels/return-%s.pdf", dispute.ID.String()[:8])
+		dispute.ReturnLabelURL = fmt.Sprintf("https://shipping.buyershigh.internal/labels/return-%s.pdf", dispute.ID.String()[:8])
 		dispute.Status = db.DisputeStatusAdminMediation
 		s.appendTimelineLocked(dispute.ID, "seller", "ACCEPTED_FAULT", "Seller accepted fault. 72-hour buyer return shipping window initiated.")
 	} else {

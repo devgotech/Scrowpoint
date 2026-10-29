@@ -61,15 +61,15 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] space-y-6",
+        "border border-[#111113]/12 bg-white p-6 space-y-6",
         className
       )}
     >
-      <div className="pb-4 border-b border-[#e2e8f0]">
-        <h3 className="font-primary text-base font-bold text-[#020617]">
+      <div className="pb-4 border-b border-[#111113]/12">
+        <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
           Profile & Store Identity
         </h3>
-        <p className="font-secondary text-xs text-[#64748b] mt-1">
+        <p className="font-secondary text-xs text-[#111113]/65 mt-1">
           Your legal name is locked to your SmileID NIN verification.
         </p>
       </div>
@@ -77,59 +77,59 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Legal Name (Locked to KYC) */}
         <div>
-          <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
+          <label className="label block mb-1.5">
             Legal Name (NIN Locked)
           </label>
           <input
             type="text"
             value={legalName}
             disabled
-            className="w-full h-11 px-3 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] text-xs font-secondary text-[#64748b] cursor-not-allowed outline-none"
+            className="w-full h-11 px-3 border border-[#111113]/12 bg-[#F8F7F4] text-xs font-secondary text-[#111113]/60 cursor-not-allowed outline-none"
           />
-          <p className="font-secondary text-[11px] text-[#64748b] mt-1">
+          <p className="font-secondary text-[11px] text-[#111113]/60 mt-1">
             Verified by National Identity Management Commission.
           </p>
         </div>
 
         {/* Store Name */}
         <div>
-          <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
+          <label className="label block mb-1.5">
             Marketplace Merchant Name
           </label>
           <input
             type="text"
             value={storeName}
             onChange={(e) => setStoreName(e.target.value)}
-            className="w-full h-11 px-3 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none"
+            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none"
           />
-          <p className="font-secondary text-[11px] text-[#64748b] mt-1">
+          <p className="font-secondary text-[11px] text-[#111113]/60 mt-1">
             Displayed publicly on your gadget listings.
           </p>
         </div>
 
         {/* Email */}
         <div>
-          <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
+          <label className="label block mb-1.5">
             Notification Email
           </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-11 px-3 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none"
+            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none"
           />
         </div>
 
         {/* Location */}
         <div>
-          <label className="font-primary text-xs font-semibold text-[#020617] uppercase tracking-wider block mb-1">
+          <label className="label block mb-1.5">
             Pickup & Dispatch City
           </label>
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full h-11 px-3 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a] outline-none"
+            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none"
           />
         </div>
       </div>
@@ -139,7 +139,7 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
           type="submit"
           variant="default"
           size="sm"
-          className="h-10 px-5 text-xs font-semibold gap-1.5 shadow-xs"
+          className="h-10 px-5 rounded-full text-xs font-semibold gap-1.5"
         >
           {saved ? (
             <>

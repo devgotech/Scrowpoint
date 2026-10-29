@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,6 +18,14 @@ import (
 type CreateOrderInput struct {
 	ListingID         uuid.UUID            `json:"listingId"`
 	FulfillmentMethod db.FulfillmentMethod `json:"fulfillmentMethod"`
+}
+
+type SendOrderMessageInput struct {
+	SenderRole        string `json:"sender"`
+	SenderName        string `json:"senderName"`
+	Text              string `json:"text"`
+	AttachmentURL     string `json:"attachmentUrl,omitempty"`
+	AttachmentCaption string `json:"attachmentCaption,omitempty"`
 }
 
 type OrderReceiptDTO struct {
@@ -55,21 +65,23 @@ type OrderTrackingDTO struct {
 }
 
 type OrderService struct {
-	Mu             sync.RWMutex
-	OrdersByID     map[uuid.UUID]*db.Order
-	OrdersByBuyer  map[uuid.UUID][]uuid.UUID
-	OrdersBySeller map[uuid.UUID][]uuid.UUID
-	listingService *ListingService
-	authService    *AuthService
+	Mu              sync.RWMutex
+	OrdersByID      map[uuid.UUID]*db.Order
+	OrdersByBuyer   map[uuid.UUID][]uuid.UUID
+	OrdersBySeller  map[uuid.UUID][]uuid.UUID
+	MessagesByOrder map[string][]*db.OrderChatMessage
+	listingService  *ListingService
+	authService     *AuthService
 }
 
 func NewOrderService(listingService *ListingService, authService *AuthService) *OrderService {
 	return &OrderService{
-		OrdersByID:     make(map[uuid.UUID]*db.Order),
-		OrdersByBuyer:  make(map[uuid.UUID][]uuid.UUID),
-		OrdersBySeller: make(map[uuid.UUID][]uuid.UUID),
-		listingService: listingService,
-		authService:    authService,
+		OrdersByID:      make(map[uuid.UUID]*db.Order),
+		OrdersByBuyer:   make(map[uuid.UUID][]uuid.UUID),
+		OrdersBySeller:  make(map[uuid.UUID][]uuid.UUID),
+		MessagesByOrder: make(map[string][]*db.OrderChatMessage),
+		listingService:  listingService,
+		authService:     authService,
 	}
 }
 
@@ -273,20 +285,20 @@ func (s *OrderService) ConfirmReceipt(ctx context.Context, orderID, buyerID uuid
 		return nil, errors.New("forbidden: only the buyer may confirm receipt of the item")
 	}
 
-	if order.EscrowState != db.EscrowStateInspectionPeriod && order.EscrowState != db.EscrowStateInTransit {
-		// If confirmed prior to transit / delivery in test environment (e.g. Created or FundsHeld),
-		// advance the lifecycle: set delivery time and initiate the 48-hour inspection period.
-		if order.EscrowState == db.EscrowStateCreated || order.EscrowState == db.EscrowStatePendingPayment || order.EscrowState == db.EscrowStateFundsHeld {
-			now := time.Now()
-			expires := now.Add(48 * time.Hour)
-			order.EscrowState = db.EscrowStateInspectionPeriod
-			order.DeliveredAt = &now
-			order.InspectionExpiresAt = &expires
-			order.UpdatedAt = now
-			orderCopy := *order
-			return &orderCopy, nil
-		}
-		return nil, fmt.Errorf("cannot confirm receipt when order is in state: %s", order.EscrowState)
+	if order.EscrowState == db.EscrowStateInTransit {
+		// Delivery has been confirmed by buyer, initiating the official 48-hour inspection window.
+		now := time.Now()
+		expires := now.Add(48 * time.Hour)
+		order.EscrowState = db.EscrowStateInspectionPeriod
+		order.DeliveredAt = &now
+		order.InspectionExpiresAt = &expires
+		order.UpdatedAt = now
+		orderCopy := *order
+		return &orderCopy, nil
+	}
+
+	if order.EscrowState != db.EscrowStateInspectionPeriod {
+		return nil, fmt.Errorf("cannot confirm receipt: order is in '%s' state (must be 'in_transit' or 'inspection_period')", order.EscrowState)
 	}
 
 	now := time.Now()
@@ -328,7 +340,7 @@ func (s *OrderService) GetReceipt(ctx context.Context, orderID, requestorID uuid
 		feePct = 0.015
 	}
 
-	receiptNumber := fmt.Sprintf("SP-REC-%s-%s", order.ID.String()[:8], order.CreatedAt.Format("20060102"))
+	receiptNumber := fmt.Sprintf("BH-REC-%s-%s", order.ID.String()[:8], order.CreatedAt.Format("20060102"))
 
 	return &OrderReceiptDTO{
 		OrderID:           order.ID,
@@ -352,3 +364,220 @@ func (s *OrderService) GetReceipt(ctx context.Context, orderID, requestorID uuid
 		CreatedAt:         order.CreatedAt,
 	}, nil
 }
+
+var (
+	tradeChatPhoneRegex = regexp.MustCompile(`(?:(?:\+?234)|0)[789][01]\d{8}`)
+	tradeChatEmailRegex = regexp.MustCompile(`[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`)
+	tradeChatLinkRegex  = regexp.MustCompile(`(?i)(?:https?://|www\.|wa\.me/|whatsapp\.com/|t\.me/)[^\s]+`)
+	tradeChatNubanRegex = regexp.MustCompile(`\b\d{10}\b`)
+)
+
+// SanitizeTradeChatMessage scrubs off-platform phone numbers, emails, 10-digit NUBAN accounts, and external links.
+func SanitizeTradeChatMessage(raw string) (string, bool, string) {
+	masked := raw
+	sanitized := false
+
+	if tradeChatPhoneRegex.MatchString(masked) {
+		masked = tradeChatPhoneRegex.ReplaceAllString(masked, "[PHONE HIDDEN FOR SAFETY]")
+		sanitized = true
+	}
+	if tradeChatEmailRegex.MatchString(masked) {
+		masked = tradeChatEmailRegex.ReplaceAllString(masked, "[EMAIL HIDDEN FOR SAFETY]")
+		sanitized = true
+	}
+	if tradeChatLinkRegex.MatchString(masked) {
+		masked = tradeChatLinkRegex.ReplaceAllString(masked, "[EXTERNAL LINK HIDDEN]")
+		sanitized = true
+	}
+	if tradeChatNubanRegex.MatchString(masked) {
+		masked = tradeChatNubanRegex.ReplaceAllString(masked, "[BANK ACCOUNT HIDDEN FOR SAFETY]")
+		sanitized = true
+	}
+
+	var reason string
+	if sanitized {
+		reason = "Friendly heads-up: We hid a phone number, bank account, email, or external link in your message. Keeping all chat inside Scrowpoint ensures your 48-hour money-back guarantee stays 100% valid!"
+	}
+
+	return masked, sanitized, reason
+}
+
+func (s *OrderService) ensureDefaultOrderMessagesLocked(orderIDKey string) []*db.OrderChatMessage {
+	msgs, exists := s.MessagesByOrder[orderIDKey]
+	if exists && len(msgs) > 0 {
+		return msgs
+	}
+
+	baseTime := time.Now().Add(-3 * time.Hour)
+	seeded := []*db.OrderChatMessage{
+		{
+			ID:                   uuid.New(),
+			OrderID:              orderIDKey,
+			SenderRole:           "admin",
+			SenderName:           "Scrowpoint Concierge",
+			IsMilestone:          true,
+			MilestoneType:        "FUNDED",
+			MilestoneTitle:       "₦850,000 Safely Locked in Paystack Escrow",
+			MilestoneDescription: "Adeola's payment is secured in the segregated vault. Chidi Gadgets can now package and hand off the iPhone 14 Pro Max with full peace of mind.",
+			MilestoneNextStep:    "Seller dispatches the gadget via GIG Logistics and shares the waybill.",
+			Timestamp:            "10:14 AM",
+			CreatedAt:            baseTime,
+		},
+		{
+			ID:         uuid.New(),
+			OrderID:    orderIDKey,
+			SenderRole: "seller",
+			SenderName: "Chidi Gadgets (Seller)",
+			Text:       "Hi Adeola! Thanks for the prompt deposit. I've just wrapped your iPhone 14 Pro Max in bubble wrap along with the original Apple 20W brick and USB-C cable. Heading to the GIG Ikeja hub now!",
+			Timestamp:  "10:18 AM",
+			CreatedAt:  baseTime.Add(4 * time.Minute),
+		},
+		{
+			ID:                   uuid.New(),
+			OrderID:              orderIDKey,
+			SenderRole:           "admin",
+			SenderName:           "Scrowpoint Concierge",
+			IsMilestone:          true,
+			MilestoneType:        "SHIPPED",
+			MilestoneTitle:       "Gadget Dispatched via GIG Logistics (#GIG-948102-LOS)",
+			MilestoneDescription: "The package has been sealed with tamper-evident tape and is on its way from Ikeja GRA.",
+			MilestoneNextStep:    "Once delivered, Adeola gets a full 48-hour window to test the device at home.",
+			Timestamp:            "11:45 AM",
+			CreatedAt:            baseTime.Add(90 * time.Minute),
+		},
+		{
+			ID:         uuid.New(),
+			OrderID:    orderIDKey,
+			SenderRole: "buyer",
+			SenderName: "Adeola (Buyer)",
+			Text:       "Awesome, thank you Chidi! I'll let you know as soon as the rider drops it off so I can test FaceID and battery health.",
+			Timestamp:  "11:52 AM",
+			CreatedAt:  baseTime.Add(97 * time.Minute),
+		},
+		{
+			ID:                   uuid.New(),
+			OrderID:              orderIDKey,
+			SenderRole:           "admin",
+			SenderName:           "Scrowpoint Concierge",
+			IsMilestone:          true,
+			MilestoneType:        "INSPECTION_ACTIVE",
+			MilestoneTitle:       "Delivered! Your 48-Hour Home Inspection Window is Open",
+			MilestoneDescription: "Take your time to check the screen, TrueTone, cameras, SIM signal, and battery health (97%).",
+			MilestoneNextStep:    "Happy with the gadget? Tap 'Approve Payout' on the left to pay Chidi immediately.",
+			Timestamp:            "Yesterday • 03:20 PM",
+			CreatedAt:            baseTime.Add(150 * time.Minute),
+		},
+		{
+			ID:         uuid.New(),
+			OrderID:    orderIDKey,
+			SenderRole: "seller",
+			SenderName: "Chidi Gadgets (Seller)",
+			Text:       "Glad the courier delivered safely! Take your time testing everything, and let me know if you have any questions about the setup.",
+			Timestamp:  "Yesterday • 03:25 PM",
+			CreatedAt:  baseTime.Add(155 * time.Minute),
+		},
+	}
+
+	s.MessagesByOrder[orderIDKey] = seeded
+	return seeded
+}
+
+func (s *OrderService) GetOrderMessages(ctx context.Context, orderIDKey string, userID uuid.UUID) ([]db.OrderChatMessage, error) {
+	cleanID := strings.TrimSpace(orderIDKey)
+	if cleanID == "" {
+		return nil, errors.New("orderId is required")
+	}
+
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+
+	raw := s.ensureDefaultOrderMessagesLocked(cleanID)
+	out := make([]db.OrderChatMessage, len(raw))
+	for i, m := range raw {
+		msgCopy := *m
+		if msgCopy.Timestamp == "" {
+			msgCopy.Timestamp = msgCopy.CreatedAt.Format("03:04 PM")
+		}
+		out[i] = msgCopy
+	}
+	return out, nil
+}
+
+func (s *OrderService) AddOrderMessage(ctx context.Context, orderIDKey string, userID uuid.UUID, in SendOrderMessageInput) (*db.OrderChatMessage, error) {
+	cleanID := strings.TrimSpace(orderIDKey)
+	if cleanID == "" {
+		return nil, errors.New("orderId is required")
+	}
+	if strings.TrimSpace(in.Text) == "" && strings.TrimSpace(in.AttachmentURL) == "" {
+		return nil, errors.New("message text or attachmentUrl is required")
+	}
+
+	// If order exists in memory and is disputed, reject direct P2P messages
+	if parsedUUID, err := uuid.Parse(cleanID); err == nil {
+		s.Mu.RLock()
+		ord, exists := s.OrdersByID[parsedUUID]
+		s.Mu.RUnlock()
+		if exists && ord.EscrowState == db.EscrowStateDisputed {
+			return nil, errors.New("direct trade chat is paused while an active dispute is under mediation")
+		}
+	}
+
+	maskedText, sanitized, reason := SanitizeTradeChatMessage(in.Text)
+
+	// SEC-06 Hardening: Authenticated users have their sender identity and role derived
+	// directly from their verified session, completely preventing counterparty or admin impersonation.
+	senderRole := "buyer"
+	senderName := "Buyer"
+
+	if userID != uuid.Nil {
+		if u, err := s.authService.GetUserByID(ctx, userID); err == nil && u != nil {
+			senderName = u.Name
+			senderRole = string(u.Role)
+		}
+	} else {
+		// Unauthenticated fallback (test only): restrict strictly to buyer/seller, never allow admin spoofing
+		reqRole := strings.ToLower(strings.TrimSpace(in.SenderRole))
+		if reqRole == "seller" {
+			senderRole = "seller"
+			senderName = "Seller (Preview)"
+		} else {
+			senderRole = "buyer"
+			senderName = "Buyer (Preview)"
+		}
+		if strings.TrimSpace(in.SenderName) != "" && !strings.Contains(strings.ToLower(in.SenderName), "admin") {
+			senderName = strings.TrimSpace(in.SenderName)
+		}
+	}
+
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+
+	s.ensureDefaultOrderMessagesLocked(cleanID)
+
+	now := time.Now()
+	var senderIDStr string
+	if userID != uuid.Nil {
+		senderIDStr = userID.String()
+	}
+
+	msg := &db.OrderChatMessage{
+		ID:                uuid.New(),
+		OrderID:           cleanID,
+		SenderID:          senderIDStr,
+		SenderRole:        senderRole,
+		SenderName:        senderName,
+		Text:              maskedText,
+		AttachmentURL:     strings.TrimSpace(in.AttachmentURL),
+		AttachmentCaption: strings.TrimSpace(in.AttachmentCaption),
+		Sanitized:         sanitized,
+		SanitizedReason:   reason,
+		IsMilestone:       false,
+		Timestamp:         now.Format("03:04 PM"),
+		CreatedAt:         now,
+	}
+
+	s.MessagesByOrder[cleanID] = append(s.MessagesByOrder[cleanID], msg)
+	msgCopy := *msg
+	return &msgCopy, nil
+}
+

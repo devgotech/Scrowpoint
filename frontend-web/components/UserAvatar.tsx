@@ -80,7 +80,7 @@ export function UserAvatar({
 
   return (
     <Avatar
-      className={cn(sizeConfig.container, "border-border bg-muted", className)}
+      className={cn(sizeConfig.container, "border-[#111113]/15 bg-[#F0EFEA]", className)}
       {...props}
     >
       {src ? (
@@ -92,7 +92,7 @@ export function UserAvatar({
       ) : null}
       <AvatarFallback
         className={cn(
-          "font-heading font-semibold text-muted-foreground bg-muted/80 tracking-wide select-none",
+          "font-primary font-bold text-[#111113] bg-[#F0EFEA] tracking-wide select-none",
           sizeConfig.text
         )}
       >

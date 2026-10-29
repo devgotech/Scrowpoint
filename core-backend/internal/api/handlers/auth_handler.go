@@ -82,13 +82,20 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		displayName = req.FullName
 	}
 
+	// SEC-01 Hardening: Prevent mass-assignment privilege escalation to admin.
+	// Public registration can only provision buyer or seller roles.
+	assignedRole := db.RoleBuyer
+	if strings.EqualFold(string(req.Role), string(db.RoleSeller)) {
+		assignedRole = db.RoleSeller
+	}
+
 	user, err := h.authService.SignUp(r.Context(), services.SignUpInput{
 		Email:    req.Email,
 		Password: req.Password,
 		Name:     displayName,
 		Phone:    req.Phone,
 		Location: req.Location,
-		Role:     req.Role,
+		Role:     assignedRole,
 	})
 	if err != nil {
 		JSONError(w, http.StatusBadRequest, err.Error())

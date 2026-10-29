@@ -188,3 +188,42 @@ func (h *OrderHandler) GetReceipt(w http.ResponseWriter, r *http.Request, userID
 
 	JSONSuccess(w, http.StatusOK, receipt)
 }
+
+func (h *OrderHandler) HandleOrderMessages(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
+	if len(parts) < 4 || parts[3] != "messages" {
+		JSONError(w, http.StatusBadRequest, "Invalid path. Expected /api/orders/:id/messages")
+		return
+	}
+
+	orderIDKey := parts[2]
+
+	if r.Method == http.MethodGet {
+		msgs, err := h.orderService.GetOrderMessages(r.Context(), orderIDKey, userID)
+		if err != nil {
+			JSONError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		JSONSuccess(w, http.StatusOK, msgs)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		var req services.SendOrderMessageInput
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			JSONError(w, http.StatusBadRequest, "Invalid request payload")
+			return
+		}
+
+		msg, err := h.orderService.AddOrderMessage(r.Context(), orderIDKey, userID, req)
+		if err != nil {
+			JSONError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		JSONSuccess(w, http.StatusCreated, msg)
+		return
+	}
+
+	JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
+}
+

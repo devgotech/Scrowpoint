@@ -72,46 +72,46 @@ export function TransactionHistoryLedger({
   return (
     <div
       className={cn(
-        "rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] overflow-hidden",
+        "border border-[#111113]/12 bg-white overflow-hidden",
         className
       )}
     >
-      <div className="flex items-center justify-between p-5 border-b border-[#e2e8f0]">
+      <div className="flex items-center justify-between p-5 border-b border-[#111113]/12">
         <div>
-          <h3 className="font-primary text-base font-bold text-[#020617]">
+          <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
             Immutable Payout Ledger
           </h3>
-          <p className="font-secondary text-xs text-[#64748b]">
+          <p className="font-secondary text-xs text-[#111113]/65">
             Cryptographically sealed settlement entries verified by Paystack and Go backend.
           </p>
         </div>
 
-        <span className="font-mono text-[10px] bg-[#f8fafc] border border-[#e2e8f0] px-2 py-0.5 rounded-[4px] font-bold text-[#64748b]">
+        <span className="font-mono text-[10px] uppercase tracking-[0.12em] bg-[#F8F7F4] border border-[#111113]/12 px-2 py-0.5 font-bold text-[#111113]/70">
           Audit-Grade
         </span>
       </div>
 
-      <div className="divide-y divide-[#e2e8f0]">
+      <div className="divide-y divide-[#111113]/12">
         {entries.map((entry) => {
           const isCredit = entry.amountNaira > 0;
 
           return (
-            <div key={entry.id} className="p-4 flex items-center justify-between hover:bg-[#f8fafc] transition-colors">
+            <div key={entry.id} className="p-4 flex items-center justify-between hover:bg-[#F8F7F4] transition-colors">
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-[4px]",
-                    isCredit ? "bg-[#22c55e]/15 text-[#15803d]" : "bg-[#f1f5f9] text-[#0f172a]"
+                    "flex h-9 w-9 items-center justify-center border",
+                    isCredit ? "bg-[#22c55e]/15 text-[#15803d] border-[#22c55e]/30" : "bg-[#F0EFEA] text-[#111113] border-[#111113]/12"
                   )}
                 >
                   {isCredit ? <ArrowDownLeft className="h-4 w-4" /> : <ArrowUpRight className="h-4 w-4" />}
                 </div>
 
                 <div>
-                  <h4 className="font-primary text-xs font-bold text-[#020617]">
+                  <h4 className="font-primary text-xs font-bold text-[#111113]">
                     {entry.title}
                   </h4>
-                  <div className="font-mono text-[10px] text-[#64748b] mt-0.5">
+                  <div className="font-mono text-[10px] text-[#111113]/60 mt-0.5">
                     Ref: {entry.ref} • {entry.date}
                   </div>
                 </div>
@@ -121,12 +121,12 @@ export function TransactionHistoryLedger({
                 <div
                   className={cn(
                     "font-mono text-sm font-bold",
-                    isCredit ? "text-[#15803d]" : "text-[#020617]"
+                    isCredit ? "text-[#15803d]" : "text-[#111113]"
                   )}
                 >
                   {isCredit ? `+${formatNaira(entry.amountNaira)}` : `-${formatNaira(entry.amountNaira)}`}
                 </div>
-                <span className="font-mono text-[10px] text-[#64748b] block">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/60 block">
                   {entry.status}
                 </span>
               </div>

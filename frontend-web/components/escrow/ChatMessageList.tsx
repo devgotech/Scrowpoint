@@ -2,36 +2,33 @@
 
 import React, { useRef, useState } from "react";
 import {
-  AlertCircle,
   AlertTriangle,
   Camera,
   CheckCheck,
-  FileText,
+  CheckCircle2,
   Image as ImageIcon,
-  Lock,
-  Paperclip,
+  MessageSquareHeart,
   Send,
   Shield,
   ShieldAlert,
-  Smile,
+  Sparkles,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { SystemMilestoneBubble, type SystemMilestone } from "./SystemMilestoneBubble";
+import {
+  SystemMilestoneBubble,
+  type SystemMilestone,
+} from "./SystemMilestoneBubble";
 import { cn } from "@/lib/utils";
 
 /**
  * ChatMessageList Component (Phase 3 §2)
  *
- * Requirements (5_screen_flows.md & 4_ui_system.md):
- * - Bybit-Style P2P Escrow Ledger Chat.
- * - Real-time Regex Data Masking (Trust Shield): Filters out Nigerian phone numbers,
- *   emails, WhatsApp links, replacing them with [CONTACT INFO HIDDEN].
- * - RegexWarningToast: Informs user that off-platform communication void escrow rights.
- * - System-Injected Milestones: Distinct, un-deletable chat events.
- * - Read-Only Freeze Mode: Freezes input if order enters DISPUTED state.
- * - Token Compliance: 8px container radius, 4px controls, Geist Mono timestamps.
+ * Friendly, welcoming P2P Trade Conversation & Milestone Stream.
+ * Design Variation 7 Compliance (4_ui_system.md):
+ * - Warm Editorial Paper (#F8F7F4) & Crisp White (#FFFFFF) surfaces with 0px sharp architectural cards
+ * - Deep Carbon Ink (#111113) & Vermilion Orange (#FF5A25) accents
+ * - Friendly participant presence bar, one-tap quick replies, unboxing photo attachments,
+ *   and polite Trust Shield contact-masking assistance.
  */
 
 export interface ChatMessage {
@@ -41,6 +38,7 @@ export interface ChatMessage {
   text: string;
   timestamp: string;
   attachmentUrl?: string;
+  attachmentCaption?: string;
   isMilestone?: boolean;
   milestoneData?: SystemMilestone;
 }
@@ -54,11 +52,18 @@ export interface ChatMessageListProps {
   onOpenEvidenceModal?: () => void;
 }
 
+const QUICK_REPLIES = [
+  "Package just arrived! Unboxing now 📦",
+  "Battery health & FaceID match 100% ✅",
+  "What time will the GIG rider arrive?",
+  "Everything works great — releasing payout now!",
+];
+
 export function ChatMessageList({
   orderId,
   isDisputed = false,
   buyerName = "Adeola (Buyer)",
-  sellerName = "Chidi (Seller)",
+  sellerName = "Chidi Gadgets (Seller)",
   className,
   onOpenEvidenceModal,
 }: ChatMessageListProps) {
@@ -66,16 +71,18 @@ export function ChatMessageList({
     {
       id: "m-1",
       sender: "admin",
-      senderName: "System Escrow Ledger",
+      senderName: "Scrowpoint Concierge",
       text: "",
       timestamp: "10:14 AM",
       isMilestone: true,
       milestoneData: {
         id: "ms-1",
         type: "FUNDED",
-        title: "₦850,000 Locked in Paystack Segregated Vault",
+        title: "₦850,000 Safely Locked in Paystack Escrow",
         description:
-          "Buyer completed deposit via Instant Bank Transfer. Funds are safely held. Seller is authorized to dispatch gadget with insured tracked courier.",
+          "Adeola's payment is secured in the segregated vault. Chidi Gadgets can now package and hand off the iPhone 14 Pro Max with full peace of mind.",
+        nextStepHint:
+          "Seller dispatches the gadget via GIG Logistics and shares the waybill.",
         timestamp: "10:14 AM",
       },
     },
@@ -83,22 +90,24 @@ export function ChatMessageList({
       id: "m-2",
       sender: "seller",
       senderName: sellerName,
-      text: "Hello Adeola! Payment confirmed in escrow. I'm packing the iPhone 14 Pro Max now with the original box and charger.",
+      text: "Hi Adeola! Thanks for the prompt deposit. I've just wrapped your iPhone 14 Pro Max in bubble wrap along with the original Apple 20W brick and USB-C cable. Heading to the GIG Ikeja hub now!",
       timestamp: "10:18 AM",
     },
     {
       id: "m-3",
       sender: "admin",
-      senderName: "System Escrow Ledger",
+      senderName: "Scrowpoint Concierge",
       text: "",
       timestamp: "11:45 AM",
       isMilestone: true,
       milestoneData: {
         id: "ms-2",
         type: "SHIPPED",
-        title: "Tracked Courier Dispatch — GIG Logistics #GIG-948102",
+        title: "Gadget Dispatched via GIG Logistics (#GIG-948102-LOS)",
         description:
-          "Waybill verified. Package is in transit from Ikeja, Lagos with tamper-evident seal and delivery signature confirmation.",
+          "The package has been sealed with tamper-evident tape and is on its way from Ikeja GRA.",
+        nextStepHint:
+          "Once delivered, Adeola gets a full 48-hour window to test the device at home.",
         timestamp: "11:45 AM",
       },
     },
@@ -106,24 +115,33 @@ export function ChatMessageList({
       id: "m-4",
       sender: "buyer",
       senderName: buyerName,
-      text: "Thanks! Will test battery health and FaceID immediately courier arrives.",
+      text: "Awesome, thank you Chidi! I'll let you know as soon as the rider drops it off so I can test FaceID and battery health.",
       timestamp: "11:52 AM",
     },
     {
       id: "m-5",
       sender: "admin",
-      senderName: "System Escrow Ledger",
+      senderName: "Scrowpoint Concierge",
       text: "",
-      timestamp: "Yesterday 03:20 PM",
+      timestamp: "Yesterday • 03:20 PM",
       isMilestone: true,
       milestoneData: {
         id: "ms-3",
         type: "INSPECTION_ACTIVE",
-        title: "Package Delivered — 48-Hour Inspection Active",
+        title: "Delivered! Your 48-Hour Home Inspection Window is Open",
         description:
-          "Courier handoff confirmed. Buyer has 48 hours to inspect display, TrueTone, and hardware before funds release.",
-        timestamp: "Yesterday 03:20 PM",
+          "Take your time to check the screen, TrueTone, cameras, SIM signal, and battery health (97%).",
+        nextStepHint:
+          "Happy with the gadget? Tap 'Approve Payout' on the left to pay Chidi immediately.",
+        timestamp: "Yesterday • 03:20 PM",
       },
+    },
+    {
+      id: "m-6",
+      sender: "seller",
+      senderName: sellerName,
+      text: "Glad the courier delivered safely! Take your time testing everything, and let me know if you have any questions about the setup.",
+      timestamp: "Yesterday • 03:25 PM",
     },
   ]);
 
@@ -131,7 +149,68 @@ export function ChatMessageList({
   const [regexWarning, setRegexWarning] = useState<string | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  // Regex patterns to block off-platform diversion
+  // Sync order conversation & milestones with GET /api/orders/{id}/messages
+  React.useEffect(() => {
+    let isMounted = true;
+    const loadOrderMessages = async () => {
+      try {
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("sp_access_token") ||
+              localStorage.getItem("bh_access_token")
+            : null;
+        const headers: Record<string, string> = {};
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const res = await fetch(
+          `/api/orders/${encodeURIComponent(orderId)}/messages`,
+          { headers }
+        );
+        if (!res.ok || !isMounted) return;
+        const payload = await res.json();
+        const items = payload?.data || payload;
+        if (Array.isArray(items) && items.length > 0) {
+          const mapped: ChatMessage[] = items.map((m: Record<string, unknown>, idx: number) => ({
+            id: String(m.id || `srv-m-${idx}`),
+            sender:
+              m.sender === "seller" || m.sender === "admin"
+                ? (m.sender as "seller" | "admin")
+                : "buyer",
+            senderName: String(m.senderName || buyerName),
+            text: String(m.text || ""),
+            timestamp: String(m.timestamp || "Just now"),
+            attachmentUrl: m.attachmentUrl ? String(m.attachmentUrl) : undefined,
+            attachmentCaption: m.attachmentCaption
+              ? String(m.attachmentCaption)
+              : undefined,
+            isMilestone: Boolean(m.isMilestone),
+            milestoneData: m.isMilestone
+              ? {
+                  id: String(m.id || `ms-${idx}`),
+                  type: (m.milestoneType as SystemMilestone["type"]) || "FUNDED",
+                  title: String(m.milestoneTitle || "Escrow Milestone"),
+                  description: String(m.milestoneDescription || ""),
+                  nextStepHint: m.milestoneNextStepHint
+                    ? String(m.milestoneNextStepHint)
+                    : undefined,
+                  timestamp: String(m.timestamp || "Just now"),
+                }
+              : undefined,
+          }));
+          setMessages(mapped);
+        }
+      } catch {
+        // Retain local seeded milestone & trade chat stream when backend is unreachable
+      }
+    };
+
+    loadOrderMessages();
+    return () => {
+      isMounted = false;
+    };
+  }, [orderId, buyerName]);
+
+  // Regex patterns to protect both parties from off-platform diversion
   const PHONE_REGEX = /(?:(?:\+?234)|0)[789][01]\d{8}/g;
   const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
   const LINK_REGEX = /(?:https?:\/\/|www\.|wa\.me\/|whatsapp\.com\/)[^\s]+/gi;
@@ -141,115 +220,211 @@ export function ChatMessageList({
     let foundViolation = false;
 
     if (PHONE_REGEX.test(masked)) {
-      masked = masked.replace(PHONE_REGEX, "[CONTACT INFO HIDDEN]");
+      masked = masked.replace(PHONE_REGEX, "[PHONE HIDDEN FOR SAFETY]");
       foundViolation = true;
     }
     if (EMAIL_REGEX.test(masked)) {
-      masked = masked.replace(EMAIL_REGEX, "[EMAIL HIDDEN]");
+      masked = masked.replace(EMAIL_REGEX, "[EMAIL HIDDEN FOR SAFETY]");
       foundViolation = true;
     }
     if (LINK_REGEX.test(masked)) {
-      masked = masked.replace(LINK_REGEX, "[LINK BLOCKED]");
+      masked = masked.replace(LINK_REGEX, "[EXTERNAL LINK HIDDEN]");
       foundViolation = true;
     }
 
     return { masked, foundViolation };
   };
 
-  const handleSendMessage = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!inputText.trim() || isDisputed) return;
+  const pushMessage = async (rawText: string, attachmentUrl?: string) => {
+    if ((!rawText.trim() && !attachmentUrl) || isDisputed) return;
 
-    const { masked, foundViolation } = maskForbiddenData(inputText);
+    const { masked, foundViolation } = maskForbiddenData(rawText);
 
     if (foundViolation) {
       setRegexWarning(
-        "Trust Shield: Off-platform contact details (phone numbers, WhatsApp, emails) were masked. Off-platform trades void your 48-hour escrow protection."
+        "Friendly heads-up: We hid a phone number, email, or external link in your message. Keeping all chat inside Scrowpoint ensures your 48-hour money-back guarantee stays 100% valid!"
       );
     } else {
       setRegexWarning(null);
     }
 
-    const newMessage: ChatMessage = {
+    const attachmentCaption = attachmentUrl
+      ? "Unboxing & Settings > About verification photo"
+      : undefined;
+
+    const optimisticMessage: ChatMessage = {
       id: `m-${Date.now()}`,
       sender: "buyer",
       senderName: buyerName,
       text: masked,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      attachmentUrl,
+      attachmentCaption,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
-    setMessages((prev) => [...prev, newMessage]);
+    setMessages((prev) => [...prev, optimisticMessage]);
     setInputText("");
 
     setTimeout(() => {
       if (chatScrollRef.current) {
         chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
       }
-    }, 100);
+    }, 80);
+
+    try {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem("sp_access_token") ||
+            localStorage.getItem("bh_access_token")
+          : null;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(
+        `/api/orders/${encodeURIComponent(orderId)}/messages`,
+        {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            sender: "buyer",
+            senderName: buyerName,
+            text: rawText,
+            attachmentUrl,
+            attachmentCaption,
+          }),
+        }
+      );
+      if (res.ok) {
+        const payload = await res.json();
+        const saved = payload?.data || payload;
+        if (saved?.sanitized && saved?.sanitizedReason) {
+          setRegexWarning(String(saved.sanitizedReason));
+        }
+      }
+    } catch {
+      // Optimistic message already rendered in chat stream
+    }
+  };
+
+  const handleSendMessage = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    pushMessage(inputText);
+  };
+
+  const handleShareUnboxingPhoto = () => {
+    pushMessage(
+      "Just unboxed it! Here is a quick photo of the Settings screen — IMEI and 97% battery health match your listing.",
+      "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&auto=format&fit=crop&q=80"
+    );
   };
 
   return (
     <div
       className={cn(
-        "flex flex-col h-[600px] rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] overflow-hidden",
+        "flex flex-col h-[680px] border border-[#111113]/12 bg-white overflow-hidden",
         className
       )}
     >
-      {/* 1. Chat Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#e2e8f0] bg-[#f8fafc]">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
-            <Lock className="h-4 w-4" />
+      {/* 1. Friendly Trade Conversation Header */}
+      <div className="p-4 sm:px-5 border-b border-[#111113]/12 bg-white flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          {/* Overlapping Participant Avatars */}
+          <div className="flex -space-x-2">
+            <div
+              className="h-9 w-9 rounded-full bg-[#111113] text-white font-mono text-xs font-bold flex items-center justify-center ring-2 ring-white"
+              title={sellerName}
+            >
+              CG
+            </div>
+            <div
+              className="h-9 w-9 rounded-full bg-[#FF5A25] text-white font-mono text-xs font-bold flex items-center justify-center ring-2 ring-white"
+              title={buyerName}
+            >
+              AD
+            </div>
           </div>
+
           <div>
-            <h3 className="font-primary text-xs font-bold text-[#020617] flex items-center gap-1.5">
-              <span>P2P Escrow Communication Ledger</span>
-              <span className="font-mono text-[10px] text-[#64748b]">({orderId})</span>
-            </h3>
-            <p className="font-secondary text-[11px] text-[#64748b]">
-              Direct between {buyerName} & {sellerName} • Encrypted & Arbitrated
+            <div className="flex items-center gap-2">
+              <h3 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                Trade Chat &amp; Live Milestones
+              </h3>
+              <span className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-[#15803d] font-bold">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                <span>Seller Online</span>
+              </span>
+            </div>
+            <p className="font-secondary text-xs text-[#111113]/65">
+              Chat directly with{" "}
+              <strong className="font-semibold text-[#111113]">
+                {sellerName.replace(" (Seller)", "")}
+              </strong>{" "}
+              • Typically replies in 2 mins
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 bg-[#22c55e]/15 border border-[#22c55e]/30 px-2 py-0.5 rounded-[4px] font-mono text-[10px] font-bold text-[#15803d]">
+        {/* Friendly Protection Pill */}
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
           <Shield className="h-3 w-3 text-[#22c55e]" />
-          <span>Trust Shield Active</span>
+          <span>Protected Chat • {orderId}</span>
+        </div>
+      </div>
+
+      {/* Reassuring Welcome Strip */}
+      <div className="bg-[#F0EFEA] border-b border-[#111113]/10 px-4 sm:px-5 py-2 flex items-center justify-between gap-2 text-[11px] font-secondary text-[#111113]/75">
+        <div className="flex items-center gap-2">
+          <MessageSquareHeart className="h-3.5 w-3.5 text-[#FF5A25] shrink-0" />
+          <span>
+            Ask questions, share unboxing photos, or confirm delivery right here.
+            Everything is saved to protect both of you.
+          </span>
         </div>
       </div>
 
       {/* 2. Dispute Read-Only Banner */}
       {isDisputed && (
-        <div className="bg-[#f56565] text-white px-4 py-2.5 flex items-center justify-between text-xs font-mono font-semibold">
+        <div className="bg-[#c53030] text-white px-5 py-3 flex items-center justify-between text-xs font-secondary">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4" />
-            <span>ARBITRATION FREEZE: Chat is in READ-ONLY mode. Funds locked in Paystack custody.</span>
+            <ShieldAlert className="h-4 w-4 shrink-0" />
+            <span>
+              <strong>Mediation Specialist Joined:</strong> Chat is paused while
+              our team reviews your hardware report. Your ₦850,000 remains safe.
+            </span>
           </div>
-          <span className="text-[10px] bg-black/20 px-2 py-0.5 rounded-[2px]">Admin Assigned</span>
+          <span className="font-mono text-[10px] uppercase tracking-wider bg-black/25 px-2.5 py-0.5 shrink-0">
+            Under Review
+          </span>
         </div>
       )}
 
-      {/* 3. Regex Masking Warning Toast */}
+      {/* 3. Polite Trust Shield Toast */}
       {regexWarning && (
-        <div className="bg-[#ecc94b]/20 border-b border-[#ecc94b]/40 text-[#975a16] p-3 flex items-start justify-between gap-2 text-xs">
+        <div className="bg-[#ecc94b]/20 border-b border-[#ecc94b]/50 text-[#975a16] px-5 py-3 flex items-start justify-between gap-3 text-xs font-secondary">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-[#ecc94b]" />
+            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-[#975a16]" />
             <span>{regexWarning}</span>
           </div>
           <button
             type="button"
             onClick={() => setRegexWarning(null)}
-            className="text-[#975a16] hover:text-[#020617]"
+            className="text-[#975a16] hover:text-[#111113] p-0.5"
+            aria-label="Dismiss notice"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      {/* 4. Message Stream */}
+      {/* 4. Message & Milestone Stream */}
       <div
         ref={chatScrollRef}
-        className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f8fafc]/50"
+        className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#F8F7F4]"
       >
         {messages.map((msg) => {
           if (msg.isMilestone && msg.milestoneData) {
@@ -262,70 +437,153 @@ export function ChatMessageList({
           }
 
           const isMe = msg.sender === "buyer";
+          const initials = isMe ? "AD" : "CG";
 
           return (
             <div
               key={msg.id}
-              className={cn("flex flex-col max-w-[80%]", isMe ? "ml-auto items-end" : "mr-auto items-start")}
+              className={cn(
+                "flex items-end gap-2.5 max-w-[88%] sm:max-w-[80%]",
+                isMe ? "ml-auto flex-row-reverse" : "mr-auto"
+              )}
             >
-              <div className="flex items-center gap-1.5 mb-1 px-1">
-                <span className="font-primary text-[10px] font-bold text-[#64748b]">
-                  {msg.senderName}
-                </span>
-                <span className="font-mono text-[9px] text-[#94a3b8]">{msg.timestamp}</span>
+              {/* Sender Avatar */}
+              <div
+                className={cn(
+                  "h-7 w-7 rounded-full shrink-0 font-mono text-[10px] font-bold flex items-center justify-center",
+                  isMe
+                    ? "bg-[#FF5A25] text-white"
+                    : "bg-[#111113] text-white"
+                )}
+              >
+                {initials}
               </div>
 
               <div
                 className={cn(
-                  "p-3 rounded-[8px] text-xs font-secondary leading-relaxed shadow-2xs",
-                  isMe
-                    ? "bg-[#0f172a] text-white rounded-br-[2px]"
-                    : "bg-white text-[#020617] border border-[#e2e8f0] rounded-bl-[2px]"
+                  "flex flex-col",
+                  isMe ? "items-end" : "items-start"
                 )}
               >
-                {msg.text}
+                <div className="flex items-center gap-2 mb-1 px-0.5">
+                  <span className="font-primary text-[11px] font-bold text-[#111113]/75">
+                    {isMe ? "You (Adeola)" : msg.senderName}
+                  </span>
+                  <span className="font-mono text-[10px] text-[#111113]/50">
+                    {msg.timestamp}
+                  </span>
+                </div>
+
+                <div
+                  className={cn(
+                    "p-3.5 text-xs sm:text-[13px] font-secondary leading-relaxed",
+                    isMe
+                      ? "bg-[#111113] text-white"
+                      : "bg-white text-[#111113] border border-[#111113]/12"
+                  )}
+                >
+                  <p>{msg.text}</p>
+
+                  {msg.attachmentUrl && (
+                    <div className="mt-2.5 border border-white/15 bg-black/20 overflow-hidden">
+                      <img
+                        src={msg.attachmentUrl}
+                        alt={msg.attachmentCaption || "Shared gadget photo"}
+                        className="h-36 w-full object-cover"
+                      />
+                      {msg.attachmentCaption && (
+                        <div className="px-2.5 py-1.5 text-[10px] font-mono text-white/80 flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3 w-3 text-[#22c55e]" />
+                          <span>{msg.attachmentCaption}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {isMe && (
+                  <div className="flex items-center gap-1 mt-1 px-0.5 text-[10px] font-mono text-[#15803d]">
+                    <CheckCheck className="h-3 w-3" />
+                    <span>Delivered • Saved to Trade Record</span>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* 5. Input Dock (Disabled in Read-Only Mode) */}
-      <div className="p-3 bg-white border-t border-[#e2e8f0]">
+      {/* 5. Quick Replies & Friendly Input Dock */}
+      <div className="bg-white border-t border-[#111113]/12 p-3.5 sm:p-4 space-y-3">
         {isDisputed ? (
-          <div className="rounded-[4px] bg-[#f8fafc] border border-[#e2e8f0] p-3 text-center font-mono text-xs text-[#64748b]">
-            Direct messaging paused during formal dispute mediation.
+          <div className="bg-[#F0EFEA] border border-[#111113]/12 p-3 text-center font-secondary text-xs text-[#111113]/75">
+            Direct chat is paused while your dedicated mediation officer reviews
+            the inspection photos.
           </div>
         ) : (
-          <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onOpenEvidenceModal}
-              title="Upload unboxing evidence photo"
-              className="flex h-10 w-10 items-center justify-center rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc] text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors"
-            >
-              <Camera className="h-4 w-4" />
-            </button>
+          <>
+            {/* One-Tap Quick Reply Suggestions */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/50 shrink-0 flex items-center gap-1 pr-1">
+                <Sparkles className="h-3 w-3 text-[#FF5A25]" />
+                <span>Quick reply:</span>
+              </span>
+              {QUICK_REPLIES.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => pushMessage(suggestion)}
+                  className="shrink-0 px-2.5 py-1 border border-[#111113]/15 bg-[#F8F7F4] hover:bg-[#111113] hover:text-white hover:border-[#111113] text-[11px] font-secondary text-[#111113]/80 transition-colors"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
 
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="Type message... (phone numbers & off-platform links will be masked)"
-              className="flex-1 h-10 px-3 rounded-[4px] border border-[#e2e8f0] bg-white text-xs font-secondary text-[#020617] outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]"
-            />
-
-            <Button
-              type="submit"
-              variant="default"
-              size="sm"
-              disabled={!inputText.trim()}
-              className="h-10 px-4 text-xs font-semibold gap-1.5 shadow-xs"
+            {/* Message Input Bar */}
+            <form
+              onSubmit={handleSendMessage}
+              className="flex items-center gap-2"
             >
-              <span>Send</span>
-              <Send className="h-3.5 w-3.5" />
-            </Button>
-          </form>
+              <button
+                type="button"
+                onClick={handleShareUnboxingPhoto}
+                title="Share a quick unboxing photo in chat"
+                className="h-11 px-3 border border-[#111113]/15 bg-[#F8F7F4] text-[#111113] hover:border-[#111113] transition-colors inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider font-bold shrink-0"
+              >
+                <ImageIcon className="h-4 w-4 text-[#FF5A25]" />
+                <span className="hidden sm:inline">Share Photo</span>
+              </button>
+
+              {onOpenEvidenceModal && (
+                <button
+                  type="button"
+                  onClick={onOpenEvidenceModal}
+                  title="Report a hardware issue"
+                  className="h-11 w-11 border border-[#111113]/15 bg-[#F8F7F4] text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors flex items-center justify-center shrink-0"
+                >
+                  <Camera className="h-4 w-4" />
+                </button>
+              )}
+
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Write a message to Chidi Gadgets..."
+                className="flex-1 h-11 px-3.5 rounded-none border border-[#111113]/15 bg-white text-xs sm:text-sm font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+              />
+
+              <button
+                type="submit"
+                disabled={!inputText.trim()}
+                className="btn-primary h-11 px-5 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] disabled:opacity-40 text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-1.5 shrink-0"
+              >
+                <span>Send</span>
+                <Send className="h-3.5 w-3.5" />
+              </button>
+            </form>
+          </>
         )}
       </div>
     </div>

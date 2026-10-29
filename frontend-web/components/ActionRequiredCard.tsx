@@ -142,8 +142,8 @@ export function ActionRequiredCard({
     <Alert
       variant={config.variant}
       className={cn(
-        "relative overflow-hidden rounded-[8px] border shadow-[0_2px_4px_rgba(15,23,42,0.06)] transition-all duration-200 ease-out",
-        config.urgent && "border-[#ecc94b]/80 shadow-md",
+        "relative overflow-hidden rounded-none border transition-all duration-200 ease-out",
+        config.urgent && "border-[#ecc94b]/80",
         className
       )}
     >
@@ -152,14 +152,14 @@ export function ActionRequiredCard({
         <div className="flex items-start gap-3.5 flex-1">
           <div
             className={cn(
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-[4px] transition-colors duration-200 ease-out",
+              "flex h-10 w-10 shrink-0 items-center justify-center border transition-colors duration-200 ease-out",
               config.variant === "warning"
-                ? "bg-[#ecc94b]/20 text-[#975a16]"
+                ? "bg-[#ecc94b]/20 text-[#975a16] border-[#ecc94b]/40"
                 : config.variant === "trust"
-                ? "bg-[#22c55e]/15 text-[#15803d]"
+                ? "bg-[#22c55e]/15 text-[#15803d] border-[#22c55e]/30"
                 : config.variant === "destructive"
-                ? "bg-[#f56565]/15 text-[#c53030]"
-                : "bg-[#f1f5f9] text-[#0f172a]"
+                ? "bg-[#f56565]/15 text-[#c53030] border-[#f56565]/30"
+                : "bg-[#F0EFEA] text-[#111113] border-[#111113]/12"
             )}
           >
             <Icon className="h-5 w-5" />
@@ -167,17 +167,17 @@ export function ActionRequiredCard({
 
           <div className="space-y-1 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <AlertTitle className="font-primary text-base font-medium text-[#020617]">
+              <AlertTitle className="font-primary text-base font-bold tracking-[-0.03em] text-[#111113]">
                 {config.title}
               </AlertTitle>
 
-              {/* Order Reference Pill (4px radius per rule 3) */}
-              <span className="font-mono text-[10px] rounded-[4px] bg-[#f1f5f9] border border-[#e2e8f0] px-2 py-0.5 font-semibold text-[#64748b]">
+              {/* Order Reference Badge */}
+              <span className="font-mono text-[10px] bg-[#F0EFEA] border border-[#111113]/15 px-2 py-0.5 font-semibold text-[#111113]/75">
                 {orderNumber}
               </span>
             </div>
 
-            <AlertDescription className="font-secondary text-xs text-[#64748b] leading-relaxed max-w-2xl">
+            <AlertDescription className="font-secondary text-xs text-[#111113]/70 leading-relaxed max-w-2xl">
               {config.description}
             </AlertDescription>
 
@@ -185,11 +185,11 @@ export function ActionRequiredCard({
             {countdownString && (
               <div className="mt-2 flex items-center gap-2 text-xs font-mono font-medium">
                 <Clock className="h-3.5 w-3.5 text-[#ecc94b] animate-spin" />
-                <span className="text-[#64748b] font-secondary">Time Remaining:</span>
+                <span className="text-[#111113]/65 font-secondary">Time Remaining:</span>
                 <span className="font-bold text-[#975a16]">
                   {countdownString}
                 </span>
-                <span className="text-[10px] text-[#64748b] font-secondary">
+                <span className="text-[10px] text-[#111113]/55 font-secondary">
                   (auto-resolves upon expiration)
                 </span>
               </div>
@@ -198,7 +198,7 @@ export function ActionRequiredCard({
         </div>
 
         {/* Right: Primary and Optional Secondary Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:self-center shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-[#e2e8f0]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:self-center shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-[#111113]/12">
           {config.secondaryLabel && onSecondaryAction && (
             <Button
               type="button"
@@ -217,11 +217,7 @@ export function ActionRequiredCard({
             size="sm"
             disabled={isLoading}
             onClick={onPrimaryAction}
-            className={cn(
-              "gap-2 text-xs h-9 font-medium shadow-xs transition-colors duration-200 ease-out",
-              config.variant === "warning" && "bg-[#0f172a] hover:bg-[#0f172a]/90 text-white",
-              config.variant === "trust" && "bg-[#0f172a] hover:bg-[#0f172a]/90 text-white"
-            )}
+            className="gap-2 text-xs h-9 font-semibold"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">

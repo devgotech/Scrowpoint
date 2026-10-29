@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import {
+  Banknote,
   Bitcoin,
   Building2,
   CheckCircle2,
@@ -14,6 +15,22 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
+/**
+ * PaymentMethodSelector Component for Scrowpoint.
+ *
+ * Requirements (4_ui_system.md & UI Context Spec 2 Tier 3, Spec 4 §6):
+ * - Grid of selectable UI cards for:
+ *   1. Card (Debit/Credit Card via Paystack - Visa, Mastercard, Verve)
+ *   2. Bank (Direct Bank Transfer via Dedicated Virtual Account)
+ *   3. Crypto (USDT / USDC Escrow Stablecoin settlement)
+ *   4. Wallet (Scrowpoint In-App Balance & Payout Vault)
+ * - Corner Radius: --radius-card (8px -> rounded-[8px]) for cards, --radius-control (4px -> rounded-[4px]) for inner elements.
+ * - Highlights the active selected method with a primary border (`border-[#0f172a] ring-2 ring-[#0f172a]/20 bg-[#0f172a]/5`).
+ * - Displays escrow security badges (Trust Green #22c55e with --color-trust-strong #15803d text contrast).
+ * - Transitions: strict duration-200 ease-out (NEVER bouncy).
+ * - Typography: font-primary for headings, font-secondary for body, font-mono for metrics and badges.
+ */
 
 export type PaymentMethodId = "card" | "bank" | "crypto" | "wallet";
 
@@ -99,24 +116,27 @@ export function PaymentMethodSelector({
     <div className={cn("w-full space-y-4", className)}>
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-heading text-sm font-semibold text-foreground">
+          <h3 className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113]">
             Select Escrow Funding Method
           </h3>
-          <p className="font-body text-xs text-muted-foreground mt-0.5">
+          <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
             Funds remain locked in custodial vault until you inspect the device.
           </p>
         </div>
 
+        {/* Trust badge with rounded-full radius */}
         <Badge
-          variant="secondary"
-          className="hidden sm:inline-flex gap-1 py-0 px-2 text-[11px] font-semibold"
+          variant="trust"
+          className="hidden sm:inline-flex gap-1 py-0 px-2 text-[11px] font-mono tracking-wider font-semibold"
         >
-          <Lock className="h-3 w-3" />
+          <Lock className="h-3 w-3 text-[#22c55e]" />
           <span>Paystack Custody Vault</span>
         </Badge>
       </div>
 
-      {/* 4-Card Selectable Grid */}
+      {/* ====================================================================
+          1. 4-CARD SELECTABLE GRID
+          ==================================================================== */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {PAYMENT_METHODS.map((method) => {
           const isSelected = activeMethod === method.id;
@@ -136,19 +156,20 @@ export function PaymentMethodSelector({
                 }
               }}
               className={cn(
-                "group relative flex flex-col justify-between p-4 rounded-lg border transition-colors duration-200 ease-out cursor-pointer select-none",
+                "group relative flex flex-col justify-between p-4 border transition-all duration-200 ease-out cursor-pointer select-none",
                 isSelected
-                  ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
-                  : "border-border bg-card hover:border-border/80 hover:bg-muted/30"
+                  ? "border-[#111113] bg-[#F8F7F4] ring-1 ring-[#111113]"
+                  : "border-[#111113]/12 bg-white hover:border-[#111113]/40 hover:bg-[#F8F7F4]/60"
               )}
             >
+              {/* Top Row: Icon + Recommendation / Selection Radio */}
               <div className="flex items-start justify-between gap-3">
                 <div
                   className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors",
+                    "flex h-10 w-10 shrink-0 items-center justify-center transition-colors duration-200 ease-out",
                     isSelected
-                      ? "bg-primary text-primary-foreground shadow-xs"
-                      : "bg-muted text-muted-foreground group-hover:text-foreground"
+                      ? "bg-[#111113] text-white"
+                      : "bg-[#F0EFEA] text-[#111113]/65 group-hover:text-[#111113]"
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -156,18 +177,19 @@ export function PaymentMethodSelector({
 
                 <div className="flex items-center gap-1.5">
                   {method.isRecommended && (
-                    <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted border border-border rounded-md px-2 py-0.5">
-                      <Sparkles className="h-3 w-3" />
+                    <span className="inline-flex items-center gap-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-[#15803d] bg-[#22c55e]/15 border border-[#22c55e]/30 px-2 py-0.5">
+                      <Sparkles className="h-3 w-3 text-[#22c55e]" />
                       Popular
                     </span>
                   )}
 
+                  {/* Radio Indicator */}
                   <div
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-full border transition-colors",
+                      "flex h-5 w-5 items-center justify-center rounded-full border transition-colors duration-200 ease-out",
                       isSelected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-muted-foreground/40 bg-background"
+                        ? "border-[#111113] bg-[#111113] text-white"
+                        : "border-[#111113]/25 bg-white"
                     )}
                   >
                     {isSelected && <CheckCircle2 className="h-3.5 w-3.5" />}
@@ -175,30 +197,32 @@ export function PaymentMethodSelector({
                 </div>
               </div>
 
+              {/* Middle: Method Identity */}
               <div className="mt-3 space-y-1">
                 <div className="flex items-baseline justify-between gap-2">
-                  <h4 className="font-heading text-sm font-semibold text-foreground">
+                  <h4 className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113]">
                     {method.name}
                   </h4>
-                  <span className="font-mono text-[10px] text-muted-foreground uppercase">
+                  <span className="label text-[9.5px]!">
                     {method.subtitle}
                   </span>
                 </div>
-                <p className="font-body text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                <p className="font-secondary text-xs text-[#111113]/65 leading-relaxed line-clamp-2">
                   {method.description}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono">
-                <span className="text-muted-foreground flex items-center gap-1">
-                  <Zap className="h-3 w-3 text-primary" />
+              {/* Bottom: Speed & Fee Badges */}
+              <div className="mt-4 pt-3 border-t border-[#111113]/12 flex items-center justify-between text-[11px] font-mono">
+                <span className="text-[#111113]/65 flex items-center gap-1">
+                  <Zap className="h-3 w-3 text-[#FF5A25]" />
                   {method.speedBadge}
                 </span>
 
                 <span
                   className={cn(
-                    "font-semibold",
-                    isSelected ? "text-primary" : "text-muted-foreground"
+                    "font-medium",
+                    isSelected ? "text-[#111113] font-bold" : "text-[#111113]/65"
                   )}
                 >
                   {method.feeBadge}
@@ -209,41 +233,43 @@ export function PaymentMethodSelector({
         })}
       </div>
 
-      {/* Contextual Instructions Container */}
+      {/* ====================================================================
+          2. CONDITIONAL CONTEXTUAL FORM / INSTRUCTIONS CONTAINER
+          ==================================================================== */}
       {showDetailsForm && currentConfig && (
-        <div className="mt-4 rounded-xl border border-border/80 bg-muted/40 p-4 space-y-3">
+        <div className="mt-4 border border-[#111113]/12 bg-[#F8F7F4] p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="font-heading text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-primary" />
+            <span className="font-primary text-xs font-bold tracking-[-0.02em] text-[#111113] flex items-center gap-1.5">
+              <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
               <span>Selected Channel: {currentConfig.name}</span>
             </span>
-            <span className="font-mono text-[11px] text-muted-foreground">
+            <span className="label">
               {currentConfig.trustBadge}
             </span>
           </div>
 
           {activeMethod === "card" && (
-            <p className="font-body text-xs text-muted-foreground leading-relaxed">
-              Clicking <strong className="text-foreground">&quot;Proceed to Paystack&quot;</strong> will invoke
+            <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
+              Clicking <strong className="text-[#111113]">"Proceed to Paystack"</strong> will invoke
               a secure popup iframe to tokenize your card and place the escrow reservation hold. No card PIN or CVV is ever stored on Scrowpoint servers.
             </p>
           )}
 
           {activeMethod === "bank" && (
-            <p className="font-body text-xs text-muted-foreground leading-relaxed">
+            <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
               A unique Wema / Sterling virtual bank account number will be generated for your order. Funds transferred will be credited to escrow automatically within 60 seconds.
             </p>
           )}
 
           {activeMethod === "crypto" && (
-            <p className="font-body text-xs text-muted-foreground leading-relaxed">
+            <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
               Deposit address for USDT (TRC-20 / ERC-20) will be provided with an exact conversion rate locked for 30 minutes. Once confirmed by 12 network blocks, escrow is marked funded.
             </p>
           )}
 
           {activeMethod === "wallet" && (
-            <p className="font-body text-xs text-muted-foreground leading-relaxed">
-              Instant deduction from your available Scrowpoint balance with zero gateway surcharge. Instant transition to <span className="font-mono font-semibold text-trust-strong">funds_held</span>.
+            <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
+              Instant deduction from your available Scrowpoint balance with zero gateway surcharge. Instant transition to <span className="font-mono font-semibold text-[#15803d]">funds_held</span>.
             </p>
           )}
         </div>

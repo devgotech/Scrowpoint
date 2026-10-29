@@ -31,8 +31,8 @@ export function FAQQuickLinks({
   className,
 }: FAQQuickLinksProps) {
   return (
-    <div className={cn("bg-[#f8fafc] border-b border-[#e2e8f0] p-3 space-y-2", className)}>
-      <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase font-bold text-[#64748b]">
+    <div className={cn("bg-[#F8F7F4] border-b border-[#111113]/12 p-3 space-y-2", className)}>
+      <div className="flex items-center gap-1.5 label">
         <HelpCircle className="h-3 w-3 text-[#22c55e]" />
         <span>Quick FAQ Suggestions:</span>
       </div>
@@ -42,7 +42,7 @@ export function FAQQuickLinks({
             key={i}
             type="button"
             onClick={() => onSelect(faq)}
-            className="text-[11px] font-secondary text-[#0f172a] bg-white border border-[#e2e8f0] hover:bg-[#f1f5f9] hover:border-[#cbd5e1] px-2.5 py-1 rounded-[4px] text-left transition-colors duration-150 shadow-2xs"
+            className="text-[11px] font-secondary text-[#111113] bg-white border border-[#111113]/15 hover:bg-[#111113] hover:text-white px-2.5 py-1 rounded-full text-left transition-colors duration-150 cursor-pointer"
           >
             {faq}
           </button>

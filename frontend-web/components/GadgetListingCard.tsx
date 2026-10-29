@@ -73,17 +73,17 @@ export function GadgetListingCard({
   const [imageError, setImageError] = useState(false);
   const [isSaved, setIsSaved] = useState(Boolean(listing.isSaved));
 
-  // Condition Badge Config (Non-trust badges do NOT use pill radius)
+  // Condition Badge Config
   const conditionConfig = {
     mint: {
       label: "Mint Condition",
       variant: "secondary" as const,
-      className: "border-[#e2e8f0] bg-[#f1f5f9] text-[#0f172a]",
+      className: "border-[#111113]/15 bg-white/95 text-[#111113]",
     },
     good: {
       label: "Good Condition",
       variant: "secondary" as const,
-      className: "border-[#e2e8f0] bg-[#f1f5f9] text-[#64748b]",
+      className: "border-[#111113]/15 bg-white/95 text-[#111113]/75",
     },
     fair: {
       label: "Fair / Used",
@@ -93,12 +93,12 @@ export function GadgetListingCard({
     salvage: {
       label: "Salvage / Parts",
       variant: "secondary" as const,
-      className: "border-[#e2e8f0] bg-[#f8fafc] text-[#64748b]",
+      className: "border-[#111113]/15 bg-[#F8F7F4] text-[#111113]/65",
     },
   }[listing.condition] || {
     label: listing.condition,
     variant: "secondary" as const,
-    className: "border-[#e2e8f0] bg-[#f1f5f9] text-[#64748b]",
+    className: "border-[#111113]/15 bg-white/95 text-[#111113]/75",
   };
 
   const priceInKobo = listing.isPriceInKobo ?? true ? listing.price : listing.price * 100;
@@ -130,7 +130,7 @@ export function GadgetListingCard({
   return (
     <div
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-[8px] border border-[#e2e8f0] bg-white text-[#020617] shadow-[0_2px_4px_rgba(15,23,42,0.06)] transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_4px_8px_rgba(15,23,42,0.06)]",
+        "group relative flex flex-col overflow-hidden border border-[#111113]/12 bg-white text-[#111113] transition-all duration-200 ease-out hover:-translate-y-1 hover:border-[#111113]/40",
         className
       )}
     >
@@ -142,18 +142,18 @@ export function GadgetListingCard({
         {/* ====================================================================
             1. 4:3 ASPECT RATIO IMAGE CONTAINER
             ==================================================================== */}
-        <div className="relative aspect-4/3 w-full overflow-hidden bg-[#f1f5f9]">
+        <div className="relative aspect-4/3 w-full overflow-hidden bg-[#F0EFEA] border-b border-[#111113]/10">
           {primaryImage ? (
             <img
               src={primaryImage}
               alt={listing.title}
               onError={() => setImageError(true)}
-              className="h-full w-full object-cover transition-transform duration-200 ease-out group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center bg-[#f1f5f9] text-[#64748b]">
+            <div className="flex h-full w-full flex-col items-center justify-center bg-[#F0EFEA] text-[#111113]/50">
               <Smartphone className="h-10 w-10 stroke-[1.5]" />
-              <span className="mt-2 font-mono text-[11px] uppercase tracking-wider">
+              <span className="mt-2 label">
                 Photo Unavailable
               </span>
             </div>
@@ -177,8 +177,8 @@ export function GadgetListingCard({
               onClick={handleHeartClick}
               aria-label={isSaved ? "Remove from wishlist" : "Save gadget"}
               className={cn(
-                "absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-[4px] bg-white/90 backdrop-blur-xs shadow-xs transition-colors duration-200 ease-out hover:bg-white",
-                isSaved ? "text-[#f56565]" : "text-[#64748b] hover:text-[#020617]"
+                "absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[#111113]/12 bg-white/95 backdrop-blur-xs transition-colors duration-200 ease-out hover:bg-white",
+                isSaved ? "text-[#FF5A25]" : "text-[#111113]/60 hover:text-[#111113]"
               )}
             >
               <Heart
@@ -192,7 +192,7 @@ export function GadgetListingCard({
 
           {/* Battery Health Pill (Bottom-Right overlay) */}
           {listing.batteryHealth ? (
-            <div className="absolute bottom-2.5 right-2.5 z-10 rounded-[4px] bg-[#0f172a]/90 px-2 py-0.5 font-mono text-[11px] font-medium text-white backdrop-blur-xs">
+            <div className="absolute bottom-2.5 right-2.5 z-10 bg-[#111113]/90 px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-white backdrop-blur-xs">
               {listing.batteryHealth}% Battery
             </div>
           ) : null}
@@ -202,26 +202,26 @@ export function GadgetListingCard({
             2. CARD CONTENT & METADATA
             [title] → [condition · location] → [amount] → [badge slot]
             ==================================================================== */}
-        <div className="flex flex-1 flex-col p-4 space-y-2">
-          {/* Title: headline-md (Roboto Medium 16px / 24px) */}
-          <h3 className="font-primary text-base font-medium leading-6 tracking-normal text-[#020617] line-clamp-1 group-hover:text-[#0f172a]">
+        <div className="flex flex-1 flex-col p-5 space-y-2.5">
+          {/* Title: Space Grotesk */}
+          <h3 className="font-primary text-base font-bold leading-6 tracking-[-0.03em] text-[#111113] line-clamp-1 group-hover:text-[#FF5A25] transition-colors">
             {listing.title}
           </h3>
 
           {/* Condition & Location meta row */}
-          <div className="flex items-center justify-between text-xs font-secondary text-[#64748b]">
+          <div className="flex items-center justify-between text-xs font-secondary text-[#111113]/65">
             <span className="truncate max-w-[150px]">
               {listing.storage ? `${listing.storage} • ` : ""}
               {listing.category || "Gadget"}
             </span>
 
             {listing.sellerVerified ? (
-              <span className="flex items-center gap-1 font-mono text-[11px] font-semibold text-[#15803d]">
+              <span className="flex items-center gap-1 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#15803d]">
                 <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
                 <span>Verified</span>
               </span>
             ) : listing.location ? (
-              <span className="flex items-center gap-1 font-secondary text-[11px] text-[#64748b] truncate max-w-[120px]">
+              <span className="flex items-center gap-1 font-secondary text-[11px] text-[#111113]/60 truncate max-w-[120px]">
                 <MapPin className="h-3 w-3" />
                 <span>{listing.location}</span>
               </span>
@@ -229,24 +229,22 @@ export function GadgetListingCard({
           </div>
 
           {/* ====================================================================
-              3. FOOTER: AMOUNT & BADGE SLOT
-              Price: mono-data (Geist Mono, Medium, 14px)
-              Badge: Trust Green reserved for Escrow Signals
+               3. FOOTER: AMOUNT & BADGE SLOT
               ==================================================================== */}
-          <div className="mt-auto pt-3 border-t border-[#e2e8f0] flex items-center justify-between">
+          <div className="mt-auto pt-3.5 border-t border-[#111113]/12 flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[#64748b]">
+              <span className="label text-[9.5px]!">
                 Escrow Price
               </span>
-              <span className="font-mono text-sm font-medium leading-5 text-[#020617]">
+              <span className="font-mono text-base font-bold leading-5 text-[#111113] mt-0.5">
                 {formattedPrice}
               </span>
             </div>
 
-            {/* Trust Badge Slot (Uses --radius-badge rounded-full and --color-trust-strong text on white) */}
+            {/* Trust Badge Slot */}
             <Badge
               variant="trust"
-              className="gap-1 py-0.5 px-2 text-[10px] font-mono tracking-wider"
+              className="gap-1 py-0.5 px-2.5 text-[10px] font-mono tracking-[0.1em]"
             >
               <Lock className="h-3 w-3 text-[#22c55e]" />
               <span>Escrow Active</span>

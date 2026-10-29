@@ -110,50 +110,55 @@ export interface TrustPillarsGridProps {
 export function TrustPillarsGrid({ className }: TrustPillarsGridProps) {
   return (
     <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-6", className)}>
-      {TRUST_PILLARS.map((pillar) => {
+      {TRUST_PILLARS.map((pillar, index) => {
         const Icon = pillar.icon;
 
         return (
           <div
             key={pillar.id}
-            className="rounded-[8px] border border-[#e2e8f0] bg-white p-6 shadow-[0_2px_4px_rgba(15,23,42,0.06)] flex flex-col justify-between hover:border-[#cbd5e1] transition-all duration-200 ease-out"
+            className="v7-card flex flex-col justify-between hover:border-[#111113]/40 transition-all duration-200 ease-out"
           >
             <div>
               {/* Header Strip */}
               <div className="flex items-center justify-between mb-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-[4px] bg-[#0f172a] text-white shadow-xs">
-                  <Icon className="h-5 w-5" />
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center bg-[#111113] text-white">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="label">
+                    [0{index + 1}] {pillar.badge}
+                  </span>
                 </div>
-                <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2.5 py-0.5 rounded-[4px]">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2.5 py-0.5 rounded-full">
                   {pillar.badge}
                 </span>
               </div>
 
               {/* Title & Metric */}
               <div className="flex items-baseline justify-between mb-2">
-                <h3 className="font-primary text-lg font-bold text-[#020617]">
+                <h3 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
                   {pillar.title}
                 </h3>
                 <div className="text-right">
-                  <span className="font-mono text-xl font-extrabold text-[#020617]">
+                  <span className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
                     {pillar.metric}
                   </span>
-                  <span className="block font-mono text-[10px] text-[#64748b]">
+                  <span className="block label text-[9.5px]!">
                     {pillar.metricLabel}
                   </span>
                 </div>
               </div>
 
-              <p className="font-secondary text-xs sm:text-sm text-[#64748b] leading-relaxed mb-4">
+              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed mb-4">
                 {pillar.description}
               </p>
 
               {/* Bullet Features */}
-              <ul className="space-y-2 border-t border-[#e2e8f0] pt-3">
+              <ul className="space-y-2 border-t border-[#111113]/12 pt-3">
                 {pillar.points.map((pt, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center gap-2 text-xs font-secondary text-[#020617]"
+                    className="flex items-center gap-2 text-xs font-secondary text-[#111113]"
                   >
                     <ShieldCheck className="h-4 w-4 text-[#22c55e] shrink-0" />
                     <span>{pt}</span>

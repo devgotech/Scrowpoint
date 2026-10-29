@@ -72,6 +72,7 @@ import { AdminDisputeRow } from "@/components/AdminDisputeRow";
 import { StackedCard } from "@/components/StackedCard";
 
 // Marketing & Trust Components (Phase 1)
+import { InstitutionalHero } from "@/components/marketing/InstitutionalHero";
 import { TrustPillarsGrid } from "@/components/marketing/TrustPillarsGrid";
 import { PolicyAccordion } from "@/components/marketing/PolicyAccordion";
 import { EscrowTimelineExplainer } from "@/components/marketing/EscrowTimelineExplainer";
@@ -123,14 +124,14 @@ import { cn } from "@/lib/utils";
 /**
  * Live Design System and Component Documentation Registry for Scrowpoint.
  *
- * Requirements (4_ui_system.md & UI Context Specs 1 through 6):
+ * Requirements (4_ui_system.md — Design Variation 7):
  * - Two-column layout:
  *   - Left: Fixed navigation sidebar with category filtering.
  *     Categories: "All", "Tokens & Rules", "Tier 1 Atoms", "Tier 2 Marketplace", "Tier 3 Escrow", "Marketing & Trust", "Seller & Wallet", "User & Support", "Admin Mediation", "Forms", "Overlays"
  *   - Right: Main component viewing area.
- * - Corner Radius: strictly 8px on cards (rounded-[8px]), 4px on controls (rounded-[4px]), rounded-full on trust badges only.
- * - Enforces --color-bg-base (#f8fafc), --color-bg-card (#ffffff), --color-text-primary (#020617).
- * - Typography: Roboto for headings (font-primary), Geist for body/UI (font-secondary), Geist Mono for numbers/IDs (font-mono).
+ * - Structural Geometry: 0px sharp architectural cards (`1px solid rgba(17, 17, 19, 0.12)`), 999px pill primary CTAs (`.btn-primary`) & status badges.
+ * - Enforces --bg (#F8F7F4), --color-bg-card (#FFFFFF), --ink (#111113), --accent (#FF5A25).
+ * - Typography: Space Grotesk for headings (`font-primary`, -0.04em), Plus Jakarta Sans for body/UI (`font-secondary`), Space Grotesk monospace for technical labels, currency & IDs (`font-mono` / `.label`).
  */
 
 export type ComponentCategory =
@@ -219,13 +220,13 @@ function EvidenceUploadSandboxDemo() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 rounded-[8px] border border-dashed border-[#e2e8f0] bg-[#f8fafc] text-center space-y-3 w-full max-w-md mx-auto">
-      <div className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-[#f56565]/15 text-[#c53030]">
+    <div className="flex flex-col items-center justify-center p-6 border border-dashed border-[#111113]/20 bg-[#F8F7F4] text-center space-y-3 w-full max-w-md mx-auto">
+      <div className="flex h-10 w-10 items-center justify-center bg-[#f56565]/15 text-[#c53030]">
         <AlertTriangle className="h-5 w-5" />
       </div>
       <div>
-        <h4 className="font-primary text-sm font-bold text-[#020617]">Dispute Evidence Submission Modal</h4>
-        <p className="font-secondary text-xs text-[#64748b] mt-0.5">
+        <h4 className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">Dispute Evidence Submission Modal</h4>
+        <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
           Modal stays closed by default. Tap the button below to test opening, reviewing, and dismissing the arbitration drawer.
         </p>
       </div>
@@ -233,7 +234,7 @@ function EvidenceUploadSandboxDemo() {
         variant="default"
         size="sm"
         onClick={() => setIsOpen(true)}
-        className="gap-2 bg-[#0f172a] text-white hover:bg-slate-800"
+        className="gap-2"
       >
         <AlertTriangle className="h-4 w-4 text-[#ecc94b]" />
         <span>Open Dispute Modal Preview</span>
@@ -245,7 +246,6 @@ function EvidenceUploadSandboxDemo() {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onSubmitDispute={() => {
-          alert("Evidence submitted successfully. Order placed into DISPUTED state.");
           setIsOpen(false);
         }}
       />
@@ -259,102 +259,119 @@ function EvidenceUploadSandboxDemo() {
 
 export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
-  // DESIGN SYSTEM TOKENS & RULES (4_ui_system.md)
+  // DESIGN SYSTEM TOKENS & RULES (4_ui_system.md — Variation 7)
   // --------------------------------------------------------------------------
   {
     id: "tokens-quick-reference",
-    title: "4_ui_system.md Design Tokens & Strict Rules",
+    title: "4_ui_system.md Design Tokens & Strict Rules (Variation 7)",
     category: "Tokens & Rules",
-    tierLabel: "Design System Core",
-    description: "System colors, corner radius semantics, font stacks, and the 6 NEVER rules from 4_ui_system.md.",
-    tags: ["Tokens", "CSS Variables", "Rules", "WCAG Contrast"],
+    tierLabel: "Design Variation 7 Core",
+    description: "Warm editorial paper palette (#F8F7F4), deep carbon ink (#111113), vermilion orange accent (#FF5A25), Space Grotesk + Plus Jakarta Sans typography, and the 6 NEVER rules from 4_ui_system.md.",
+    tags: ["Variation 7", "Tokens", "Space Grotesk", "Plus Jakarta Sans", "6 NEVER Rules"],
     render: () => (
       <div className="w-full space-y-6">
         <div>
-          <span className="font-mono text-xs uppercase tracking-wider text-[#64748b] block mb-3 font-semibold">
-            Color Palette & Semantic Tokens
+          <span className="label block mb-3">
+            [01] Color Palette &amp; Semantic Tokens (Variation 7)
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc]">
-              <div className="h-6 w-full rounded-[2px] bg-[#f8fafc] border border-[#e2e8f0] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-bg-base</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#f8fafc (Page Bg)</div>
+            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
+              <div className="h-6 w-full bg-[#F8F7F4] border border-[#111113]/15 mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--bg / --color-bg-base</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#F8F7F4 (Warm Paper)</div>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
-              <div className="h-6 w-full rounded-[2px] bg-[#0f172a] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-action-primary</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#0f172a (CTA Button)</div>
+            <div className="p-3 border border-[#111113]/12 bg-white">
+              <div className="h-6 w-full bg-[#111113] mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--ink / --action-primary</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#111113 (Deep Carbon Ink)</div>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
-              <div className="h-6 w-full rounded-[2px] bg-[#22c55e] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-trust</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#22c55e (Escrow Only)</div>
+            <div className="p-3 border border-[#111113]/12 bg-white">
+              <div className="h-6 w-full bg-[#FF5A25] mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--accent</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#FF5A25 (Vermilion Orange)</div>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
-              <div className="h-6 w-full rounded-[2px] bg-[#15803d] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-trust-strong</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#15803d (Text Contrast)</div>
+            <div className="p-3 border border-[#111113]/12 bg-white">
+              <div className="h-6 w-full bg-[#F0EFEA] border border-[#111113]/12 mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--color-bg-muted</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#F0EFEA (Warm Stone)</div>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
-              <div className="h-6 w-full rounded-[2px] bg-[#088235] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-state-success</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#088235 (Escrow Funded)</div>
+            <div className="p-3 border border-[#111113]/12 bg-white">
+              <div className="h-6 w-full bg-[#22c55e] mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--color-trust</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#22c55e (Escrow &amp; KYC)</div>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
-              <div className="h-6 w-full rounded-[2px] bg-[#ecc94b] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-state-warning</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#ecc94b (Dispute Open)</div>
+            <div className="p-3 border border-[#111113]/12 bg-white">
+              <div className="h-6 w-full bg-[#15803d] mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--color-trust-strong</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#15803d (WCAG Trust Text)</div>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
-              <div className="h-6 w-full rounded-[2px] bg-[#f56565] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-state-error</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#f56565 (Verification Fail)</div>
+            <div className="p-3 border border-[#111113]/12 bg-white">
+              <div className="h-6 w-full bg-[#ecc94b] mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--color-state-warning</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#ecc94b (48H SLA / Dispute)</div>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-white">
-              <div className="h-6 w-full rounded-[2px] bg-[#e2e8f0] mb-2" />
-              <div className="font-mono font-bold text-[#020617]">--color-border-default</div>
-              <div className="font-mono text-[10px] text-[#64748b]">#e2e8f0 (Border)</div>
+            <div className="p-3 border border-[#111113]/12 bg-white">
+              <div className="h-6 w-full bg-[#f56565] mb-2" />
+              <div className="font-mono font-bold text-[#111113]">--color-state-error</div>
+              <div className="font-mono text-[10px] text-[#111113]/65">#f56565 (Verification Fail)</div>
             </div>
           </div>
         </div>
 
         <div>
-          <span className="font-mono text-xs uppercase tracking-wider text-[#64748b] block mb-3 font-semibold">
-            Corner Radius Semantics
+          <span className="label block mb-3">
+            [02] Structural Geometry &amp; Typography Semantics (Variation 7)
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc]">
-              <span className="font-mono font-bold text-[#020617] block">--radius-control: 4px</span>
-              <p className="font-secondary text-[#64748b] text-[11px] mt-1">
-                Buttons, form inputs, selects, filter chips, action pills.
+            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
+              <span className="font-mono font-bold text-[#111113] block">.card (0px Hairline Frame)</span>
+              <p className="font-secondary text-[#111113]/70 text-[11px] mt-1">
+                Architectural cards, tables, and containers use <code className="font-mono bg-white px-1 border border-[#111113]/12">1px solid rgba(17,17,19,0.12)</code> on <code className="font-mono bg-white px-1 border border-[#111113]/12">#FFFFFF</code> with sharp 0px corners.
               </p>
             </div>
-            <div className="p-3 rounded-[8px] border border-[#e2e8f0] bg-[#f8fafc]">
-              <span className="font-mono font-bold text-[#020617] block">--radius-card: 8px</span>
-              <p className="font-secondary text-[#64748b] text-[11px] mt-1">
-                Listing cards, containers, dialogs, dropdown menus.
+            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
+              <span className="font-mono font-bold text-[#111113] block">.btn-primary &amp; Badges (999px Pill)</span>
+              <p className="font-secondary text-[#111113]/70 text-[11px] mt-1">
+                Primary CTAs (<code className="font-mono bg-white px-1 border border-[#111113]/12">#111113</code> fill, <code className="font-mono bg-white px-1 border border-[#111113]/12">#FF5A25</code> hover) and status badges use <code className="font-mono bg-white px-1 border border-[#111113]/12">border-radius: 999px</code>.
               </p>
             </div>
-            <div className="p-3 rounded-[4px] border border-[#e2e8f0] bg-[#f8fafc]">
-              <span className="font-mono font-bold text-[#020617] block">--radius-badge: 9999px</span>
-              <p className="font-secondary text-[#64748b] text-[11px] mt-1">
-                Trust badges ONLY (Escrow Active, Verified Seller).
+            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
+              <span className="font-mono font-bold text-[#111113] block">Space Grotesk + Plus Jakarta Sans</span>
+              <p className="font-secondary text-[#111113]/70 text-[11px] mt-1">
+                Headings: <code className="font-mono bg-white px-1 border border-[#111113]/12">Space Grotesk (-0.04em)</code>. Body: <code className="font-mono bg-white px-1 border border-[#111113]/12">Plus Jakarta Sans</code>. Labels &amp; NGN: <code className="font-mono bg-white px-1 border border-[#111113]/12">Space Grotesk Mono</code>.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-[4px] border border-[#ecc94b]/50 bg-[#ecc94b]/10 p-4">
-          <span className="font-mono text-xs uppercase tracking-wider text-[#975a16] block font-bold mb-2">
-            The 6 NEVER Rules (4_ui_system.md)
-          </span>
-          <ol className="space-y-1.5 text-xs font-secondary text-[#020617] list-decimal list-inside leading-relaxed">
-            <li><strong>NEVER</strong> use Trust Green for anything except escrow signals (Escrow Active, Verified, funds released).</li>
-            <li><strong>NEVER</strong> place Trust Green text on white background (fails WCAG). Always use <code className="font-mono bg-white px-1 py-0.5 rounded text-[#15803d]">--color-trust-strong (#15803d)</code>.</li>
-            <li><strong>NEVER</strong> use pill radius (9999px) on anything except trust badges. Condition chips and status pills use 4px.</li>
-            <li><strong>NEVER</strong> use Warning amber for failures or Error red for disputes. Dispute Open = warning (#ecc94b), Verification Failed = error (#f56565), Escrow Funded = success (#088235).</li>
-            <li><strong>NEVER</strong> set money amounts, IDs or reference numbers in primary font — use <code className="font-mono bg-white px-1 py-0.5 rounded">Geist Mono</code>.</li>
-            <li><strong>NEVER</strong> write money values in major units directly if stored in base kobo/cents.</li>
+        <div className="border border-[#111113]/15 bg-[#F8F7F4] p-5">
+          <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-[#111113]/12">
+            <span className="font-mono text-xs uppercase tracking-[0.15em] text-[#111113] block font-bold">
+              [03] The 6 NEVER Rules (4_ui_system.md — Variation 7)
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-wider bg-[#FF5A25]/15 text-[#FF5A25] border border-[#FF5A25]/30 px-2 py-0.5 font-bold">
+              Strict Enforcement
+            </span>
+          </div>
+          <ol className="space-y-2 text-xs font-secondary text-[#111113] list-decimal list-inside leading-relaxed">
+            <li>
+              <strong>NEVER</strong> use legacy cool slate backgrounds (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#f8fafc</code>) or navy ink (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#0f172a</code>) — always use Warm Editorial Paper (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#F8F7F4</code>), Deep Carbon Ink (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#111113</code>), and Vermilion Orange (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#FF5A25]">#FF5A25</code>) for accents and hover states.
+            </li>
+            <li>
+              <strong>NEVER</strong> place raw Trust Green (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#22c55e</code>) text directly on light backgrounds (fails WCAG). Always use <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#15803d]">--color-trust-strong (#15803d)</code> and reserve green strictly for verified escrow/KYC signals.
+            </li>
+            <li>
+              <strong>NEVER</strong> apply rounded corners to architectural <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">.card</code> surfaces (must remain crisp <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">0px</code> with <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">1px solid rgba(17, 17, 19, 0.12)</code> borders), while primary CTAs (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">.btn-primary</code>) and status badges strictly use <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">999px</code> pill radius (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">rounded-full</code>).
+            </li>
+            <li>
+              <strong>NEVER</strong> use Warning amber for failures or Error red for disputes. 48H SLA &amp; Dispute Open = warning (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#975a16]">#ecc94b</code>), Verification Failed = error (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#c53030]">#f56565</code>), Escrow Funded = success (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#15803d]">#088235</code>).
+            </li>
+            <li>
+              <strong>NEVER</strong> set NGN currency amounts, order IDs (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">SP-ORD-*</code>), or <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">.label</code> index tags (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">[01] VAULT</code>) in body font — always use <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">Space Grotesk</code> monospace (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">font-mono</code>).
+            </li>
+            <li>
+              <strong>NEVER</strong> write or compute money values in floating-point major units — always store and calculate in integer kobo/cents before formatting for display.
+            </li>
           </ol>
         </div>
       </div>
@@ -364,6 +381,19 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
   // MARKETING & TRUST (Phase 1)
   // --------------------------------------------------------------------------
+  {
+    id: "marketing-institutional-hero",
+    title: "InstitutionalHero (Design Variation 7)",
+    category: "Marketing & Trust",
+    tierLabel: "Design Variation 7",
+    description: "Editorial P2P Gadget Escrow hero: Space Grotesk display typography ('SECURE EXCHANGE. VERIFIED TECH.'), Plus Jakarta Sans subcopy, pill primary CTA, and 3-column architectural vault/KYC/SLA cards.",
+    tags: ["Hero", "Variation 7", "Space Grotesk", "Plus Jakarta Sans", "3-Column Cards"],
+    render: () => (
+      <div className="w-full border border-[#111113]/12 overflow-hidden">
+        <InstitutionalHero />
+      </div>
+    ),
+  },
   {
     id: "marketing-trust-pillars",
     title: "TrustPillarsGrid (Phase 1 §3)",
@@ -428,43 +458,43 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
   {
     id: "atom-button-variants",
-    title: "Buttons & Control Semantics (4px Radius)",
+    title: "Buttons & Pill CTA Semantics (Variation 7)",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Button variants conforming to 4_ui_system.md: 4px radius (rounded-[4px]), 44px min-touch target, duration-200 transitions.",
-    tags: ["Button", "Controls", "4px Radius"],
+    description: "Button variants conforming to 4_ui_system.md (Variation 7): 999px pill radius (rounded-full), #111113 deep carbon ink fill, #FF5A25 vermilion hover, 44px min-touch target.",
+    tags: ["Button", "Pill CTA", "999px Radius", "Vermilion Hover"],
     render: () => (
       <div className="flex flex-wrap items-center gap-3">
-        <Button variant="default">Primary CTA (#0f172a)</Button>
+        <Button variant="default">Primary CTA (#111113)</Button>
         <Button variant="secondary">Secondary Button</Button>
         <Button variant="outline">Outline Button</Button>
         <Button variant="ghost">Ghost Button</Button>
         <Button variant="destructive">Destructive (Dispute)</Button>
-        <Button className="bg-[#22c55e] text-[#020617] hover:bg-[#16a34a] font-semibold">Trust Action (Release)</Button>
+        <Button className="bg-[#22c55e] text-[#111113] hover:bg-[#16a34a] font-semibold">Trust Action (Release)</Button>
       </div>
     ),
   },
   {
     id: "atom-badge-variants",
-    title: "Badges & Trust Signal Discipline",
+    title: "Badges & Trust Signal Discipline (Variation 7)",
     category: "Tier 1 Atoms",
     tierLabel: "Tier 1 Foundation",
-    description: "Strict anti-pill discipline: Trust Green is strictly reserved for escrow signals (rounded-full). Non-trust chips use rounded-[4px].",
-    tags: ["Badges", "Trust Green", "Zero Pill Slop"],
+    description: "Space Grotesk monospace uppercase badges: Trust Green is strictly reserved for verified escrow/KYC signals. Status badges use 999px pill geometry or crisp architectural tags.",
+    tags: ["Badges", "Trust Green", "Space Grotesk Mono"],
     render: () => (
       <div className="flex flex-wrap items-center gap-3">
         <Badge variant="trust" className="gap-1.5 font-mono text-xs">
           <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
-          <span>Escrow Active (Pill Allowed)</span>
+          <span>Escrow Active (Verified)</span>
         </Badge>
-        <Badge variant="secondary" isPill={false} className="font-mono text-xs">
-          Mint Condition (4px)
+        <Badge variant="secondary" className="font-mono text-xs">
+          Mint Condition
         </Badge>
-        <Badge variant="warning" isPill={false} className="font-mono text-xs">
-          Inspection Window (4px)
+        <Badge variant="warning" className="font-mono text-xs">
+          48H Inspection SLA
         </Badge>
-        <Badge variant="destructive" isPill={false} className="font-mono text-xs">
-          Verification Rejected (4px)
+        <Badge variant="destructive" className="font-mono text-xs">
+          Verification Rejected
         </Badge>
       </div>
     ),
@@ -475,10 +505,10 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
   {
     id: "marketplace-listing-card",
-    title: "GadgetListingCard (Masonry Grid Ready)",
+    title: "GadgetListingCard (Architectural Hairline Card)",
     category: "Tier 2 Marketplace",
     tierLabel: "Tier 2 Public Feed",
-    description: "4:3 media aspect ratio, Roboto title, Geist Mono price, location, condition chips, and verified trust badge slot.",
+    description: "4:3 media aspect ratio, Space Grotesk title, Space Grotesk Mono kobo price, location, condition chips, and verified trust badge slot inside a 1px solid var(--ink-faint) frame.",
     tags: ["Listing Card", "Gadget", "Price Kobo", "4:3 Aspect"],
     render: () => (
       <div className="w-full max-w-sm mx-auto">
@@ -491,7 +521,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "GadgetListingSkeleton & Grid Loader",
     category: "Tier 2 Marketplace",
     tierLabel: "Tier 2 Public Feed",
-    description: "Low-contrast skeleton state matching the exact card aspect ratio and metadata structure without layout shifts.",
+    description: "Warm stone (#F0EFEA) skeleton state matching the exact card aspect ratio and metadata structure without layout shifts.",
     tags: ["Skeleton", "Loading State", "Feed Placeholder"],
     render: () => (
       <div className="w-full max-w-sm mx-auto">
@@ -530,7 +560,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "SecureCheckoutButton (Phase 2 §2)",
     category: "Tier 3 Escrow",
     tierLabel: "Phase 2: Payment",
-    description: "Locked escrow checkout trigger with Paystack/Flutterwave gateway status and SSL encryption guarantee.",
+    description: "Locked escrow checkout pill CTA with Paystack/Flutterwave gateway status and SSL encryption guarantee.",
     tags: ["Checkout", "Payment CTA", "Vault Lock"],
     render: () => (
       <div className="w-full max-w-md mx-auto">
@@ -552,7 +582,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "EscrowStatusBar (Sticky Room Top Bar)",
     category: "Tier 3 Escrow",
     tierLabel: "Tier 3 Escrow Ledger",
-    description: "Sticky contextual banner showing Order ID in Geist Mono, 48-Hour Inspection Countdown timer, and quick action.",
+    description: "Sticky contextual banner showing Order ID in Space Grotesk Mono, 48-Hour Inspection Countdown timer, and quick action.",
     tags: ["Status Bar", "Countdown", "Inspection Window"],
     render: () => (
       <EscrowStatusBar
@@ -601,7 +631,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "SellerStatsOverview (Phase 3 §1)",
     category: "Seller & Wallet",
     tierLabel: "Phase 3: Seller",
-    description: "Metric cards: Active Listings, Settled Sales Volume, and Locked Escrow Balance in Geist Mono.",
+    description: "Metric cards: Active Listings, Settled Sales Volume, and Locked Escrow Balance in Space Grotesk Mono.",
     tags: ["Seller Metrics", "Volume", "Escrow Balance"],
     render: () => <SellerStatsOverview />,
   },
@@ -873,11 +903,11 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
   {
     id: "overlay-navbar",
-    title: "Navbar (Authenticated & Guest Header)",
+    title: "Navbar (Variation 7 Editorial Header)",
     category: "Overlays",
     tierLabel: "Tier 1 Foundation",
-    description: "Exact 64px (h-16) header with brand mark, marketplace search, notification dropdown, and KYC status pill.",
-    tags: ["Navbar", "Header", "Navigation Bar"],
+    description: "80px (h-20) header with SCROWPOINT. wordmark, uppercase navigation links, notification dropdown, and pill Sign In / Sell Gadget CTAs.",
+    tags: ["Navbar", "Header", "Variation 7", "SCROWPOINT."],
     render: () => (
       <div className="w-full">
         <Navbar unreadNotificationsCount={3} />
@@ -889,11 +919,11 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     title: "MobileBottomNav (Fixed App Navigation)",
     category: "Overlays",
     tierLabel: "Tier 1 Foundation",
-    description: "Reconciled bottom navigation for mobile screens (<768px): Market, Trust Hub, Escrow, Seller Hub, and Profile.",
+    description: "Reconciled bottom navigation for mobile screens (<768px): Market, Trust Hub, Escrow, Seller Hub (authenticated only), and Profile.",
     tags: ["Mobile Bottom Bar", "Webapp Nav", "Touch Friendly", "44px Targets"],
     render: () => (
-      <div className="w-full max-w-md mx-auto relative h-20 rounded-[8px] overflow-hidden border border-[#e2e8f0] bg-white p-2">
-        <span className="font-mono text-[10px] text-[#64748b] uppercase block text-center mb-1">
+      <div className="w-full max-w-md mx-auto relative h-20 overflow-hidden border border-[#111113]/12 bg-[#F8F7F4] p-2">
+        <span className="label block text-center mb-1">
           Simulated Mobile Screen Nav Bar
         </span>
         <div className="relative">
@@ -910,7 +940,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Comprehensive safety-net directory for landing and pricing pages: secondary CTA banner ('Get Started for Free'), multi-column doormat navigation, newsletter signup, NDPR/ISO security badges, and trust certificates.",
     tags: ["Footer", "Marketing", "Directory", "Trust Badges", "Newsletter"],
     render: () => (
-      <div className="w-full border border-[#e2e8f0] rounded-[8px] overflow-hidden shadow-xs">
+      <div className="w-full border border-[#111113]/12 overflow-hidden">
         <MarketingFatFooter />
       </div>
     ),
@@ -923,9 +953,9 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Clean, distraction-free single-row footer eliminating funnel leaks on login, register, KYC camera verify, and checkout screens. Features interactive locale selector and live help modal.",
     tags: ["Footer", "Minimalist", "Auth", "Onboarding", "Locale Selector"],
     render: () => (
-      <div className="w-full border border-[#e2e8f0] rounded-[8px] overflow-hidden bg-[#f8fafc] p-4">
-        <div className="py-6 px-4 bg-white rounded-[6px] border border-[#e2e8f0] mb-4 text-center">
-          <span className="font-mono text-xs text-[#64748b]">Simulated Form Wizard Screen Area</span>
+      <div className="w-full border border-[#111113]/12 overflow-hidden bg-[#F8F7F4] p-4">
+        <div className="py-6 px-4 bg-white border border-[#111113]/12 mb-4 text-center">
+          <span className="label">Simulated Form Wizard Screen Area</span>
         </div>
         <MinimalistAuthFooter />
       </div>
@@ -939,9 +969,9 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Preserves vertical screen real estate for dashboards, feeds, and dispute desks. Features live system operational pulse dot, build metadata (v2.4.1), interactive ⌘K keyboard shortcuts modal dialog, and release notes drawer.",
     tags: ["Footer", "Utility Bar", "System Status", "Shortcuts ⌘K", "Build Version"],
     render: () => (
-      <div className="w-full border border-[#e2e8f0] rounded-[8px] overflow-hidden bg-[#f8fafc]">
+      <div className="w-full border border-[#111113]/12 overflow-hidden bg-[#F8F7F4]">
         <div className="py-12 px-6 text-center">
-          <span className="font-mono text-xs text-[#64748b]">
+          <span className="label">
             Simulated Logged-In Workspace (e.g., Seller Hub / Wallet / Escrow Desk)
           </span>
         </div>
@@ -1029,26 +1059,30 @@ export default function SandboxPage() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <div className="min-h-screen bg-[#f8fafc] text-[#020617] font-secondary">
+        <div className="min-h-screen bg-[#F8F7F4] text-[#111113] font-secondary">
           {/* Header Banner */}
-          <div className="border-b border-[#e2e8f0] bg-white sticky top-0 z-30 shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
-            <div className="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="border-b border-[#111113]/12 bg-[#F8F7F4]/95 backdrop-blur-md sticky top-0 z-30">
+            <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8">
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[4px] bg-[#0f172a] text-white">
+                <div className="flex h-8 w-8 items-center justify-center bg-[#111113] text-white">
                   <Boxes className="h-4 w-4" />
                 </div>
-                <div>
-                  <h1 className="font-primary text-sm font-semibold tracking-tight text-[#020617] flex items-center gap-2">
-                    <span>Scrowpoint Component Sandbox</span>
-                    <span className="font-mono text-[10px] bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2 py-0.5 rounded-full font-bold">
-                      4_ui_system.md Compliant
+                <div className="flex items-center gap-2.5">
+                  <span className="font-primary text-lg font-extrabold tracking-[-0.05em] text-[#111113]">
+                    SCROWPOINT<span className="text-[#FF5A25]">.</span>
+                  </span>
+                  <span className="text-[#111113]/25">/</span>
+                  <h1 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] flex items-center gap-2">
+                    <span>Component Sandbox</span>
+                    <span className="font-mono text-[10px] bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                      Variation 7 • 4_ui_system.md
                     </span>
                   </h1>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="hidden sm:inline-flex font-mono text-xs text-[#64748b]">
+                <span className="hidden sm:inline-flex label">
                   {COMPONENT_REGISTRY.length} Documented Components
                 </span>
               </div>
@@ -1056,27 +1090,27 @@ export default function SandboxPage() {
           </div>
 
           {/* Two-Column Layout Container */}
-          <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-8">
             <div className="flex flex-col md:flex-row gap-8 items-start">
               {/* ==================================================================
                   LEFT COLUMN: FIXED CATEGORY NAVIGATION SIDEBAR
                   ================================================================== */}
-              <aside className="w-full md:w-64 shrink-0 space-y-6 md:sticky md:top-20">
+              <aside className="w-full md:w-64 shrink-0 space-y-6 md:sticky md:top-24">
                 {/* Search Bar */}
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b]" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#111113]/50" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Filter registry..."
-                    className="h-8 w-full rounded-[4px] border border-[#e2e8f0] bg-white pl-8 pr-3 text-xs text-[#020617] placeholder:text-[#64748b] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0f172a] transition-colors duration-200 ease-out"
+                    className="h-9 w-full border border-[#111113]/15 bg-white pl-8 pr-3 text-xs text-[#111113] placeholder:text-[#111113]/45 focus:bg-white focus:outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113] transition-colors duration-200 ease-out"
                   />
                 </div>
 
                 {/* Navigation Categories */}
                 <div className="space-y-1">
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#64748b] px-2 block mb-2">
+                  <span className="label px-2 block mb-2">
                     Categories
                   </span>
                   {categories.map((cat) => {
@@ -1088,19 +1122,19 @@ export default function SandboxPage() {
                         type="button"
                         onClick={() => setActiveCategory(cat.value)}
                         className={cn(
-                          "flex w-full items-center justify-between rounded-[4px] px-2.5 py-2 text-xs font-medium transition-colors duration-200 ease-out text-left select-none cursor-pointer",
+                          "flex w-full items-center justify-between px-3 py-2 text-xs font-medium transition-colors duration-200 ease-out text-left select-none cursor-pointer",
                           isActive
-                            ? "bg-[#0f172a] text-white font-semibold shadow-xs"
-                            : "text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#020617]"
+                            ? "bg-[#111113] text-white font-semibold"
+                            : "text-[#111113]/70 hover:bg-[#F0EFEA] hover:text-[#111113]"
                         )}
                       >
                         <span>{cat.label}</span>
                         <span
                           className={cn(
-                            "font-mono text-[10px] rounded-[4px] px-1.5 py-0.2",
+                            "font-mono text-[10px] px-1.5 py-0.5",
                             isActive
-                              ? "bg-white/20 text-white"
-                              : "bg-[#f1f5f9] text-[#64748b]"
+                              ? "bg-[#FF5A25] text-white font-bold"
+                              : "bg-[#F0EFEA] text-[#111113]/65"
                           )}
                         >
                           {cat.count}
@@ -1111,19 +1145,20 @@ export default function SandboxPage() {
                 </div>
 
                 {/* Design System Rules Reference Box */}
-                <div className="rounded-[4px] border border-[#e2e8f0] bg-white p-3 space-y-2 text-xs text-[#64748b] shadow-[0_2px_4px_rgba(15,23,42,0.06)]">
-                  <div className="flex items-center gap-1.5 font-primary font-semibold text-[#020617]">
+                <div className="border border-[#111113]/12 bg-white p-4 space-y-2.5 text-xs text-[#111113]/70">
+                  <div className="flex items-center gap-1.5 font-primary font-bold text-[#111113] tracking-[-0.02em]">
                     <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
-                    <span>Enforced Directives</span>
+                    <span>Variation 7 Directives</span>
                   </div>
-                  <ul className="space-y-1 text-[11px] leading-relaxed list-disc list-inside font-secondary">
-                    <li>Strict 4-point spacing base</li>
-                    <li>Green #22c55e strictly for trust</li>
-                    <li>#15803d text on white (WCAG)</li>
-                    <li>Amber #ecc94b for disputes</li>
-                    <li>Cards: 8px, Controls: 4px</li>
-                    <li>font-mono for numbers & IDs</li>
-                    <li>Zero bouncy animations</li>
+                  <ul className="space-y-1.5 text-[11px] leading-relaxed list-disc list-inside font-secondary">
+                    <li>Canvas: Warm Paper (#F8F7F4)</li>
+                    <li>Ink: Deep Carbon (#111113)</li>
+                    <li>Accent: Vermilion (#FF5A25)</li>
+                    <li>Cards: 1px solid var(--ink-faint)</li>
+                    <li>Primary CTAs: 999px Pill</li>
+                    <li>Headings: Space Grotesk (-0.04em)</li>
+                    <li>Body: Plus Jakarta Sans</li>
+                    <li>Labels &amp; NGN: Space Grotesk Mono</li>
                   </ul>
                 </div>
               </aside>
@@ -1132,17 +1167,17 @@ export default function SandboxPage() {
                   RIGHT COLUMN: MAIN COMPONENT DISPLAY VIEWPORT
                   ================================================================== */}
               <main className="flex-1 space-y-8 overflow-y-auto w-full">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#e2e8f0]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#111113]/12">
                   <div>
-                    <h2 className="font-primary text-xl font-medium tracking-tight text-[#020617]">
+                    <h2 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
                       {categories.find((c) => c.value === activeCategory)?.label}
                     </h2>
-                    <p className="font-secondary text-xs text-[#64748b] mt-0.5">
-                      Displaying {filteredComponents.length} production-ready React components complying with 4_ui_system.md.
+                    <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
+                      Displaying {filteredComponents.length} production-ready React components complying with Design Variation 7 (4_ui_system.md).
                     </p>
                   </div>
 
-                  <span className="font-mono text-xs text-[#64748b]">
+                  <span className="label">
                     Registry Items: {filteredComponents.length} / {COMPONENT_REGISTRY.length}
                   </span>
                 </div>
@@ -1164,13 +1199,13 @@ export default function SandboxPage() {
                       <Card
                         key={item.id}
                         id={item.id}
-                        className="w-full rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)] overflow-hidden transition-all duration-200 ease-out hover:border-[#cbd5e1]"
+                        className="w-full border border-[#111113]/12 bg-white overflow-hidden transition-all duration-200 ease-out hover:border-[#111113]/30"
                       >
                         {/* Component Card Header */}
-                        <CardHeader className="bg-[#f8fafc] p-5 border-b border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <CardHeader className="bg-[#F8F7F4] p-5 border-b border-[#111113]/12 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
-                              <CardTitle className="font-primary text-base font-medium text-[#020617]">
+                              <CardTitle className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
                                 {item.title}
                               </CardTitle>
                               <Badge
@@ -1180,7 +1215,7 @@ export default function SandboxPage() {
                                 {item.tierLabel}
                               </Badge>
                             </div>
-                            <CardDescription className="font-secondary text-xs text-[#64748b] mt-1 max-w-2xl leading-relaxed">
+                            <CardDescription className="font-secondary text-xs text-[#111113]/65 mt-1 max-w-2xl leading-relaxed">
                               {item.description}
                             </CardDescription>
                           </div>
@@ -1190,7 +1225,7 @@ export default function SandboxPage() {
                             {item.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="font-mono text-[10px] bg-white border border-[#e2e8f0] px-2 py-0.5 rounded-[4px] text-[#64748b]"
+                                className="font-mono text-[10px] uppercase tracking-wider bg-white border border-[#111113]/12 px-2 py-0.5 text-[#111113]/70"
                               >
                                 {tag}
                               </span>

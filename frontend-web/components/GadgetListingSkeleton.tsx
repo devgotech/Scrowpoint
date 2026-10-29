@@ -27,39 +27,39 @@ export function GadgetListingSkeleton({
       role="status"
       aria-label="Loading gadget listing"
       className={cn(
-        "flex flex-col overflow-hidden rounded-[8px] border border-[#e2e8f0] bg-white shadow-[0_2px_4px_rgba(15,23,42,0.06)]",
+        "flex flex-col overflow-hidden border border-[#111113]/12 bg-white",
         className
       )}
       {...props}
     >
       {/* 4:3 Aspect Ratio Image Block */}
-      <div className="relative aspect-4/3 w-full bg-[#f1f5f9]">
-        <Skeleton className="h-full w-full rounded-none bg-[#e2e8f0]" />
+      <div className="relative aspect-4/3 w-full bg-[#F0EFEA] border-b border-[#111113]/10">
+        <Skeleton className="h-full w-full rounded-none bg-[#111113]/8" />
         {/* Condition Badge Placeholder */}
         <div className="absolute top-3 left-3">
-          <Skeleton className="h-5 w-16 rounded-[4px] bg-[#cbd5e1]" />
+          <Skeleton className="h-5 w-16 rounded-none bg-[#111113]/15" />
         </div>
       </div>
 
       {/* Card Content Body */}
-      <div className="flex flex-1 flex-col p-4 space-y-3">
+      <div className="flex flex-1 flex-col p-5 space-y-3">
         {/* Category & Verified Seller Row */}
         <div className="flex items-center justify-between">
-          <Skeleton className="h-3.5 w-20 rounded-[4px] bg-[#e2e8f0]" />
-          <Skeleton className="h-3.5 w-24 rounded-[4px] bg-[#e2e8f0]" />
+          <Skeleton className="h-3.5 w-20 rounded-none bg-[#111113]/10" />
+          <Skeleton className="h-3.5 w-24 rounded-none bg-[#111113]/10" />
         </div>
 
-        {/* Title Block: h-6 w-3/4 (Spec requirement) */}
-        <Skeleton className="h-6 w-3/4 rounded-[4px] bg-[#e2e8f0]" />
+        {/* Title Block: h-6 w-3/4 */}
+        <Skeleton className="h-6 w-3/4 rounded-none bg-[#111113]/12" />
 
         {/* Specs / Storage metadata */}
-        <Skeleton className="h-4 w-1/2 rounded-[4px] bg-[#f1f5f9]" />
+        <Skeleton className="h-4 w-1/2 rounded-none bg-[#111113]/8" />
 
         {/* Price & Escrow Footer */}
-        <div className="pt-3 mt-auto flex items-center justify-between border-t border-[#e2e8f0]">
-          {/* Price Block: h-5 w-1/4 (Spec requirement) */}
-          <Skeleton className="h-5 w-1/4 rounded-[4px] bg-[#e2e8f0]" />
-          <Skeleton className="h-5 w-20 rounded-full bg-[#e2e8f0]" />
+        <div className="pt-3.5 mt-auto flex items-center justify-between border-t border-[#111113]/12">
+          {/* Price Block: h-5 w-1/4 */}
+          <Skeleton className="h-5 w-1/4 rounded-none bg-[#111113]/12" />
+          <Skeleton className="h-5 w-20 rounded-full bg-[#111113]/10" />
         </div>
       </div>
     </div>

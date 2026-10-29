@@ -28,7 +28,7 @@ export function FormHelperText({
   icon = true,
 }: FormHelperTextProps) {
   const variantStyles = {
-    default: "text-[#64748b]",
+    default: "text-[#111113]/65",
     error: "text-[#c53030]",
     success: "text-[#15803d]",
     warning: "text-[#975a16]",

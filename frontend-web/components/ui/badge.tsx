@@ -40,7 +40,7 @@ function Badge({
     trust:
       "border border-[#22c55e]/30 bg-[#22c55e]/15 text-[#15803d] font-semibold",
     "trust-solid":
-      "border-transparent bg-[#22c55e] text-white font-semibold shadow-xs",
+      "border-transparent bg-[#22c55e] text-white font-semibold",
     // Semantic Success: Escrow Funded (#088235)
     success:
       "border border-[#088235]/30 bg-[#088235]/15 text-[#088235] font-semibold",
@@ -50,23 +50,23 @@ function Badge({
     // Semantic Error: Verification Failed (#f56565)
     destructive:
       "border border-[#f56565]/40 bg-[#f56565]/15 text-[#c53030] font-semibold",
-    // In Transit: Courier Item (#0f172a)
+    // In Transit: Courier Item (#111113)
     transit:
-      "border border-[#0f172a]/20 bg-[#0f172a] text-white font-semibold",
-    // Default / Secondary / Outline
+      "border border-[#111113]/20 bg-[#111113] text-white font-semibold",
+    // Default / Secondary / Outline (Variation 7)
     default:
-      "border-transparent bg-[#0f172a] text-white shadow-xs",
+      "border-transparent bg-[#111113] text-white",
     secondary:
-      "border border-[#e2e8f0] bg-[#f1f5f9] text-[#64748b]",
+      "border border-[#111113]/12 bg-[#F0EFEA] text-[#111113]/75",
     outline:
-      "border border-[#e2e8f0] text-[#020617] bg-white",
+      "border border-[#111113]/15 text-[#111113] bg-white",
   };
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 px-2.5 py-0.5 font-mono text-[11px] font-semibold tracking-[0.04em] uppercase transition-colors duration-200 ease-out select-none",
-        usePillRadius ? "rounded-full" : "rounded-[4px]",
+        "inline-flex items-center gap-1 px-2.5 py-0.5 font-mono text-[10.5px] font-semibold tracking-[0.12em] uppercase transition-colors duration-200 ease-out select-none",
+        usePillRadius ? "rounded-full" : "rounded-none",
         variantStyles[variant],
         className
       )}

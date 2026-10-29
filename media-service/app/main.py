@@ -1,24 +1,37 @@
 """
-Scrowpoint Media Microservice
+Buyer's High Media Microservice
 FastAPI entry point for secure image compression, EXIF metadata stripping,
 and secure object storage upload across listings, KYC documents, and dispute evidence.
+Production and test ready with local directory serving and S3 cloud storage.
 """
 
+import os
+from pathlib import Path
 from typing import List, Optional
+from dotenv import load_dotenv
+
+# Load .env file automatically when starting
+load_dotenv()
+
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .processor import (
     process_and_strip_exif,
     ImageProcessingError,
     ALLOWED_IMAGE_TYPES,
-    MAX_FILE_SIZE_BYTES
+    MAX_FILE_SIZE_BYTES,
+    MAX_UPLOAD_SIZE_MB,
+    DEFAULT_MAX_DIMENSION,
+    COMPRESSION_QUALITY,
+    STRIP_EXIF_ENABLED
 )
 from .storage import StorageService
 
 app = FastAPI(
-    title="Scrowpoint Media Microservice",
+    title="Buyer's High Media Microservice",
     description="Sanitizes, compresses, strips EXIF privacy data, and hosts gadget photos, KYC documents, and dispute evidence.",
     version="1.0.0"
 )
@@ -32,6 +45,17 @@ app.add_middleware(
 )
 
 storage = StorageService()
+
+# In local/test mode, mount StaticFiles for public assets (listing photos & dispute evidence)
+# Note: kyc_vault is strictly segregated and NOT mounted publicly to protect sensitive PII.
+if storage.backend == "local":
+    local_path = Path(storage.local_dir)
+    (local_path / "listing_media").mkdir(parents=True, exist_ok=True)
+    (local_path / "dispute_evidence").mkdir(parents=True, exist_ok=True)
+    (local_path / "kyc_vault").mkdir(parents=True, exist_ok=True)
+
+    app.mount("/media/listing_media", StaticFiles(directory=str(local_path / "listing_media")), name="listing_media")
+    app.mount("/media/dispute_evidence", StaticFiles(directory=str(local_path / "dispute_evidence")), name="dispute_evidence")
 
 
 # ============================================================================
@@ -62,10 +86,14 @@ class BatchUploadResponse(BaseModel):
 def health_check():
     return {
         "status": "healthy",
-        "service": "scrowpoint_media_microservice",
+        "service": "buyers_high_media_microservice",
         "version": "1.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development"),
         "storageBackend": storage.backend,
-        "maxFileSizeBytes": MAX_FILE_SIZE_BYTES,
+        "maxUploadSizeMb": MAX_UPLOAD_SIZE_MB,
+        "maxDimensionPx": DEFAULT_MAX_DIMENSION,
+        "compressionQuality": COMPRESSION_QUALITY,
+        "stripExif": STRIP_EXIF_ENABLED,
         "allowedMimeTypes": sorted(list(ALLOWED_IMAGE_TYPES))
     }
 
@@ -98,7 +126,7 @@ async def _process_and_store(
     if len(content) > MAX_FILE_SIZE_BYTES:
         raise HTTPException(
             status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail=f"File exceeds maximum allowed upload size of {MAX_FILE_SIZE_BYTES // (1024 * 1024)}MB."
+            detail=f"File exceeds maximum allowed upload size of {MAX_UPLOAD_SIZE_MB}MB."
         )
 
     # 3. Process, normalize orientation, and strip EXIF
@@ -114,7 +142,7 @@ async def _process_and_store(
             detail=str(err)
         )
 
-    # 4. Store in segregated storage
+    # 4. Store in segregated storage (Local partition or S3 bucket)
     record = storage.store_file(
         file_bytes=sanitized_bytes,
         folder=folder,
@@ -150,12 +178,12 @@ async def _process_and_store(
 async def upload_listing_media(file: UploadFile = File(...)):
     """
     Sanitizes gadget listing photo, removes EXIF location data,
-    resizes to max 2048px, converts to WebP, and returns public CDN URL.
+    resizes to max dimension, converts to WebP, and returns public URL.
     """
     return await _process_and_store(
         file=file,
         folder="listing_media",
-        max_dimension=2048,
+        max_dimension=DEFAULT_MAX_DIMENSION,
         media_type_label="listing_media"
     )
 
@@ -178,7 +206,7 @@ async def upload_id_document(file: UploadFile = File(...)):
     return await _process_and_store(
         file=file,
         folder="kyc_vault",
-        max_dimension=1920,
+        max_dimension=min(DEFAULT_MAX_DIMENSION, 1920),
         media_type_label="kyc_document"
     )
 
@@ -196,7 +224,7 @@ async def upload_dispute_evidence(file: UploadFile = File(...)):
     return await _process_and_store(
         file=file,
         folder="dispute_evidence",
-        max_dimension=2048,
+        max_dimension=DEFAULT_MAX_DIMENSION,
         media_type_label="dispute_evidence"
     )
 
@@ -222,7 +250,7 @@ async def upload_batch(files: List[UploadFile] = File(...)):
         res = await _process_and_store(
             file=f,
             folder="listing_media",
-            max_dimension=2048,
+            max_dimension=DEFAULT_MAX_DIMENSION,
             media_type_label="listing_media"
         )
         results.append(res)
@@ -231,3 +259,11 @@ async def upload_batch(files: List[UploadFile] = File(...)):
         totalUploaded=len(results),
         items=results
     )
+
+
+# Entry point for direct execution: python -m app.main
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", "8000"))
+    host = os.getenv("HOST", "0.0.0.0")
+    uvicorn.run("app.main:app", host=host, port=port, reload=True)

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -47,6 +46,7 @@ import {
 
 // Phase 1 Screens
 import LandingPage from "../(marketing)/page";
+import WaitlistPage from "../(marketing)/waitlist/page";
 import PricingPage from "../(marketing)/pricing/page";
 import LegalDocumentPage from "../(marketing)/legal/[slug]/page";
 import TrustAndSafetyPage from "../(marketing)/trust-and-safety/page";
@@ -56,12 +56,14 @@ import GadgetDetailPage from "../(public)/gadget/[id]/page";
 // Phase 2 Screens
 import LoginPage from "../(auth)/login/page";
 import RegisterPage from "../(auth)/register/page";
+import ForgotPasswordPage from "../(auth)/forgot-password/page";
 import VerifyIdentityPage from "../(onboarding)/verify-identity/page";
 import CheckoutPage from "../(protected)/checkout/[order_id]/page";
 
 // Phase 3 Screens
 import SellerDashboardPage from "../(protected)/seller/dashboard/page";
 import SellerWalletPage from "../(protected)/seller/wallet/page";
+import PostGadgetPage from "../(protected)/seller/post-gadget/page";
 
 // Phase 4 Screens
 import EscrowRoomPage from "../(protected)/escrow/[order_id]/page";
@@ -77,23 +79,16 @@ import ArbitrationRoomPage from "../(admin)/disputes/[case_id]/page";
 // Design System Sandbox
 import SandboxPage from "../sandbox/page";
 
-const CheckoutScreen = CheckoutPage as React.ComponentType<any>;
-
 // Shared Shell Components
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { LiveChatWidget } from "@/components/support/LiveChatWidget";
-import { AuthProvider } from "@/components/providers/AuthContext";
+import { AuthProvider, useAuth } from "@/components/providers/AuthContext";
 import { ToastProvider } from "@/components/Toast";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-function navigate(path: string) {
-  if (typeof window === "undefined") return;
-  window.history.pushState({}, "", path);
-  window.dispatchEvent(new Event("sp_route_change"));
-}
 
 export type ScreenRoute =
   | "phase1_landing"
+  | "phase1_waitlist"
   | "phase1_marketplace"
   | "phase1_gadget_detail"
   | "phase1_trust_and_safety"
@@ -101,9 +96,11 @@ export type ScreenRoute =
   | "phase1_legal"
   | "phase2_login"
   | "phase2_register"
+  | "phase2_forgot_password"
   | "phase2_kyc"
   | "phase2_checkout"
   | "phase3_seller_dashboard"
+  | "phase3_post_gadget"
   | "phase3_seller_wallet"
   | "phase4_escrow_room"
   | "phase5_settings_profile"
@@ -114,22 +111,10 @@ export type ScreenRoute =
 
 export type ViewportMode = "desktop" | "tablet" | "mobile";
 
-export interface ScreenConfig {
-  id: ScreenRoute;
-  phase: string;
-  label: string;
-  routePath: string;
-  urlPath: string;
-  badge?: string;
-}
-
-export interface CheckoutScreenProps {
-  orderId: string;
-  onPaymentSuccess: (ordId: string) => void;
-  onBackToGadget: () => void;
-}
-
-export default function App() {
+function AppInner() {
+  const { user, isAuthenticated, login, logout } = useAuth();
+  const router = useRouter();
+  const navigate = (path: string) => router.push(path);
   const [activeRoute, setActiveRoute] = useState<ScreenRoute>("phase1_landing");
   const [viewportMode, setViewportMode] = useState<ViewportMode>("desktop");
   const [selectedGadgetId, setSelectedGadgetId] = useState<string>("g-001");
@@ -145,6 +130,8 @@ export default function App() {
 
       if (pathname === "/" || pathname === "/landing") {
         setActiveRoute("phase1_landing");
+      } else if (pathname === "/waitlist" || pathname === "/early-access") {
+        setActiveRoute("phase1_waitlist");
       } else if (pathname === "/marketplace") {
         setActiveRoute("phase1_marketplace");
       } else if (pathname.startsWith("/gadget/")) {
@@ -163,6 +150,12 @@ export default function App() {
         setActiveRoute("phase2_login");
       } else if (pathname === "/register" || pathname === "/signup" || pathname === "/auth/register") {
         setActiveRoute("phase2_register");
+      } else if (
+        pathname === "/forgot-password" ||
+        pathname === "/reset-password" ||
+        pathname === "/auth/forgot-password"
+      ) {
+        setActiveRoute("phase2_forgot_password");
       } else if (pathname.startsWith("/verify-identity") || pathname.startsWith("/kyc")) {
         setActiveRoute("phase2_kyc");
       } else if (pathname.startsWith("/checkout")) {
@@ -171,6 +164,8 @@ export default function App() {
         setActiveRoute("phase2_checkout");
       } else if (pathname === "/seller/dashboard" || pathname === "/dashboard") {
         setActiveRoute("phase3_seller_dashboard");
+      } else if (pathname === "/seller/post-gadget" || pathname === "/post-gadget") {
+        setActiveRoute("phase3_post_gadget");
       } else if (pathname === "/seller/wallet" || pathname === "/dashboard/wallet") {
         setActiveRoute("phase3_seller_wallet");
       } else if (pathname.startsWith("/escrow")) {
@@ -199,10 +194,12 @@ export default function App() {
     };
 
     window.addEventListener("sp_route_change", handleRouteChange);
+    window.addEventListener("bh_route_change", handleRouteChange);
     window.addEventListener("popstate", handleRouteChange);
 
     return () => {
       window.removeEventListener("sp_route_change", handleRouteChange);
+      window.removeEventListener("bh_route_change", handleRouteChange);
       window.removeEventListener("popstate", handleRouteChange);
     };
   }, []);
@@ -222,6 +219,14 @@ export default function App() {
       label: "1. Landing Page",
       routePath: "app/(marketing)/page.tsx",
       urlPath: "/",
+    },
+    {
+      id: "phase1_waitlist",
+      phase: "Phase 1: Marketing",
+      label: "1b. Founding Waitlist",
+      routePath: "app/(marketing)/waitlist/page.tsx",
+      urlPath: "/waitlist",
+      badge: "0% Fees",
     },
     {
       id: "phase1_marketplace",
@@ -269,9 +274,18 @@ export default function App() {
     {
       id: "phase2_register",
       phase: "Phase 2: Auth",
-      label: "6b. Register",
+      label: "6b. Register & OTP",
       routePath: "app/(auth)/register/page.tsx",
       urlPath: "/register",
+      badge: "OTP",
+    },
+    {
+      id: "phase2_forgot_password",
+      phase: "Phase 2: Auth",
+      label: "6c. Forgot Password",
+      routePath: "app/(auth)/forgot-password/page.tsx",
+      urlPath: "/forgot-password",
+      badge: "Reset",
     },
     {
       id: "phase2_kyc",
@@ -294,6 +308,14 @@ export default function App() {
       label: "9. Seller Dashboard",
       routePath: "app/(protected)/seller/dashboard/page.tsx",
       urlPath: "/seller/dashboard",
+    },
+    {
+      id: "phase3_post_gadget",
+      phase: "Phase 3: Seller",
+      label: "9b. Post Gadget",
+      routePath: "app/(protected)/seller/post-gadget/page.tsx",
+      urlPath: "/seller/post-gadget",
+      badge: "Wizard",
     },
     {
       id: "phase3_seller_wallet",
@@ -354,9 +376,8 @@ export default function App() {
   };
 
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] font-secondary flex flex-col relative">
+    <ToastProvider>
+      <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] font-secondary flex flex-col relative">
           {/* =================================================================
               TOP MASTER SCREEN FLOW & RESPONSIVE ARCHITECTURE CONTROLLER
               ================================================================= */}
@@ -369,7 +390,7 @@ export default function App() {
                 </div>
                 <div>
                   <div className="font-primary text-xs font-bold tracking-tight flex items-center gap-1.5">
-                    <span>Scrowpoint</span>
+                    <span>SCROWPOINT</span>
                     <span className="font-mono text-[9px] bg-slate-800 text-[#22c55e] px-1.5 py-0.2 rounded-[2px] font-semibold border border-slate-700">
                       5_SCREEN_FLOWS
                     </span>
@@ -428,6 +449,41 @@ export default function App() {
                 </button>
               </div>
 
+              {/* Persona Switcher: Guest vs Logged In */}
+              <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-0.5 rounded-[4px]">
+                <span className="text-[10px] font-mono text-slate-400 px-1.5 hidden md:inline">
+                  Navbar Mode:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => logout()}
+                  className={cn(
+                    "flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-xs font-mono transition-colors",
+                    !isAuthenticated
+                      ? "bg-slate-700 text-white font-bold"
+                      : "text-slate-400 hover:text-white"
+                  )}
+                  title="Simulate Guest / Browsing State (Login & Register in Navbar)"
+                >
+                  <User className="h-3.5 w-3.5" />
+                  <span>Guest</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => login("adeola@techhub.ng", "Adeola Tech Hub", "seller")}
+                  className={cn(
+                    "flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-xs font-mono transition-colors",
+                    isAuthenticated
+                      ? "bg-[#22c55e] text-[#020617] font-bold"
+                      : "text-slate-400 hover:text-white"
+                  )}
+                  title="Simulate Logged-In Verified Trader (Avatar, Notifications, Sell Gadget in Navbar)"
+                >
+                  <UserCheck className="h-3.5 w-3.5" />
+                  <span>Logged In</span>
+                </button>
+              </div>
+
               {/* Active Route & URL Bar */}
               <div className="hidden xl:flex items-center gap-2 font-mono text-[11px] text-slate-400">
                 <span className="text-slate-500">Route:</span>
@@ -482,10 +538,10 @@ export default function App() {
           {/* =================================================================
               MAIN VIEWPORT CANVAS
               ================================================================= */}
-          <main className="flex-1 w-full bg-[#e2e8f0]/40 flex justify-center items-start py-4 sm:py-6 overflow-x-auto">
+          <main className="flex-1 w-full bg-[#E8E6DF] flex justify-center items-start py-0 sm:py-0 overflow-x-auto">
             <div
               className={cn(
-                "transition-all duration-300 ease-out bg-[#f8fafc] text-[#020617] shadow-xl overflow-hidden",
+                "transition-all duration-300 ease-out bg-[#F8F7F4] text-[#111113] shadow-xl overflow-hidden",
                 viewportMode === "desktop" && "w-full min-h-[calc(100vh-110px)]",
                 viewportMode === "tablet" &&
                   "w-[768px] min-h-[900px] rounded-[16px] border-8 border-slate-800 shadow-2xl my-4",
@@ -523,6 +579,20 @@ export default function App() {
                     onNavigateToEscrow={() => {
                       setActiveRoute("phase4_escrow_room");
                       navigate(`/escrow/${selectedOrderId}`);
+                    }}
+                  />
+                )}
+
+                {/* 1b. Early Access Waitlist & Founding Cohort Screen */}
+                {activeRoute === "phase1_waitlist" && (
+                  <WaitlistPage
+                    onNavigateHome={() => {
+                      setActiveRoute("phase1_landing");
+                      navigate("/");
+                    }}
+                    onNavigateMarketplace={() => {
+                      setActiveRoute("phase1_marketplace");
+                      navigate("/marketplace");
                     }}
                   />
                 )}
@@ -606,10 +676,27 @@ export default function App() {
 
                 {/* 6. Auth Login Screen */}
                 {activeRoute === "phase2_login" && (
-                  <LoginPage />
+                  <LoginPage
+                    onSuccess={() => {
+                      setActiveRoute("phase2_kyc");
+                      navigate("/verify-identity");
+                    }}
+                    onNavigateRegister={() => {
+                      setActiveRoute("phase2_register");
+                      navigate("/register");
+                    }}
+                    onNavigateForgotPassword={() => {
+                      setActiveRoute("phase2_forgot_password");
+                      navigate("/forgot-password");
+                    }}
+                    onNavigateHome={() => {
+                      setActiveRoute("phase1_landing");
+                      navigate("/");
+                    }}
+                  />
                 )}
 
-                {/* 6b. Auth Register Screen */}
+                {/* 6b. Auth Register & Email OTP Screen */}
                 {activeRoute === "phase2_register" && (
                   <RegisterPage
                     onSuccess={() => {
@@ -619,6 +706,24 @@ export default function App() {
                     onNavigateLogin={() => {
                       setActiveRoute("phase2_login");
                       navigate("/login");
+                    }}
+                    onNavigateHome={() => {
+                      setActiveRoute("phase1_landing");
+                      navigate("/");
+                    }}
+                  />
+                )}
+
+                {/* 6c. Auth Forgot & Reset Password Screen */}
+                {activeRoute === "phase2_forgot_password" && (
+                  <ForgotPasswordPage
+                    onBackToLogin={() => {
+                      setActiveRoute("phase2_login");
+                      navigate("/login");
+                    }}
+                    onResetSuccess={() => {
+                      setActiveRoute("phase1_marketplace");
+                      navigate("/marketplace");
                     }}
                     onNavigateHome={() => {
                       setActiveRoute("phase1_landing");
@@ -643,10 +748,9 @@ export default function App() {
 
                 {/* 8. Escrow Payment & Checkout */}
                 {activeRoute === "phase2_checkout" && (
-                  <CheckoutScreen
-                    key={selectedOrderId}
+                  <CheckoutPage
                     orderId={selectedOrderId}
-                    onPaymentSuccess={(ordId: string) => {
+                    onPaymentSuccess={(ordId) => {
                       setSelectedOrderId(ordId);
                       setActiveRoute("phase4_escrow_room");
                       navigate(`/escrow/${ordId}`);
@@ -673,6 +777,23 @@ export default function App() {
                     onNavigateWallet={() => {
                       setActiveRoute("phase3_seller_wallet");
                       navigate("/seller/wallet");
+                    }}
+                  />
+                )}
+
+                {/* 9b. Post a Gadget Screen Flow */}
+                {activeRoute === "phase3_post_gadget" && (
+                  <PostGadgetPage
+                    onSuccess={(newId) => {
+                      setSelectedGadgetId(newId);
+                    }}
+                    onNavigateDashboard={() => {
+                      setActiveRoute("phase3_seller_dashboard");
+                      navigate("/seller/dashboard");
+                    }}
+                    onNavigateMarketplace={() => {
+                      setActiveRoute("phase1_marketplace");
+                      navigate("/marketplace");
                     }}
                   />
                 )}
@@ -764,25 +885,33 @@ export default function App() {
                 {/* 16. Live Design System & Component Documentation Registry */}
                 {activeRoute === "design_sandbox" && <SandboxPage />}
 
-                {/* Mobile Bottom Navigation (Visible in mobile viewport mode or on screens < 768px) */}
-                <MobileBottomNav
-                  onNavigate={(href) => {
-                    navigate(href);
-                  }}
-                  className={cn(
-                    viewportMode === "mobile"
-                      ? "sticky bottom-0 z-40"
-                      : "fixed bottom-0 z-40"
-                  )}
-                />
+                {/* Mobile Bottom Navigation (Hidden on waitlist page so visitors cannot access unlaunched core app) */}
+                {activeRoute !== "phase1_waitlist" && (
+                  <MobileBottomNav
+                    onNavigate={(href) => {
+                      navigate(href);
+                    }}
+                    className={cn(
+                      viewportMode === "mobile"
+                        ? "sticky bottom-0 z-40"
+                        : "fixed bottom-0 z-40"
+                    )}
+                  />
+                )}
               </div>
             </div>
           </main>
 
           {/* Customer Support Floating Live Chat Widget (Phase 5 §3) */}
-          <LiveChatWidget />
         </div>
       </ToastProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppInner />
     </AuthProvider>
   );
 }
