@@ -4,8 +4,8 @@ import { Suspense, type ReactNode } from "react";
 import "./globals.css";
 
 import { AuthProvider } from "@/components/providers/AuthContext";
-import Navbar from "@/components/Navbar";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import { LiveChatWidget } from "@/components/support/LiveChatWidget";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const spaceGrotesk = Space_Grotesk({
@@ -45,6 +45,7 @@ export default function RootLayout({
             <Suspense fallback={null}>
               <MobileBottomNav />
             </Suspense>
+            <LiveChatWidget />
           </TooltipProvider>
         </AuthProvider>
       </body>

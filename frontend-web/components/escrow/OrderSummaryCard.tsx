@@ -42,7 +42,7 @@ export interface EscrowOrderData {
   totalDeposit: number;
   buyerName: string;
   sellerName: string;
-  status: "FUNDED" | "SHIPPED" | "DELIVERED" | "DISPUTED" | "SETTLED";
+  status: "PENDING_PAYMENT" | "FUNDED" | "SHIPPED" | "DELIVERED" | "DISPUTED" | "SETTLED";
   courierWaybill?: string;
   courierPartner?: string;
   inspectionRemainingSeconds?: number;
@@ -91,7 +91,9 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
 
         <Badge
           variant={
-            order.status === "DISPUTED"
+            order.status === "PENDING_PAYMENT"
+              ? "warning"
+              : order.status === "DISPUTED"
               ? "destructive"
               : order.status === "SETTLED"
               ? "trust"
@@ -124,14 +126,35 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
       </div>
 
       {/* Primary Vault Balance Callout */}
-      <div className="border border-[#22c55e]/30 bg-[#22c55e]/10 p-3 flex items-center justify-between">
+      <div
+        className={cn(
+          "border p-3 flex items-center justify-between",
+          order.status === "PENDING_PAYMENT"
+            ? "border-[#ecc94b]/40 bg-[#ecc94b]/10"
+            : "border-[#22c55e]/30 bg-[#22c55e]/10"
+        )}
+      >
         <div className="flex items-center gap-2">
-          <Lock className="h-4 w-4 text-[#22c55e]" />
-          <span className="font-primary text-xs font-bold text-[#15803d]">
-            Locked in Escrow Vault
+          {order.status === "PENDING_PAYMENT" ? (
+            <CreditCard className="h-4 w-4 text-[#975a16]" />
+          ) : (
+            <Lock className="h-4 w-4 text-[#22c55e]" />
+          )}
+          <span
+            className={cn(
+              "font-primary text-xs font-bold",
+              order.status === "PENDING_PAYMENT" ? "text-[#975a16]" : "text-[#15803d]"
+            )}
+          >
+            {order.status === "PENDING_PAYMENT" ? "Awaiting Payment" : "Locked in Escrow Vault"}
           </span>
         </div>
-        <span className="font-mono text-xs font-extrabold text-[#15803d]">
+        <span
+          className={cn(
+            "font-mono text-xs font-extrabold",
+            order.status === "PENDING_PAYMENT" ? "text-[#975a16]" : "text-[#15803d]"
+          )}
+        >
           ₦{(order.totalDeposit).toLocaleString()}
         </span>
       </div>

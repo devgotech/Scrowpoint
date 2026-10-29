@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -22,10 +23,12 @@ export interface LegalPageProps {
 }
 
 export default function LegalDocumentPage({
-  slug = "buyer-protection",
+  slug: providedSlug,
   onNavigateHome,
 }: LegalPageProps) {
-  const [currentSlug, setCurrentSlug] = useState<string>(slug);
+  const routeParams = useParams<{ slug?: string }>();
+  const router = useRouter();
+  const currentSlug = providedSlug ?? routeParams.slug ?? "buyer-protection";
 
   return (
     <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
@@ -83,7 +86,7 @@ export default function LegalDocumentPage({
               {/* Sidebar */}
               <LegalSidebarNav
                 activeSlug={currentSlug}
-                onSelectSlug={(newSlug) => setCurrentSlug(newSlug)}
+                onSelectSlug={(newSlug) => router.push(`/legal/${newSlug}`)}
               />
 
               {/* Document Prose View */}

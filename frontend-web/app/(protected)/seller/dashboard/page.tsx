@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ShieldCheck, Wallet } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { DashboardUtilityBar } from "@/components/footers";
@@ -34,6 +35,7 @@ export default function SellerDashboardPage({
   onNavigateEscrowRoom,
   onNavigateWallet,
 }: SellerDashboardPageProps) {
+  const router = useRouter();
   const [walletBalanceNaira, setWalletBalanceNaira] = useState<number>(420000);
   const [sellerOrders, setSellerOrders] =
     useState<SellerOrderRecord[]>(SAMPLE_SELLER_ORDERS);
@@ -84,6 +86,22 @@ export default function SellerDashboardPage({
     };
   }, []);
 
+  const handleNavigateWallet = () => {
+    if (onNavigateWallet) {
+      onNavigateWallet();
+      return;
+    }
+    router.push("/seller/wallet");
+  };
+
+  const handleNavigateEscrow = (orderNumber: string) => {
+    if (onNavigateEscrowRoom) {
+      onNavigateEscrowRoom(orderNumber);
+      return;
+    }
+    router.push(`/escrow/${encodeURIComponent(orderNumber)}`);
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
       <Navbar />
@@ -119,7 +137,7 @@ export default function SellerDashboardPage({
             <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                onClick={onNavigateWallet}
+                onClick={handleNavigateWallet}
                 className="h-10 px-4 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors inline-flex items-center gap-2"
               >
                 <Wallet className="h-4 w-4 text-[#FF5A25]" />
@@ -135,14 +153,8 @@ export default function SellerDashboardPage({
 
           {/* Quick Action Banner */}
           <QuickActionBanner
-            onNewListing={() => {
-              if (typeof window !== "undefined") {
-                window.history.pushState({}, "", "/seller/post-gadget");
-                window.dispatchEvent(new Event("sp_route_change"));
-                window.dispatchEvent(new Event("bh_route_change"));
-              }
-            }}
-            onOpenWallet={onNavigateWallet}
+            onNewListing={() => router.push("/seller/post-gadget")}
+            onOpenWallet={handleNavigateWallet}
           />
 
           {/* Stats Overview */}
@@ -151,7 +163,7 @@ export default function SellerDashboardPage({
           {/* Recent Orders Table */}
           <RecentOrdersTable
             orders={sellerOrders}
-            onSelectOrder={onNavigateEscrowRoom}
+            onSelectOrder={handleNavigateEscrow}
           />
         </div>
       </main>

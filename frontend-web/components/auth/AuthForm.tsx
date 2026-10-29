@@ -213,12 +213,14 @@ export function AuthForm({
       requestedPath?.startsWith("/") && !requestedPath.startsWith("//")
         ? requestedPath
         : null;
-    const roleMatchesPath =
-      authenticatedRole === "admin"
-        ? safeRequestedPath?.startsWith("/admin/")
-        : authenticatedRole === "seller"
-          ? safeRequestedPath?.startsWith("/seller/")
-          : safeRequestedPath === "/marketplace";
+    const isAdminPath =
+      safeRequestedPath === "/dashboard" ||
+      safeRequestedPath?.startsWith("/dashboard/") ||
+      safeRequestedPath === "/admin" ||
+      safeRequestedPath?.startsWith("/admin/") ||
+      safeRequestedPath === "/disputes" ||
+      safeRequestedPath?.startsWith("/disputes/");
+    const roleMatchesPath = authenticatedRole === "admin" || !isAdminPath;
 
     router.push(roleMatchesPath && safeRequestedPath ? safeRequestedPath : defaultPath);
   };
@@ -374,6 +376,12 @@ export function AuthForm({
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = fullName.trim() || cleanEmail.split("@")[0];
+    const isDevelopmentDemoLogin =
+      process.env.NODE_ENV !== "production" &&
+      mode === "login" &&
+      ((cleanEmail === "buyer@example.com" && password === "Password123!") ||
+        (cleanEmail === "seller@example.com" && password === "Password123!") ||
+        (cleanEmail === "admin@buyershigh.com" && password === "AdminPassword123!"));
     const endpoint =
       mode === "login" ? "/api/auth/login" : "/api/auth/register";
     const requestBody =
@@ -403,7 +411,12 @@ export function AuthForm({
       // Use the local preview account when the API is unreachable.
     }
 
-    if (response && response.status !== 404) {
+    if (
+      response &&
+      response.status !== 404 &&
+      (response.status < 500 || process.env.NODE_ENV === "production") &&
+      !(isDevelopmentDemoLogin && !response.ok)
+    ) {
       let payload: {
         data?: { user?: Record<string, unknown>; token?: string };
         error?: string;

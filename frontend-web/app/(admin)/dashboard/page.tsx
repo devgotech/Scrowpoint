@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Scale } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { DashboardUtilityBar } from "@/components/footers";
@@ -30,6 +31,7 @@ export default function AdminDashboardPage({
   onSelectCase,
   onNavigateHome,
 }: AdminDashboardPageProps) {
+  const router = useRouter();
   const [kycActionNotice, setKycActionNotice] = useState<string | null>(null);
   const [disputeCases, setDisputeCases] =
     useState<DisputeQueueRecord[]>(SAMPLE_DISPUTE_QUEUE);
@@ -72,6 +74,14 @@ export default function AdminDashboardPage({
     } else {
       setKycActionNotice(`Flagged KYC record ${id} for biometric recapture`);
     }
+  };
+
+  const handleSelectCase = (caseId: string) => {
+    if (onSelectCase) {
+      onSelectCase(caseId);
+      return;
+    }
+    router.push(`/admin/disputes/${encodeURIComponent(caseId)}`);
   };
 
   return (
@@ -136,7 +146,7 @@ export default function AdminDashboardPage({
           {/* Dispute Queue */}
           <DisputeQueueDataTable
             cases={disputeCases}
-            onSelectCase={onSelectCase}
+            onSelectCase={handleSelectCase}
           />
 
           {/* KYC Manual Review Queue */}

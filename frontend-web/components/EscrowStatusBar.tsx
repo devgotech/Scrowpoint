@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
  * - Critical Alert Pulsing:
  *   - If inspection window drops below 2 hours (< 7200 seconds), pulses with the `warning` (#ecc94b) color.
  * - Typography: Tracking IDs & countdown timer in `font-mono`.
- * - Navigation: Actionable link directing directly to `/escrow/[id]/status`.
+ * - Navigation: Actionable link directing to the active `/escrow/[id]` room.
  */
 
 export type EscrowDisplayState =
@@ -196,7 +196,7 @@ export function EscrowStatusBar({
 
           {/* Escrow Status Link */}
           <Link
-            href={`/escrow/${orderId}/status`}
+            href={`/escrow/${orderId}`}
             className="group flex items-center gap-1 rounded-full bg-[#FF5A25] hover:bg-[#FF5A25]/90 px-3 py-1 text-[11px] font-primary uppercase tracking-[0.06em] font-semibold text-white transition-colors duration-200 ease-out"
           >
             <span>View Trade</span>

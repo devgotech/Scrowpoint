@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
@@ -45,6 +46,7 @@ export default function VerifyIdentityPage({
   onCompleteKyc,
   onNavigateHome,
 }: VerifyIdentityPageProps) {
+  const router = useRouter();
   const [kycState, setKycState] = useState<KycFlowState>("active_form");
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [, setHasDoc] = useState(false);
@@ -91,6 +93,14 @@ export default function VerifyIdentityPage({
       setIsSubmitting(false);
       setKycState("pending_review");
     }, 800);
+  };
+
+  const handleCompleteKyc = () => {
+    if (onCompleteKyc) {
+      onCompleteKyc();
+      return;
+    }
+    router.push("/seller/post-gadget");
   };
 
   return (
@@ -452,7 +462,7 @@ export default function VerifyIdentityPage({
               <div className="pt-2">
                 <button
                   type="button"
-                  onClick={onCompleteKyc}
+                  onClick={handleCompleteKyc}
                   className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
                 >
                   <span>Go to Merchant Desk &amp; Post Gadget</span>

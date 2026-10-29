@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -56,10 +57,13 @@ function formatKoboToNgn(kobo: number): string {
 }
 
 export default function GadgetDetailPage({
-  gadgetId = "g-001",
+  gadgetId: providedGadgetId,
   onBackToMarketplace,
   onLockEscrow,
 }: GadgetDetailPageProps) {
+  const routeParams = useParams<{ id?: string }>();
+  const router = useRouter();
+  const gadgetId = providedGadgetId ?? routeParams.id ?? "g-001";
   const fallbackGadget =
     INITIAL_GADGETS.find((g) => g.id === gadgetId) || INITIAL_GADGETS[0];
   const [liveGadget, setLiveGadget] = useState<GadgetListingData | null>(null);
@@ -166,6 +170,15 @@ export default function GadgetDetailPage({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const handleLockEscrow = () => {
+    if (onLockEscrow) {
+      onLockEscrow(gadget.id);
+      return;
+    }
+    const checkoutId = `SP-ORD-${Date.now().toString(36).toUpperCase()}`;
+    router.push(`/checkout/${checkoutId}?gadget=${encodeURIComponent(gadget.id)}`);
   };
 
   return (
@@ -711,7 +724,7 @@ export default function GadgetDetailPage({
                     {/* Primary Pill CTA */}
                     <button
                       type="button"
-                      onClick={() => onLockEscrow?.(gadget.id)}
+                      onClick={handleLockEscrow}
                       className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
                     >
                       <Lock className="h-4 w-4 text-[#22c55e]" />
@@ -795,7 +808,7 @@ export default function GadgetDetailPage({
 
         <button
           type="button"
-          onClick={() => onLockEscrow?.(gadget.id)}
+          onClick={handleLockEscrow}
           className="btn-primary h-11 px-6 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold flex items-center gap-2"
         >
           <Lock className="h-3.5 w-3.5 text-[#22c55e]" />

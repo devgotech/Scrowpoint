@@ -5,14 +5,24 @@ import type { NextRequest } from "next/server";
  * Next.js App Router Edge Middleware for Scrowpoint.
  *
  * Requirements (UI Context Spec 5, §3):
- * - Intercepts requests to protected routes: /dashboard, /escrow, /admin (and their nested paths).
+ * - Intercepts requests to protected account, checkout, escrow, and admin routes.
  * - Checks for a frontend session marker or an existing backend auth cookie.
  * - If missing or empty, preserves the attempted destination URL via `?redirect=` and redirects to `/login`.
  * - Passes through all public routes, static assets, and auth flows without interruption.
  */
 
-// Protected path prefixes
-const PROTECTED_PREFIXES = ["/dashboard", "/escrow", "/admin"];
+// Protected routes mirrored from the authenticated account and transaction areas.
+const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/seller",
+  "/settings",
+  "/notifications",
+  "/checkout",
+  "/escrow",
+  "/admin",
+  "/disputes",
+  "/verify-identity",
+];
 
 // The frontend manages auth state in localStorage and mirrors its presence here
 // so protected page requests can pass the proxy. API authorization remains the
@@ -55,7 +65,13 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
+    "/seller/:path*",
+    "/settings/:path*",
+    "/notifications/:path*",
+    "/checkout/:path*",
     "/escrow/:path*",
     "/admin/:path*",
+    "/disputes/:path*",
+    "/verify-identity/:path*",
   ],
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { SupportChatWindow } from "./SupportChatWindow";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,16 @@ export interface LiveChatWidgetProps {
 
 export function LiveChatWidget({ className }: LiveChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("sp_open_live_chat", handleOpen);
+    window.addEventListener("bh_open_live_chat", handleOpen);
+    return () => {
+      window.removeEventListener("sp_open_live_chat", handleOpen);
+      window.removeEventListener("bh_open_live_chat", handleOpen);
+    };
+  }, []);
 
   return (
     <div

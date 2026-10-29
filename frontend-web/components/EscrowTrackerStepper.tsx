@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
  * EscrowTrackerStepper Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 3):
- * - Macro-view timeline component located in the page body of `/escrow/[id]/status`.
+ * - Macro-view timeline component located in the page body of `/escrow/[id]`.
  * - Corner Radius: --radius-card (8px -> rounded-[8px]). Controls / inner cards: rounded-[4px].
  * - Distinct views:
  *   - Desktop (>=768px): Full horizontal stepper timeline with connecting status lines.

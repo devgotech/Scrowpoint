@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, ShieldAlert } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { MinimalistAuthFooter } from "@/components/footers";
@@ -24,9 +25,11 @@ export interface ArbitrationRoomPageProps {
 }
 
 export default function ArbitrationRoomPage({
-  caseId = "dsp-101",
+  caseId: providedCaseId,
   onBackToDashboard,
 }: ArbitrationRoomPageProps) {
+  const routeParams = useParams<{ case_id?: string }>();
+  const caseId = providedCaseId ?? routeParams.case_id ?? "dsp-101";
   const [verdictMessage, setVerdictMessage] = useState<string | null>(null);
 
   const handleExecuteVerdict = async (

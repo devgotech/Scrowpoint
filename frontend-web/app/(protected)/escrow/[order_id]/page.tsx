@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -44,10 +45,12 @@ export interface EscrowRoomPageProps {
 }
 
 export default function EscrowRoomPage({
-  orderId = "sp-ord-94218a",
+  orderId: providedOrderId,
   onNavigateHome,
   onNavigateDisputes,
 }: EscrowRoomPageProps) {
+  const routeParams = useParams<{ order_id?: string }>();
+  const orderId = providedOrderId ?? routeParams.order_id ?? "sp-ord-94218a";
   const [currentState, setCurrentState] =
     useState<EscrowState>("inspection_period");
   const [isDisputeModalOpen, setIsDisputeModalOpen] = useState(false);
@@ -80,7 +83,7 @@ export default function EscrowRoomPage({
   }, [orderId]);
 
   const orderData: EscrowOrderData = {
-    orderId: "SP-ORD-9421",
+    orderId,
     gadgetId: "g-001",
     gadgetTitle: "Apple iPhone 14 Pro Max 256GB Deep Purple",
     gadgetImage:
@@ -252,10 +255,18 @@ export default function EscrowRoomPage({
                     </p>
                     <button
                       type="button"
-                      onClick={onNavigateDisputes}
+                        onClick={() => {
+                          if (onNavigateDisputes) {
+                            onNavigateDisputes();
+                            return;
+                          }
+                          window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
+                        }}
                       className="w-full h-10 border border-[#c53030] bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#c53030] hover:bg-[#c53030] hover:text-white transition-colors"
                     >
-                      View Arbitration Case File
+                      {onNavigateDisputes
+                        ? "View Arbitration Case File"
+                        : "Contact Support About Case"}
                     </button>
                   </div>
                 ) : (

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { DashboardUtilityBar } from "@/components/footers";
@@ -24,6 +25,25 @@ export default function NotificationsPage({
   onNavigateHome,
   onNavigateOrder,
 }: NotificationsPageProps) {
+  const router = useRouter();
+  const handleSelectNotification = (notification: {
+    orderNumber?: string;
+    linkHref?: string;
+  }) => {
+    if (notification.orderNumber && onNavigateOrder) {
+      onNavigateOrder(notification.orderNumber);
+      return;
+    }
+    const destination = notification.linkHref;
+    if (destination?.startsWith("/") && !destination.startsWith("//")) {
+      router.push(destination);
+      return;
+    }
+    if (notification.orderNumber) {
+      router.push(`/escrow/${encodeURIComponent(notification.orderNumber)}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
       <Navbar />
@@ -56,11 +76,7 @@ export default function NotificationsPage({
           </div>
 
           <NotificationFeed
-            onSelectNotification={(n) => {
-              if (n.orderNumber && onNavigateOrder) {
-                onNavigateOrder(n.orderNumber);
-              }
-            }}
+            onSelectNotification={handleSelectNotification}
           />
         </div>
       </main>
