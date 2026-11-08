@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
@@ -15,7 +15,6 @@ import {
   Mail,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MinimalistAuthFooter } from "@/components/footers";
@@ -43,29 +42,39 @@ export interface ForgotPasswordPageProps {
 
 type RecoveryStep = "request" | "verify_and_reset" | "completed";
 
-const DEMO_RESET_OTP = "842915";
-
-export default function ForgotPasswordPage({
+function ForgotPasswordForm({
   initialEmail = "",
   onBackToLogin,
   onResetSuccess,
   onNavigateHome,
 }: ForgotPasswordPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialToken = searchParams.get("token") ?? "";
   const { requestPasswordReset, resetPasswordWithToken, login } = useAuth();
 
-  const [step, setStep] = useState<RecoveryStep>("request");
+  const [step, setStep] = useState<RecoveryStep>(
+    initialToken ? "verify_and_reset" : "request"
+  );
   const [email, setEmail] = useState(initialEmail);
-  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
+  const [resetToken, setResetToken] = useState(initialToken);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [statusBanner, setStatusBanner] = useState<string | null>(null);
+  const [statusBanner, setStatusBanner] = useState<string | null>(
+    initialToken ? "Reset link loaded. Choose a new password to continue." : null
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  useEffect(() => {
+    if (initialToken) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("token");
+      window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    }
+  }, [initialToken]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -84,7 +93,7 @@ export default function ForgotPasswordPage({
   const passwordsMatch =
     newPassword.length > 0 && newPassword === confirmPassword;
 
-  // Stage 1: Dispatch Reset Token (`POST /api/auth/request-password-reset`)
+  // Stage 1: Send a password reset link.
   const handleRequestReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -97,73 +106,51 @@ export default function ForgotPasswordPage({
     }
 
     setIsSubmitting(true);
-    await requestPasswordReset(cleanEmail);
-    setIsSubmitting(false);
-    setResendCooldown(60);
-    setStep("verify_and_reset");
-    setStatusBanner(
-      `A 6-digit recovery code has been dispatched to ${cleanEmail}.`
-    );
-  };
-
-  // OTP Box Change & Keyboard Navigation
-  const handleOtpChange = (index: number, value: string) => {
-    const digit = value.replace(/\D/g, "").slice(-1);
-    const next = [...otpDigits];
-    next[index] = digit;
-    setOtpDigits(next);
-
-    if (digit && index < 5) {
-      otpInputRefs.current[index + 1]?.focus();
+    try {
+      const previewToken = await requestPasswordReset(cleanEmail);
+      setEmail(cleanEmail);
+      setResetToken(previewToken ?? "");
+      setResendCooldown(60);
+      setStep("verify_and_reset");
+      setStatusBanner(
+        previewToken
+          ? "Development reset token ready. Use it below to set a new password."
+          : `If an account exists for ${cleanEmail}, a password reset link has been sent.`
+      );
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to request a password reset.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleOtpKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
-      otpInputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pasted = e.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
-      .slice(0, 6);
-    if (!pasted) return;
-    const next = ["", "", "", "", "", ""];
-    for (let i = 0; i < pasted.length; i++) {
-      next[i] = pasted[i];
-    }
-    setOtpDigits(next);
-    const focusIdx = Math.min(pasted.length, 5);
-    otpInputRefs.current[focusIdx]?.focus();
-  };
-
-  const handleFillDemoOtp = () => {
-    setOtpDigits(DEMO_RESET_OTP.split(""));
-    setErrorMessage(null);
-  };
-
-  const handleResendCode = async () => {
+  const handleResendLink = async () => {
     if (resendCooldown > 0) return;
     setErrorMessage(null);
-    await requestPasswordReset(email);
-    setResendCooldown(60);
-    setStatusBanner(`New recovery code dispatched to ${email.trim()}.`);
+    setIsSubmitting(true);
+    try {
+      const previewToken = await requestPasswordReset(email);
+      setResetToken(previewToken ?? "");
+      setResendCooldown(60);
+      setStatusBanner(
+        previewToken
+          ? "Development reset token ready. Use it below to set a new password."
+          : `If an account exists for ${email.trim()}, a password reset link has been sent.`
+      );
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to resend the password reset link.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Stage 2: Verify OTP & Update Password (`POST /api/auth/reset-password`)
+  // Stage 2: Verify the reset token and update the password.
   const handleResetPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
-    const tokenCode = otpDigits.join("");
-    if (tokenCode.length < 6) {
-      setErrorMessage("Please enter the complete 6-digit recovery code sent to your email.");
+    if (!resetToken.trim()) {
+      setErrorMessage("Open the password reset link from your email to continue.");
       return;
     }
 
@@ -178,9 +165,14 @@ export default function ForgotPasswordPage({
     }
 
     setIsSubmitting(true);
-    await resetPasswordWithToken(tokenCode, newPassword);
-    setIsSubmitting(false);
-    setStep("completed");
+    try {
+      await resetPasswordWithToken(resetToken.trim(), newPassword);
+      setStep("completed");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to reset the password.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -224,7 +216,7 @@ export default function ForgotPasswordPage({
                   step === "request" && "text-[#111113] font-bold"
                 )}
               >
-                01. Request Code
+                01. Request Link
               </span>
               <span>→</span>
               <span
@@ -232,7 +224,7 @@ export default function ForgotPasswordPage({
                   step === "verify_and_reset" && "text-[#FF5A25] font-bold"
                 )}
               >
-                02. Verify OTP &amp; Reset
+                02. Set New Password
               </span>
               <span>→</span>
               <span
@@ -277,8 +269,8 @@ export default function ForgotPasswordPage({
                 </h1>
 
                 <p className="font-secondary text-sm text-[#111113]/65">
-                  Enter your registered email address to receive a 6-digit
-                  cryptographic recovery code.
+                  Enter your registered email address and we’ll send you a
+                  secure password reset link.
                 </p>
               </div>
 
@@ -311,25 +303,6 @@ export default function ForgotPasswordPage({
                   </p>
                 </div>
 
-                {/* Quick Fill Demo Account Email */}
-                <div className="p-3 bg-[#F8F7F4] border border-[#111113]/12 flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/60">
-                      Testing Recovery Flow?
-                    </p>
-                    <p className="font-mono text-xs text-[#111113] truncate">
-                      chidi.okafor@scrowpoint.com
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setEmail("chidi.okafor@scrowpoint.com")}
-                    className="px-2.5 py-1.5 bg-white border border-[#111113]/15 hover:border-[#111113] text-[11px] font-mono uppercase tracking-wider text-[#111113] transition-colors shrink-0 cursor-pointer"
-                  >
-                    Use Email
-                  </button>
-                </div>
-
                 <Button
                   type="submit"
                   variant="default"
@@ -338,10 +311,10 @@ export default function ForgotPasswordPage({
                   className="w-full h-12 rounded-full text-xs font-semibold gap-2"
                 >
                   {isSubmitting ? (
-                    <span>Dispatching Recovery Code...</span>
+                    <span>Sending Reset Link...</span>
                   ) : (
                     <>
-                      <span>Send 6-Digit Recovery Code</span>
+                      <span>Send Reset Link</span>
                       <ArrowRight className="h-4 w-4" />
                     </>
                   )}
@@ -351,7 +324,7 @@ export default function ForgotPasswordPage({
           )}
 
           {/* =================================================================
-              STAGE 2: VERIFY 6-DIGIT OTP & SET NEW PASSWORD (`POST /api/auth/reset-password`)
+              STAGE 2: VERIFY RESET LINK & SET NEW PASSWORD (`POST /api/auth/reset-password`)
               ================================================================= */}
           {step === "verify_and_reset" && (
             <>
@@ -361,14 +334,20 @@ export default function ForgotPasswordPage({
                 </div>
 
                 <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
-                  Enter Recovery OTP
+                  Set a New Password
                 </h1>
 
                 <p className="font-secondary text-xs text-[#111113]/70">
-                  We sent a 6-digit verification code to{" "}
-                  <span className="font-mono font-semibold text-[#111113]">
-                    {email}
-                  </span>
+                  {email ? (
+                    <>
+                      The secure reset link is associated with{" "}
+                      <span className="font-mono font-semibold text-[#111113]">
+                        {email}
+                      </span>
+                    </>
+                  ) : (
+                    "Use the secure reset link from your email to continue."
+                  )}
                 </p>
               </div>
 
@@ -389,39 +368,20 @@ export default function ForgotPasswordPage({
               )}
 
               <form onSubmit={handleResetPasswordSubmit} className="space-y-5 pt-5">
-                {/* 6-Digit OTP Input Grid */}
+                {/* The reset token comes from the emailed link or local dev preview. */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="label">6-Digit Recovery Code</label>
-                    <button
-                      type="button"
-                      onClick={handleFillDemoOtp}
-                      className="inline-flex items-center gap-1 font-mono text-[11px] text-[#FF5A25] hover:underline cursor-pointer"
-                    >
-                      <Sparkles className="h-3 w-3" />
-                      <span>Auto-Fill Demo OTP ({DEMO_RESET_OTP})</span>
-                    </button>
+                    <label htmlFor="reset-token" className="label">Reset Link Token</label>
                   </div>
-
-                  <div className="grid grid-cols-6 gap-2">
-                    {otpDigits.map((digit, idx) => (
-                      <input
-                        key={idx}
-                        ref={(el) => {
-                          otpInputRefs.current[idx] = el;
-                        }}
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e) => handleOtpChange(idx, e.target.value)}
-                        onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                        onPaste={idx === 0 ? handleOtpPaste : undefined}
-                        aria-label={`Recovery code digit ${idx + 1}`}
-                        className="h-12 w-full text-center font-mono text-lg font-bold text-[#111113] border border-[#111113]/20 bg-[#F8F7F4]/60 focus:bg-white focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none transition-colors"
-                      />
-                    ))}
-                  </div>
+                  <input
+                    id="reset-token"
+                    type="password"
+                    autoComplete="off"
+                    value={resetToken}
+                    onChange={(e) => setResetToken(e.target.value)}
+                    placeholder="Open the reset link from your email"
+                    className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                  />
 
                   <div className="mt-2 flex items-center justify-between text-[11px] font-mono text-[#111113]/60">
                     <button
@@ -432,24 +392,26 @@ export default function ForgotPasswordPage({
                       Change email address
                     </button>
 
-                    <button
-                      type="button"
-                      disabled={resendCooldown > 0}
-                      onClick={handleResendCode}
-                      className={cn(
-                        "inline-flex items-center gap-1",
-                        resendCooldown > 0
-                          ? "opacity-50 cursor-not-allowed"
-                          : "text-[#111113] hover:text-[#FF5A25] cursor-pointer"
-                      )}
-                    >
-                      <RefreshCw className="h-3 w-3" />
-                      <span>
-                        {resendCooldown > 0
-                          ? `Resend in ${resendCooldown}s`
-                          : "Resend Code"}
-                      </span>
-                    </button>
+                    {email && (
+                      <button
+                        type="button"
+                        disabled={resendCooldown > 0 || isSubmitting}
+                        onClick={handleResendLink}
+                        className={cn(
+                          "inline-flex items-center gap-1",
+                          resendCooldown > 0 || isSubmitting
+                            ? "opacity-50 cursor-not-allowed"
+                            : "text-[#111113] hover:text-[#FF5A25] cursor-pointer"
+                        )}
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                        <span>
+                          {resendCooldown > 0
+                            ? `Resend in ${resendCooldown}s`
+                            : "Resend Link"}
+                        </span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -662,5 +624,13 @@ export default function ForgotPasswordPage({
 
       <MinimalistAuthFooter />
     </div>
+  );
+}
+
+export default function ForgotPasswordPage(props: ForgotPasswordPageProps) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F8F7F4]" />}>
+      <ForgotPasswordForm {...props} />
+    </Suspense>
   );
 }

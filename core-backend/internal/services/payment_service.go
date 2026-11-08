@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"context"
 	"crypto/hmac"
 	"crypto/sha512"
@@ -8,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"net/url"
@@ -22,9 +24,34 @@ import (
 )
 
 type PaystackInitResponse struct {
-	AuthorizationURL string `json:"authorizationUrl"`
-	AccessCode       string `json:"accessCode"`
+	AuthorizationURL string `json:"authorization_url"`
+	AccessCode       string `json:"access_code"`
 	Reference        string `json:"reference"`
+}
+
+type PaymentServiceConfig struct {
+	PaystackAPIBaseURL string
+	FrontendBaseURL    string
+	HTTPClient         *http.Client
+}
+
+type paystackInitRequest struct {
+	Email       string                 `json:"email"`
+	Amount      int64                  `json:"amount"`
+	Currency    string                 `json:"currency"`
+	Reference   string                 `json:"reference"`
+	CallbackURL string                 `json:"callback_url"`
+	Metadata    map[string]interface{} `json:"metadata"`
+}
+
+type paystackInitEnvelope struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		AuthorizationURL string `json:"authorization_url"`
+		AccessCode       string `json:"access_code"`
+		Reference        string `json:"reference"`
+	} `json:"data"`
 }
 
 type NUBANResolutionInput struct {
@@ -79,14 +106,18 @@ type PayoutRequestInput struct {
 }
 
 type PaymentService struct {
-	mu             sync.RWMutex
-	paystackSecret string
-	payments       map[string]*db.Payment
-	paymentMethods map[uuid.UUID][]*db.SavedPaymentMethod
-	payouts        map[uuid.UUID][]*db.Payout
-	escrowService  *EscrowService
-	orderService   *OrderService
-	authService    *AuthService
+	mu              sync.RWMutex
+	webhookMu       sync.Mutex
+	paystackSecret  string
+	paystackAPIURL  string
+	frontendBaseURL string
+	httpClient      *http.Client
+	payments        map[string]*db.Payment
+	paymentMethods  map[uuid.UUID][]*db.SavedPaymentMethod
+	payouts         map[uuid.UUID][]*db.Payout
+	escrowService   *EscrowService
+	orderService    *OrderService
+	authService     *AuthService
 }
 
 func NewPaymentService(
@@ -94,15 +125,32 @@ func NewPaymentService(
 	escrowService *EscrowService,
 	orderService *OrderService,
 	authService *AuthService,
+	configs ...PaymentServiceConfig,
 ) *PaymentService {
+	config := PaymentServiceConfig{}
+	if len(configs) > 0 {
+		config = configs[0]
+	}
+	if config.PaystackAPIBaseURL == "" {
+		config.PaystackAPIBaseURL = "https://api.paystack.co"
+	}
+	if config.FrontendBaseURL == "" {
+		config.FrontendBaseURL = "http://localhost:3000"
+	}
+	if config.HTTPClient == nil {
+		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
+	}
 	return &PaymentService{
-		paystackSecret: paystackSecret,
-		payments:       make(map[string]*db.Payment),
-		paymentMethods: make(map[uuid.UUID][]*db.SavedPaymentMethod),
-		payouts:        make(map[uuid.UUID][]*db.Payout),
-		escrowService:  escrowService,
-		orderService:   orderService,
-		authService:    authService,
+		paystackSecret:  paystackSecret,
+		paystackAPIURL:  strings.TrimRight(config.PaystackAPIBaseURL, "/"),
+		frontendBaseURL: strings.TrimRight(config.FrontendBaseURL, "/"),
+		httpClient:      config.HTTPClient,
+		payments:        make(map[string]*db.Payment),
+		paymentMethods:  make(map[uuid.UUID][]*db.SavedPaymentMethod),
+		payouts:         make(map[uuid.UUID][]*db.Payout),
+		escrowService:   escrowService,
+		orderService:    orderService,
+		authService:     authService,
 	}
 }
 
@@ -116,13 +164,78 @@ func (s *PaymentService) InitializePaystackTransaction(ctx context.Context, orde
 		return nil, errors.New("forbidden: buyer ID mismatch")
 	}
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	if s.paystackSecret == "" {
+		return nil, errors.New("Paystack is not configured")
+	}
+	if !strings.EqualFold(order.Currency, "NGN") {
+		return nil, fmt.Errorf("Paystack checkout does not support currency %s", order.Currency)
+	}
 
-	reference := fmt.Sprintf("BH-PSTK-%s-%d", orderID.String()[:8], time.Now().UnixNano())
-	accessCode := fmt.Sprintf("pstk_acc_%s", uuid.New().String()[:12])
-	authURL := fmt.Sprintf("https://checkout.paystack.com/%s", accessCode)
+	buyer, err := s.authService.GetUserByID(ctx, buyerID)
+	if err != nil {
+		return nil, fmt.Errorf("load checkout buyer: %w", err)
+	}
+	if strings.TrimSpace(buyer.Email) == "" {
+		return nil, errors.New("buyer email is required for Paystack checkout")
+	}
 
+	reference := fmt.Sprintf("SP-%s", strings.ReplaceAll(uuid.NewString(), "-", ""))
+	callbackURL := s.frontendBaseURL + "/checkout/" + url.PathEscape(order.ID.String()) + "?payment=complete"
+	callback, err := url.Parse(callbackURL)
+	if err != nil || (callback.Scheme != "https" && callback.Scheme != "http") || callback.Host == "" {
+		return nil, errors.New("FRONTEND_BASE_URL must be an absolute HTTP(S) URL")
+	}
+	initRequest := paystackInitRequest{
+		Email:       buyer.Email,
+		Amount:      int64(math.Round(order.TotalAmount * 100)),
+		Currency:    strings.ToUpper(order.Currency),
+		Reference:   reference,
+		CallbackURL: callbackURL,
+		Metadata: map[string]interface{}{
+			"order_id": order.ID.String(),
+			"buyer_id": buyerID.String(),
+		},
+	}
+	body, err := json.Marshal(initRequest)
+	if err != nil {
+		return nil, fmt.Errorf("encode Paystack initialization request: %w", err)
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.paystackAPIURL+"/transaction/initialize", bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("create Paystack initialization request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+s.paystackSecret)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	res, err := s.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("initialize Paystack transaction: %w", err)
+	}
+	defer res.Body.Close()
+	responseBody, err := io.ReadAll(io.LimitReader(res.Body, 1<<20))
+	if err != nil {
+		return nil, fmt.Errorf("read Paystack initialization response: %w", err)
+	}
+	var envelope paystackInitEnvelope
+	if err := json.Unmarshal(responseBody, &envelope); err != nil {
+		return nil, fmt.Errorf("decode Paystack initialization response (HTTP %d): %w", res.StatusCode, err)
+	}
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices || !envelope.Status {
+		if envelope.Message == "" {
+			envelope.Message = http.StatusText(res.StatusCode)
+		}
+		return nil, fmt.Errorf("Paystack transaction initialization failed: %s", envelope.Message)
+	}
+	if envelope.Data.Reference != reference || envelope.Data.AccessCode == "" {
+		return nil, errors.New("Paystack returned an incomplete or mismatched transaction")
+	}
+	checkoutURL, err := url.Parse(envelope.Data.AuthorizationURL)
+	if err != nil || checkoutURL.Scheme != "https" || checkoutURL.Host != "checkout.paystack.com" {
+		return nil, errors.New("Paystack returned an invalid checkout URL")
+	}
+
+	now := time.Now()
 	payment := &db.Payment{
 		ID:                 uuid.New(),
 		OrderID:            order.ID,
@@ -130,18 +243,20 @@ func (s *PaymentService) InitializePaystackTransaction(ctx context.Context, orde
 		Currency:           order.Currency,
 		Method:             db.PaymentMethodCard,
 		Status:             db.PaymentStatusPending,
-		GatewayReference:   reference,
-		PaystackAccessCode: accessCode,
-		CreatedAt:          time.Now(),
-		UpdatedAt:          time.Now(),
+		GatewayReference:   envelope.Data.Reference,
+		PaystackAccessCode: envelope.Data.AccessCode,
+		CreatedAt:          now,
+		UpdatedAt:          now,
 	}
 
-	s.payments[reference] = payment
+	s.mu.Lock()
+	s.payments[envelope.Data.Reference] = payment
+	s.mu.Unlock()
 
 	return &PaystackInitResponse{
-		AuthorizationURL: authURL,
-		AccessCode:       accessCode,
-		Reference:        reference,
+		AuthorizationURL: envelope.Data.AuthorizationURL,
+		AccessCode:       envelope.Data.AccessCode,
+		Reference:        envelope.Data.Reference,
 	}, nil
 }
 
@@ -164,14 +279,23 @@ func (s *PaymentService) VerifyWebhookSignature(payload []byte, signatureHeader 
 }
 
 func (s *PaymentService) HandlePaystackWebhook(ctx context.Context, payload []byte) error {
+	s.webhookMu.Lock()
+	defer s.webhookMu.Unlock()
+
 	var event PaystackWebhookPayload
 	if err := json.Unmarshal(payload, &event); err != nil {
 		return errors.New("invalid webhook payload JSON")
 	}
 
-	s.mu.Lock()
-	payment, exists := s.payments[event.Data.Reference]
-	s.mu.Unlock()
+	s.mu.RLock()
+	paymentRecord, exists := s.payments[event.Data.Reference]
+	var payment db.Payment
+	if exists && paymentRecord != nil {
+		payment = *paymentRecord
+	} else {
+		exists = false
+	}
+	s.mu.RUnlock()
 
 	var orderID uuid.UUID
 	var buyerID uuid.UUID
@@ -179,16 +303,10 @@ func (s *PaymentService) HandlePaystackWebhook(ctx context.Context, payload []by
 
 	if exists {
 		orderID = payment.OrderID
-	} else if event.Data.Metadata != nil {
-		if ordIDStr, ok := event.Data.Metadata["order_id"].(string); ok && ordIDStr != "" {
-			if parsed, err := uuid.Parse(ordIDStr); err == nil {
-				orderID = parsed
-			}
-		}
 	}
 
 	if orderID == uuid.Nil {
-		return fmt.Errorf("transaction reference %s not recognized and no order_id metadata found", event.Data.Reference)
+		return fmt.Errorf("transaction reference %s is not recognized", event.Data.Reference)
 	}
 
 	switch event.Event {
@@ -198,31 +316,24 @@ func (s *PaymentService) HandlePaystackWebhook(ctx context.Context, payload []by
 			return err
 		}
 
-		// SEC-02 Hardening: Verify payment amount matches order requirements.
-		// Paystack sends amounts in kobo (1 NGN = 100 kobo). In mock tests, it might be sent in Naira or kobo.
 		paidAmount := event.Data.Amount
-		expectedTotal := order.TotalAmount
-		isValidAmount := math.Abs(paidAmount-expectedTotal*100) < 1.0 || math.Abs(paidAmount-expectedTotal) < 0.01
-
-		// In production, reject mismatched amounts strictly
-		if os.Getenv("ENV") == "production" || event.Data.Amount > 0 {
-			if !isValidAmount {
-				return fmt.Errorf("payment amount verification failed: expected %.2f, received %.2f", expectedTotal, paidAmount)
-			}
+		expectedAmountKobo := math.Round(order.TotalAmount * 100)
+		if !strings.EqualFold(event.Data.Currency, order.Currency) || math.Abs(paidAmount-expectedAmountKobo) >= 1 {
+			return fmt.Errorf("payment amount/currency verification failed: expected %.0f %s kobo, received %.2f %s", expectedAmountKobo, strings.ToUpper(order.Currency), paidAmount, strings.ToUpper(event.Data.Currency))
 		}
 
 		now := time.Now()
-		if payment != nil {
-			payment.Status = db.PaymentStatusFunded
-			payment.PaidAt = &now
-			payment.UpdatedAt = now
+		if exists {
+			if payment.Status == db.PaymentStatusFunded {
+				return nil
+			}
 			method = payment.Method
 		}
 
 		buyerID = order.BuyerID
 
 		gatewayRef := event.Data.Reference
-		if payment != nil && payment.GatewayReference != "" {
+		if exists && payment.GatewayReference != "" {
 			gatewayRef = payment.GatewayReference
 		}
 
@@ -230,11 +341,24 @@ func (s *PaymentService) HandlePaystackWebhook(ctx context.Context, payload []by
 		if err != nil {
 			return fmt.Errorf("failed to transition escrow to funds_held: %w", err)
 		}
+		if exists {
+			s.mu.Lock()
+			if storedPayment, ok := s.payments[event.Data.Reference]; ok {
+				storedPayment.Status = db.PaymentStatusFunded
+				storedPayment.PaidAt = &now
+				storedPayment.UpdatedAt = now
+			}
+			s.mu.Unlock()
+		}
 
 	case "charge.failed":
-		if payment != nil {
-			payment.Status = db.PaymentStatusFailed
-			payment.UpdatedAt = time.Now()
+		if exists {
+			s.mu.Lock()
+			if storedPayment, ok := s.payments[event.Data.Reference]; ok && storedPayment.Status != db.PaymentStatusFunded {
+				storedPayment.Status = db.PaymentStatusFailed
+				storedPayment.UpdatedAt = time.Now()
+			}
+			s.mu.Unlock()
 		}
 	}
 
@@ -525,4 +649,3 @@ func (s *PaymentService) ResolveBankAccount(ctx context.Context, userID uuid.UUI
 		VerifiedAt:    time.Now(),
 	}, nil
 }
-

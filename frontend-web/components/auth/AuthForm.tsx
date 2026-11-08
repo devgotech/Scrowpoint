@@ -169,6 +169,7 @@ export function AuthForm({
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState(TRADING_LOCATIONS[0]);
   const [role, setRole] = useState<UserRole>("buyer");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewAccount, setIsPreviewAccount] = useState(false);
@@ -293,6 +294,10 @@ export function AuthForm({
     }
   ) => {
     setErrorMessage(null);
+    if (mode === "register" && !termsAccepted) {
+      setErrorMessage("Please accept the Terms of Service before creating an account.");
+      return;
+    }
     setIsOauthSubmitting(true);
 
     try {
@@ -302,6 +307,7 @@ export function AuthForm({
         providerUid: account.providerUid,
         role: mode === "register" ? role : account.role || "seller",
         avatarUrl: account.avatarUrl,
+        termsAccepted: mode === "register" && termsAccepted,
       });
 
       setOauthProviderModal(null);
@@ -370,6 +376,11 @@ export function AuthForm({
       return;
     }
 
+    if (mode === "register" && !termsAccepted) {
+      setErrorMessage("Please accept the Terms of Service before creating an account.");
+      return;
+    }
+
     if (password.length < 8) {
       setErrorMessage("Password must be at least 8 characters long.");
       return;
@@ -398,6 +409,7 @@ export function AuthForm({
             phone: phone.trim() || undefined,
             location,
             role,
+            termsAccepted,
           };
 
     let response: Response | null = null;
@@ -430,7 +442,11 @@ export function AuthForm({
       !(isDevelopmentDemoLogin && !response.ok)
     ) {
       let payload: {
-        data?: { user?: Record<string, unknown>; token?: string };
+        data?: {
+          user?: Record<string, unknown>;
+          token?: string;
+          verificationCodePreview?: string;
+        };
         error?: string;
         message?: string;
       };
@@ -495,9 +511,15 @@ export function AuthForm({
 
       if (mode === "register") {
         setResendCooldown(60);
-        setOtpStatusBanner(
-          `We sent a 6-digit verification code to ${cleanEmail}.`
-        );
+        const previewCode = payload.data?.verificationCodePreview;
+        if (previewCode && /^\d{6}$/.test(previewCode)) {
+          setOtpDigits(previewCode.split(""));
+          setOtpStatusBanner(
+            `Development email preview code: ${previewCode}. Configure SMTP to send the code by email.`
+          );
+        } else {
+          setOtpStatusBanner(`We sent a 6-digit verification code to ${cleanEmail}.`);
+        }
         setRegStage("verify_email_otp");
       } else {
         continueAfterLogin(authenticatedEmail, backendRole);
@@ -572,9 +594,14 @@ export function AuthForm({
     if (resendCooldown > 0) return;
     setErrorMessage(null);
     try {
-      await resendVerificationEmail();
+      const previewCode = await resendVerificationEmail();
       setResendCooldown(60);
-      setOtpStatusBanner(`New verification code dispatched to ${email.trim()}.`);
+      if (previewCode && /^\d{6}$/.test(previewCode)) {
+        setOtpDigits(previewCode.split(""));
+        setOtpStatusBanner(`Development email preview code: ${previewCode}. Configure SMTP to send email.`);
+      } else {
+        setOtpStatusBanner(`New verification code dispatched to ${email.trim()}.`);
+      }
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Unable to resend the verification code."
@@ -1344,6 +1371,35 @@ export function AuthForm({
             </div>
 
             {/* Submit Button */}
+            {mode === "register" && (
+              <label className="flex items-start gap-2.5 text-xs leading-relaxed text-[#111113]/75">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(event) => setTermsAccepted(event.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#FF5A25]"
+                />
+                <span>
+                  I agree to the{" "}
+                  <Link
+                    href="/legal/terms"
+                    target="_blank"
+                    className="font-semibold text-[#111113] underline underline-offset-2 hover:text-[#FF5A25]"
+                  >
+                    Terms of Service
+                  </Link>{" "}
+                  and acknowledge the{" "}
+                  <Link
+                    href="/legal/privacy"
+                    target="_blank"
+                    className="font-semibold text-[#111113] underline underline-offset-2 hover:text-[#FF5A25]"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
+                </span>
+              </label>
+            )}
             <Button
               type="submit"
               variant="default"

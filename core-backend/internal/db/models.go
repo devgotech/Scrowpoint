@@ -185,6 +185,8 @@ type User struct {
 	RatingCount     int        `json:"ratingCount" db:"rating_count"`
 	IsSuspended     bool       `json:"isSuspended" db:"is_suspended"`
 	EmailVerifiedAt *time.Time `json:"emailVerifiedAt,omitempty" db:"email_verified_at"`
+	TermsAcceptedAt *time.Time `json:"termsAcceptedAt,omitempty" db:"terms_accepted_at"`
+	TermsVersion    string     `json:"termsVersion,omitempty" db:"terms_version"`
 	CreatedAt       time.Time  `json:"createdAt" db:"created_at"`
 	UpdatedAt       time.Time  `json:"updatedAt" db:"updated_at"`
 	DeletedAt       *time.Time `json:"deletedAt,omitempty" db:"deleted_at"`

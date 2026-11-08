@@ -113,7 +113,7 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-paystack-signature")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-paystack-signature, Response-Signature, Response-Timestamp")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Set("X-Frame-Options", "DENY")
@@ -182,10 +182,6 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rt.authHandler.OAuth(w, r)
 		return
 	}
-	if path == "/api/auth/verify-email" {
-		rt.authHandler.VerifyEmail(w, r)
-		return
-	}
 	if path == "/api/auth/request-password-reset" {
 		rt.authHandler.RequestPasswordReset(w, r)
 		return
@@ -235,6 +231,10 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rt.paymentHandler.PaystackWebhook(w, r)
 		return
 	}
+	if path == "/api/kyc/smile/webhook" {
+		rt.kycHandler.SmileIDWebhook(w, r)
+		return
+	}
 	if path == "/api/listings" && r.Method == http.MethodGet && r.URL.Query().Get("role") != "seller" {
 		rt.listingHandler.HandleListings(w, r, [16]byte{})
 		return
@@ -279,6 +279,8 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			rt.authHandler.Logout(w, r, claims.SessionID)
 		case path == "/api/auth/resend-verification":
 			rt.authHandler.ResendVerification(w, r, userID)
+		case path == "/api/auth/verify-email":
+			rt.authHandler.VerifyEmail(w, r, userID)
 		case path == "/api/auth/change-password":
 			rt.authHandler.ChangePassword(w, r, userID)
 		case path == "/api/auth/sessions":
@@ -303,6 +305,8 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case len(parts) == 4 && parts[1] == "notifications" && parts[3] == "read" && r.Method == http.MethodPut:
 			rt.notificationHandler.MarkAsRead(w, r, userID)
 
+		case path == "/api/kyc/smile/session":
+			rt.kycHandler.StartSmileIDSession(w, r, userID)
 		case path == "/api/kyc/submit" || path == "/api/kyc/verify":
 			rt.kycHandler.SubmitKYC(w, r, userID)
 		case path == "/api/kyc/status":

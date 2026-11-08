@@ -2,7 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
+	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -19,23 +23,33 @@ type TokenGenerator interface {
 type AuthHandler struct {
 	authService *services.AuthService
 	tokenGen    TokenGenerator
+	emailSender services.EmailSender
 }
 
-func NewAuthHandler(authService *services.AuthService, tokenGen TokenGenerator) *AuthHandler {
-	return &AuthHandler{
+func NewAuthHandler(
+	authService *services.AuthService,
+	tokenGen TokenGenerator,
+	emailSenders ...services.EmailSender,
+) *AuthHandler {
+	handler := &AuthHandler{
 		authService: authService,
 		tokenGen:    tokenGen,
 	}
+	if len(emailSenders) > 0 {
+		handler.emailSender = emailSenders[0]
+	}
+	return handler
 }
 
 type SignupRequest struct {
-	Email    string      `json:"email"`
-	Password string      `json:"password"`
-	Name     string      `json:"name,omitempty"`
-	FullName string      `json:"fullName,omitempty"`
-	Phone    string      `json:"phone,omitempty"`
-	Location string      `json:"location,omitempty"`
-	Role     db.UserRole `json:"role,omitempty"`
+	Email         string      `json:"email"`
+	Password      string      `json:"password"`
+	Name          string      `json:"name,omitempty"`
+	FullName      string      `json:"fullName,omitempty"`
+	Phone         string      `json:"phone,omitempty"`
+	Location      string      `json:"location,omitempty"`
+	Role          db.UserRole `json:"role,omitempty"`
+	TermsAccepted bool        `json:"termsAccepted"`
 }
 
 type LoginRequest struct {
@@ -44,9 +58,10 @@ type LoginRequest struct {
 }
 
 type OAuthRequest struct {
-	Email       string `json:"email"`
-	Name        string `json:"name"`
-	ProviderUID string `json:"providerUid"`
+	Email         string `json:"email"`
+	Name          string `json:"name"`
+	ProviderUID   string `json:"providerUid"`
+	TermsAccepted bool   `json:"termsAccepted"`
 }
 
 type ResetPasswordRequest struct {
@@ -70,10 +85,13 @@ type AcceptMediatorInvitationRequest struct {
 }
 
 type AuthResponseData struct {
-	User      *db.User  `json:"user"`
-	Token     string    `json:"token"`
-	ExpiresAt time.Time `json:"expiresAt"`
+	User                    *db.User  `json:"user"`
+	Token                   string    `json:"token"`
+	ExpiresAt               time.Time `json:"expiresAt"`
+	VerificationCodePreview string    `json:"verificationCodePreview,omitempty"`
 }
+
+const TermsOfServiceVersion = "SPP-TOS-2026-009"
 
 func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -84,6 +102,10 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	var req SignupRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		JSONError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if !req.TermsAccepted {
+		JSONError(w, http.StatusBadRequest, "You must accept the Terms of Service before creating an account")
 		return
 	}
 
@@ -99,13 +121,16 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		assignedRole = db.RoleSeller
 	}
 
+	acceptedAt := time.Now().UTC()
 	user, err := h.authService.SignUp(r.Context(), services.SignUpInput{
-		Email:    req.Email,
-		Password: req.Password,
-		Name:     displayName,
-		Phone:    req.Phone,
-		Location: req.Location,
-		Role:     assignedRole,
+		Email:           req.Email,
+		Password:        req.Password,
+		Name:            displayName,
+		Phone:           req.Phone,
+		Location:        req.Location,
+		Role:            assignedRole,
+		TermsAcceptedAt: &acceptedAt,
+		TermsVersion:    TermsOfServiceVersion,
 	})
 	if err != nil {
 		JSONError(w, http.StatusBadRequest, err.Error())
@@ -119,11 +144,31 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		JSONError(w, http.StatusInternalServerError, "Failed to issue security token")
 		return
 	}
+	verificationCode, err := h.authService.RequestEmailVerification(r.Context(), user.ID)
+	if err != nil {
+		JSONError(w, http.StatusInternalServerError, "Unable to create email verification code")
+		return
+	}
+	preview, err := h.deliverEmail(
+		r,
+		user.Email,
+		"Verify your Scrowpoint email",
+		fmt.Sprintf("Your Scrowpoint email verification code is %s. It expires in 10 minutes.", verificationCode),
+	)
+	if err != nil {
+		JSONError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	verificationCodePreview := ""
+	if preview {
+		verificationCodePreview = verificationCode
+	}
 
 	JSONSuccess(w, http.StatusCreated, AuthResponseData{
-		User:      user,
-		Token:     token,
-		ExpiresAt: time.Now().Add(ttl),
+		User:                    user,
+		Token:                   token,
+		ExpiresAt:               time.Now().Add(ttl),
+		VerificationCodePreview: verificationCodePreview,
 	})
 }
 
@@ -239,7 +284,22 @@ func (h *AuthHandler) OAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, sess, err := h.authService.OAuthLogin(r.Context(), provider, req.Email, req.Name, req.ProviderUID, r.UserAgent(), r.RemoteAddr)
+	var acceptedAt *time.Time
+	if req.TermsAccepted {
+		now := time.Now().UTC()
+		acceptedAt = &now
+	}
+	user, sess, err := h.authService.OAuthLoginWithTerms(
+		r.Context(),
+		provider,
+		req.Email,
+		req.Name,
+		req.ProviderUID,
+		r.UserAgent(),
+		r.RemoteAddr,
+		acceptedAt,
+		TermsOfServiceVersion,
+	)
 	if err != nil {
 		JSONError(w, http.StatusBadRequest, err.Error())
 		return
@@ -272,7 +332,7 @@ func (h *AuthHandler) GetCurrentUser(w http.ResponseWriter, r *http.Request, use
 	JSONSuccess(w, http.StatusOK, user)
 }
 
-func (h *AuthHandler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) VerifyEmail(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	if r.Method != http.MethodPost {
 		JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
@@ -286,7 +346,7 @@ func (h *AuthHandler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.authService.VerifyEmail(r.Context(), req.Token); err != nil {
+	if err := h.authService.VerifyEmailForUser(r.Context(), userID, req.Token); err != nil {
 		JSONError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -300,11 +360,29 @@ func (h *AuthHandler) ResendVerification(w http.ResponseWriter, r *http.Request,
 		JSONError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	user, err := h.authService.GetUserByID(r.Context(), userID)
+	if err != nil {
+		JSONError(w, http.StatusNotFound, "User not found")
+		return
+	}
+	preview, err := h.deliverEmail(
+		r,
+		user.Email,
+		"Your Scrowpoint verification code",
+		fmt.Sprintf("Your new Scrowpoint email verification code is %s. It expires in 10 minutes.", token),
+	)
+	if err != nil {
+		JSONError(w, http.StatusBadGateway, err.Error())
+		return
+	}
 
-	JSONSuccess(w, http.StatusOK, map[string]string{
-		"message": "Verification link sent to registered email",
-		"token":   token,
-	})
+	response := map[string]string{
+		"message": "Verification code sent to your registered email",
+	}
+	if preview {
+		response["verificationCodePreview"] = token
+	}
+	JSONSuccess(w, http.StatusOK, response)
 }
 
 func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Request) {
@@ -321,10 +399,51 @@ func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	_, _ = h.authService.RequestPasswordReset(r.Context(), req.Email)
-	JSONSuccess(w, http.StatusOK, map[string]string{
-		"message": "If this email exists, a password reset link has been dispatched",
-	})
+	token, err := h.authService.RequestPasswordReset(r.Context(), req.Email)
+	if err != nil {
+		JSONError(w, http.StatusInternalServerError, "Unable to create password reset token")
+		return
+	}
+	response := map[string]string{
+		"message": "If this email exists, a password reset link has been sent",
+	}
+	if token != "" {
+		frontendURL := strings.TrimRight(os.Getenv("FRONTEND_BASE_URL"), "/")
+		if frontendURL == "" {
+			frontendURL = "http://localhost:3000"
+		}
+		resetURL := frontendURL + "/forgot-password?token=" + url.QueryEscape(token)
+		preview, err := h.deliverEmail(
+			r,
+			req.Email,
+			"Reset your Scrowpoint password",
+			"Use this secure link to reset your Scrowpoint password. It expires in one hour:\n\n"+resetURL,
+		)
+		if err != nil {
+			JSONError(w, http.StatusBadGateway, err.Error())
+			return
+		}
+		if preview {
+			response["resetTokenPreview"] = token
+		}
+	}
+	JSONSuccess(w, http.StatusOK, response)
+}
+
+func (h *AuthHandler) deliverEmail(r *http.Request, to, subject, body string) (bool, error) {
+	if h.emailSender == nil {
+		return false, nil
+	}
+	if !h.emailSender.Configured() {
+		if os.Getenv("ENV") == "development" {
+			return true, nil
+		}
+		return false, errors.New("SMTP email delivery is not configured")
+	}
+	if err := h.emailSender.Send(r.Context(), to, subject, body); err != nil {
+		return false, fmt.Errorf("email delivery failed: %w", err)
+	}
+	return false, nil
 }
 
 func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {

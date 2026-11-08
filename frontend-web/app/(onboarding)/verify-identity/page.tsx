@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Script from "next/script";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   Clock,
   Lock,
   RotateCcw,
@@ -16,10 +16,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { MinimalistAuthFooter } from "@/components/footers";
-import { DocumentUploadArea } from "@/components/onboarding/DocumentUploadArea";
-import { CameraCaptureWidget } from "@/components/onboarding/CameraCaptureWidget";
 import { kycApi } from "@/lib/api";
-import { cn } from "@/lib/utils";
 
 /**
  * Screen 6: Identity Verification (KYC) (Phase 2 §2)
@@ -37,6 +34,31 @@ export type KycFlowState =
   | "rejected_retry"
   | "approved";
 
+interface SmileIdentityResult {
+  status: "success" | "failure" | "cancelled";
+  error?: { message?: string };
+}
+
+declare global {
+  interface Window {
+    SmileIdentity?: (options: {
+      token: string;
+      product: "biometric_kyc";
+      environment: "sandbox" | "production";
+      callback_url: string;
+      partner_details: {
+        partner_id: string;
+        name: string;
+        logo_url: string;
+        policy_url: string;
+        theme_color: string;
+      };
+      partner_params: Record<string, string>;
+      onResult: (result: SmileIdentityResult) => void;
+    }) => void;
+  }
+}
+
 export interface VerifyIdentityPageProps {
   onCompleteKyc?: () => void;
   onNavigateHome?: () => void;
@@ -48,51 +70,79 @@ export default function VerifyIdentityPage({
 }: VerifyIdentityPageProps) {
   const router = useRouter();
   const [kycState, setKycState] = useState<KycFlowState>("active_form");
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
-  const [, setHasDoc] = useState(false);
-  const [, setHasSelfie] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sdkReady, setSdkReady] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
-    kycApi.getStatus().then((res) => {
+    const refreshStatus = () => kycApi.getStatus().then((res) => {
       if (!mounted || !res.ok || !res.data) return;
       const st = (res.data.status || "").toLowerCase();
       if (st === "approved" || st === "verified") {
         setKycState("approved");
       } else if (st === "rejected") {
         setKycState("rejected_retry");
-      } else if (st === "pending_review" || st === "manual_review_required") {
+      } else if (
+        st === "pending" ||
+        st === "pending_review" ||
+        st === "manual_review_required"
+      ) {
         setKycState("pending_review");
       }
     });
+    void refreshStatus();
+    const timer = window.setInterval(() => void refreshStatus(), 5000);
     return () => {
       mounted = false;
+      window.clearInterval(timer);
     };
   }, []);
 
-  const handleSubmitForReview = async () => {
-    setIsSubmitting(true);
-    const res = await kycApi.submit({
-      id_type: "NIN",
-      id_number: "49102910482",
-      first_name: "Chidi",
-      last_name: "Okafor",
-      dob: "1994-06-15",
-      selfie_url: "https://scrowpoint-media.s3.amazonaws.com/kyc/selfie-liveness.jpg",
-    });
-
-    if (res.ok && res.data) {
-      setIsSubmitting(false);
-      const st = (res.data.status || "").toLowerCase();
-      setKycState(st === "approved" ? "approved" : "pending_review");
+  const handleStartVerification = async () => {
+    setErrorMessage(null);
+    if (!window.SmileIdentity) {
+      setErrorMessage("Smile ID could not be loaded. Check your connection and try again.");
       return;
     }
-
-    setTimeout(() => {
+    setIsSubmitting(true);
+    try {
+      const response = await kycApi.startSmileIDSession();
+      if (!response.ok || !response.data) {
+        throw new Error(response.error || "Unable to start Smile ID verification.");
+      }
+      const session = response.data;
+      window.SmileIdentity({
+        token: session.token,
+        product: "biometric_kyc",
+        environment: session.environment,
+        callback_url: session.callbackUrl,
+        partner_details: {
+          partner_id: session.partnerId,
+          name: session.partnerName,
+          logo_url: session.logoUrl,
+          policy_url: session.policyUrl,
+          theme_color: session.themeColor,
+        },
+        partner_params: {
+          internal_reference: session.sessionId,
+        },
+        onResult: (result) => {
+          setIsSubmitting(false);
+          if (result.status === "success") {
+            setKycState("pending_review");
+            setErrorMessage(null);
+          } else if (result.status === "failure") {
+            setErrorMessage(result.error?.message || "Smile ID could not submit the verification.");
+          }
+        },
+      });
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to start Smile ID verification."
+      );
       setIsSubmitting(false);
-      setKycState("pending_review");
-    }, 800);
+    }
   };
 
   const handleCompleteKyc = () => {
@@ -105,11 +155,17 @@ export default function VerifyIdentityPage({
 
   return (
     <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+      <Script
+        src="https://cdn.usesmileid.com/inline/v12/js/script.min.js"
+        strategy="afterInteractive"
+        onReady={() => setSdkReady(true)}
+        onError={() => setErrorMessage("Smile ID could not be loaded. Check your connection and retry.")}
+      />
       <Navbar />
 
       <main className="flex-1 w-full py-8 sm:py-12">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
-          {/* Breadcrumb & Flow State Switcher */}
+          {/* Breadcrumb */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-[#111113]/12">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em]">
               <Link
@@ -128,34 +184,6 @@ export default function VerifyIdentityPage({
               </span>
             </div>
 
-            {/* State Switcher for Reviewing All 4 Specification States */}
-            <div className="flex items-center gap-1 bg-white border border-[#111113]/12 p-1 self-start sm:self-auto overflow-x-auto max-w-full">
-              <span className="font-mono text-[10px] uppercase tracking-wider font-bold text-[#111113]/55 px-2.5">
-                Preview State:
-              </span>
-              {(
-                [
-                  { id: "active_form", label: "Upload & Selfie" },
-                  { id: "pending_review", label: "Pending Review" },
-                  { id: "rejected_retry", label: "Rejected/Retry" },
-                  { id: "approved", label: "Approved" },
-                ] as const
-              ).map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setKycState(s.id)}
-                  className={cn(
-                    "px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors whitespace-nowrap",
-                    kycState === s.id
-                      ? "bg-[#111113] text-white font-bold"
-                      : "text-[#111113]/65 hover:text-[#111113] hover:bg-[#F8F7F4]"
-                  )}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* =================================================================
@@ -180,119 +208,34 @@ export default function VerifyIdentityPage({
                 </p>
               </div>
 
-              {/* 2-Step Architectural Progress Bar */}
-              <div className="grid grid-cols-2 border border-[#111113]/12 bg-white divide-x divide-[#111113]/12 max-w-md mx-auto">
+              <div className="mx-auto max-w-xl border border-[#111113]/12 bg-white p-6 sm:p-8 text-center space-y-5">
+                <p className="font-secondary text-sm text-[#111113]/70 leading-relaxed">
+                  Smile ID will securely guide you through identity document capture,
+                  biometric liveness, and consent. Scrowpoint receives the final result
+                  directly from Smile ID and will not mark verification complete from
+                  the browser alone.
+                </p>
+                {errorMessage && (
+                  <p role="alert" className="text-sm text-red-700">
+                    {errorMessage}
+                  </p>
+                )}
                 <button
                   type="button"
-                  onClick={() => setCurrentStep(1)}
-                  className={cn(
-                    "p-4 text-left transition-colors relative",
-                    currentStep === 1
-                      ? "bg-[#111113] text-white"
-                      : "bg-white text-[#111113]/65 hover:bg-[#F8F7F4]"
-                  )}
+                  disabled={isSubmitting || !sdkReady}
+                  onClick={handleStartVerification}
+                  className="btn-primary h-11 px-7 rounded-full bg-[#111113] hover:bg-[#FF5A25] disabled:opacity-50 text-xs font-mono uppercase tracking-wider font-bold text-white transition-colors inline-flex items-center gap-2"
                 >
-                  {currentStep === 1 && (
-                    <div className="absolute top-0 inset-x-0 h-[3px] bg-[#FF5A25]" />
+                  {isSubmitting ? (
+                    <span>Opening secure verification...</span>
+                  ) : (
+                    <>
+                      <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                      <span>{sdkReady ? "Start Smile ID Verification" : "Loading Smile ID..."}</span>
+                    </>
                   )}
-                  <span
-                    className={cn(
-                      "font-mono text-[10px] uppercase tracking-widest font-bold block mb-0.5",
-                      currentStep === 1
-                        ? "text-[#FF5A25]"
-                        : "text-[#111113]/50"
-                    )}
-                  >
-                    [01] Document
-                  </span>
-                  <span className="font-primary text-sm font-bold tracking-[-0.02em]">
-                    Government ID
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(2)}
-                  className={cn(
-                    "p-4 text-left transition-colors relative",
-                    currentStep === 2
-                      ? "bg-[#111113] text-white"
-                      : "bg-white text-[#111113]/65 hover:bg-[#F8F7F4]"
-                  )}
-                >
-                  {currentStep === 2 && (
-                    <div className="absolute top-0 inset-x-0 h-[3px] bg-[#FF5A25]" />
-                  )}
-                  <span
-                    className={cn(
-                      "font-mono text-[10px] uppercase tracking-widest font-bold block mb-0.5",
-                      currentStep === 2
-                        ? "text-[#FF5A25]"
-                        : "text-[#111113]/50"
-                    )}
-                  >
-                    [02] Biometrics
-                  </span>
-                  <span className="font-primary text-sm font-bold tracking-[-0.02em]">
-                    3D Liveness Selfie
-                  </span>
                 </button>
               </div>
-
-              {/* Step Content */}
-              {currentStep === 1 ? (
-                <div className="space-y-6">
-                  <DocumentUploadArea
-                    onComplete={(res) => {
-                      if (res.frontFile) setHasDoc(true);
-                    }}
-                  />
-
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="btn-primary h-11 px-7 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-2"
-                    >
-                      <span>Proceed to Biometric Selfie</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <CameraCaptureWidget
-                    onCaptureComplete={() => setHasSelfie(true)}
-                  />
-
-                  <div className="flex items-center justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      className="h-11 px-5 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors inline-flex items-center gap-2"
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                      <span>Back to Document</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      disabled={isSubmitting}
-                      onClick={handleSubmitForReview}
-                      className="btn-primary h-11 px-7 rounded-full bg-[#111113] hover:bg-[#FF5A25] disabled:opacity-50 text-xs font-mono uppercase tracking-wider font-bold text-white transition-colors inline-flex items-center gap-2"
-                    >
-                      {isSubmitting ? (
-                        <span>Validating with SmileID...</span>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="h-4 w-4 text-[#22c55e]" />
-                          <span>Submit Verification</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 

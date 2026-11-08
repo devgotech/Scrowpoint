@@ -47,9 +47,11 @@ func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
 
 	assertHandlerStatus(t, performHandlerRequest(handler.SignUp, http.MethodGet, "/api/auth/signup", ""), http.StatusMethodNotAllowed)
 	assertHandlerStatus(t, performHandlerRequest(handler.SignUp, http.MethodPost, "/api/auth/signup", "{"), http.StatusBadRequest)
+	assertHandlerStatus(t, performHandlerRequest(handler.SignUp, http.MethodPost, "/api/auth/signup",
+		`{"email":"no-terms@example.com","password":"password-123","name":"No Terms"}`), http.StatusBadRequest)
 
 	signup := performHandlerRequest(handler.SignUp, http.MethodPost, "/api/auth/signup",
-		`{"email":"handler@example.com","password":"password-123","name":"Handler User","role":"admin"}`)
+		`{"email":"handler@example.com","password":"password-123","name":"Handler User","role":"admin","termsAccepted":true}`)
 	assertHandlerStatus(t, signup, http.StatusCreated)
 	var signupResponse struct {
 		Data AuthResponseData `json:"data"`
@@ -60,8 +62,11 @@ func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
 	if signupResponse.Data.Token != "test-token" || signupResponse.Data.User.Role != db.RoleBuyer {
 		t.Fatalf("signup response did not issue token or restrict public role: %+v", signupResponse.Data)
 	}
+	if signupResponse.Data.User.TermsAcceptedAt == nil || signupResponse.Data.User.TermsVersion != TermsOfServiceVersion {
+		t.Fatal("signup did not persist the accepted terms version and timestamp")
+	}
 	mediatorSignup := performHandlerRequest(handler.SignUp, http.MethodPost, "/api/auth/signup",
-		`{"email":"public-mediator@example.com","password":"password-123","name":"Public Mediator","role":"mediator"}`)
+		`{"email":"public-mediator@example.com","password":"password-123","name":"Public Mediator","role":"mediator","termsAccepted":true}`)
 	assertHandlerStatus(t, mediatorSignup, http.StatusCreated)
 	var mediatorSignupResponse struct {
 		Data AuthResponseData `json:"data"`
@@ -83,9 +88,12 @@ func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RequestEmailVerification: %v", err)
 	}
-	assertHandlerStatus(t, performHandlerRequest(handler.VerifyEmail, http.MethodPost, "/api/auth/verify-email",
+	verifyEmail := func(w http.ResponseWriter, r *http.Request) {
+		handler.VerifyEmail(w, r, user.ID)
+	}
+	assertHandlerStatus(t, performHandlerRequest(verifyEmail, http.MethodPost, "/api/auth/verify-email",
 		`{"token":"`+token+`"}`), http.StatusOK)
-	assertHandlerStatus(t, performHandlerRequest(handler.VerifyEmail, http.MethodPost, "/api/auth/verify-email", `{}`), http.StatusBadRequest)
+	assertHandlerStatus(t, performHandlerRequest(verifyEmail, http.MethodPost, "/api/auth/verify-email", `{}`), http.StatusBadRequest)
 
 	recorder := httptest.NewRecorder()
 	handler.GetCurrentUser(recorder, httptest.NewRequest(http.MethodGet, "/api/auth/me", nil), user.ID)
@@ -96,20 +104,33 @@ func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
 }
 
 func TestAuthOAuthHandlerAndAdditionalValidation(t *testing.T) {
-	handler := NewAuthHandler(services.NewAuthService(), handlerTokenGenerator{})
+	auth := services.NewAuthService()
+	handler := NewAuthHandler(auth, handlerTokenGenerator{})
 	assertHandlerStatus(t, performHandlerRequest(handler.OAuth, http.MethodGet, "/api/auth/oauth/google", ""), http.StatusMethodNotAllowed)
 	assertHandlerStatus(t, performHandlerRequest(handler.OAuth, http.MethodPost, "/api/auth/oauth/google", "{"), http.StatusBadRequest)
 	assertHandlerStatus(t, performHandlerRequest(handler.OAuth, http.MethodPost, "/api/auth/oauth/google",
-		`{"email":"oauth-handler@example.com","name":"OAuth Handler","providerUid":"provider-1"}`), http.StatusOK)
+		`{"email":"oauth-handler@example.com","name":"OAuth Handler","providerUid":"provider-1"}`), http.StatusBadRequest)
+	oauthResponse := performHandlerRequest(handler.OAuth, http.MethodPost, "/api/auth/oauth/google",
+		`{"email":"oauth-handler@example.com","name":"OAuth Handler","providerUid":"provider-1","termsAccepted":true}`)
+	assertHandlerStatus(t, oauthResponse, http.StatusOK)
+	var authResponse struct {
+		Data AuthResponseData `json:"data"`
+	}
+	if err := json.Unmarshal(oauthResponse.Body.Bytes(), &authResponse); err != nil {
+		t.Fatalf("decode OAuth response: %v", err)
+	}
 	assertHandlerStatus(t, performHandlerRequest(handler.Login, http.MethodPost, "/api/auth/login", "{"), http.StatusBadRequest)
 	assertHandlerStatus(t, performHandlerRequest(handler.ResetPassword, http.MethodPost, "/api/auth/password/reset/confirm", "{"), http.StatusBadRequest)
 	assertHandlerStatus(t, performHandlerRequest(handler.ResetPassword, http.MethodPost, "/api/auth/password/reset/confirm",
 		`{"token":"missing","newPassword":"new-password"}`), http.StatusBadRequest)
-	assertHandlerStatus(t, performHandlerRequest(handler.VerifyEmail, http.MethodGet, "/api/auth/verify-email", ""), http.StatusMethodNotAllowed)
-	assertHandlerStatus(t, performHandlerRequest(handler.VerifyEmail, http.MethodPost, "/api/auth/verify-email", "{"), http.StatusBadRequest)
+	verifyEmail := func(w http.ResponseWriter, r *http.Request) {
+		handler.VerifyEmail(w, r, uuid.New())
+	}
+	assertHandlerStatus(t, performHandlerRequest(verifyEmail, http.MethodGet, "/api/auth/verify-email", ""), http.StatusMethodNotAllowed)
+	assertHandlerStatus(t, performHandlerRequest(verifyEmail, http.MethodPost, "/api/auth/verify-email", "{"), http.StatusBadRequest)
 
 	recorder := httptest.NewRecorder()
-	handler.ResendVerification(recorder, httptest.NewRequest(http.MethodPost, "/api/auth/verify-email/resend", nil), uuid.New())
+	handler.ResendVerification(recorder, httptest.NewRequest(http.MethodPost, "/api/auth/verify-email/resend", nil), authResponse.Data.User.ID)
 	assertHandlerStatus(t, recorder, http.StatusOK)
 	recorder = httptest.NewRecorder()
 	handler.ChangePassword(recorder, httptest.NewRequest(http.MethodPost, "/api/auth/password/change", strings.NewReader("{")), uuid.New())
@@ -123,7 +144,7 @@ func TestAuthHandlerTokenFailureAndPasswordRoutes(t *testing.T) {
 	auth := services.NewAuthService()
 	handler := NewAuthHandler(auth, handlerTokenGenerator{err: errors.New("token unavailable")})
 	assertHandlerStatus(t, performHandlerRequest(handler.SignUp, http.MethodPost, "/api/auth/signup",
-		`{"email":"token@example.com","password":"password-123","name":"Token User"}`), http.StatusInternalServerError)
+		`{"email":"token@example.com","password":"password-123","name":"Token User","termsAccepted":true}`), http.StatusInternalServerError)
 	assertHandlerStatus(t, performHandlerRequest(handler.Login, http.MethodPost, "/api/auth/login",
 		`{"email":"token@example.com","password":"password-123"}`), http.StatusInternalServerError)
 
@@ -1057,7 +1078,29 @@ func TestPaymentAndAdminHandlerServiceFlows(t *testing.T) {
 	listings := services.NewListingService(auth)
 	orders := services.NewOrderService(listings, auth)
 	escrow := services.NewEscrowService(orders, auth)
-	paymentService := services.NewPaymentService("sk_test_mock", escrow, orders, auth)
+	paystack := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var request struct {
+			Reference string `json:"reference"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+			t.Errorf("decode Paystack initialization request: %v", err)
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"status": true,
+			"data": map[string]string{
+				"authorization_url": "https://checkout.paystack.com/test-code",
+				"access_code":       "test-code",
+				"reference":         request.Reference,
+			},
+		})
+	}))
+	defer paystack.Close()
+	paymentService := services.NewPaymentService("sk_test_mock", escrow, orders, auth, services.PaymentServiceConfig{
+		PaystackAPIBaseURL: paystack.URL,
+		FrontendBaseURL:    "https://frontend.example",
+	})
 	paymentHandler := NewPaymentHandler(paymentService)
 	userID := seller.ID
 
@@ -1121,13 +1164,19 @@ func TestPaymentAndAdminHandlerServiceFlows(t *testing.T) {
 	paymentHandler.InitializePaystack(recorder, httptest.NewRequest(http.MethodPost, "/api/payments/initialize",
 		strings.NewReader(`{"orderId":"`+order.ID.String()+`"}`)), buyer.ID)
 	assertHandlerStatus(t, recorder, http.StatusOK)
+	var initialization struct {
+		Data services.PaystackInitResponse `json:"data"`
+	}
+	if err := json.Unmarshal(recorder.Body.Bytes(), &initialization); err != nil {
+		t.Fatalf("decode Paystack initialization response: %v", err)
+	}
 	recorder = httptest.NewRecorder()
 	paymentHandler.PaystackWebhook(recorder, httptest.NewRequest(http.MethodPost, "/api/payments/webhook", strings.NewReader(`{}`)))
 	assertHandlerStatus(t, recorder, http.StatusBadRequest)
 	t.Setenv("ENV", "test")
 	t.Setenv("ALLOW_DEV_MOCK_PAYMENTS", "true")
 	webhookRequest := httptest.NewRequest(http.MethodPost, "/api/payments/webhook",
-		strings.NewReader(`{"event":"unknown.event","data":{"reference":"unknown","metadata":{"order_id":"`+order.ID.String()+`"}}}`))
+		strings.NewReader(`{"event":"unknown.event","data":{"reference":"`+initialization.Data.Reference+`"}}`))
 	webhookRequest.Header.Set("x-paystack-signature", "dev_mock_signature")
 	recorder = httptest.NewRecorder()
 	paymentHandler.PaystackWebhook(recorder, webhookRequest)

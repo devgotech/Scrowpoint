@@ -185,9 +185,6 @@ export default function CheckoutPage({
 
       const paystackInit = await paymentsApi.initializePaystack({
         order_id: resolvedOrderId,
-        email: user.email,
-        amount_kobo: orderData.totalDeposit * 100,
-        callback_url: `${window.location.origin}/checkout/${encodeURIComponent(resolvedOrderId)}?gadget=${encodeURIComponent(resolvedGadget.id)}&payment=complete`,
       });
       if (!paystackInit.ok || !paystackInit.data?.authorization_url) {
         throw new Error(paystackInit.error || "Unable to initialize Paystack checkout.");

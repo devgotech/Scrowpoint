@@ -138,6 +138,7 @@ export interface AuthResponseDTO {
   token?: string;
   user?: AuthUserDTO;
   verification_code_preview?: string;
+  verificationCodePreview?: string;
 }
 
 export const authApi = {
@@ -161,7 +162,12 @@ export const authApi = {
 
   oauth: (
     provider: "google" | "facebook",
-    payload: { email: string; name: string; providerUid: string }
+    payload: {
+      email: string;
+      name: string;
+      providerUid: string;
+      termsAccepted?: boolean;
+    }
   ) =>
     apiFetch<AuthResponseDTO>(`/api/auth/oauth/${provider}`, {
       method: "POST",
@@ -175,7 +181,7 @@ export const authApi = {
     }),
 
   resendVerification: () =>
-    apiFetch<{ message: string; token: string }>("/api/auth/resend-verification", {
+    apiFetch<{ message: string; verificationCodePreview?: string }>("/api/auth/resend-verification", {
       method: "POST",
     }),
 
@@ -190,7 +196,7 @@ export const authApi = {
     }),
 
   requestPasswordReset: (payload: { email: string }) =>
-    apiFetch<{ message: string }>("/api/auth/request-password-reset", {
+    apiFetch<{ message: string; resetTokenPreview?: string }>("/api/auth/request-password-reset", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
@@ -220,22 +226,27 @@ export interface KYCStatusDTO {
   id_type?: string;
   masked_id?: string;
   verified_at?: string;
+  message?: string;
+  providerRef?: string;
+  rejectionReason?: string;
 }
 
 export const kycApi = {
   getStatus: () => apiFetch<KYCStatusDTO>("/api/kyc/status"),
 
-  submit: (payload: {
-    id_type: "BVN" | "NIN";
-    id_number: string;
-    first_name: string;
-    last_name: string;
-    dob?: string;
-    selfie_url?: string;
-  }) =>
-    apiFetch<KYCStatusDTO>("/api/kyc/submit", {
+  startSmileIDSession: () =>
+    apiFetch<{
+      token: string;
+      environment: "sandbox" | "production";
+      partnerId: string;
+      callbackUrl: string;
+      sessionId: string;
+      partnerName: string;
+      logoUrl: string;
+      policyUrl: string;
+      themeColor: string;
+    }>("/api/kyc/smile/session", {
       method: "POST",
-      body: JSON.stringify(payload),
     }),
 };
 
@@ -425,12 +436,7 @@ export interface SellerEarningsSummaryDTO {
 }
 
 export const paymentsApi = {
-  initializePaystack: (payload: {
-    order_id: string;
-    email: string;
-    amount_kobo: number;
-    callback_url?: string;
-  }) =>
+  initializePaystack: (payload: { order_id: string }) =>
     apiFetch<{
       authorization_url: string;
       access_code: string;

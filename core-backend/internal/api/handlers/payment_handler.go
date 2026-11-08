@@ -28,9 +28,17 @@ func (h *PaymentHandler) InitializePaystack(w http.ResponseWriter, r *http.Reque
 	}
 
 	var req struct {
-		OrderID uuid.UUID `json:"orderId"`
+		OrderID       uuid.UUID `json:"orderId"`
+		OrderIDCompat uuid.UUID `json:"order_id"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.OrderID == uuid.Nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		JSONError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if req.OrderID == uuid.Nil {
+		req.OrderID = req.OrderIDCompat
+	}
+	if req.OrderID == uuid.Nil {
 		JSONError(w, http.StatusBadRequest, "orderId is required")
 		return
 	}
@@ -200,4 +208,3 @@ func (h *PaymentHandler) ResolveBankAccount(w http.ResponseWriter, r *http.Reque
 
 	JSONSuccess(w, http.StatusOK, res)
 }
-
