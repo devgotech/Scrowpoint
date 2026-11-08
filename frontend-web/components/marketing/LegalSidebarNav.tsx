@@ -2,17 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  BookOpen,
-  ChevronRight,
-  FileText,
-  Lock,
-  Scale,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
-  UserCheck,
-} from "lucide-react";
+import { BookOpen, FileText, Lock, Scale, Shield, ShieldAlert, ShieldCheck, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

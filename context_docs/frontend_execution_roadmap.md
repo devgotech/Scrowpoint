@@ -5,7 +5,7 @@
 
 - [x] Next.js App Router setup (Tailwind v4, Geist/Roboto fonts configured).
 - [x] Implement global `formatCurrency` utility (converting kobo/cents to ₦ NGN).
-- [x] Set up HTTP-only JWT interception in `middleware.ts`.
+- [x] Set up authenticated-route interception in `proxy.ts`.
 - [x] Create `AuthContext.tsx` to distribute user state (ID, Role, KYC tier) globally.
 - [x] Configure AWS S3 Presigned URL fetcher for the `FileUploader` component.
 - [x] Set up global `error.tsx` (Generic Error State) and `loading.tsx` (Global Skeleton).

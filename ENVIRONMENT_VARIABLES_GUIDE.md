@@ -59,6 +59,30 @@ Video files are uploaded by the browser directly to the private bucket using a s
 | `GOOGLE_OAUTH_CLIENT_SECRET` | Google OAuth Client Secret for authorization code exchange | Local/Dev Google Client Secret | Staging Google Client Secret | Production Google Client Secret |
 | `FACEBOOK_APP_ID` | Server-side verification of Facebook tokens on `POST /api/auth/oauth/facebook` | Facebook Test App ID | Facebook Test App ID | Production Facebook App ID |
 | `FACEBOOK_APP_SECRET` | Meta App Secret used to validate `input_token` against Facebook Graph API | Facebook Test App Secret | Facebook Test App Secret | Production Facebook App Secret |
+| `BOOTSTRAP_ADMIN_EMAIL` | Email for one-time creation of the initial staging/production administrator, only when no admin exists | Not set | Set temporarily with `BOOTSTRAP_ADMIN_PASSWORD` only when first provisioning staging | Set temporarily with `BOOTSTRAP_ADMIN_PASSWORD` only when first provisioning production |
+| `BOOTSTRAP_ADMIN_PASSWORD` | Initial administrator password; at least 12 characters and never logged | Not set | Set as a backend secret only for first staging admin provisioning | Set as a backend secret only for first production admin provisioning |
+
+#### Initial production administrator and mediator invitations
+
+Public registration cannot create administrator or mediator accounts. Local
+development seeds a demo administrator by default; `DEV_ADMIN_EMAIL` and
+`DEV_ADMIN_PASSWORD` override its demo credentials, and `SEED_DEV_ADMIN=false`
+disables the seed. Do not use this demo account or its default password outside local
+development.
+
+Staging and production do not seed a demo administrator. To provision the first admin
+in either environment, set `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD` as
+backend secrets and deploy/restart once. The backend creates that account only if no
+administrator exists, then persists it with the other application state. Remove both
+secrets immediately after successful provisioning. If an administrator already
+exists, bootstrap credentials are ignored and do not modify any account. Keep staging
+and production credentials separate.
+
+Administrators can create a single-use mediator invitation from `/admin/dashboard`.
+The dashboard displays a link that expires after 24 hours; share it directly with the
+invited person. The recipient sets a name and a password of at least 12 characters,
+then is signed in with the limited mediator role. Invitation emails are not sent by
+this flow, so do not post invitation links publicly.
 
 ### D. Transactional Email & 6-Digit OTP Delivery (Registration & Forgot Password)
 

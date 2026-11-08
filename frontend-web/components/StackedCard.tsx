@@ -2,17 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Eye,
-  FileText,
-  Lock,
-  Scale,
-  ShieldAlert,
-} from "lucide-react";
+import { ArrowRight, Clock, Eye, FileText, Lock, Scale } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/currency";

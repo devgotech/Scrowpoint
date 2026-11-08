@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, FileText, HelpCircle, Shield, ShieldAlert, ShieldCheck } from "lucide-react";
+import { ChevronDown, ChevronUp, FileText, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

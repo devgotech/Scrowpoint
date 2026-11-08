@@ -13,7 +13,7 @@ import { authApi, clearAuthSession, setAuthSession } from "@/lib/api";
 /**
  * Types and Enums matching Scrowpoint Go Backend & Domain Models
  */
-export type UserRole = "buyer" | "seller" | "admin";
+export type UserRole = "buyer" | "seller" | "mediator" | "admin";
 export type OAuthProviderType = "google" | "facebook";
 
 export type KYCStatus =
@@ -64,7 +64,7 @@ export interface AuthContextValue {
   user: UserProfile | null;
   /** Primary identifier shorthand */
   userId: string | null;
-  /** Role of the active user: "buyer" | "seller" | "admin" */
+  /** Role of the active user. */
   role: UserRole | null;
   /** Active KYC verification status */
   kycTier: KYCStatus | null;
@@ -74,6 +74,8 @@ export interface AuthContextValue {
   isAuthenticated: boolean;
   /** Convenience boolean for admin capabilities */
   isAdmin: boolean;
+  /** Convenience boolean for limited dispute-mediation access */
+  isMediator: boolean;
   /** True if the user has been fully approved for high-trust escrow actions */
   isKYCVerified: boolean;
   /** Manually refresh the authenticated user's profile */
@@ -259,9 +261,12 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
         id: responseUser.id,
         email: responseUser.email,
         name: responseUser.name ?? responseUser.full_name ?? profile.name,
-        role: responseUser.role === "seller" || responseUser.role === "admin"
-          ? responseUser.role
-          : "buyer",
+        role:
+          responseUser.role === "seller" ||
+          responseUser.role === "mediator" ||
+          responseUser.role === "admin"
+            ? responseUser.role
+            : "buyer",
         phone: responseUser.phone,
         avatarUrl: profile.avatarUrl,
         kycStatus: isKYCStatus(responseUser.kycStatus)
@@ -327,6 +332,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     const kycTier = user?.kycStatus ?? null;
     const isAuthenticated = Boolean(user && user.id);
     const isAdmin = role === "admin";
+    const isMediator = role === "mediator";
     const isKYCVerified = kycTier === "approved";
 
     return {
@@ -337,6 +343,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
       isLoading,
       isAuthenticated,
       isAdmin,
+      isMediator,
       isKYCVerified,
       refreshUser: fetchCurrentUser,
       setUser,

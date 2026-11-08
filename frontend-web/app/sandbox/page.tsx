@@ -1,53 +1,15 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import {
-  AlertTriangle,
-  ArrowRight,
-  Boxes,
-  CheckCircle2,
-  Clock,
-  Component,
-  CreditCard,
-  Database,
-  Eye,
-  FileText,
-  Filter,
-  Grid,
-  Heart,
-  HelpCircle,
-  Laptop,
-  Layers,
-  Lock,
-  MessageCircle,
-  Package,
-  Receipt,
-  RotateCcw,
-  Scale,
-  Search,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
-  SlidersHorizontal,
-  Smartphone,
-  Sparkles,
-  Truck,
-  Upload,
-  User,
-  Wallet,
-  Zap,
-} from "lucide-react";
+import { AlertTriangle, Boxes, Search, ShieldCheck } from "lucide-react";
 
 // Atomic Primitives
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Custom Domain & Shell Components
-import { UserAvatar } from "@/components/UserAvatar";
+// Custom Domain & Shell Components
 import { EmptyState } from "@/components/EmptyState";
 import { EscrowStatusBar } from "@/components/EscrowStatusBar";
 import { Navbar } from "@/components/Navbar";
@@ -58,18 +20,10 @@ import {
   DashboardUtilityBar,
 } from "@/components/footers";
 import { GadgetListingCard, type GadgetListingData } from "@/components/GadgetListingCard";
-import { GadgetListingSkeleton, GadgetListingGridSkeleton } from "@/components/GadgetListingSkeleton";
+import { GadgetListingSkeleton } from "@/components/GadgetListingSkeleton";
 import { SearchBar } from "@/components/SearchBar";
 import { EscrowTrackerStepper } from "@/components/EscrowTrackerStepper";
-import { EscrowFeeReceipt } from "@/components/EscrowFeeReceipt";
-import { ActionRequiredCard } from "@/components/ActionRequiredCard";
-import { PaymentMethodSelector } from "@/components/PaymentMethodSelector";
-import { FileUploader } from "@/components/FileUploader";
-import { ToastItem, ToastProvider, useToast } from "@/components/Toast";
-import GlobalError from "@/app/error";
-import NotFound from "@/app/not-found";
-import { AdminDisputeRow } from "@/components/AdminDisputeRow";
-import { StackedCard } from "@/components/StackedCard";
+import { ToastProvider } from "@/components/Toast";
 
 // Marketing & Trust Components (Phase 1)
 import { InstitutionalHero } from "@/components/marketing/InstitutionalHero";
@@ -106,7 +60,6 @@ import { ProfileDetailsForm } from "@/components/settings/ProfileDetailsForm";
 import { SecuritySettings } from "@/components/settings/SecuritySettings";
 import { KYCStatusBadge } from "@/components/settings/KYCStatusBadge";
 import { NotificationFeed } from "@/components/notifications/NotificationFeed";
-import { SupportChatWindow } from "@/components/support/SupportChatWindow";
 import { FAQQuickLinks } from "@/components/support/FAQQuickLinks";
 
 // Admin Mediation Components (Phase 6)
@@ -117,8 +70,6 @@ import { ReadonlyChatTranscript } from "@/components/admin/ReadonlyChatTranscrip
 import { VerdictActionGroup } from "@/components/admin/VerdictActionGroup";
 
 import { AuthProvider } from "@/components/providers/AuthContext";
-import { formatCurrency } from "@/lib/currency";
-import type { AdminDisputeData } from "@/types/dispute";
 import { cn } from "@/lib/utils";
 
 /**
@@ -180,24 +131,6 @@ const MOCK_LISTING: GadgetListingData = {
   sellerName: "Adeola Tech Hub",
   sellerVerified: true,
   isSaved: false,
-};
-
-const MOCK_ADMIN_DISPUTE: AdminDisputeData = {
-  id: "dsp-8942-bc89",
-  orderId: "sp-ord-94218a",
-  orderNumber: "SP-ORD-94218A",
-  buyerName: "Tunde Adeleke",
-  buyerEmail: "tunde@example.ng",
-  sellerName: "Adeola Tech Hub",
-  sellerEmail: "adeola@techhub.ng",
-  gadgetTitle: "iPhone 14 Pro Max 256GB Space Black",
-  reason: "Battery capacity shows 81% on 3uTools diagnostic audit despite listing claiming 97% mint condition.",
-  lockedAmountKobo: 85000000, // ₦850,000 in kobo
-  status: "admin_mediation",
-  evidenceCount: 5,
-  slaRemainingString: "04h 18m",
-  isUrgentSla: true,
-  createdAt: "3 hours ago",
 };
 
 const MOCK_ORDER_DATA: EscrowOrderData = {

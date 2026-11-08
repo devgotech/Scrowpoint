@@ -1,19 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  CheckCircle2,
-  Clock,
-  CreditCard,
-  Lock,
-  Package,
-  RotateCcw,
-  Scale,
-  ShieldAlert,
-  ShieldCheck,
-  Truck,
-  Zap,
-} from "lucide-react";
+import { CheckCircle2, Clock, Lock, Scale, ShieldCheck, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
