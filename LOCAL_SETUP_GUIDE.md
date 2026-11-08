@@ -58,6 +58,15 @@ npm run dev
 ```
 Open `http://localhost:3000` in your browser.
 
+### Media privacy and manual KYC review
+
+- Local uploads are stored under `LOCAL_STORAGE_DIR`. Only `listing_media` is served as a public static path; KYC documents and dispute evidence are not.
+- The production media service verifies admin JWTs using the same `JWT_SECRET` as the Go backend. Use `GET /private/{storageKey}` with an `Authorization: Bearer <admin-token>` header to retrieve private files.
+- Upload evidence videos directly from the browser to the private S3/R2 bucket through a 10-minute signed URL. The default limits are 100 MB and 60 seconds; the Go API verifies actual uploaded size and content type. The original video is kept as-is—no server-side transcoding—while the existing image service continues to handle image optimization.
+- For a smaller recording without re-encoding artifacts, ask users to record at 1080p/30fps (or 720p/30fps on slower connections), keep the phone steady, and frame the device details clearly. Lowering resolution or bitrate reduces size but always trades off some detail; the app preserves the submitted original for review.
+- On Render, create a private evidence bucket and configure `S3_PRIVATE_BUCKET_NAME`, access credentials, `S3_REGION`, `S3_ENDPOINT_URL` (R2 only), and `MAX_VIDEO_UPLOAD_MB` on the Go backend. For R2, use the account endpoint and `S3_REGION=auto`. Configure bucket CORS to permit `PUT` from the exact frontend origin with `Content-Type`; keep the bucket private.
+- SmileID verification failures still enter `manual_review_required` in the Go backend. When that workflow stores a media service `storageKey` with the verification record, an admin can use the private-file endpoint to inspect the submitted ID; this does not change SmileID's automated verification behavior.
+
 ---
 
 ## 4. Deploying to Render (1-Click Blueprint or Manual Setup)
@@ -71,7 +80,7 @@ Both the repository root (`/render.yaml`) and `/scrowpoint_workspace/render.yaml
    - **`scrowpoint-core-backend`**: Docker web service built from `scrowpoint_workspace/core-backend/Dockerfile` with `/health` probe.
    - **`scrowpoint-media-service`**: Docker web service built from `scrowpoint_workspace/media-service/Dockerfile` with dynamic `$PORT` binding.
    - **`scrowpoint-db`**: Managed PostgreSQL 16 database automatically wired to `scrowpoint-core-backend` via `DATABASE_URL`.
-5. Enter your Paystack (`PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`) and SmileID (`SMILE_ID_PARTNER_ID`, `SMILE_ID_API_KEY`) keys when prompted (or use test keys) and click **Apply**.
+5. Enter your Paystack (`PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`), SmileID (`SMILE_ID_PARTNER_ID`, `SMILE_ID_API_KEY`), and object-storage values when prompted. Configure the private evidence bucket on the Go backend and separate public/private buckets on the media service. For R2, set the endpoint URL and region `auto`. Keep the private bucket non-public and configure its upload CORS for your frontend origin, then click **Apply**.
 
 ### Option B: Deploy the Next.js Frontend on Render
 Deploy `frontend-web` as a Node web service; Next.js must run as a server because its `/api/*` rewrites forward requests to the Go backend.

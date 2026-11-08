@@ -1,0 +1,109 @@
+name: Quality Gates
+
+on:
+  push:
+    branches:
+      - dev
+      - staging
+      - main
+  pull_request:
+    branches:
+      - staging
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go:
+    name: Go tests, vet, and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: core-backend/go.mod
+          cache-dependency-path: core-backend/go.sum
+
+      - name: Run Go tests
+        working-directory: core-backend
+        run: go test ./...
+
+      - name: Run Go vet
+        working-directory: core-backend
+        run: go vet ./...
+
+      - name: Build Go backend
+        working-directory: core-backend
+        run: go build ./...
+
+  frontend:
+    name: Frontend lint and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend-web/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend-web
+
+      - name: Lint frontend
+        run: npm --prefix frontend-web run lint
+
+      - name: Build frontend
+        run: npm --prefix frontend-web run build
+
+  media:
+    name: Media service tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: media-service/requirements.txt
+
+      - name: Install media service dependencies
+        run: python -m pip install -r media-service/requirements.txt
+
+      - name: Run media service tests
+        working-directory: media-service
+        run: python -m unittest discover -s tests -v
+
+  quality-gates:
+    name: Quality Gates
+    if: always()
+    needs:
+      - go
+      - frontend
+      - media
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every quality job to pass
+        env:
+          GO_RESULT: ${{ needs.go.result }}
+          FRONTEND_RESULT: ${{ needs.frontend.result }}
+          MEDIA_RESULT: ${{ needs.media.result }}
+        run: |
+          test "${GO_RESULT}" = "success"
+          test "${FRONTEND_RESULT}" = "success"
+          test "${MEDIA_RESULT}" = "success"

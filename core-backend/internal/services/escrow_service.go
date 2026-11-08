@@ -167,11 +167,21 @@ func (s *EscrowService) FundEscrow(
 	}
 
 	s.orderService.Mu.Lock()
-	order.EscrowState = db.EscrowStateFundsHeld
-	order.UpdatedAt = time.Now()
+	storedOrder, exists := s.orderService.OrdersByID[orderID]
+	if !exists || storedOrder.DeletedAt != nil {
+		s.orderService.Mu.Unlock()
+		return nil, errors.New("order not found")
+	}
+	if storedOrder.EscrowState != db.EscrowStateCreated && storedOrder.EscrowState != db.EscrowStatePendingPayment {
+		s.orderService.Mu.Unlock()
+		return nil, fmt.Errorf("order cannot be funded from current state: %s", storedOrder.EscrowState)
+	}
+	storedOrder.EscrowState = db.EscrowStateFundsHeld
+	storedOrder.UpdatedAt = time.Now()
+	orderCopy := *storedOrder
 	s.orderService.Mu.Unlock()
 
-	return order, nil
+	return &orderCopy, nil
 }
 
 func (s *EscrowService) TransitionToInTransit(
@@ -190,18 +200,24 @@ func (s *EscrowService) TransitionToInTransit(
 		return nil, errors.New("forbidden: only seller can initiate shipment")
 	}
 
-	if err := db.ValidateStateTransition(order.EscrowState, db.EscrowStateInTransit); err != nil {
+	s.orderService.Mu.Lock()
+	storedOrder, exists := s.orderService.OrdersByID[orderID]
+	if !exists || storedOrder.DeletedAt != nil {
+		s.orderService.Mu.Unlock()
+		return nil, errors.New("order not found")
+	}
+	if err := db.ValidateStateTransition(storedOrder.EscrowState, db.EscrowStateInTransit); err != nil {
+		s.orderService.Mu.Unlock()
 		return nil, err
 	}
-
-	s.orderService.Mu.Lock()
-	order.EscrowState = db.EscrowStateInTransit
-	order.TrackingNumber = trackingNumber
-	order.TrackingCarrier = carrier
-	order.UpdatedAt = time.Now()
+	storedOrder.EscrowState = db.EscrowStateInTransit
+	storedOrder.TrackingNumber = trackingNumber
+	storedOrder.TrackingCarrier = carrier
+	storedOrder.UpdatedAt = time.Now()
+	orderCopy := *storedOrder
 	s.orderService.Mu.Unlock()
 
-	return order, nil
+	return &orderCopy, nil
 }
 
 func (s *EscrowService) StartInspectionPeriod(ctx context.Context, orderID uuid.UUID) (*db.Order, error) {

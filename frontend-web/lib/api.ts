@@ -467,23 +467,27 @@ export const paymentsApi = {
 // ============================================================================
 export interface BackendDisputeDTO {
   id: string;
-  order_id: string;
-  initiator_id: string;
-  reason: string;
-  description: string;
+  orderId: string;
+  issueType: string;
   status: string;
-  evidence_urls?: string[];
-  resolution_verdict?: string;
-  seller_split_pct?: number;
-  created_at?: string;
+  mediatorNotes?: string;
+  evidence?: Array<{
+    id: string;
+    disputeId: string;
+    submittedBy: string;
+    evidenceType: "photo" | "video" | "tracking";
+    mediaUrl: string;
+    description?: string;
+    createdAt: string;
+  }>;
+  createdAt?: string;
 }
 
 export const disputesApi = {
   create: (payload: {
-    order_id: string;
-    reason: string;
-    description: string;
-    evidence_urls: string[];
+    orderId: string;
+    issueType: string;
+    notes: string;
   }) =>
     apiFetch<BackendDisputeDTO>("/api/disputes", {
       method: "POST",
@@ -494,15 +498,20 @@ export const disputesApi = {
 
   addEvidence: (
     id: string,
-    payload: { file_url: string; file_type: string; caption?: string; sha256_hash?: string }
+    payload: { mediaUrl: string; evidenceType: "photo" | "video" | "tracking"; description?: string }
   ) =>
-    apiFetch<{ added: boolean; dispute_id: string }>(
+    apiFetch<NonNullable<BackendDisputeDTO["evidence"]>[number]>(
       `/api/disputes/${encodeURIComponent(id)}/evidence`,
       {
         method: "POST",
         body: JSON.stringify(payload),
       }
     ),
+
+  finalizeEvidence: (id: string) =>
+    apiFetch<BackendDisputeDTO>(`/api/disputes/${encodeURIComponent(id)}/submit`, {
+      method: "POST",
+    }),
 };
 
 // ============================================================================
@@ -517,10 +526,35 @@ export interface AdminSummaryDTO {
   platform_revenue_kobo: number;
 }
 
+export interface AdminDisputeEvidenceDTO {
+  id: string;
+  disputeId: string;
+  submittedBy: string;
+  evidenceType: "photo" | "video" | "tracking";
+  mediaUrl: string;
+  downloadUrl: string;
+  description?: string;
+  createdAt: string;
+}
+
+export interface AdminDisputeEvidenceResponseDTO {
+  disputeId: string;
+  orderId: string;
+  issueType: string;
+  evidence: AdminDisputeEvidenceDTO[];
+  sellerResponseNotes?: string;
+  mediatorNotes?: string;
+}
+
 export const adminApi = {
   getSummary: () => apiFetch<AdminSummaryDTO>("/api/admin/summary"),
 
   listDisputes: () => apiFetch<BackendDisputeDTO[]>("/api/admin/disputes"),
+
+  getDisputeEvidence: (disputeId: string) =>
+    apiFetch<AdminDisputeEvidenceResponseDTO>(
+      `/api/admin/disputes/${encodeURIComponent(disputeId)}/evidence`
+    ),
 
   resolveDispute: (
     disputeId: string,

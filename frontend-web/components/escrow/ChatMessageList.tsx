@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useId, useRef, useState } from "react";
 import {
   AlertTriangle,
   Camera,
@@ -67,6 +67,8 @@ export function ChatMessageList({
   className,
   onOpenEvidenceModal,
 }: ChatMessageListProps) {
+  const messageIdPrefix = useId();
+  const messageSequence = useRef(0);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "m-1",
@@ -253,7 +255,7 @@ export function ChatMessageList({
       : undefined;
 
     const optimisticMessage: ChatMessage = {
-      id: `m-${Date.now()}`,
+      id: `m-${messageIdPrefix}-${messageSequence.current++}`,
       sender: "buyer",
       senderName: buyerName,
       text: masked,

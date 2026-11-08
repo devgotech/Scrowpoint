@@ -250,7 +250,7 @@ export function PaymentMethodSelector({
 
           {activeMethod === "card" && (
             <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
-              Clicking <strong className="text-[#111113]">"Proceed to Paystack"</strong> will invoke
+              Clicking <strong className="text-[#111113]">&quot;Proceed to Paystack&quot;</strong> will invoke
               a secure popup iframe to tokenize your card and place the escrow reservation hold. No card PIN or CVV is ever stored on Scrowpoint servers.
             </p>
           )}

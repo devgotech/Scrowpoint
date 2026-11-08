@@ -14,15 +14,18 @@ import (
 type AdminHandler struct {
 	disputeService    *services.DisputeService
 	moderationService *services.ModerationService
+	mediaHandler      *MediaHandler
 }
 
 func NewAdminHandler(
 	disputeService *services.DisputeService,
 	moderationService *services.ModerationService,
+	mediaHandler *MediaHandler,
 ) *AdminHandler {
 	return &AdminHandler{
 		disputeService:    disputeService,
 		moderationService: moderationService,
+		mediaHandler:      mediaHandler,
 	}
 }
 
@@ -72,6 +75,10 @@ func (h *AdminHandler) AssignDispute(w http.ResponseWriter, r *http.Request, adm
 
 func (h *AdminHandler) GetDisputeEvidence(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
+	if len(parts) != 5 {
+		JSONError(w, http.StatusBadRequest, "Dispute ID is required")
+		return
+	}
 	disputeID, err := uuid.Parse(parts[3])
 	if err != nil {
 		JSONError(w, http.StatusBadRequest, "Invalid dispute UUID")
@@ -84,11 +91,30 @@ func (h *AdminHandler) GetDisputeEvidence(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	evidence := make([]map[string]interface{}, 0, len(dispute.Evidence))
+	for _, item := range dispute.Evidence {
+		downloadURL, err := h.mediaHandler.PrivateEvidenceDownloadURL(r, item.MediaURL)
+		if err != nil {
+			JSONError(w, http.StatusServiceUnavailable, "Private dispute evidence could not be accessed")
+			return
+		}
+		evidence = append(evidence, map[string]interface{}{
+			"id":           item.ID,
+			"disputeId":    item.DisputeID,
+			"submittedBy":  item.SubmittedBy,
+			"evidenceType": item.EvidenceType,
+			"mediaUrl":     item.MediaURL,
+			"downloadUrl":  downloadURL,
+			"description":  item.Description,
+			"createdAt":    item.CreatedAt,
+		})
+	}
+
 	JSONSuccess(w, http.StatusOK, map[string]interface{}{
 		"disputeId":           dispute.ID,
 		"orderId":             dispute.OrderID,
 		"issueType":           dispute.IssueType,
-		"evidence":            dispute.Evidence,
+		"evidence":            evidence,
 		"sellerResponseNotes": dispute.SellerResponseNotes,
 		"mediatorNotes":       dispute.MediatorNotes,
 	})

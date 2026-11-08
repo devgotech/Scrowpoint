@@ -105,7 +105,7 @@ export function VerdictActionGroup({
             {formatNaira(orderAmount)}
           </div>
           <p className="font-secondary text-[11px] text-[#15803d]/80 leading-tight">
-            Claim rejected; release escrow funds to seller's NUBAN.
+            Claim rejected; release escrow funds to seller&apos;s NUBAN.
           </p>
         </button>
 

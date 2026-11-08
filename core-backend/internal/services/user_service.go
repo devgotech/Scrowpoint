@@ -13,17 +13,17 @@ import (
 )
 
 type PublicProfileDTO struct {
-	ID                   uuid.UUID   `json:"id"`
-	Name                 string      `json:"name"`
-	AvatarURL            string      `json:"avatarUrl,omitempty"`
-	Location             string      `json:"location,omitempty"`
+	ID                   uuid.UUID    `json:"id"`
+	Name                 string       `json:"name"`
+	AvatarURL            string       `json:"avatarUrl,omitempty"`
+	Location             string       `json:"location,omitempty"`
 	KYCStatus            db.KYCStatus `json:"kycStatus"`
-	IsKYCVerified        bool        `json:"isKycVerified"`
-	RatingAvg            float64     `json:"ratingAvg"`
-	RatingCount          int         `json:"ratingCount"`
-	MemberSince          time.Time   `json:"memberSince"`
-	CompletedOrdersCount int         `json:"completedOrdersCount"`
-	ActiveListingsCount  int         `json:"activeListingsCount"`
+	IsKYCVerified        bool         `json:"isKycVerified"`
+	RatingAvg            float64      `json:"ratingAvg"`
+	RatingCount          int          `json:"ratingCount"`
+	MemberSince          time.Time    `json:"memberSince"`
+	CompletedOrdersCount int          `json:"completedOrdersCount"`
+	ActiveListingsCount  int          `json:"activeListingsCount"`
 }
 
 type UpdateProfileInput struct {
@@ -44,9 +44,11 @@ func NewUserService(authService *AuthService) *UserService {
 }
 
 func (s *UserService) UpdateProfile(ctx context.Context, userID uuid.UUID, in UpdateProfileInput) (*db.User, error) {
-	user, err := s.authService.GetUserByID(ctx, userID)
-	if err != nil {
-		return nil, err
+	s.authService.Mu.Lock()
+	defer s.authService.Mu.Unlock()
+	user, exists := s.authService.UsersByID[userID]
+	if !exists || user.DeletedAt != nil {
+		return nil, errors.New("user not found")
 	}
 
 	if in.Name != "" {
@@ -68,9 +70,11 @@ func (s *UserService) UpdateAvatar(ctx context.Context, userID uuid.UUID, avatar
 		return nil, errors.New("avatar URL cannot be empty")
 	}
 
-	user, err := s.authService.GetUserByID(ctx, userID)
-	if err != nil {
-		return nil, err
+	s.authService.Mu.Lock()
+	defer s.authService.Mu.Unlock()
+	user, exists := s.authService.UsersByID[userID]
+	if !exists || user.DeletedAt != nil {
+		return nil, errors.New("user not found")
 	}
 
 	user.AvatarURL = avatarURL

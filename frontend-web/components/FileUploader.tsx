@@ -7,10 +7,7 @@ import {
   CheckCircle2,
   FileText,
   Film,
-  Image as ImageIcon,
   Loader2,
-  Lock,
-  RefreshCw,
   Trash2,
   Upload,
   UploadCloud,
@@ -25,11 +22,11 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 2, Spec 5 §4):
  * - Desktop: Drag-and-drop dropzone with file picker fallback.
- * - Mobile (<768px): Dual buttons for "Take Photo / Camera Capture" (`capture="environment"`) and "Choose from Gallery".
+ * - Mobile (<768px): Record a video or select an existing clip.
  * - Corner Radius: --radius-card (8px -> rounded-[8px]) for dropzone & queue cards; --radius-control (4px -> rounded-[4px]) for buttons and controls.
  * - Loading States:
  *   - "Requesting secure upload authorization..." (presigned URL request from Go backend)
- *   - "Streaming directly to secure storage..." (PUT to S3)
+ *   - Direct-to-storage video upload with transfer progress.
  * - Error Handling: Surface friendly validation messages (size limit, file type) in --color-state-error (#f56565).
  * - Transitions: strict duration-200 ease-out transitions. Zero bouncy scaling animations.
  * - Typography: font-primary for headings, font-secondary for body, font-mono for file sizes and S3 keys.
@@ -49,8 +46,10 @@ export interface FileUploaderProps {
   referenceId?: string;
   /** Accepted MIME types (e.g., "image/*,video/mp4") */
   accept?: string;
-  /** Maximum file size allowed in MegaBytes. Default 50MB */
-  maxSizeMB?: number;
+  /** Maximum direct-to-storage video size, in MB. */
+  maxVideoSizeMB?: number;
+  /** Maximum video duration, in seconds. */
+  maxVideoDurationSeconds?: number;
   /** Allow multiple file selection. Default true */
   multiple?: boolean;
   /** Maximum number of files. Default 5 */
@@ -61,20 +60,52 @@ export interface FileUploaderProps {
   description?: string;
   /** Callback fired when all files are successfully uploaded */
   onUploadComplete?: (results: UploadResult[]) => void;
+  /** Callback fired when transfer begins or all selected uploads finish. */
+  onUploadStateChange?: (uploading: boolean) => void;
   /** Callback fired on error */
   onError?: (err: Error) => void;
   className?: string;
 }
 
+function readVideoDuration(file: File): Promise<number> {
+  const objectUrl = URL.createObjectURL(file);
+  const video = document.createElement("video");
+  video.preload = "metadata";
+  video.src = objectUrl;
+
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      URL.revokeObjectURL(objectUrl);
+      video.removeAttribute("src");
+      video.load();
+    };
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      cleanup();
+      if (Number.isFinite(duration) && duration > 0) {
+        resolve(duration);
+      } else {
+        reject(new Error("Video duration metadata is unavailable."));
+      }
+    };
+    video.onerror = () => {
+      cleanup();
+      reject(new Error("Video metadata could not be read."));
+    };
+  });
+}
+
 export function FileUploader({
   referenceId = "upload-ref-default",
-  accept = "image/*,video/mp4,video/quicktime",
-  maxSizeMB = 50,
+  accept = "video/mp4,video/quicktime,video/webm",
+  maxVideoSizeMB = 100,
+  maxVideoDurationSeconds = 60,
   multiple = true,
   maxFiles = 5,
-  title = "Upload Media & Evidence",
-  description = "Drag and drop high-resolution gadget photos, KYC documents, or unboxing video evidence.",
+  title = "Upload Device Video Evidence",
+  description = "Upload a short device walkthrough. Show the device condition and important details clearly.",
   onUploadComplete,
+  onUploadStateChange,
   onError,
   className,
 }: FileUploaderProps) {
@@ -86,7 +117,7 @@ export function FileUploader({
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+  const maxVideoSizeBytes = maxVideoSizeMB * 1024 * 1024;
 
   // Process selected files and trigger direct presigned S3 upload
   const handleFilesSelected = async (newRawFiles: FileList | File[]) => {
@@ -101,18 +132,34 @@ export function FileUploader({
     const validatedNewFiles: UploadedFileState[] = [];
 
     for (const file of fileArray) {
-      if (file.size > maxSizeBytes) {
-        setGlobalError(`File "${file.name}" exceeds the ${maxSizeMB}MB size limit.`);
+      const isVideo = file.type.startsWith("video/");
+      if (!isVideo || file.size > maxVideoSizeBytes) {
+        setGlobalError(
+          !isVideo
+            ? `File "${file.name}" is not a supported video. Upload images through the image uploader.`
+            : `File "${file.name}" exceeds the ${maxVideoSizeMB}MB video limit.`
+        );
         continue;
       }
 
-      const previewUrl = file.type.startsWith("image/")
-        ? URL.createObjectURL(file)
-        : "";
+      if (isVideo) {
+        try {
+          const duration = await readVideoDuration(file);
+          if (duration > maxVideoDurationSeconds) {
+            setGlobalError(
+              `"${file.name}" is ${Math.ceil(duration)} seconds long. Videos must be ${maxVideoDurationSeconds} seconds or shorter.`
+            );
+            continue;
+          }
+        } catch {
+          setGlobalError(`Could not read the duration of "${file.name}". Try an MP4 or MOV video.`);
+          continue;
+        }
+      }
 
       validatedNewFiles.push({
         file,
-        previewUrl,
+        previewUrl: "",
         status: "idle",
       });
     }
@@ -123,27 +170,32 @@ export function FileUploader({
 
     // Begin upload lifecycle for each newly added file
     const completedResults: UploadResult[] = [];
+    onUploadStateChange?.(true);
+    try {
+      for (const item of validatedNewFiles) {
+        updateFileStatus(item.file.name, "presigning");
 
-    for (const item of validatedNewFiles) {
-      updateFileStatus(item.file.name, "presigning");
+        try {
+          updateFileStatus(item.file.name, "uploading");
+          const result = await uploadToPresignedUrl(item.file, referenceId, {
+            onProgress: (progress) => updateFileProgress(item.file.name, progress),
+          });
 
-      try {
-        // Step 1 & 2: Get presigned URL and stream to S3
-        updateFileStatus(item.file.name, "uploading");
-        const result = await uploadToPresignedUrl(item.file, referenceId);
-
-        updateFileSuccess(item.file.name, result);
-        completedResults.push(result);
-      } catch (err: unknown) {
-        const errorMsg =
-          err instanceof Error ? err.message : "Failed to upload file.";
-        updateFileError(item.file.name, errorMsg);
-        onError?.(err instanceof Error ? err : new Error(errorMsg));
+          updateFileSuccess(item.file.name, result);
+          completedResults.push(result);
+        } catch (err: unknown) {
+          const errorMsg =
+            err instanceof Error ? err.message : "Failed to upload file.";
+          updateFileError(item.file.name, errorMsg);
+          onError?.(err instanceof Error ? err : new Error(errorMsg));
+        }
       }
-    }
 
-    if (completedResults.length > 0) {
-      onUploadComplete?.(completedResults);
+      if (completedResults.length > 0) {
+        onUploadComplete?.(completedResults);
+      }
+    } finally {
+      onUploadStateChange?.(false);
     }
   };
 
@@ -173,6 +225,12 @@ export function FileUploader({
           ? { ...f, status: "error", error }
           : f
       )
+    );
+  };
+
+  const updateFileProgress = (fileName: string, progress: number) => {
+    setFiles((prev) =>
+      prev.map((f) => (f.file.name === fileName ? { ...f, progress } : f))
     );
   };
 
@@ -229,7 +287,7 @@ export function FileUploader({
       <input
         ref={cameraInputRef}
         type="file"
-        accept="image/*"
+        accept="video/*"
         capture="environment"
         className="hidden"
         onChange={(e) => {
@@ -281,7 +339,7 @@ export function FileUploader({
             <span>Select Files</span>
           </Button>
           <span className="text-[11px] font-mono text-[#111113]/60">
-            Max {maxSizeMB}MB per file
+            Videos up to {maxVideoSizeMB}MB / {maxVideoDurationSeconds}s
           </span>
         </div>
       </div>
@@ -298,7 +356,7 @@ export function FileUploader({
           className="h-11 gap-2 text-xs font-medium"
         >
           <Camera className="h-4 w-4" />
-          <span>Take Photo</span>
+          <span>Record Video</span>
         </Button>
 
         <Button
@@ -308,8 +366,8 @@ export function FileUploader({
           onClick={() => galleryInputRef.current?.click()}
           className="h-11 gap-2 text-xs font-medium"
         >
-          <ImageIcon className="h-4 w-4" />
-          <span>Photo Gallery</span>
+          <Film className="h-4 w-4" />
+          <span>Choose Video</span>
         </Button>
       </div>
 
@@ -379,7 +437,7 @@ export function FileUploader({
                         {item.status === "uploading" && (
                           <span className="flex items-center gap-1 text-[#111113]">
                             <Loader2 className="h-3 w-3 animate-spin text-[#111113]" />
-                            <span>Streaming to S3...</span>
+                            <span>Uploading {item.progress ?? 0}%...</span>
                           </span>
                         )}
 
