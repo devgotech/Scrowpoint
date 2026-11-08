@@ -31,29 +31,36 @@ export default function ArbitrationRoomPage({
   const routeParams = useParams<{ case_id?: string }>();
   const caseId = providedCaseId ?? routeParams.case_id ?? "dsp-101";
   const [verdictMessage, setVerdictMessage] = useState<string | null>(null);
-  const [disputeEvidence, setDisputeEvidence] =
-    useState<AdminDisputeEvidenceResponseDTO | null>(null);
-  const [isEvidenceLoading, setIsEvidenceLoading] = useState(true);
-  const [evidenceError, setEvidenceError] = useState<string | null>(null);
+  const [evidenceState, setEvidenceState] = useState<{
+    caseId: string;
+    data: AdminDisputeEvidenceResponseDTO | null;
+    error: string | null;
+  }>({ caseId: "", data: null, error: null });
 
   useEffect(() => {
     let active = true;
-    setIsEvidenceLoading(true);
-    setEvidenceError(null);
     adminApi.getDisputeEvidence(caseId).then((result) => {
       if (!active) return;
       if (!result.ok || !result.data) {
-        setEvidenceError(result.error || "Could not load dispute evidence.");
+        setEvidenceState({
+          caseId,
+          data: null,
+          error: result.error || "Could not load dispute evidence.",
+        });
       } else {
-        setDisputeEvidence(result.data);
+        setEvidenceState({ caseId, data: result.data, error: null });
       }
-      setIsEvidenceLoading(false);
     });
     return () => {
       active = false;
     };
   }, [caseId]);
 
+  const isEvidenceLoading = evidenceState.caseId !== caseId;
+  const evidenceError =
+    evidenceState.caseId === caseId ? evidenceState.error : null;
+  const disputeEvidence =
+    evidenceState.caseId === caseId ? evidenceState.data : null;
   const evidenceAssets = disputeEvidence?.evidence.map((item, index) => ({
     id: item.id,
     title: `Submitted ${item.evidenceType} ${index + 1}`,

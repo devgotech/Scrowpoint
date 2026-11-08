@@ -110,8 +110,17 @@ func (s *DisputeService) OpenDispute(ctx context.Context, buyerID uuid.UUID, in 
 	}
 
 	s.orderService.Mu.Lock()
-	order.EscrowState = db.EscrowStateDisputed
-	order.UpdatedAt = now
+	storedOrder, exists := s.orderService.OrdersByID[order.ID]
+	if !exists || storedOrder.DeletedAt != nil {
+		s.orderService.Mu.Unlock()
+		return nil, errors.New("order not found")
+	}
+	if storedOrder.EscrowState != db.EscrowStateInspectionPeriod && storedOrder.EscrowState != db.EscrowStateInTransit {
+		s.orderService.Mu.Unlock()
+		return nil, fmt.Errorf("cannot open dispute on order with state: %s", storedOrder.EscrowState)
+	}
+	storedOrder.EscrowState = db.EscrowStateDisputed
+	storedOrder.UpdatedAt = now
 	s.orderService.Mu.Unlock()
 
 	s.DisputesByID[dispute.ID] = dispute
