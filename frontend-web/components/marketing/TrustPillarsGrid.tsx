@@ -1,20 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  Clock,
-  Eye,
-  FileCheck,
-  Lock,
-  Scale,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
-  Smartphone,
-  Truck,
-  UserCheck,
-  Zap,
-} from "lucide-react";
+import { Clock, Lock, Scale, ShieldCheck, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

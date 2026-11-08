@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Lock, MessageSquare, ShieldAlert } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

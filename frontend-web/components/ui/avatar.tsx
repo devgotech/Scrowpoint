@@ -41,14 +41,14 @@ const AvatarImage = React.forwardRef<
   React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, src, alt, ...props }, ref) => {
   const context = React.useContext(AvatarContext);
+  const setImageLoaded = context?.setImageLoaded;
+  const setImageError = context?.setImageError;
 
   React.useEffect(() => {
     // Reset status when src changes
-    if (context) {
-      context.setImageLoaded(false);
-      context.setImageError(false);
-    }
-  }, [src]);
+    setImageLoaded?.(false);
+    setImageError?.(false);
+  }, [src, setImageError, setImageLoaded]);
 
   if (!src || context?.imageError) {
     return null;

@@ -2,21 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Activity,
-  CheckCircle2,
-  Command,
-  ExternalLink,
-  FileText,
-  HelpCircle,
-  Keyboard,
-  Lock,
-  RotateCcw,
-  Shield,
-  Sparkles,
-  Terminal,
-  X,
-} from "lucide-react";
+import { Activity, HelpCircle, Keyboard, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";

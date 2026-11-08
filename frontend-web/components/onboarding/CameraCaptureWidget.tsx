@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Camera,
-  CheckCircle2,
-  RefreshCw,
-  RotateCcw,
-  ShieldCheck,
-  Sparkles,
-  UserCheck,
-} from "lucide-react";
+import { Camera, CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";

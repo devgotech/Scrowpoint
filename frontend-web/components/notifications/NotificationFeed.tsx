@@ -1,19 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import {
-  AlertTriangle,
-  ArrowRight,
-  Bell,
-  CheckCircle2,
-  Clock,
-  Lock,
-  MessageSquare,
-  ShieldAlert,
-  ShieldCheck,
-  Truck,
-} from "lucide-react";
+import { ArrowRight, Bell, Clock, Lock, ShieldAlert, ShieldCheck, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

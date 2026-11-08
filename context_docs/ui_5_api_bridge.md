@@ -21,7 +21,7 @@ This document defines how the Next.js 16 App Router frontend securely communicat
 ## 3. Authentication & Security (JWT Handling)
 
 *   **Storage:** The Go backend will issue an HTTP-only, secure cookie containing the JWT. The Next.js frontend must never store JWTs in `localStorage` to prevent XSS attacks.
-*   **Middleware Protection:** Next.js `middleware.ts` will intercept requests to `/dashboard`, `/escrow`, and `/admin`. If the HTTP-only auth cookie is missing or expired, it immediately redirects the user to `/login` before rendering the shell.
+*   **Proxy Protection:** Next.js `proxy.ts` intercepts requests to protected routes. If the frontend session cookie is missing, it redirects the user to `/login` before rendering the shell. The Go API remains responsible for validating JWTs and role permissions.
 *   **Auth State in Client:** Create a React Context (`AuthContext`) that initializes from the server-validated cookie, providing the `user` object (ID, role, KYC tier) to deeply nested Client Components without prop-drilling.
 
 ---

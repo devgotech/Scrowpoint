@@ -5,18 +5,18 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthContext";
 
 export function AdminRouteGuard({ children }: { children: ReactNode }) {
-  const { isAdmin, isAuthenticated } = useAuth();
+  const { isAdmin, isMediator, isAuthenticated } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    if (isAdmin) return;
+    if (isAdmin || isMediator) return;
     if (isAuthenticated) {
       router.replace("/");
       return;
     }
     router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-  }, [isAdmin, isAuthenticated, pathname, router]);
+  }, [isAdmin, isMediator, isAuthenticated, pathname, router]);
 
-  return isAdmin ? children : null;
+  return isAdmin || isMediator ? children : null;
 }

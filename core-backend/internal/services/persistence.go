@@ -29,10 +29,11 @@ type PersistentServices struct {
 }
 
 type authState struct {
-	UsersByID     map[uuid.UUID]*db.User
-	Sessions      map[uuid.UUID]*Session
-	UserSessions  map[uuid.UUID][]uuid.UUID
-	TokensByValue map[string]*VerificationToken
+	UsersByID           map[uuid.UUID]*db.User
+	Sessions            map[uuid.UUID]*Session
+	UserSessions        map[uuid.UUID][]uuid.UUID
+	TokensByValue       map[string]*VerificationToken
+	MediatorInvitations map[string]*MediatorInvitation
 }
 
 type listingState struct {
@@ -93,7 +94,13 @@ func (s PersistentServices) Export() (map[string][]byte, error) {
 	}
 
 	s.Auth.Mu.RLock()
-	err := collect("auth", authState{s.Auth.UsersByID, s.Auth.Sessions, s.Auth.UserSessions, s.Auth.TokensByValue})
+	err := collect("auth", authState{
+		UsersByID:           s.Auth.UsersByID,
+		Sessions:            s.Auth.Sessions,
+		UserSessions:        s.Auth.UserSessions,
+		TokensByValue:       s.Auth.TokensByValue,
+		MediatorInvitations: s.Auth.MediatorInvitations,
+	})
 	s.Auth.Mu.RUnlock()
 	if err != nil {
 		return nil, err
@@ -217,6 +224,9 @@ func (s PersistentServices) Restore(states map[string][]byte) error {
 	}
 	if auth.TokensByValue != nil {
 		s.Auth.TokensByValue = auth.TokensByValue
+	}
+	if auth.MediatorInvitations != nil {
+		s.Auth.MediatorInvitations = auth.MediatorInvitations
 	}
 
 	var listings listingState

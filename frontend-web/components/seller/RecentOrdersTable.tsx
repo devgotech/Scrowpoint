@@ -1,10 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowRight, Clock, Eye, Lock, Package, ShieldAlert, ShieldCheck, Truck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Clock, Lock, ShieldAlert, ShieldCheck, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
