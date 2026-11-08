@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, ShieldAlert } from "lucide-react";
@@ -9,7 +9,7 @@ import { MinimalistAuthFooter } from "@/components/footers";
 import { ReadonlyChatTranscript } from "@/components/admin/ReadonlyChatTranscript";
 import { EvidenceViewer } from "@/components/admin/EvidenceViewer";
 import { VerdictActionGroup } from "@/components/admin/VerdictActionGroup";
-import { adminApi } from "@/lib/api";
+import { adminApi, type AdminDisputeEvidenceResponseDTO } from "@/lib/api";
 
 /**
  * Screen: The Arbitration Room (Phase 6 §1)
@@ -31,6 +31,37 @@ export default function ArbitrationRoomPage({
   const routeParams = useParams<{ case_id?: string }>();
   const caseId = providedCaseId ?? routeParams.case_id ?? "dsp-101";
   const [verdictMessage, setVerdictMessage] = useState<string | null>(null);
+  const [disputeEvidence, setDisputeEvidence] =
+    useState<AdminDisputeEvidenceResponseDTO | null>(null);
+  const [isEvidenceLoading, setIsEvidenceLoading] = useState(true);
+  const [evidenceError, setEvidenceError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    setIsEvidenceLoading(true);
+    setEvidenceError(null);
+    adminApi.getDisputeEvidence(caseId).then((result) => {
+      if (!active) return;
+      if (!result.ok || !result.data) {
+        setEvidenceError(result.error || "Could not load dispute evidence.");
+      } else {
+        setDisputeEvidence(result.data);
+      }
+      setIsEvidenceLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [caseId]);
+
+  const evidenceAssets = disputeEvidence?.evidence.map((item, index) => ({
+    id: item.id,
+    title: `Submitted ${item.evidenceType} ${index + 1}`,
+    source: "buyer" as const,
+    type: item.evidenceType === "video" ? "video" as const : "photo" as const,
+    url: item.downloadUrl,
+    notes: item.description || "No additional description provided.",
+  }));
 
   const handleExecuteVerdict = async (
     type: "refund_buyer" | "release_seller" | "split"
@@ -127,7 +158,11 @@ export default function ArbitrationRoomPage({
             </div>
 
             <div className="lg:col-span-6 space-y-6">
-              <EvidenceViewer />
+              <EvidenceViewer
+                evidence={evidenceAssets ?? []}
+                isLoading={isEvidenceLoading}
+                error={evidenceError}
+              />
             </div>
           </div>
 

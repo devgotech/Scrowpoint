@@ -4,16 +4,17 @@
  * Requirements (UI Context Spec 5, §4):
  * - Direct upload architecture: Prevents large media uploads (e.g., 50MB 4K unboxing videos,
  *   KYC passport images, dispute evidence) from overloading the Next.js/frontend application server.
- * - Two-step flow:
+ * - Three-step flow:
  *   1. Requests a presigned S3 PUT URL from the Go core backend (/api/media/presign).
- *   2. Directly streams/PUTs the raw binary file to the presigned S3 URL with the matching Content-Type.
+ *   2. Streams the file directly to private storage with transfer progress.
+ *   3. Asks the backend to verify the stored object's size and content type.
  * - Does NOT use heavy AWS SDK packages; uses native fetch() exclusively.
  * - Robust error handling with descriptive exceptions.
  */
 
 export interface PresignRequestPayload {
-  fileName: string;
   fileType: string;
+  fileSize: number;
   referenceId: string;
 }
 
@@ -30,7 +31,7 @@ export interface PresignResponseData {
 
 export interface UploadResult {
   /** Final URL of the uploaded file */
-  fileUrl: string;
+  fileUrl?: string;
   /** The S3 key where the object is stored */
   s3Key: string;
   /** Reference ID associated with this upload (e.g. Dispute ID, KYC Job ID) */
@@ -59,14 +60,68 @@ export interface UploadOptions {
   onProgress?: (percentage: number) => void;
 }
 
+interface CompleteResponseData {
+  fileUrl?: string;
+  key: string;
+  sizeBytes: number;
+}
+
+function uploadWithProgress(
+  url: string,
+  file: File,
+  signal?: AbortSignal,
+  onProgress?: (percentage: number) => void
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    const abort = () => request.abort();
+
+    request.open("PUT", url);
+    request.setRequestHeader("Content-Type", file.type);
+    request.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        onProgress?.(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+    request.onload = () => {
+      signal?.removeEventListener("abort", abort);
+      if (request.status >= 200 && request.status < 300) {
+        resolve();
+      } else {
+        reject(
+          new Error(
+            `Storage upload failed [${request.status}]: ${
+              request.responseText || request.statusText
+            }`
+          )
+        );
+      }
+    };
+    request.onerror = () => {
+      signal?.removeEventListener("abort", abort);
+      reject(new Error("Network error while uploading to storage."));
+    };
+    request.onabort = () => {
+      signal?.removeEventListener("abort", abort);
+      reject(new DOMException("Upload cancelled.", "AbortError"));
+    };
+    if (signal?.aborted) {
+      abort();
+      return;
+    }
+    signal?.addEventListener("abort", abort, { once: true });
+    request.send(file);
+  });
+}
+
 /**
- * Uploads a file directly to AWS S3 using a backend-generated presigned URL.
+ * Uploads a file directly to S3-compatible private storage using a backend-generated URL.
  *
  * @param file - The HTML5 File object to upload.
  * @param referenceId - Context identifier (e.g. Dispute ID, Listing ID, User KYC ID).
  * @param options - Optional configurations (endpoint, cancellation signal, progress).
  * @returns Promise resolving to an UploadResult containing the fileUrl and s3Key.
- * @throws Error if presign request fails or S3 rejects the PUT payload.
+ * @throws Error if authorization, upload, or object verification fails.
  */
 export async function uploadToPresignedUrl(
   file: File,
@@ -80,6 +135,12 @@ export async function uploadToPresignedUrl(
   const endpoint = options?.presignEndpoint || "/api/media/presign";
   const fileType = file.type || "application/octet-stream";
   const fileName = file.name;
+  const token =
+    typeof window === "undefined"
+      ? null
+      : localStorage.getItem("sp_auth_token") ||
+        localStorage.getItem("sp_access_token") ||
+        localStorage.getItem("bh_access_token");
 
   // --------------------------------------------------------------------------
   // Step 1: Request presigned S3 URL from Go backend
@@ -92,12 +153,13 @@ export async function uploadToPresignedUrl(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       credentials: "include",
       signal: options?.signal,
       body: JSON.stringify({
-        fileName,
         fileType,
+        fileSize: file.size,
         referenceId,
       } satisfies PresignRequestPayload),
     });
@@ -130,26 +192,15 @@ export async function uploadToPresignedUrl(
   }
 
   // --------------------------------------------------------------------------
-  // Step 2: Execute direct PUT request to the S3 Presigned URL
+  // Step 2: Stream the original file directly to storage and report progress.
   // --------------------------------------------------------------------------
   try {
-    const uploadRes = await fetch(presignData.uploadUrl, {
-      method: "PUT",
-      headers: {
-        "Content-Type": fileType,
-      },
-      body: file,
-      signal: options?.signal,
-    });
-
-    if (!uploadRes.ok) {
-      const s3ErrorText = await uploadRes.text().catch(() => "");
-      throw new Error(
-        `S3 Upload Failed [${uploadRes.status} ${uploadRes.statusText}]: ${
-          s3ErrorText || "Direct cloud storage rejected the payload."
-        }`
-      );
-    }
+    await uploadWithProgress(
+      presignData.uploadUrl,
+      file,
+      options?.signal,
+      options?.onProgress
+    );
   } catch (err: unknown) {
     if (err instanceof Error) {
       throw err;
@@ -158,27 +209,46 @@ export async function uploadToPresignedUrl(
   }
 
   // --------------------------------------------------------------------------
+  const completeRes = await fetch("/api/media/complete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    credentials: "include",
+    signal: options?.signal,
+    body: JSON.stringify({
+      key: presignData.key || presignData.s3Key,
+      fileType,
+    }),
+  });
+  if (!completeRes.ok) {
+    const message = await completeRes.text().catch(() => "");
+    throw new Error(
+      `Upload verification failed [${completeRes.status}]: ${
+        message || completeRes.statusText
+      }`
+    );
+  }
+  const completePayload = await completeRes.json();
+  const completed = (completePayload.data ?? completePayload) as CompleteResponseData;
+
   // Step 3: Compute final asset coordinates
   // --------------------------------------------------------------------------
-  const finalKey =
-    presignData.key ||
-    presignData.s3Key ||
-    `evidence/${referenceId}/${fileName.replace(/\s+/g, "_")}`;
-
-  // If a distinct public fileUrl was provided, prefer it; otherwise strip query params from the uploadUrl
-  const finalUrl =
-    presignData.fileUrl ||
-    (presignData.uploadUrl.includes("?")
-      ? presignData.uploadUrl.split("?")[0]
-      : presignData.uploadUrl);
+  const finalKey = completed.key || presignData.key || presignData.s3Key;
+  if (!finalKey) {
+    throw new Error("Upload verification returned no storage key.");
+  }
 
   return {
-    fileUrl: finalUrl,
+    ...(completed.fileUrl || presignData.fileUrl
+      ? { fileUrl: completed.fileUrl || presignData.fileUrl }
+      : {}),
     s3Key: finalKey,
     referenceId,
     fileName,
     fileType,
-    size: file.size,
+    size: completed.sizeBytes,
   };
 }
 

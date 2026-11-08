@@ -109,7 +109,8 @@ func main() {
 	escrowHandler := handlers.NewEscrowHandler(escrowService)
 	paymentHandler := handlers.NewPaymentHandler(paymentService)
 	disputeHandler := handlers.NewDisputeHandler(disputeService)
-	adminHandler := handlers.NewAdminHandler(disputeService, moderationService)
+	mediaHandler := handlers.NewMediaHandler()
+	adminHandler := handlers.NewAdminHandler(disputeService, moderationService, mediaHandler)
 	notificationHandler := handlers.NewNotificationHandler(notificationService)
 	waitlistHandler := handlers.NewWaitlistHandler(waitlistService)
 	supportHandler := handlers.NewSupportHandler(supportService)
@@ -126,6 +127,7 @@ func main() {
 		adminHandler,
 		notificationHandler,
 		jwtMw,
+		mediaHandler,
 	)
 	router.RegisterExtendedHandlers(waitlistHandler, supportHandler)
 

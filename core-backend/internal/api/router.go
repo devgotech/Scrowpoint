@@ -1,8 +1,6 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -28,6 +26,7 @@ type Router struct {
 	notificationHandler *handlers.NotificationHandler
 	waitlistHandler     *handlers.WaitlistHandler
 	supportHandler      *handlers.SupportHandler
+	mediaHandler        *handlers.MediaHandler
 	jwtMw               *middleware.AuthMiddleware
 }
 
@@ -43,7 +42,11 @@ func NewRouter(
 	adminHandler *handlers.AdminHandler,
 	notificationHandler *handlers.NotificationHandler,
 	jwtMw *middleware.AuthMiddleware,
+	mediaHandler *handlers.MediaHandler,
 ) *Router {
+	if mediaHandler == nil {
+		mediaHandler = handlers.NewMediaHandler()
+	}
 	return &Router{
 		authHandler:         authHandler,
 		userHandler:         userHandler,
@@ -57,6 +60,7 @@ func NewRouter(
 		notificationHandler: notificationHandler,
 		waitlistHandler:     handlers.NewWaitlistHandler(services.NewWaitlistService()),
 		supportHandler:      handlers.NewSupportHandler(services.NewSupportService()),
+		mediaHandler:        mediaHandler,
 		jwtMw:               jwtMw,
 	}
 }
@@ -250,39 +254,6 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if path == "/api/media/presign" && r.Method == http.MethodPost {
-		var req struct {
-			FileName    string `json:"fileName"`
-			FileType    string `json:"fileType"`
-			ReferenceID string `json:"referenceId"`
-		}
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			handlers.JSONError(w, http.StatusBadRequest, "Invalid request payload")
-			return
-		}
-		if req.FileName == "" {
-			req.FileName = "upload_" + uuid.NewString()[:8]
-		}
-		cleanName := strings.ReplaceAll(req.FileName, " ", "_")
-		s3Key := fmt.Sprintf("evidence/%s/%s", req.ReferenceID, cleanName)
-		if req.ReferenceID == "" {
-			s3Key = fmt.Sprintf("uploads/%s", cleanName)
-		}
-
-		// Provide S3 upload URL or direct media URL for local / test environments
-		uploadURL := fmt.Sprintf("http://localhost:8000/media/%s", s3Key)
-		fileURL := uploadURL
-
-		handlers.JSONSuccess(w, http.StatusOK, map[string]interface{}{
-			"uploadUrl":   uploadURL,
-			"fileUrl":     fileURL,
-			"key":         s3Key,
-			"s3Key":       s3Key,
-			"referenceId": req.ReferenceID,
-		})
-		return
-	}
-
 	// Authenticated Routes
 	rt.jwtMw.Authenticate(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		claims, err := middleware.GetUserClaims(r.Context())
@@ -294,6 +265,10 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		userID := claims.UserID
 
 		switch {
+		case path == "/api/media/presign" && r.Method == http.MethodPost:
+			rt.mediaHandler.PresignUpload(w, r, userID)
+		case path == "/api/media/complete" && r.Method == http.MethodPost:
+			rt.mediaHandler.CompleteUpload(w, r, userID)
 		case path == "/api/auth/me" || path == "/api/users/me":
 			rt.authHandler.GetCurrentUser(w, r, userID)
 		case path == "/api/auth/logout":
@@ -424,7 +399,7 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					rt.adminHandler.ListDisputes(w, r)
 				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "disputes" && parts[3] == "assign":
 					rt.adminHandler.AssignDispute(w, r, userID)
-				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "disputes" && parts[3] == "evidence":
+				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "disputes" && parts[4] == "evidence" && r.Method == http.MethodGet:
 					rt.adminHandler.GetDisputeEvidence(w, r)
 				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "disputes" && parts[3] == "verdict":
 					rt.adminHandler.IssueVerdict(w, r, userID)

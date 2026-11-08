@@ -34,7 +34,19 @@ The frontend is a Next.js application. API requests use same-origin `/api/*` pat
 | `DB_NAME` | Postgres database name | `scrowpoint` | `scrowpoint_test` | `scrowpoint` |
 | `ALLOWED_ORIGINS` | Comma-separated CORS origins allowed to call the Go API | `http://localhost:3000` | `https://staging.scrowpoint.com` | `https://scrowpoint.com,https://scrowpoint-web.onrender.com` |
 
-### B. Authentication, JWT & OAuth 2.0 (`Google` & `Facebook`)
+### B. Direct video upload configuration
+
+| Variable Name | Purpose | Local Development | Production (Render) |
+| :--- | :--- | :--- | :--- |
+| `S3_PRIVATE_BUCKET_NAME` | Private destination for KYC files and dispute evidence videos | Private test bucket | Private production bucket |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Server-side credentials used to sign upload URLs and verify uploaded objects | Development credentials | Production-scoped credentials with object put/head/delete permissions |
+| `S3_REGION` | S3 region (`auto` for R2) | `eu-west-1` | Bucket region or `auto` |
+| `S3_ENDPOINT_URL` | Optional S3-compatible endpoint; required for R2 | Empty for AWS S3 | `https://<account-id>.r2.cloudflarestorage.com` for R2; empty for AWS |
+| `MAX_VIDEO_UPLOAD_MB` | Maximum direct video upload size | `100` | `100` |
+
+Video files are uploaded by the browser directly to the private bucket using a short-lived URL; the Go API does not relay the video bytes. The browser checks that a video is no longer than 60 seconds, and the API checks the stored object's actual content type and size after upload. The original video is retained without transcoding. Configure the private bucket's CORS policy to allow `PUT` from your frontend origin with the `Content-Type` request header; do not make this bucket public.
+
+### C. Authentication, JWT & OAuth 2.0 (`Google` & `Facebook`)
 
 | Variable Name | Purpose | Local Development (`development`) | Test / Staging (`test` / `staging`) | Production (`Render`) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -45,7 +57,7 @@ The frontend is a Next.js application. API requests use same-origin `/api/*` pat
 | `FACEBOOK_APP_ID` | Server-side verification of Facebook tokens on `POST /api/auth/oauth/facebook` | Facebook Test App ID | Facebook Test App ID | Production Facebook App ID |
 | `FACEBOOK_APP_SECRET` | Meta App Secret used to validate `input_token` against Facebook Graph API | Facebook Test App Secret | Facebook Test App Secret | Production Facebook App Secret |
 
-### C. Transactional Email & 6-Digit OTP Delivery (Registration & Forgot Password)
+### D. Transactional Email & 6-Digit OTP Delivery (Registration & Forgot Password)
 
 | Variable Name | Purpose | Local Development (`development`) | Test / Staging (`test` / `staging`) | Production (`Render`) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -55,7 +67,7 @@ The frontend is a Next.js application. API requests use same-origin `/api/*` pat
 | `SMTP_PASSWORD` | SMTP password / API key | Test API key (or empty when using UI demo OTP banner) | Sandbox API key | Live Resend / AWS SES SMTP key |
 | `SMTP_FROM_EMAIL` | Sender address for escrow receipts & OTP codes | `dev-security@scrowpoint.local` | `staging-security@scrowpoint.com` | `security@scrowpoint.com` |
 
-### D. Custodial Escrow Payments (Paystack) & Biometric KYC (SmileID)
+### E. Custodial Escrow Payments (Paystack) & Biometric KYC (SmileID)
 
 | Variable Name | Purpose | Local Development (`development`) | Test / Staging (`test` / `staging`) | Production (`Render`) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -75,7 +87,7 @@ The frontend is a Next.js application. API requests use same-origin `/api/*` pat
 | `PORT` | Port FastAPI/Uvicorn listens on | `8000` | `8000` | `8000` |
 | `ENVIRONMENT` | FastAPI runtime environment | `development` | `staging` | `production` |
 | `STRIP_EXIF` | Enforces removal of GPS & camera metadata on uploaded gadget photos | `"true"` | `"true"` | `"true"` (Must always be `"true"` in production to prevent off-platform contact leaks) |
-| `MAX_UPLOAD_SIZE_MB` | Maximum size per inspection photo/video upload | `"15"` | `"15"` | `"15"` |
+| `MAX_UPLOAD_SIZE_MB` | Maximum image size handled by the media image-processing service | `"15"` | `"15"` | `"15"` |
 | `STORAGE_BACKEND` | Storage adapter (`local` or S3-compatible) | `local` | `local` or `s3` | `s3` |
 | `LOCAL_STORAGE_DIR` | Local storage root when `STORAGE_BACKEND=local`; only listing media is served publicly | `/tmp/scrowpoint_media` | Persistent disk path or `/tmp/scrowpoint_media` | Not used when `STORAGE_BACKEND=s3` |
 | `S3_PUBLIC_BUCKET_NAME` | Bucket for public listing photos | Not required for local storage | Staging public bucket | Production public-media bucket |

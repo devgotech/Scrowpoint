@@ -42,6 +42,18 @@ services:
           type: web
           name: scrowpoint-media-service
           envVarKey: RENDER_EXTERNAL_URL
+      - key: S3_PRIVATE_BUCKET_NAME
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: MAX_VIDEO_UPLOAD_MB
+        value: "100"
       # SEC-10: Restrict CORS to your deployed frontend domain
       - key: CORS_ALLOWED_ORIGIN
         sync: false

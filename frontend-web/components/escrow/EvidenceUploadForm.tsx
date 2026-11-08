@@ -3,16 +3,12 @@
 import React, { useState } from "react";
 import {
   AlertTriangle,
-  Camera,
-  CheckCircle2,
-  Lock,
   Scale,
   ShieldAlert,
-  Upload,
-  UploadCloud,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FileUploader } from "@/components/FileUploader";
 import { disputesApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +18,7 @@ import { cn } from "@/lib/utils";
  * Requirements (5_screen_flows.md & 4_ui_system.md):
  * - Sub-modal / Action drawer inside the Escrow Room.
  * - Sub-case types: Not As Described (NAD), Dead on Arrival (DOA), Transit Damage, Counterfeit.
- * - Media evidence uploader (photos, diagnostic screenshots).
+ * - Private direct-to-storage upload for device inspection video evidence.
  * - Triggers state change in Postgres (DISPUTED), locks funds, pushes to Admin Dispute Queue.
  * - Token Compliance: 8px modal radius, 4px controls, Warning Amber (#ecc94b) and Destructive (#f56565).
  */
@@ -48,10 +44,12 @@ export function EvidenceUploadForm({
 }: EvidenceUploadFormProps) {
   const [category, setCategory] = useState("not_as_described");
   const [description, setDescription] = useState("");
-  const [evidenceFiles, setEvidenceFiles] = useState<string[]>([
-    "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&auto=format&fit=crop&q=80",
-  ]);
+  const [evidenceFiles, setEvidenceFiles] = useState<string[]>([]);
+  const [pendingDisputeId, setPendingDisputeId] = useState<string | null>(null);
+  const [linkedEvidenceKeys, setLinkedEvidenceKeys] = useState<string[]>([]);
+  const [isEvidenceUploading, setIsEvidenceUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -63,34 +61,64 @@ export function EvidenceUploadForm({
     { id: "counterfeit", label: "Counterfeit / Locked", desc: "iCloud locked, blacklisted IMEI or fake clone" },
   ];
 
-  const handleAddSampleEvidence = () => {
-    setEvidenceFiles((prev) => [
-      ...prev,
-      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&auto=format&fit=crop&q=80",
-    ]);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description.trim()) return;
+    if (!description.trim() || isEvidenceUploading) return;
+    if (evidenceFiles.length === 0) {
+      setSubmitError("Upload at least one video before submitting the dispute.");
+      return;
+    }
 
     setIsSubmitting(true);
-    await disputesApi.create({
-      order_id: orderId,
-      reason: category,
-      description: description.trim(),
-      evidence_urls: evidenceFiles,
-    });
+    setSubmitError(null);
+    try {
+      let disputeId = pendingDisputeId;
+      if (!disputeId) {
+        const created = await disputesApi.create({
+          orderId,
+          issueType: category,
+          notes: description.trim(),
+        });
+        if (!created.ok || !created.data?.id) {
+          throw new Error(created.error || "Could not open the dispute. Please try again.");
+        }
+        disputeId = created.data.id;
+        setPendingDisputeId(disputeId);
+      }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+      const linkedKeys = new Set(linkedEvidenceKeys);
+      for (const mediaUrl of evidenceFiles) {
+        if (linkedKeys.has(mediaUrl)) continue;
+        const added = await disputesApi.addEvidence(disputeId, {
+          mediaUrl,
+          evidenceType: "video",
+          description: `${category}: ${description.trim()}`,
+        });
+        if (!added.ok) {
+          throw new Error(added.error || "Could not attach the uploaded video to the dispute.");
+        }
+        linkedKeys.add(mediaUrl);
+        setLinkedEvidenceKeys(Array.from(linkedKeys));
+      }
+
+      const finalized = await disputesApi.finalizeEvidence(disputeId);
+      if (!finalized.ok) {
+        throw new Error(finalized.error || "Could not finalize the dispute evidence.");
+      }
+
       onSubmitDispute({
         category,
         description,
         evidenceCount: evidenceFiles.length,
       });
       onClose();
-    }, 600);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Could not submit the dispute. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -189,32 +217,35 @@ export function EvidenceUploadForm({
             />
           </div>
 
-          {/* Evidence Photo Strip */}
+          {/* Private Video Evidence */}
           <div className="space-y-2">
             <label className="label block">
-              Diagnostic & Photographic Evidence
+              Device Inspection Video
             </label>
-
-            <div className="grid grid-cols-4 gap-2">
-              {evidenceFiles.map((url, i) => (
-                <div
-                  key={i}
-                  className="relative aspect-square overflow-hidden border border-[#111113]/12"
-                >
-                  <img src={url} alt="Dispute evidence" className="h-full w-full object-cover" />
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={handleAddSampleEvidence}
-                className="aspect-square border border-dashed border-[#111113]/25 hover:border-[#111113] flex flex-col items-center justify-center text-[#111113]/65 hover:text-[#111113] text-[10px] font-mono gap-1"
-              >
-                <Upload className="h-4 w-4" />
-                <span>Add Proof</span>
-              </button>
-            </div>
+            <p className="font-secondary text-xs text-[#111113]/65">
+              Up to 60 seconds and 100 MB. Record at 1080p/30fps when possible; the original is kept in private storage.
+            </p>
+            <FileUploader
+              referenceId={orderId}
+              accept="video/mp4,video/quicktime,video/webm"
+              maxFiles={2}
+              multiple
+              onUploadStateChange={setIsEvidenceUploading}
+              onUploadComplete={(results) =>
+                setEvidenceFiles((existing) => [
+                  ...existing,
+                  ...results.map((result) => result.s3Key),
+                ])
+              }
+              onError={(error) => setSubmitError(error.message)}
+            />
           </div>
+
+          {submitError && (
+            <p role="alert" className="text-xs text-[#c53030]">
+              {submitError}
+            </p>
+          )}
 
           {/* Action CTAs */}
           <div className="pt-4 border-t border-[#111113]/12 flex items-center justify-end gap-3">
@@ -232,11 +263,11 @@ export function EvidenceUploadForm({
               type="submit"
               variant="destructive"
               size="sm"
-              disabled={isSubmitting || !description.trim()}
+              disabled={isSubmitting || isEvidenceUploading || !description.trim() || evidenceFiles.length === 0}
               className="h-10 px-5 text-xs font-semibold gap-2 bg-[#f56565] hover:bg-[#e53e3e] text-white"
             >
               <Scale className="h-4 w-4" />
-              <span>{isSubmitting ? "Locking Escrow..." : "Confirm & Freeze Escrow"}</span>
+              <span>{isSubmitting ? "Submitting Evidence..." : "Confirm & Freeze Escrow"}</span>
             </Button>
           </div>
         </form>
