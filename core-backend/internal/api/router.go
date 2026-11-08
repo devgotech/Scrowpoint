@@ -170,10 +170,6 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rt.authHandler.SignUp(w, r)
 		return
 	}
-	if path == "/api/auth/mediator-invitations/accept" {
-		rt.authHandler.AcceptMediatorInvitation(w, r)
-		return
-	}
 	if path == "/api/auth/login" {
 		rt.authHandler.Login(w, r)
 		return
@@ -395,21 +391,8 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			rt.disputeHandler.GetDispute(w, r)
 
 		case strings.HasPrefix(path, "/api/admin/"):
-			allowedRoles := []db.UserRole{db.RoleAdmin}
-			isMediatorRoute := (path == "/api/admin/disputes" && r.Method == http.MethodGet) ||
-				(len(parts) == 5 && parts[1] == "admin" && parts[2] == "disputes" &&
-					parts[4] == "evidence" && r.Method == http.MethodGet) ||
-				(len(parts) == 5 && parts[1] == "admin" && parts[2] == "disputes" &&
-					parts[4] == "verdict" && r.Method == http.MethodPost) ||
-				(len(parts) == 5 && parts[1] == "admin" && parts[2] == "appeals" &&
-					parts[4] == "decide" && r.Method == http.MethodPost)
-			if isMediatorRoute {
-				allowedRoles = append(allowedRoles, db.RoleMediator)
-			}
-			middleware.RequireRole(allowedRoles...)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			middleware.RequireRole(db.RoleAdmin)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				switch {
-				case path == "/api/admin/mediators/invitations":
-					rt.authHandler.CreateMediatorInvitation(w, r, userID)
 				case path == "/api/admin/summary":
 					rt.adminHandler.GetSummary(w, r)
 				case path == "/api/admin/disputes" && r.Method == http.MethodGet:
@@ -418,9 +401,9 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					rt.adminHandler.AssignDispute(w, r, userID)
 				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "disputes" && parts[4] == "evidence" && r.Method == http.MethodGet:
 					rt.adminHandler.GetDisputeEvidence(w, r)
-				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "disputes" && parts[4] == "verdict":
+				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "disputes" && parts[3] == "verdict":
 					rt.adminHandler.IssueVerdict(w, r, userID)
-				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "appeals" && parts[4] == "decide":
+				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "appeals" && parts[3] == "decide":
 					rt.adminHandler.DecideAppeal(w, r, userID)
 				case path == "/api/admin/reports" && r.Method == http.MethodGet:
 					rt.adminHandler.ListReports(w, r)

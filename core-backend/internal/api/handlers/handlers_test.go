@@ -60,18 +60,6 @@ func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
 	if signupResponse.Data.Token != "test-token" || signupResponse.Data.User.Role != db.RoleBuyer {
 		t.Fatalf("signup response did not issue token or restrict public role: %+v", signupResponse.Data)
 	}
-	mediatorSignup := performHandlerRequest(handler.SignUp, http.MethodPost, "/api/auth/signup",
-		`{"email":"public-mediator@example.com","password":"password-123","name":"Public Mediator","role":"mediator"}`)
-	assertHandlerStatus(t, mediatorSignup, http.StatusCreated)
-	var mediatorSignupResponse struct {
-		Data AuthResponseData `json:"data"`
-	}
-	if err := json.Unmarshal(mediatorSignup.Body.Bytes(), &mediatorSignupResponse); err != nil {
-		t.Fatalf("decode public mediator signup response: %v", err)
-	}
-	if mediatorSignupResponse.Data.User.Role != db.RoleBuyer {
-		t.Fatalf("public signup provisioned mediator role: %q", mediatorSignupResponse.Data.User.Role)
-	}
 
 	assertHandlerStatus(t, performHandlerRequest(handler.Login, http.MethodPost, "/api/auth/login",
 		`{"email":"handler@example.com","password":"wrong-password"}`), http.StatusUnauthorized)

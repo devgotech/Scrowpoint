@@ -7,7 +7,7 @@
 ## 2. Core PostgreSQL Database Schema
 All database tables must use `uuid` for primary keys and include `created_at`, `updated_at`, and `deleted_at` timestamps.
 
-*   `users`: ID, role (`buyer`, `seller`, `mediator`, `admin`), email, password_hash, name, phone, location, avatar_url, kyc_status, rating_avg, rating_count, is_suspended.
+*   `users`: ID, role, email, password_hash, name, phone, location, avatar_url, kyc_status, rating_avg, rating_count, is_suspended.
 *   `user_verifications`: ID, user_id, provider_ref, status, rejection_reason, metadata.
 *   `saved_payment_methods`: ID, user_id, type, masked_details, is_default, provider_auth_code, bank_name, account_number_last4.
 *   `listings`: ID, seller_id, category, brand, model, sku, condition, price, currency, escrow_terms, status, fulfillment_method.

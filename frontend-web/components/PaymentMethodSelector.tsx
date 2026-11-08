@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Bitcoin, Building2, CheckCircle2, CreditCard, Lock, ShieldCheck, Sparkles, Wallet, Zap } from "lucide-react";
+import {
+  Banknote,
+  Bitcoin,
+  Building2,
+  CheckCircle2,
+  CreditCard,
+  Lock,
+  ShieldCheck,
+  Sparkles,
+  Wallet,
+  Zap,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 

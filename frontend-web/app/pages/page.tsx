@@ -1,7 +1,48 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Monitor, ShieldCheck, Smartphone, Tablet, User, UserCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Calculator,
+  Camera,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Compass,
+  CreditCard,
+  Database,
+  ExternalLink,
+  Eye,
+  FileText,
+  Filter,
+  Grid,
+  Heart,
+  HelpCircle,
+  Home,
+  Laptop,
+  Layers,
+  Lock,
+  Maximize2,
+  MessageSquare,
+  Monitor,
+  Package,
+  RotateCcw,
+  Scale,
+  Search,
+  Shield,
+  ShieldAlert,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+  Tablet,
+  Truck,
+  User,
+  UserCheck,
+  Wallet,
+  Zap,
+} from "lucide-react";
 
 // Phase 1 Screens
 import LandingPage from "../(marketing)/page";
@@ -71,7 +112,7 @@ export type ScreenRoute =
 export type ViewportMode = "desktop" | "tablet" | "mobile";
 
 function AppInner() {
-  const { isAuthenticated, login, logout } = useAuth();
+  const { user, isAuthenticated, login, logout } = useAuth();
   const router = useRouter();
   const navigate = (path: string) => router.push(path);
   const [activeRoute, setActiveRoute] = useState<ScreenRoute>("phase1_landing");

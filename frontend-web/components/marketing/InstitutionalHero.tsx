@@ -2,7 +2,18 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Lock,
+  Search,
+  Shield,
+  ShieldCheck,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export interface InstitutionalHeroProps {

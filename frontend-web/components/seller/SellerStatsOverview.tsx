@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { DollarSign, Lock, ShieldCheck, TrendingUp } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Clock, DollarSign, Lock, Package, ShieldCheck, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

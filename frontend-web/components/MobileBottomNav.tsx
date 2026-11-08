@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Lock, Package, ShieldCheck, User } from "lucide-react";
+import { Home, Lock, Package, Search, ShieldCheck, User } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthContext";
 import { cn } from "@/lib/utils";
 

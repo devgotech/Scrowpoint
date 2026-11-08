@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { AlertCircle, RefreshCw, Home, ShieldAlert } from "lucide-react";
 
 /**
@@ -17,8 +16,6 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
-  const router = useRouter();
-
   useEffect(() => {
     console.error("[Scrowpoint Client Exception]:", error);
   }, [error]);
@@ -60,7 +57,11 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
           <button
             type="button"
-            onClick={() => router.push("/")}
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.location.href = "/";
+              }
+            }}
             className="w-full sm:w-auto h-11 px-6 border border-[#111113]/15 bg-white hover:border-[#111113] text-[#111113] text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center justify-center gap-2"
           >
             <Home className="h-4 w-4" />

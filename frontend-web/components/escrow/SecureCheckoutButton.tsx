@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { ArrowRight, Lock, ShieldCheck } from "lucide-react";
+import React, { useState } from "react";
+import { ArrowRight, CheckCircle2, Lock, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +35,7 @@ export function SecureCheckoutButton({
   const formatNaira = (val: number) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
-      currency,
+      currency: "NGN",
       maximumFractionDigits: 0,
     }).format(val);
   };

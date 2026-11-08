@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { KeyRound, Lock, Smartphone } from "lucide-react";
+import { KeyRound, Lock, Shield, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /**

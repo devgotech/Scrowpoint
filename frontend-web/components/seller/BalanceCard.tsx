@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowDownRight, CheckCircle2, Lock, Wallet } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, CheckCircle2, Clock, DollarSign, Lock, ShieldCheck, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

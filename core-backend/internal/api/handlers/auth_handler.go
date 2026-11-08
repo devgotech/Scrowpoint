@@ -59,16 +59,6 @@ type ChangePasswordRequest struct {
 	NewPassword string `json:"newPassword"`
 }
 
-type CreateMediatorInvitationRequest struct {
-	Email string `json:"email"`
-}
-
-type AcceptMediatorInvitationRequest struct {
-	Token    string `json:"token"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
-}
-
 type AuthResponseData struct {
 	User      *db.User  `json:"user"`
 	Token     string    `json:"token"`
@@ -124,68 +114,6 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		User:      user,
 		Token:     token,
 		ExpiresAt: time.Now().Add(ttl),
-	})
-}
-
-func (h *AuthHandler) CreateMediatorInvitation(w http.ResponseWriter, r *http.Request, adminID uuid.UUID) {
-	if r.Method != http.MethodPost {
-		JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
-		return
-	}
-	var req CreateMediatorInvitationRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		JSONError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	token, expiresAt, err := h.authService.CreateMediatorInvitation(r.Context(), adminID, req.Email)
-	if err != nil {
-		JSONError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	JSONSuccess(w, http.StatusCreated, map[string]interface{}{
-		"token":     token,
-		"email":     strings.ToLower(strings.TrimSpace(req.Email)),
-		"expiresAt": expiresAt,
-	})
-}
-
-func (h *AuthHandler) AcceptMediatorInvitation(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
-		return
-	}
-	var req AcceptMediatorInvitationRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		JSONError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	user, err := h.authService.AcceptMediatorInvitation(r.Context(), req.Token, req.Name, req.Password)
-	if err != nil {
-		JSONError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	authenticatedUser, session, err := h.authService.Login(
-		r.Context(),
-		user.Email,
-		req.Password,
-		r.UserAgent(),
-		r.RemoteAddr,
-	)
-	if err != nil {
-		JSONError(w, http.StatusInternalServerError, "Failed to create mediator session")
-		return
-	}
-	ttl := 7 * 24 * time.Hour
-	token, err := h.tokenGen.GenerateToken(authenticatedUser, session.ID, ttl)
-	if err != nil {
-		JSONError(w, http.StatusInternalServerError, "Failed to issue security token")
-		return
-	}
-	JSONSuccess(w, http.StatusCreated, AuthResponseData{
-		User:      authenticatedUser,
-		Token:     token,
-		ExpiresAt: session.ExpiresAt,
 	})
 }
 

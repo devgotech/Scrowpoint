@@ -108,8 +108,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Development may seed a demo admin; production uses an explicit one-time secret bootstrap.
-	if env == "development" && os.Getenv("SEED_DEV_ADMIN") != "false" {
+	// SEC-03 Hardening: Admin account is only auto-seeded during local development.
+	// In production, administrative accounts must be provisioned via migration or secure CLI.
+	if env != "production" && os.Getenv("SEED_DEV_ADMIN") != "false" {
 		devAdminEmail := os.Getenv("DEV_ADMIN_EMAIL")
 		if devAdminEmail == "" {
 			devAdminEmail = "admin@scrowpoint.com"
@@ -133,44 +134,8 @@ func main() {
 			adminUser.KYCStatus = db.KYCApproved
 			log.Printf("[DEV-SEED] Development Admin seeded: %s", adminUser.Email)
 		}
-	} else if env == "production" || env == "staging" {
-		bootstrapEmail := strings.TrimSpace(os.Getenv("BOOTSTRAP_ADMIN_EMAIL"))
-		bootstrapPassword := os.Getenv("BOOTSTRAP_ADMIN_PASSWORD")
-		if (bootstrapEmail == "") != (bootstrapPassword == "") {
-			log.Fatal("[FATAL] BOOTSTRAP_ADMIN_EMAIL and BOOTSTRAP_ADMIN_PASSWORD must be configured together")
-		}
-		if bootstrapEmail != "" {
-			if len(bootstrapPassword) < 12 {
-				log.Fatal("[FATAL] BOOTSTRAP_ADMIN_PASSWORD must be at least 12 characters long")
-			}
-			authService.Mu.RLock()
-			hasAdmin := false
-			for _, user := range authService.UsersByID {
-				if user.Role == db.RoleAdmin {
-					hasAdmin = true
-					break
-				}
-			}
-			authService.Mu.RUnlock()
-			if hasAdmin {
-				log.Printf("[INFO] %s admin already exists; bootstrap credentials were not used.", strings.ToUpper(env))
-			} else {
-				adminUser, err := authService.SignUp(ctx, services.SignUpInput{
-					Email:    bootstrapEmail,
-					Password: bootstrapPassword,
-					Name:     "Platform Administrator",
-					Role:     db.RoleAdmin,
-				})
-				if err != nil {
-					log.Fatalf("[FATAL] Production admin bootstrap failed: %v", err)
-				}
-				now := time.Now()
-				adminUser.EmailVerifiedAt = &now
-				log.Printf("[BOOTSTRAP] Initial %s admin provisioned: %s", strings.ToUpper(env), adminUser.Email)
-			}
-		} else {
-			log.Printf("[INFO] %s admin bootstrap is disabled; no bootstrap credentials configured.", strings.ToUpper(env))
-		}
+	} else if env == "production" {
+		log.Println("[INFO] Production mode active: Automatic admin account seeding is disabled.")
 	}
 	if err := persistState(context.Background()); err != nil {
 		log.Fatalf("[FATAL] Initial PostgreSQL application state save failed: %v", err)

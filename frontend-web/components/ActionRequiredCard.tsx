@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { ArrowRight, CheckCircle2, Clock, Lock, PackageCheck, ShieldAlert, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Lock,
+  PackageCheck,
+  ShieldAlert,
+  ShieldCheck,
+  Upload,
+} from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

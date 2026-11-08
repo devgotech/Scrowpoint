@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { AlertCircle, Camera, CheckCircle2, FileText, Film, Loader2, Trash2, Upload, UploadCloud } from "lucide-react";
+import {
+  AlertCircle,
+  Camera,
+  CheckCircle2,
+  FileText,
+  Film,
+  Loader2,
+  Trash2,
+  Upload,
+  UploadCloud,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadToPresignedUrl, type UploadResult } from "@/lib/s3";
 import { cn } from "@/lib/utils";
