@@ -23,6 +23,13 @@ type EscrowWorker struct {
 	wg                  sync.WaitGroup
 	mu                  sync.Mutex
 	isRunning           bool
+	persistenceHook     func(context.Context) error
+}
+
+func (w *EscrowWorker) SetPersistenceHook(hook func(context.Context) error) {
+	w.mu.Lock()
+	w.persistenceHook = hook
+	w.mu.Unlock()
 }
 
 func NewEscrowWorker(
@@ -69,6 +76,14 @@ func (w *EscrowWorker) Start(ctx context.Context) {
 			case <-ticker.C:
 				w.ProcessInspectionAutoReleases(ctx)
 				w.ProcessDisputeDeadlines(ctx)
+				w.mu.Lock()
+				persist := w.persistenceHook
+				w.mu.Unlock()
+				if persist != nil {
+					if err := persist(ctx); err != nil {
+						log.Printf("[CRON-ERROR] Could not persist application state after escrow worker run: %v", err)
+					}
+				}
 			case <-w.stopChan:
 				log.Println("[CRON] Escrow Background Worker stopping gracefully...")
 				return

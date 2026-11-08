@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -19,6 +22,10 @@ import (
 )
 
 func main() {
+	if err := loadLocalEnv(); err != nil {
+		log.Fatalf("[FATAL] Could not load local environment: %v", err)
+	}
+
 	env := os.Getenv("ENV")
 	if env == "" {
 		env = "development"
@@ -34,7 +41,7 @@ func main() {
 		if env == "production" {
 			log.Fatalf("[FATAL] JWT_SECRET environment variable must be set in production mode")
 		}
-		jwtSecret = "dev-insecure-buyers-high-local-jwt-key-do-not-use-in-prod"
+		jwtSecret = "dev-insecure-scrowpoint-local-jwt-key-do-not-use-in-prod"
 		log.Println("[WARN] Running with fallback dev JWT secret. Do NOT use in production!")
 	}
 
@@ -52,6 +59,14 @@ func main() {
 
 	log.Printf("[INFO] Initializing Buyer's High Escrow Core Backend (Environment: %s)...", env)
 
+	startupCtx, startupCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	postgres, err := db.OpenPostgres(startupCtx, os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_URL_UNPOOLED"))
+	startupCancel()
+	if err != nil {
+		log.Fatalf("[FATAL] PostgreSQL startup failed: %v", err)
+	}
+	defer postgres.Close()
+
 	jwtMw := middleware.NewAuthMiddleware(jwtSecret)
 
 	authService := services.NewAuthService()
@@ -67,6 +82,28 @@ func main() {
 	notificationService := services.NewNotificationService()
 	waitlistService := services.NewWaitlistService()
 	supportService := services.NewSupportService()
+
+	persistentServices := services.PersistentServices{
+		Auth:          authService,
+		Listings:      listingService,
+		Orders:        orderService,
+		Escrow:        escrowService,
+		Payments:      paymentService,
+		Disputes:      disputeService,
+		KYC:           kycService,
+		Moderation:    moderationService,
+		Notifications: notificationService,
+		Waitlist:      waitlistService,
+		Support:       supportService,
+	}
+	states, err := postgres.LoadServiceStates(context.Background())
+	if err != nil {
+		log.Fatalf("[FATAL] PostgreSQL application state load failed: %v", err)
+	}
+	if err := persistentServices.Restore(states); err != nil {
+		log.Fatalf("[FATAL] PostgreSQL application state restore failed: %v", err)
+	}
+	persistState := services.NewStatePersistFunc(postgres, persistentServices)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -100,6 +137,9 @@ func main() {
 	} else if env == "production" {
 		log.Println("[INFO] Production mode active: Automatic admin account seeding is disabled.")
 	}
+	if err := persistState(context.Background()); err != nil {
+		log.Fatalf("[FATAL] Initial PostgreSQL application state save failed: %v", err)
+	}
 
 	authHandler := handlers.NewAuthHandler(authService, jwtMw)
 	userHandler := handlers.NewUserHandler(userService)
@@ -130,6 +170,7 @@ func main() {
 		mediaHandler,
 	)
 	router.RegisterExtendedHandlers(waitlistHandler, supportHandler)
+	persistingRouter := services.PersistingHandler(router, persistState)
 
 	cronInterval := 30 * time.Second
 	escrowWorker := workers.NewEscrowWorker(
@@ -139,12 +180,13 @@ func main() {
 		notificationService,
 		cronInterval,
 	)
+	escrowWorker.SetPersistenceHook(persistState)
 	escrowWorker.Start(ctx)
 
 	serverAddr := fmt.Sprintf(":%s", port)
 	srv := &http.Server{
 		Addr:    serverAddr,
-		Handler: router,
+		Handler: persistingRouter,
 	}
 
 	go func() {
@@ -154,6 +196,9 @@ func main() {
 
 		log.Println("[SHUTDOWN] Terminating server and background workers...")
 		escrowWorker.Stop()
+		if err := persistState(context.Background()); err != nil {
+			log.Printf("[SHUTDOWN] Could not persist final application state: %v", err)
+		}
 		shutdownCtx, sCancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer sCancel()
 		_ = srv.Shutdown(shutdownCtx)
@@ -166,4 +211,51 @@ func main() {
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("[FATAL] Server error: %v", err)
 	}
+}
+
+func loadLocalEnv() error {
+	for _, path := range []string{".env.local", "../.env.local"} {
+		file, err := os.Open(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return fmt.Errorf("open %s", path)
+		}
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			line = strings.TrimSpace(strings.TrimPrefix(line, "export "))
+			key, value, found := strings.Cut(line, "=")
+			if !found {
+				continue
+			}
+			key = strings.TrimSpace(key)
+			value = strings.TrimSpace(value)
+			if len(value) >= 2 && value[0] == '"' && value[len(value)-1] == '"' {
+				if unquoted, err := strconv.Unquote(value); err == nil {
+					value = unquoted
+				}
+			} else if len(value) >= 2 && value[0] == '\'' && value[len(value)-1] == '\'' {
+				value = value[1 : len(value)-1]
+			}
+			if key != "" && os.Getenv(key) == "" {
+				if err := os.Setenv(key, value); err != nil {
+					_ = file.Close()
+					return fmt.Errorf("set environment variable %s", key)
+				}
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			_ = file.Close()
+			return fmt.Errorf("read %s", path)
+		}
+		if err := file.Close(); err != nil {
+			return fmt.Errorf("close %s", path)
+		}
+	}
+	return nil
 }

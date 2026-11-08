@@ -35,7 +35,7 @@ def make_token(role):
         {
             "userId": "00000000-0000-0000-0000-000000000001",
             "role": role,
-            "iss": "buyers-high-escrow",
+            "iss": "scrowpoint-escrow",
             "exp": int(time.time()) + 60,
         },
         os.environ["JWT_SECRET"],

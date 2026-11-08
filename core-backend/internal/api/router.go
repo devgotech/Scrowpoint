@@ -140,7 +140,7 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		handlers.JSONSuccess(w, http.StatusOK, map[string]interface{}{
 			"status":  "healthy",
-			"service": "buyers-high-core-backend",
+			"service": "scrowpoint-core-backend",
 			"version": "1.0.0",
 			"paystack": map[string]interface{}{
 				"configured": paystackSecret != "" && paystackMode != "mock",

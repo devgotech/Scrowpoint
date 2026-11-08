@@ -137,8 +137,10 @@ func (s *KYCService) SubmitKYC(ctx context.Context, userID uuid.UUID, in KYCSubm
 		UpdatedAt:       now,
 	}
 
+	s.authService.Mu.Lock()
 	user.KYCStatus = initialStatus
 	user.UpdatedAt = now
+	s.authService.Mu.Unlock()
 
 	s.Verifications[user.ID] = append(s.Verifications[user.ID], verification)
 	s.activeJobMap[providerRef] = user.ID
@@ -255,6 +257,8 @@ func (s *KYCService) AdminReviewDecision(ctx context.Context, verificationID uui
 		return nil, err
 	}
 
+	s.authService.Mu.Lock()
+	defer s.authService.Mu.Unlock()
 	if approve {
 		target.Status = db.KYCApproved
 		target.RejectionReason = ""

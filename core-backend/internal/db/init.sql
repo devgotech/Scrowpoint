@@ -326,3 +326,9 @@ CREATE TABLE support_messages (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Additive persistence store used by the current in-memory service models.
+CREATE TABLE IF NOT EXISTS application_service_state (
+    service_name TEXT PRIMARY KEY,
+    payload JSONB NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

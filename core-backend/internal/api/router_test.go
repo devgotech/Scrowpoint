@@ -46,7 +46,7 @@ func TestRouterHealthRoutesReportServiceStatus(t *testing.T) {
 			if err := json.Unmarshal(recorder.Body.Bytes(), &response); err != nil {
 				t.Fatalf("decode health response: %v", err)
 			}
-			if response.Data.Status != "healthy" || response.Data.Service != "buyers-high-core-backend" {
+			if response.Data.Status != "healthy" || response.Data.Service != "scrowpoint-core-backend" {
 				t.Errorf("unexpected health payload: %+v", response.Data)
 			}
 			if response.Data.Paystack.Mode != "test" || !response.Data.Paystack.Configured {

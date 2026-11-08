@@ -124,7 +124,7 @@ def get_private_file(storage_key: str, request: Request):
             token,
             jwt_secret,
             algorithms=["HS256"],
-            issuer="buyers-high-escrow",
+            issuer="scrowpoint-escrow",
             options={"require": ["exp", "iss", "userId", "role"]},
         )
     except jwt.InvalidTokenError:

@@ -48,7 +48,7 @@ func (m *AuthMiddleware) GenerateToken(user *db.User, sessionID uuid.UUID, ttl t
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
-			Issuer:    "buyers-high-escrow",
+			Issuer:    "scrowpoint-escrow",
 			Subject:   user.ID.String(),
 		},
 	}
