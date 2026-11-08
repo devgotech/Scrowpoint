@@ -13,10 +13,9 @@ import (
 type UserRole string
 
 const (
-	RoleBuyer    UserRole = "buyer"
-	RoleSeller   UserRole = "seller"
-	RoleMediator UserRole = "mediator"
-	RoleAdmin    UserRole = "admin"
+	RoleBuyer  UserRole = "buyer"
+	RoleSeller UserRole = "seller"
+	RoleAdmin  UserRole = "admin"
 )
 
 type KYCStatus string
@@ -66,7 +65,7 @@ type EscrowState string
 
 const (
 	EscrowStateCreated          EscrowState = "created"
-	EscrowStatePendingPayment   EscrowState = "pending_payment"
+	EscrowStatePendingPayment    EscrowState = "pending_payment"
 	EscrowStateFundsHeld        EscrowState = "funds_held"
 	EscrowStateInTransit        EscrowState = "in_transit"
 	EscrowStateInspectionPeriod EscrowState = "inspection_period"
@@ -273,18 +272,18 @@ type Order struct {
 }
 
 type Payment struct {
-	ID                 uuid.UUID     `json:"id" db:"id"`
-	OrderID            uuid.UUID     `json:"orderId" db:"order_id"`
-	Amount             float64       `json:"amount" db:"amount"`
-	Currency           string        `json:"currency" db:"currency"`
-	Method             PaymentMethod `json:"method" db:"method"`
-	Status             PaymentStatus `json:"status" db:"status"`
-	GatewayReference   string        `json:"gatewayReference,omitempty" db:"gateway_reference"`
-	PaystackAccessCode string        `json:"paystackAccessCode,omitempty" db:"paystack_access_code"`
-	PaidAt             *time.Time    `json:"paidAt,omitempty" db:"paid_at"`
-	CreatedAt          time.Time     `json:"createdAt" db:"created_at"`
-	UpdatedAt          time.Time     `json:"updatedAt" db:"updated_at"`
-	DeletedAt          *time.Time    `json:"deletedAt,omitempty" db:"deleted_at"`
+	ID                  uuid.UUID     `json:"id" db:"id"`
+	OrderID             uuid.UUID     `json:"orderId" db:"order_id"`
+	Amount              float64       `json:"amount" db:"amount"`
+	Currency            string        `json:"currency" db:"currency"`
+	Method              PaymentMethod `json:"method" db:"method"`
+	Status              PaymentStatus `json:"status" db:"status"`
+	GatewayReference    string        `json:"gatewayReference,omitempty" db:"gateway_reference"`
+	PaystackAccessCode  string        `json:"paystackAccessCode,omitempty" db:"paystack_access_code"`
+	PaidAt              *time.Time    `json:"paidAt,omitempty" db:"paid_at"`
+	CreatedAt           time.Time     `json:"createdAt" db:"created_at"`
+	UpdatedAt           time.Time     `json:"updatedAt" db:"updated_at"`
+	DeletedAt           *time.Time    `json:"deletedAt,omitempty" db:"deleted_at"`
 }
 
 type EscrowTransaction struct {

@@ -2,7 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Heart, Lock, MapPin, ShieldCheck, Smartphone } from "lucide-react";
+import {
+  CheckCircle2,
+  Heart,
+  Lock,
+  MapPin,
+  ShieldCheck,
+  Smartphone,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
@@ -114,7 +121,7 @@ export function GadgetListingCard({
 
   const targetHref = href || `/gadget/${listing.id}`;
 
-  const handleCardClick = () => {
+  const handleCardClick = (e: React.MouseEvent) => {
     if (onSelect) {
       onSelect(listing.id);
     }

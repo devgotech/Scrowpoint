@@ -2,7 +2,16 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Globe, HelpCircle, Lock } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Globe,
+  HelpCircle,
+  Lock,
+  MessageSquare,
+  Shield,
+  ShieldCheck,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

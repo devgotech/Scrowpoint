@@ -49,7 +49,7 @@ export function Navbar({
   const routerPathname = usePathname();
   const currentPath = activePath || routerPathname || "/";
 
-  const { user, isAuthenticated, isAdmin, isMediator, isKYCVerified, kycTier, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, isKYCVerified, kycTier, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -459,7 +459,7 @@ export function Navbar({
                         </div>
                       </Link>
 
-                      {(isAdmin || isMediator) && (
+                      {isAdmin && (
                         <Link
                           href="/admin/dashboard"
                           onClick={() => {
@@ -475,7 +475,7 @@ export function Navbar({
                         >
                           <div className="flex items-center gap-2.5">
                             <ShieldAlert className="h-4 w-4 text-[#ecc94b]" />
-                            <span>{isMediator ? "Mediation Desk" : "Admin Dispute Portal"}</span>
+                            <span>Admin Dispute Portal</span>
                           </div>
                         </Link>
                       )}

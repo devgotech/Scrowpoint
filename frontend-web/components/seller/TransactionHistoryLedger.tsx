@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, CheckCircle2, Clock, Lock, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

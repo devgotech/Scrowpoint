@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Check, Zap } from "lucide-react";
+import { Check, Info, ShieldCheck, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

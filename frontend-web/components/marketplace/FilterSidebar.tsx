@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Check, RotateCcw, ShieldCheck, SlidersHorizontal, X } from "lucide-react";
+import { Check, Filter, RotateCcw, ShieldCheck, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**

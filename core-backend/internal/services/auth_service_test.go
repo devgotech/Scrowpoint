@@ -60,67 +60,6 @@ func TestSignUpRejectsMissingFieldsAndShortPassword(t *testing.T) {
 	}
 }
 
-func TestMediatorInvitationIsSingleUseAndCreatesLimitedVerifiedAccount(t *testing.T) {
-	service := NewAuthService()
-	ctx := context.Background()
-	admin, err := service.SignUp(ctx, SignUpInput{
-		Email: "admin@example.com", Password: "password-123", Name: "Admin", Role: db.RoleAdmin,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	token, expiresAt, err := service.CreateMediatorInvitation(ctx, admin.ID, " Mediator@Example.com ")
-	if err != nil {
-		t.Fatalf("CreateMediatorInvitation returned error: %v", err)
-	}
-	if expiresAt.Before(time.Now().Add(23*time.Hour)) || expiresAt.After(time.Now().Add(25*time.Hour)) {
-		t.Fatalf("invitation expiry = %v, want about 24 hours from now", expiresAt)
-	}
-	if _, exists := service.MediatorInvitations[hashInvitationToken(token)]; !exists {
-		t.Fatal("invitation token was not stored by hash")
-	}
-
-	if _, err := service.AcceptMediatorInvitation(ctx, token, "Mediator One", "short-pass"); err == nil {
-		t.Fatal("AcceptMediatorInvitation accepted a password shorter than 12 characters")
-	}
-	user, err := service.AcceptMediatorInvitation(ctx, token, "Mediator One", "mediator-password-123")
-	if err != nil {
-		t.Fatalf("AcceptMediatorInvitation returned error: %v", err)
-	}
-	if user.Role != db.RoleMediator || user.Email != "mediator@example.com" || user.EmailVerifiedAt == nil {
-		t.Fatalf("invited account has incorrect role, email, or verification state: %+v", user)
-	}
-	if _, err := service.AcceptMediatorInvitation(ctx, token, "Mediator One", "mediator-password-123"); err == nil {
-		t.Fatal("AcceptMediatorInvitation accepted a token more than once")
-	}
-}
-
-func TestMediatorInvitationRejectsExpiredAndExistingAccounts(t *testing.T) {
-	service := NewAuthService()
-	ctx := context.Background()
-	existing, err := service.SignUp(ctx, SignUpInput{
-		Email: "existing@example.com", Password: "password-123", Name: "Existing",
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, _, err := service.CreateMediatorInvitation(ctx, uuid.New(), existing.Email); err == nil {
-		t.Fatal("CreateMediatorInvitation accepted an email that already has an account")
-	}
-
-	token, _, err := service.CreateMediatorInvitation(ctx, uuid.New(), "expired@example.com")
-	if err != nil {
-		t.Fatal(err)
-	}
-	service.Mu.Lock()
-	service.MediatorInvitations[hashInvitationToken(token)].ExpiresAt = time.Now().Add(-time.Minute)
-	service.Mu.Unlock()
-	if _, err := service.AcceptMediatorInvitation(ctx, token, "Expired", "mediator-password-123"); err == nil {
-		t.Fatal("AcceptMediatorInvitation accepted an expired invitation")
-	}
-}
-
 func TestLoginCreatesSessionAndRejectsInvalidOrSuspendedAccounts(t *testing.T) {
 	service := NewAuthService()
 	ctx := context.Background()

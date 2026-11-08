@@ -220,10 +220,7 @@ export function AuthForm({
       safeRequestedPath?.startsWith("/admin/") ||
       safeRequestedPath === "/disputes" ||
       safeRequestedPath?.startsWith("/disputes/");
-    const roleMatchesPath =
-      authenticatedRole === "admin" ||
-      authenticatedRole === "mediator" ||
-      !isAdminPath;
+    const roleMatchesPath = authenticatedRole === "admin" || !isAdminPath;
 
     router.push(roleMatchesPath && safeRequestedPath ? safeRequestedPath : defaultPath);
   };
@@ -415,15 +412,6 @@ export function AuthForm({
     }
 
     if (
-      process.env.NODE_ENV === "production" &&
-      (!response || response.status === 404)
-    ) {
-      setErrorMessage("Unable to reach the authentication service. Please try again.");
-      setIsLoading(false);
-      return;
-    }
-
-    if (
       response &&
       response.status !== 404 &&
       (response.status < 500 || process.env.NODE_ENV === "production") &&
@@ -458,9 +446,7 @@ export function AuthForm({
       }
 
       const backendRole: UserRole =
-        backendUser.role === "admin" ||
-        backendUser.role === "mediator" ||
-        backendUser.role === "seller"
+        backendUser.role === "admin" || backendUser.role === "seller"
           ? backendUser.role
           : "buyer";
       const authenticatedEmail =

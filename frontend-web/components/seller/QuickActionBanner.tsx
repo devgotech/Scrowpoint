@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Plus, Sparkles, Wallet } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Plus, ShieldCheck, Smartphone, Sparkles, UploadCloud, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

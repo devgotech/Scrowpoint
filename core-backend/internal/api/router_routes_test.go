@@ -35,12 +35,6 @@ func TestRouterDispatchesPublicAndAuthenticatedRoutes(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create admin: %v", err)
 	}
-	mediator, err := auth.SignUp(context.Background(), services.SignUpInput{
-		Email: "router-mediator@example.com", Password: "password-123", Name: "Router Mediator", Role: db.RoleMediator,
-	})
-	if err != nil {
-		t.Fatalf("create mediator: %v", err)
-	}
 	tokenMiddleware := middleware.NewAuthMiddleware("router-test-secret")
 	buyerToken, err := tokenMiddleware.GenerateToken(buyer, uuid.New(), time.Hour)
 	if err != nil {
@@ -49,10 +43,6 @@ func TestRouterDispatchesPublicAndAuthenticatedRoutes(t *testing.T) {
 	adminToken, err := tokenMiddleware.GenerateToken(admin, uuid.New(), time.Hour)
 	if err != nil {
 		t.Fatalf("generate admin token: %v", err)
-	}
-	mediatorToken, err := tokenMiddleware.GenerateToken(mediator, uuid.New(), time.Hour)
-	if err != nil {
-		t.Fatalf("generate mediator token: %v", err)
 	}
 
 	listings := services.NewListingService(auth)
@@ -163,21 +153,11 @@ func TestRouterDispatchesPublicAndAuthenticatedRoutes(t *testing.T) {
 		{"dispute appeal", http.MethodPost, "/api/disputes/" + id + "/appeal", "{}", buyerToken, http.StatusBadRequest},
 		{"admin route forbidden", http.MethodGet, "/api/admin/summary", "", buyerToken, http.StatusForbidden},
 		{"admin summary", http.MethodGet, "/api/admin/summary", "", adminToken, http.StatusOK},
-		{"mediator disputes", http.MethodGet, "/api/admin/disputes", "", mediatorToken, http.StatusOK},
-		{"mediator summary forbidden", http.MethodGet, "/api/admin/summary", "", mediatorToken, http.StatusForbidden},
-		{"mediator reports forbidden", http.MethodGet, "/api/admin/reports", "", mediatorToken, http.StatusForbidden},
-		{"mediator dispute assignment forbidden", http.MethodPost, "/api/admin/disputes/assign", "{}", mediatorToken, http.StatusForbidden},
-		{"mediator kyc forbidden", http.MethodPost, "/api/admin/kyc/" + id + "/review", "{}", mediatorToken, http.StatusForbidden},
-		{"mediator invitation forbidden", http.MethodPost, "/api/admin/mediators/invitations", `{"email":"new-mediator@example.com"}`, mediatorToken, http.StatusForbidden},
-		{"admin mediator invitation", http.MethodPost, "/api/admin/mediators/invitations", `{"email":"new-mediator@example.com"}`, adminToken, http.StatusCreated},
-		{"mediator invitation acceptance invalid token", http.MethodPost, "/api/auth/mediator-invitations/accept", `{"token":"invalid","name":"New Mediator","password":"mediator-password-123"}`, "", http.StatusBadRequest},
 		{"admin disputes", http.MethodGet, "/api/admin/disputes", "", adminToken, http.StatusOK},
 		{"admin assign", http.MethodPost, "/api/admin/disputes/assign", "", adminToken, http.StatusBadRequest},
 		{"admin evidence", http.MethodGet, "/api/admin/disputes/" + id + "/evidence", "", adminToken, http.StatusNotFound},
-		{"admin verdict", http.MethodPost, "/api/admin/disputes/" + id + "/verdict", "{}", adminToken, http.StatusBadRequest},
-		{"mediator verdict", http.MethodPost, "/api/admin/disputes/" + id + "/verdict", "{}", mediatorToken, http.StatusBadRequest},
-		{"admin appeal decision", http.MethodPost, "/api/admin/appeals/" + id + "/decide", "{}", adminToken, http.StatusBadRequest},
-		{"mediator appeal decision", http.MethodPost, "/api/admin/appeals/" + id + "/decide", "{}", mediatorToken, http.StatusBadRequest},
+		{"admin verdict", http.MethodPost, "/api/admin/disputes/verdict", "{}", adminToken, http.StatusBadRequest},
+		{"admin appeal decision", http.MethodPost, "/api/admin/appeals/decide", "{}", adminToken, http.StatusBadRequest},
 		{"admin reports", http.MethodGet, "/api/admin/reports", "", adminToken, http.StatusOK},
 		{"admin dismiss report", http.MethodPost, "/api/admin/reports/dismiss", "{}", adminToken, http.StatusBadRequest},
 		{"admin suspend user", http.MethodPost, "/api/admin/users/suspend", "{}", adminToken, http.StatusBadRequest},
@@ -198,23 +178,5 @@ func TestRouterDispatchesPublicAndAuthenticatedRoutes(t *testing.T) {
 				t.Fatalf("status = %d, want %d; body: %s", recorder.Code, test.want, recorder.Body.String())
 			}
 		})
-	}
-
-	invitationToken, _, err := auth.CreateMediatorInvitation(context.Background(), admin.ID, "accepted-mediator@example.com")
-	if err != nil {
-		t.Fatalf("create mediator invitation for acceptance route: %v", err)
-	}
-	request := httptest.NewRequest(
-		http.MethodPost,
-		"/api/auth/mediator-invitations/accept",
-		strings.NewReader(`{"token":"`+invitationToken+`","name":"Accepted Mediator","password":"mediator-password-123"}`),
-	)
-	recorder := httptest.NewRecorder()
-	router.ServeHTTP(recorder, request)
-	if recorder.Code != http.StatusCreated {
-		t.Fatalf("mediator invitation acceptance status = %d, want %d; body: %s", recorder.Code, http.StatusCreated, recorder.Body.String())
-	}
-	if accepted := auth.UsersByEmail["accepted-mediator@example.com"]; accepted == nil || accepted.Role != db.RoleMediator {
-		t.Fatalf("invitation acceptance did not create a mediator account: %+v", accepted)
 	}
 }

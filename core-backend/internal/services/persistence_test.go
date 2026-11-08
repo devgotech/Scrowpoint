@@ -27,10 +27,6 @@ func TestPersistentServicesRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	invitationToken, _, err := auth.CreateMediatorInvitation(ctx, user.ID, "persisted-mediator@example.com")
-	if err != nil {
-		t.Fatal(err)
-	}
 	draft, err := listings.GetOrCreateDraft(ctx, user.ID)
 	if err != nil {
 		t.Fatal(err)
@@ -102,10 +98,6 @@ func TestPersistentServicesRoundTrip(t *testing.T) {
 
 	if _, err := auth2.GetUserByID(ctx, user.ID); err != nil {
 		t.Fatalf("restored user: %v", err)
-	}
-	invitedMediator, err := auth2.AcceptMediatorInvitation(ctx, invitationToken, "Persisted Mediator", "mediator-password-123")
-	if err != nil || invitedMediator.Role != db.RoleMediator {
-		t.Fatalf("restored mediator invitation = %v, %v", invitedMediator, err)
 	}
 	restoredDraft, err := listings2.GetOrCreateDraft(ctx, user.ID)
 	if err != nil || restoredDraft.ID != draft.ID {

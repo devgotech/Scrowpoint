@@ -2,7 +2,32 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Award, Check, CheckCircle2, Clock, Copy, CreditCard, Fingerprint, Gift, Lock, Mail, MapPin, MessageCircle, Percent, RefreshCw, Share2, ShieldCheck, Truck } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Award,
+  Check,
+  CheckCircle2,
+  Clock,
+  Copy,
+  CreditCard,
+  Fingerprint,
+  Gift,
+  Lock,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Percent,
+  RefreshCw,
+  Scale,
+  Share2,
+  ShieldAlert,
+  ShieldCheck,
+  Smartphone,
+  Truck,
+  Users,
+  XCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProtocolComparisonWidget } from "@/components/marketing/ProtocolComparisonWidget";
 import { GadgetVectorPattern } from "@/components/marketing/GadgetVectorPattern";
@@ -102,6 +127,29 @@ const LOCATION_PRESETS = [
   { value: "Enugu / Onitsha / Southeast", label: "Enugu / Onitsha (Southeast)" },
   { value: "Kano / Kaduna / North", label: "Kano / Kaduna (North)" },
   { value: "other", label: "Other City / State (Specify below)" },
+];
+
+const COMPARISON_ROWS = [
+  {
+    dimension: "01. Payment Security",
+    unprotected: "Buyer sends direct bank transfer hoping seller ships; or seller falls for a fake SMS alert / reversed transfer.",
+    scrowpoint: "Buyer funds lock in a segregated Paystack custodial vault. Seller receives cryptographic proof of funds before dispatch.",
+  },
+  {
+    dimension: "02. Hardware Integrity",
+    unprotected: "Buyer discovers swapped screens, boosted 3uTools battery health, or hidden iCloud MDM locks after cash is gone.",
+    scrowpoint: "Mandatory 48-Hour Hardware Diagnostic Window starts upon courier delivery. Funds remain frozen until buyer approves.",
+  },
+  {
+    dimension: "03. Counterparty Identity",
+    unprotected: "Anonymous Jiji/WhatsApp accounts and burner SIM cards that block you immediately after payment.",
+    scrowpoint: "Every participant passes SmileID 3D biometric liveness + government NIN/BVN verification before trading.",
+  },
+  {
+    dimension: "04. Dispute Resolution",
+    unprotected: "Zero recourse, police station delays, or unmoderated social media callouts when a device arrives defective.",
+    scrowpoint: "1-click dispute freeze within 48 hours. Hardware engineers arbitrate using unboxing video, IMEI serials, and diagnostic logs.",
+  },
 ];
 
 const WAITLIST_FAQS = [

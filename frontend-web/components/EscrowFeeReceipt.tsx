@@ -1,8 +1,19 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { CheckCircle2, Copy, Download, Lock, Printer, Receipt, ShieldCheck, Truck } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  CheckCircle2,
+  Copy,
+  Download,
+  Info,
+  Lock,
+  Printer,
+  Receipt,
+  Shield,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/currency";

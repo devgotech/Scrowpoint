@@ -319,7 +319,7 @@ func (s *DisputeService) IssueMediationVerdict(
 			return nil, err
 		}
 	case db.MediationOutcomeSplit:
-		order, err := s.orderService.GetOrderByID(ctx, dispute.OrderID, uuid.Nil)
+		order, err := s.orderService.GetOrderByID(ctx, dispute.OrderID, adminID)
 		if err == nil {
 			half := order.ItemPrice / 2
 			splitBuyerRef := fmt.Sprintf("SPLIT-BUYER-%s", dispute.ID.String()[:8])

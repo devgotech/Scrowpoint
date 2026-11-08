@@ -3,11 +3,8 @@ package services
 import (
 	"context"
 	"crypto/rand"
-	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"fmt"
-	"net/mail"
 	"strings"
 	"sync"
 	"time"
@@ -35,31 +32,22 @@ type VerificationToken struct {
 	ExpiresAt time.Time
 }
 
-type MediatorInvitation struct {
-	Email      string     `json:"email"`
-	InvitedBy  uuid.UUID  `json:"invitedBy"`
-	ExpiresAt  time.Time  `json:"expiresAt"`
-	AcceptedAt *time.Time `json:"acceptedAt,omitempty"`
-}
-
 type AuthService struct {
-	Mu                  sync.RWMutex
-	UsersByID           map[uuid.UUID]*db.User
-	UsersByEmail        map[string]*db.User
-	Sessions            map[uuid.UUID]*Session
-	UserSessions        map[uuid.UUID][]uuid.UUID
-	TokensByValue       map[string]*VerificationToken
-	MediatorInvitations map[string]*MediatorInvitation
+	Mu            sync.RWMutex
+	UsersByID     map[uuid.UUID]*db.User
+	UsersByEmail  map[string]*db.User
+	Sessions      map[uuid.UUID]*Session
+	UserSessions  map[uuid.UUID][]uuid.UUID
+	TokensByValue map[string]*VerificationToken
 }
 
 func NewAuthService() *AuthService {
 	return &AuthService{
-		UsersByID:           make(map[uuid.UUID]*db.User),
-		UsersByEmail:        make(map[string]*db.User),
-		Sessions:            make(map[uuid.UUID]*Session),
-		UserSessions:        make(map[uuid.UUID][]uuid.UUID),
-		TokensByValue:       make(map[string]*VerificationToken),
-		MediatorInvitations: make(map[string]*MediatorInvitation),
+		UsersByID:     make(map[uuid.UUID]*db.User),
+		UsersByEmail:  make(map[string]*db.User),
+		Sessions:      make(map[uuid.UUID]*Session),
+		UserSessions:  make(map[uuid.UUID][]uuid.UUID),
+		TokensByValue: make(map[string]*VerificationToken),
 	}
 }
 
@@ -76,10 +64,6 @@ func (s *AuthService) SignUp(ctx context.Context, in SignUpInput) (*db.User, err
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
-	return s.createUserLocked(in, in.Role, false)
-}
-
-func (s *AuthService) createUserLocked(in SignUpInput, role db.UserRole, emailVerified bool) (*db.User, error) {
 	email := strings.ToLower(strings.TrimSpace(in.Email))
 	if email == "" || in.Password == "" || in.Name == "" {
 		return nil, errors.New("email, password, and name are required")
@@ -98,110 +82,32 @@ func (s *AuthService) createUserLocked(in SignUpInput, role db.UserRole, emailVe
 		return nil, errors.New("failed to hash password")
 	}
 
+	role := in.Role
 	if role == "" {
 		role = db.RoleBuyer
 	}
 
 	now := time.Now()
-	var emailVerifiedAt *time.Time
-	if emailVerified {
-		emailVerifiedAt = &now
-	}
 	user := &db.User{
-		ID:              uuid.New(),
-		Role:            role,
-		Email:           email,
-		PasswordHash:    string(hashedPassword),
-		Name:            strings.TrimSpace(in.Name),
-		Phone:           strings.TrimSpace(in.Phone),
-		Location:        strings.TrimSpace(in.Location),
-		KYCStatus:       db.KYCPending,
-		RatingAvg:       5.00,
-		RatingCount:     0,
-		IsSuspended:     false,
-		EmailVerifiedAt: emailVerifiedAt,
-		CreatedAt:       now,
-		UpdatedAt:       now,
+		ID:           uuid.New(),
+		Role:         role,
+		Email:        email,
+		PasswordHash: string(hashedPassword),
+		Name:         strings.TrimSpace(in.Name),
+		Phone:        strings.TrimSpace(in.Phone),
+		Location:     strings.TrimSpace(in.Location),
+		KYCStatus:    db.KYCPending,
+		RatingAvg:    5.00,
+		RatingCount:  0,
+		IsSuspended:  false,
+		CreatedAt:    now,
+		UpdatedAt:    now,
 	}
 
 	s.UsersByID[user.ID] = user
 	s.UsersByEmail[email] = user
 
 	return user, nil
-}
-
-func (s *AuthService) CreateMediatorInvitation(ctx context.Context, invitedBy uuid.UUID, email string) (string, time.Time, error) {
-	cleanEmail := strings.ToLower(strings.TrimSpace(email))
-	parsedEmail, err := mail.ParseAddress(cleanEmail)
-	if err != nil || parsedEmail.Address != cleanEmail {
-		return "", time.Time{}, errors.New("a valid email address is required")
-	}
-
-	tokenBytes := make([]byte, 32)
-	if _, err := rand.Read(tokenBytes); err != nil {
-		return "", time.Time{}, fmt.Errorf("generate mediator invitation token: %w", err)
-	}
-	token := hex.EncodeToString(tokenBytes)
-	tokenHash := hashInvitationToken(token)
-	expiresAt := time.Now().Add(24 * time.Hour)
-
-	s.Mu.Lock()
-	defer s.Mu.Unlock()
-	if _, exists := s.UsersByEmail[cleanEmail]; exists {
-		return "", time.Time{}, errors.New("an account with this email already exists")
-	}
-	now := time.Now()
-	for hash, invitation := range s.MediatorInvitations {
-		if invitation.AcceptedAt != nil || !invitation.ExpiresAt.After(now) ||
-			(invitation.Email == cleanEmail && invitation.AcceptedAt == nil) {
-			delete(s.MediatorInvitations, hash)
-		}
-	}
-	s.MediatorInvitations[tokenHash] = &MediatorInvitation{
-		Email:     cleanEmail,
-		InvitedBy: invitedBy,
-		ExpiresAt: expiresAt,
-	}
-	return token, expiresAt, nil
-}
-
-func (s *AuthService) AcceptMediatorInvitation(ctx context.Context, token, name, password string) (*db.User, error) {
-	if strings.TrimSpace(name) == "" {
-		return nil, errors.New("name is required")
-	}
-	if len(password) < 12 {
-		return nil, errors.New("password must be at least 12 characters long")
-	}
-
-	s.Mu.Lock()
-	defer s.Mu.Unlock()
-
-	tokenHash := hashInvitationToken(strings.TrimSpace(token))
-	invitation, exists := s.MediatorInvitations[tokenHash]
-	if !exists || invitation.AcceptedAt != nil {
-		return nil, errors.New("invalid or already used mediator invitation")
-	}
-	if time.Now().After(invitation.ExpiresAt) {
-		delete(s.MediatorInvitations, tokenHash)
-		return nil, errors.New("mediator invitation has expired")
-	}
-
-	user, err := s.createUserLocked(SignUpInput{
-		Email:    invitation.Email,
-		Password: password,
-		Name:     name,
-	}, db.RoleMediator, true)
-	if err != nil {
-		return nil, err
-	}
-	now := time.Now()
-	invitation.AcceptedAt = &now
-	return user, nil
-}
-
-func hashInvitationToken(token string) string {
-	hash := sha256.Sum256([]byte(token))
-	return hex.EncodeToString(hash[:])
 }
 
 func (s *AuthService) Login(ctx context.Context, email, password, userAgent, ip string) (*db.User, *Session, error) {

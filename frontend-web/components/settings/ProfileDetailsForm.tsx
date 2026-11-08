@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, Save } from "lucide-react";
+import { Check, Mail, MapPin, Phone, Save, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

@@ -6,8 +6,8 @@
 - **Manual Action:** Ensure you have completed the Next.js setup and your `layout.tsx` and `globals.css` are configured (Completed).
 - **Generation 1 (Currency Utils):**
   > **CURRENT TASK:** Generate a utility file `lib/currency.ts` containing a `formatCurrency` function that takes an integer in kobo/cents (e.g., 150000) and returns a formatted Nigerian Naira string (e.g., "₦1,500").
-- **Generation 2 (Proxy):**
-  > **CURRENT TASK:** Generate `proxy.ts` for the Next.js App Router. It must check the frontend session cookies, protect authenticated routes, and redirect anonymous users to `/login`. The backend—not the proxy—must validate JWTs and authorize roles.
+- **Generation 2 (Middleware):**
+  > **CURRENT TASK:** Generate `middleware.ts` for Next.js App Router. It must check for an HTTP-only JWT cookie. Protect the `/dashboard`, `/escrow`, and `/admin` routes. Redirect unauthenticated users to `/login`.
 - **Generation 3 (Auth Context):**
   > **CURRENT TASK:** Generate a React Context provider `AuthContext.tsx` (Client Component) that stores the user's ID, Role, and KYC tier. Include a custom hook `useAuth()`.
 - **Generation 4 (S3 Config for fileuploader)**

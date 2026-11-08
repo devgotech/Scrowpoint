@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Send, ShieldCheck, X } from "lucide-react";
+import { MessageCircle, Send, ShieldCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FAQQuickLinks } from "./FAQQuickLinks";
 import { cn } from "@/lib/utils";

@@ -13,8 +13,6 @@ import {
 } from "@/components/admin/DisputeQueueDataTable";
 import { KYCManualApprovalQueue } from "@/components/admin/KYCManualApprovalQueue";
 import { adminApi } from "@/lib/api";
-import { useAuth } from "@/components/providers/AuthContext";
-import { MediatorInvitationPanel } from "@/components/admin/MediatorInvitationPanel";
 
 /**
  * Screen: Dispute Triage & Pending KYC (Phase 6 §2)
@@ -34,7 +32,6 @@ export default function AdminDashboardPage({
   onNavigateHome,
 }: AdminDashboardPageProps) {
   const router = useRouter();
-  const { isAdmin, isMediator } = useAuth();
   const [kycActionNotice, setKycActionNotice] = useState<string | null>(null);
   const [disputeCases, setDisputeCases] =
     useState<DisputeQueueRecord[]>(SAMPLE_DISPUTE_QUEUE);
@@ -113,15 +110,12 @@ export default function AdminDashboardPage({
                 </span>
               </div>
               <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
-                {isMediator
-                  ? "MEDIATION DESK"
-                  : "SENIOR MEDIATION & COMPLIANCE DESK"}
+                SENIOR MEDIATION &amp; COMPLIANCE DESK
                 <span className="text-[#FF5A25]">.</span>
               </h1>
               <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
-                {isMediator
-                  ? "Review evidence and resolve assigned customer disputes."
-                  : "Execute binding arbitration, review disputes, and clear manual SmileID identity verifications."}
+                Execute binding arbitration, review 48-hour diagnostic disputes,
+                and clear manual SmileID identity verifications.
               </p>
             </div>
 
@@ -155,14 +149,11 @@ export default function AdminDashboardPage({
             onSelectCase={handleSelectCase}
           />
 
-          {isAdmin && <MediatorInvitationPanel />}
-
-          {isAdmin && (
-            <KYCManualApprovalQueue
-              onApprove={(id) => handleReviewKyc(id, "APPROVE")}
-              onReject={(id) => handleReviewKyc(id, "REJECT")}
-            />
-          )}
+          {/* KYC Manual Review Queue */}
+          <KYCManualApprovalQueue
+            onApprove={(id) => handleReviewKyc(id, "APPROVE")}
+            onReject={(id) => handleReviewKyc(id, "REJECT")}
+          />
         </div>
       </main>
 
