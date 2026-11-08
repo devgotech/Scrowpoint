@@ -100,7 +100,7 @@ export function FilterSidebar({
               <span>SmileID Verified Only</span>
             </span>
             <span className="font-secondary text-[10px] text-[#111113]/65 leading-tight block mt-0.5">
-              Exclude sellers who haven't passed biometric Government ID checks.
+              Exclude sellers who haven&apos;t passed biometric Government ID checks.
             </span>
           </div>
         </label>

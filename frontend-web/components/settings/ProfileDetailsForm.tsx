@@ -18,7 +18,15 @@ import { useAuth } from "@/components/providers/AuthContext";
 
 export interface ProfileDetailsFormProps {
   className?: string;
-  onSave?: (data: any) => void;
+  onSave?: (data: ProfileDetailsFormData) => void;
+}
+
+export interface ProfileDetailsFormData {
+  legalName: string;
+  storeName: string;
+  email: string;
+  phone: string;
+  location: string;
 }
 
 export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProps) {
@@ -31,7 +39,8 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
   const [location, setLocation] = useState(user?.location || "Ikeja, Lagos State");
   const [saved, setSaved] = useState(false);
 
-  // Synchronize when user updates
+  // Auth can resolve after mount, so keep editable fields synchronized with the loaded profile.
+  /* eslint-disable react-hooks/set-state-in-effect */
   React.useEffect(() => {
     if (user) {
       if (user.name) setLegalName(user.name);
@@ -40,6 +49,7 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
       if (user.location) setLocation(user.location);
     }
   }, [user]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

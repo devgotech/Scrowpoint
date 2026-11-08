@@ -227,6 +227,8 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
           localStorage.getItem("bh_waitlist_user");
         if (saved) {
           const parsed = JSON.parse(saved);
+          // Restore client-only reservation data after hydration to avoid an SSR mismatch.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setSubmittedData(parsed);
           savedEmail = parsed?.email || "";
         }
