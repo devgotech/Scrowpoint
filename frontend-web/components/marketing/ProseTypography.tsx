@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Download, Lock, Printer, Shield, ShieldCheck } from "lucide-react";
+import { Lock, Printer, Shield, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

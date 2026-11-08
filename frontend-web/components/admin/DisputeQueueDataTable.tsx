@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowRight, Clock, Eye, Scale, ShieldAlert, User } from "lucide-react";
+import { ArrowRight, Clock, Scale } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

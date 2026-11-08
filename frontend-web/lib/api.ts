@@ -179,6 +179,16 @@ export const authApi = {
       method: "POST",
     }),
 
+  acceptMediatorInvitation: (payload: {
+    token: string;
+    name: string;
+    password: string;
+  }) =>
+    apiFetch<AuthResponseDTO>("/api/auth/mediator-invitations/accept", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
   requestPasswordReset: (payload: { email: string }) =>
     apiFetch<{ message: string }>("/api/auth/request-password-reset", {
       method: "POST",
@@ -551,6 +561,15 @@ export const adminApi = {
 
   listDisputes: () => apiFetch<BackendDisputeDTO[]>("/api/admin/disputes"),
 
+  createMediatorInvitation: (payload: { email: string }) =>
+    apiFetch<{ token: string; email: string; expiresAt: string }>(
+      "/api/admin/mediators/invitations",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    ),
+
   getDisputeEvidence: (disputeId: string) =>
     apiFetch<AdminDisputeEvidenceResponseDTO>(
       `/api/admin/disputes/${encodeURIComponent(disputeId)}/evidence`
@@ -565,7 +584,7 @@ export const adminApi = {
     }
   ) =>
     apiFetch<{ resolved: boolean; dispute_id: string; verdict: string }>(
-      `/api/admin/disputes/${encodeURIComponent(disputeId)}/resolve`,
+      `/api/admin/disputes/${encodeURIComponent(disputeId)}/verdict`,
       {
         method: "POST",
         body: JSON.stringify(payload),

@@ -2,15 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  Truck,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, Search, ShieldCheck, Truck, Zap } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { ValuePropGrid } from "@/components/marketing/ValuePropGrid";

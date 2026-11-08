@@ -1,28 +1,10 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import {
-  ArrowRight,
-  Calculator,
-  CheckCircle2,
-  Clock,
-  Coins,
-  Copy,
-  CreditCard,
-  DollarSign,
-  HelpCircle,
-  Info,
-  Lock,
-  Percent,
-  RefreshCw,
-  ShieldCheck,
-  Truck,
-  Zap,
-} from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, Calculator, CheckCircle2, Clock, Copy, Lock, ShieldCheck, Truck } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 /**
@@ -61,7 +43,7 @@ export function EscrowFeeCalculator({
   const [rawAmount, setRawAmount] = useState<string>(String(initialAmount));
   const [payer, setPayer] = useState<FeePayer>("buyer");
   const [includeShipping, setIncludeShipping] = useState<boolean>(true);
-  const [shippingFee, setShippingFee] = useState<number>(4500); // Standard Lagos/Nationwide tracked waybill
+  const shippingFee = 4500;
   const [copied, setCopied] = useState<boolean>(false);
 
   // Parse numerical value safely

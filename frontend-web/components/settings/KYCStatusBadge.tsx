@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, Clock, Shield, ShieldAlert, ShieldCheck, XCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Clock, ShieldAlert, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**

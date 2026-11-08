@@ -1,17 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  AlertCircle,
-  CheckCircle2,
-  FileCheck,
-  FileText,
-  IdCard,
-  Lock,
-  Upload,
-  UploadCloud,
-  X,
-} from "lucide-react";
+import { AlertCircle, FileCheck, IdCard, UploadCloud, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 

@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { CheckCircle2, RotateCcw, Scale, ShieldAlert, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { CheckCircle2, RotateCcw, Scale } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -29,8 +28,6 @@ export function VerdictActionGroup({
   onExecuteVerdict,
   className,
 }: VerdictActionGroupProps) {
-  const [selectedVerdict, setSelectedVerdict] = useState<string | null>(null);
-
   const formatNaira = (val: number) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
@@ -67,7 +64,6 @@ export function VerdictActionGroup({
         <button
           type="button"
           onClick={() => {
-            setSelectedVerdict("refund_buyer");
             onExecuteVerdict?.("refund_buyer");
           }}
           className="p-4 border border-[#f56565]/40 bg-[#f56565]/10 hover:bg-[#f56565]/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
@@ -90,7 +86,6 @@ export function VerdictActionGroup({
         <button
           type="button"
           onClick={() => {
-            setSelectedVerdict("release_seller");
             onExecuteVerdict?.("release_seller");
           }}
           className="p-4 border border-[#22c55e]/40 bg-[#22c55e]/10 hover:bg-[#22c55e]/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
@@ -113,7 +108,6 @@ export function VerdictActionGroup({
         <button
           type="button"
           onClick={() => {
-            setSelectedVerdict("split");
             onExecuteVerdict?.("split");
           }}
           className="p-4 border border-[#111113] bg-[#F8F7F4] hover:bg-[#F0EFEA] text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"

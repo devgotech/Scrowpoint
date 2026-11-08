@@ -1,22 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  Copy,
-  CreditCard,
-  FileText,
-  Lock,
-  MapPin,
-  Package,
-  Receipt,
-  Shield,
-  ShieldCheck,
-  Truck,
-  User,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, CreditCard, Lock, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
