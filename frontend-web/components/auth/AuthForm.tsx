@@ -381,7 +381,7 @@ export function AuthForm({
       mode === "login" &&
       ((cleanEmail === "buyer@example.com" && password === "Password123!") ||
         (cleanEmail === "seller@example.com" && password === "Password123!") ||
-        (cleanEmail === "admin@buyershigh.com" && password === "AdminPassword123!"));
+        (cleanEmail === "admin@scrowpoint.com" && password === "AdminPassword123!"));
     const endpoint =
       mode === "login" ? "/api/auth/login" : "/api/auth/register";
     const requestBody =
@@ -1085,7 +1085,7 @@ export function AuthForm({
                 <button
                   type="button"
                   onClick={() => {
-                    setEmail("admin@buyershigh.com");
+                    setEmail("admin@scrowpoint.com");
                     setPassword("AdminPassword123!");
                   }}
                   className="px-2 py-1 bg-white border border-[#111113]/15 hover:border-[#111113] font-mono text-[10px] uppercase text-[#111113] transition-colors cursor-pointer"

@@ -227,6 +227,8 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
           localStorage.getItem("bh_waitlist_user");
         if (saved) {
           const parsed = JSON.parse(saved);
+          // Restore client-only reservation data after hydration to avoid an SSR mismatch.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setSubmittedData(parsed);
           savedEmail = parsed?.email || "";
         }
@@ -383,7 +385,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
 
   const handleCopyReferral = () => {
     if (!submittedData) return;
-    const shareUrl = `https://scrowpoint.ng/waitlist?ref=${submittedData.referralCode}`;
+    const shareUrl = `https://scrowpoint.com/waitlist?ref=${submittedData.referralCode}`;
     if (navigator?.clipboard) {
       navigator.clipboard.writeText(shareUrl);
       setCopiedLink(true);
@@ -415,8 +417,8 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
   const capacityPercentage = Math.min(100, Math.round((currentClaimed / TOTAL_SLOTS) * 100));
 
   const referralUrl = submittedData
-    ? `https://scrowpoint.ng/waitlist?ref=${submittedData.referralCode}`
-    : "https://scrowpoint.ng/waitlist";
+    ? `https://scrowpoint.com/waitlist?ref=${submittedData.referralCode}`
+    : "https://scrowpoint.com/waitlist";
 
   const whatsappShareText = encodeURIComponent(
     `I just secured my Founding Cohort 01 spot on Scrowpoint — Nigeria's P2P gadget escrow engine with Paystack custody & a 48-hour hardware diagnostic window. First 500 traders get 0% escrow fees on their first 5 trades: ${referralUrl}`
@@ -1265,11 +1267,11 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                 Trust &amp; Safety
               </Link>
               <a
-                href="mailto:early@scrowpoint.ng?subject=Founding%20Cohort%2001%20Inquiry"
+                href="mailto:early@scrowpoint.com?subject=Founding%20Cohort%2001%20Inquiry"
                 className="text-[#111113]/70 hover:text-[#111113] transition-colors inline-flex items-center gap-1"
               >
                 <Mail className="h-3.5 w-3.5" />
-                <span>early@scrowpoint.ng</span>
+                <span>early@scrowpoint.com</span>
               </a>
               <a
                 href="https://wa.me/2348000000000?text=Hello%20Scrowpoint%20Team%2C%20I%20have%20an%20inquiry%20about%20Founding%20Cohort%2001"

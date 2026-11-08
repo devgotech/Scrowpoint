@@ -44,12 +44,12 @@ export default function AdminDashboardPage({
       }
       const mapped: DisputeQueueRecord[] = res.data.map((d) => ({
         id: d.id,
-        orderNumber: d.order_id,
+        orderNumber: d.orderId,
         gadgetTitle: "Escrow Disputed Device",
         buyerName: "Verified Buyer",
         sellerName: "Verified Merchant",
         lockedAmountNaira: 850000,
-        reason: d.description || d.reason,
+        reason: d.mediatorNotes || d.issueType,
         slaRemaining: "04h 00m",
         isUrgent: true,
         status: "MEDIATION",

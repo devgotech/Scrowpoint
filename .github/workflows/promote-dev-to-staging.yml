@@ -1,0 +1,57 @@
+name: Promote dev to staging
+
+on:
+  workflow_run:
+    workflows:
+      - Quality Gates
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: promote-dev-to-staging
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or update staging promotion PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          current_sha="$(gh api "repos/${REPOSITORY}/git/ref/heads/dev" --jq '.object.sha')"
+          if [[ "${current_sha}" != "${EXPECTED_SHA}" ]]; then
+            echo "A newer dev commit exists; its own Quality Gates run will handle promotion."
+            exit 0
+          fi
+
+          pr_number="$(gh pr list --repo "${REPOSITORY}" --base staging --head dev --state open --json number --jq '.[0].number // empty')"
+          if [[ -z "${pr_number}" ]]; then
+            gh pr create \
+              --repo "${REPOSITORY}" \
+              --base staging \
+              --head dev \
+              --title "Promote dev to staging" \
+              --body "Automated promotion after the Quality Gates workflow passed for commit ${EXPECTED_SHA}."
+            pr_number="$(gh pr list --repo "${REPOSITORY}" --base staging --head dev --state open --json number --jq '.[0].number')"
+          fi
+
+          pr_head_sha="$(gh pr view "${pr_number}" --repo "${REPOSITORY}" --json headRefOid --jq '.headRefOid')"
+          if [[ "${pr_head_sha}" != "${EXPECTED_SHA}" ]]; then
+            echo "The promotion PR head changed before checks completed; waiting for the newer commit's CI."
+            exit 0
+          fi
+
+          gh pr merge "${pr_number}" --repo "${REPOSITORY}" --auto --squash

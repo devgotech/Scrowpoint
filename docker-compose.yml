@@ -62,9 +62,18 @@ services:
     restart: unless-stopped
     environment:
       PORT: 8000
+      ENVIRONMENT: development
+      JWT_SECRET: scrowpoint-local-dev-jwt-secret-2026
       STORAGE_BACKEND: local
       LOCAL_STORAGE_DIR: /tmp/scrowpoint_media
       CDN_BASE_URL: http://localhost:8000/media
+      S3_PRIVATE_BUCKET_NAME: ${S3_PRIVATE_BUCKET_NAME:-}
+      S3_REGION: ${S3_REGION:-eu-west-1}
+      S3_ENDPOINT_URL: ${S3_ENDPOINT_URL:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      MAX_IMAGE_UPLOAD_MB: ${MAX_IMAGE_UPLOAD_MB:-15}
+      MAX_VIDEO_UPLOAD_MB: ${MAX_VIDEO_UPLOAD_MB:-100}
     ports:
       - "8000:8000"
     volumes:
