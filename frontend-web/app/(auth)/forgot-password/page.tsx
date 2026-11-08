@@ -301,7 +301,7 @@ export default function ForgotPasswordPage({
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="e.g. chidi.okafor@scrowpoint.ng"
+                      placeholder="e.g. chidi.okafor@scrowpoint.com"
                       className="w-full h-11 pl-9 pr-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
                     />
                   </div>
@@ -318,12 +318,12 @@ export default function ForgotPasswordPage({
                       Testing Recovery Flow?
                     </p>
                     <p className="font-mono text-xs text-[#111113] truncate">
-                      chidi.okafor@scrowpoint.ng
+                      chidi.okafor@scrowpoint.com
                     </p>
                   </div>
                   <button
                     type="button"
-                    onClick={() => setEmail("chidi.okafor@scrowpoint.ng")}
+                    onClick={() => setEmail("chidi.okafor@scrowpoint.com")}
                     className="px-2.5 py-1.5 bg-white border border-[#111113]/15 hover:border-[#111113] text-[11px] font-mono uppercase tracking-wider text-[#111113] transition-colors shrink-0 cursor-pointer"
                   >
                     Use Email

@@ -77,10 +77,29 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 
 	origin := r.Header.Get("Origin")
-	allowedOrigin := os.Getenv("CORS_ALLOWED_ORIGIN")
-	if allowedOrigin == "" {
+	allowedOriginConfig := os.Getenv("CORS_ALLOWED_ORIGIN")
+	if allowedOriginConfig == "" {
+		allowedOriginConfig = os.Getenv("ALLOWED_ORIGINS")
+	}
+
+	var allowedOrigin string
+	if allowedOriginConfig != "" {
+		origins := strings.Split(allowedOriginConfig, ",")
+		matched := false
+		for _, o := range origins {
+			o = strings.TrimSpace(o)
+			if o == origin || o == "*" {
+				allowedOrigin = origin
+				matched = true
+				break
+			}
+		}
+		if !matched && len(origins) > 0 {
+			allowedOrigin = strings.TrimSpace(origins[0])
+		}
+	} else {
 		if os.Getenv("ENV") == "production" {
-			allowedOrigin = "https://buyershigh.com"
+			allowedOrigin = "https://scrowpoint.com"
 		} else if origin != "" {
 			allowedOrigin = origin
 		} else {

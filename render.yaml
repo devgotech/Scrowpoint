@@ -1,10 +1,8 @@
 # ============================================================================
 # SCROWPOINT WORKSPACE — RENDER CLOUD BLUEPRINT SPECIFICATION (render.yaml)
 #
-# Use this Blueprint if you push `scrowpoint_workspace/` as its own standalone
-# backend repository on GitHub and connect it to Render ("New +" -> "Blueprint").
-# (If pushing the entire project root including the React frontend, use the
-# root `/render.yaml` instead.)
+# Use this Blueprint to deploy the Go Core Backend and Python Media Service
+# on Render ("New +" -> "Blueprint" -> Connect your repository).
 # ============================================================================
 
 services:
@@ -44,6 +42,14 @@ services:
           type: web
           name: scrowpoint-media-service
           envVarKey: RENDER_EXTERNAL_URL
+      # SEC-10: Restrict CORS to your deployed frontend domain
+      - key: CORS_ALLOWED_ORIGIN
+        sync: false
+      # SEC-02 & SEC-03: Ensure dev bypasses are explicitly disabled
+      - key: ALLOW_DEV_MOCK_PAYMENTS
+        value: "false"
+      - key: SEED_DEV_ADMIN
+        value: "false"
 
   # --------------------------------------------------------------------------
   # 2. MEDIA & EXIF-STRIPPING MICROSERVICE (Python 3.11 FastAPI Docker Service)
@@ -60,14 +66,33 @@ services:
         value: 8000
       - key: ENVIRONMENT
         value: production
+      # Set to 's3' when using AWS S3 / Cloudflare R2, or 'local' with persistent disk
       - key: STORAGE_BACKEND
         value: local
       - key: LOCAL_STORAGE_DIR
-        value: /tmp/scrowpoint_media
+        value: /var/data/scrowpoint_media
       - key: STRIP_EXIF
         value: "true"
       - key: MAX_UPLOAD_SIZE_MB
         value: "15"
+      - key: CORS_ALLOWED_ORIGIN
+        sync: false
+      # S3 / Cloudflare R2 Credentials (required if STORAGE_BACKEND=s3)
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: eu-west-1
+      - key: S3_BUCKET_NAME
+        sync: false
+      - key: CDN_BASE_URL
+        sync: false
+    # Render Persistent Disk prevents media loss on redeploys when using STORAGE_BACKEND=local
+    disk:
+      name: media-storage
+      mountPath: /var/data/scrowpoint_media
+      sizeGB: 10
 
 databases:
   # --------------------------------------------------------------------------

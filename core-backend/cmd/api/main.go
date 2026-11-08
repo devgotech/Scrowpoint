@@ -76,7 +76,7 @@ func main() {
 	if env != "production" && os.Getenv("SEED_DEV_ADMIN") != "false" {
 		devAdminEmail := os.Getenv("DEV_ADMIN_EMAIL")
 		if devAdminEmail == "" {
-			devAdminEmail = "admin@buyershigh.com"
+			devAdminEmail = "admin@scrowpoint.com"
 		}
 		devAdminPass := os.Getenv("DEV_ADMIN_PASSWORD")
 		if devAdminPass == "" {

@@ -118,7 +118,7 @@ POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@buyershigh.com",
+  "email": "admin@scrowpoint.com",
   "password": "AdminPassword123!"
 }
 
