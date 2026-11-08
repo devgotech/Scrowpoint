@@ -2,9 +2,13 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -65,18 +69,19 @@ func newCoverageFixture(t *testing.T) coverageFixture {
 func TestExtendedAuthServiceFlows(t *testing.T) {
 	ctx := context.Background()
 	auth := NewAuthService()
-	user, session, err := auth.OAuthLogin(ctx, "google", "oauth@example.com", "OAuth User", "provider-1", "test", "127.0.0.1")
+	acceptedAt := time.Now()
+	user, session, err := auth.OAuthLoginWithTerms(ctx, "google", "oauth@example.com", "OAuth User", "provider-1", "test", "127.0.0.1", &acceptedAt, "terms-v1")
 	if err != nil {
 		t.Fatalf("OAuthLogin: %v", err)
 	}
 	if user.Email != "oauth@example.com" || session.UserID != user.ID {
 		t.Fatalf("OAuthLogin returned unexpected user/session: %+v %+v", user, session)
 	}
-	if _, existingSession, err := auth.OAuthLogin(ctx, "google", user.Email, user.Name, "provider-1", "", ""); err != nil || existingSession.ID == session.ID {
+	if _, existingSession, err := auth.OAuthLoginWithTerms(ctx, "google", user.Email, user.Name, "provider-1", "", "", nil, ""); err != nil || existingSession.ID == session.ID {
 		t.Fatalf("OAuthLogin existing account returned session=%+v error=%v", existingSession, err)
 	}
 	user.IsSuspended = true
-	if _, _, err := auth.OAuthLogin(ctx, "google", user.Email, user.Name, "provider-1", "", ""); err == nil {
+	if _, _, err := auth.OAuthLoginWithTerms(ctx, "google", user.Email, user.Name, "provider-1", "", "", nil, ""); err == nil {
 		t.Fatal("OAuthLogin accepted a suspended account")
 	}
 
@@ -227,7 +232,32 @@ func TestExtendedOrderAndEscrowFlows(t *testing.T) {
 func TestExtendedPaymentAndDisputeFlows(t *testing.T) {
 	ctx := context.Background()
 	fixture := newCoverageFixture(t)
-	payments := NewPaymentService("sk_test_mock", fixture.escrow, fixture.orders, fixture.auth)
+	paystack := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost || r.URL.Path != "/transaction/initialize" {
+			t.Errorf("unexpected Paystack request: %s %s", r.Method, r.URL.Path)
+		}
+		var request struct {
+			Email       string `json:"email"`
+			Amount      int64  `json:"amount"`
+			Currency    string `json:"currency"`
+			Reference   string `json:"reference"`
+			CallbackURL string `json:"callback_url"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+			t.Errorf("decode Paystack request: %v", err)
+		}
+		if request.Email != fixture.buyer.Email || request.Amount != int64(fixture.order.TotalAmount*100) ||
+			request.Currency != "NGN" || request.CallbackURL == "" {
+			t.Errorf("unexpected Paystack request values: %+v", request)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprintf(w, `{"status":true,"data":{"authorization_url":"https://checkout.paystack.com/test-code","access_code":"test-code","reference":%q}}`, request.Reference)
+	}))
+	defer paystack.Close()
+	payments := NewPaymentService("sk_test_mock", fixture.escrow, fixture.orders, fixture.auth, PaymentServiceConfig{
+		PaystackAPIBaseURL: paystack.URL,
+		FrontendBaseURL:    "https://frontend.example",
+	})
 	init, err := payments.InitializePaystackTransaction(ctx, fixture.order.ID, fixture.buyer.ID)
 	if err != nil || init.Reference == "" {
 		t.Fatalf("InitializePaystackTransaction = %+v, error %v", init, err)

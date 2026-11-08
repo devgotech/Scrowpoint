@@ -97,11 +97,12 @@ export interface AuthContextValue {
       providerUid: string;
       role?: UserRole;
       avatarUrl?: string;
+      termsAccepted?: boolean;
     }
   ) => Promise<UserProfile>;
   verifyEmailToken: (token: string) => Promise<void>;
-  resendVerificationEmail: () => Promise<void>;
-  requestPasswordReset: (email: string) => Promise<void>;
+  resendVerificationEmail: () => Promise<string | null>;
+  requestPasswordReset: (email: string) => Promise<string | null>;
   resetPasswordWithToken: (token: string, newPassword: string) => Promise<void>;
   /** Clear auth state */
   logout: () => Promise<void>;
@@ -249,6 +250,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
         providerUid: string;
         role?: UserRole;
         avatarUrl?: string;
+        termsAccepted?: boolean;
       }
     ) => {
       const result = await authApi.oauth(provider, profile);
@@ -297,11 +299,13 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
   const resendVerificationEmail = useCallback(async () => {
     const result = await authApi.resendVerification();
     if (!result.ok) throw new Error(result.error || "Unable to resend verification.");
+    return result.data?.verificationCodePreview ?? null;
   }, []);
 
   const requestPasswordReset = useCallback(async (email: string) => {
     const result = await authApi.requestPasswordReset({ email });
     if (!result.ok) throw new Error(result.error || "Unable to request a password reset.");
+    return result.data?.resetTokenPreview ?? null;
   }, []);
 
   const resetPasswordWithToken = useCallback(

@@ -29,6 +29,9 @@ func main() {
 	env := os.Getenv("ENV")
 	if env == "" {
 		env = "development"
+		if err := os.Setenv("ENV", env); err != nil {
+			log.Fatalf("[FATAL] Could not set runtime environment: %v", err)
+		}
 	}
 
 	port := os.Getenv("PORT")
@@ -50,8 +53,7 @@ func main() {
 		if env == "production" {
 			log.Fatalf("[FATAL] PAYSTACK_SECRET_KEY must be configured in production mode")
 		}
-		paystackSecret = "sk_test_buyers_high_mock_paystack_secret_key"
-		log.Println("[WARN] Running with mock Paystack test secret key for development")
+		log.Println("[WARN] PAYSTACK_SECRET_KEY is not configured; checkout will be unavailable")
 	}
 
 	smilePartnerID := os.Getenv("SMILE_ID_PARTNER_ID")
@@ -71,12 +73,25 @@ func main() {
 
 	authService := services.NewAuthService()
 	userService := services.NewUserService(authService)
-	smileClient := services.NewSmileIDClient(smilePartnerID, smileAPIKey)
+	smileClient := services.NewSmileIDClient(
+		smilePartnerID,
+		smileAPIKey,
+		services.SmileIDClientConfig{Environment: os.Getenv("SMILE_ID_ENVIRONMENT")},
+	)
 	kycService := services.NewKYCService(authService, smileClient)
 	listingService := services.NewListingService(authService)
 	orderService := services.NewOrderService(listingService, authService)
 	escrowService := services.NewEscrowService(orderService, authService)
-	paymentService := services.NewPaymentService(paystackSecret, escrowService, orderService, authService)
+	paymentService := services.NewPaymentService(
+		paystackSecret,
+		escrowService,
+		orderService,
+		authService,
+		services.PaymentServiceConfig{
+			PaystackAPIBaseURL: os.Getenv("PAYSTACK_API_BASE_URL"),
+			FrontendBaseURL:    os.Getenv("FRONTEND_BASE_URL"),
+		},
+	)
 	disputeService := services.NewDisputeService(orderService, escrowService, authService)
 	moderationService := services.NewModerationService(authService, disputeService, orderService, kycService)
 	notificationService := services.NewNotificationService()
@@ -176,7 +191,7 @@ func main() {
 		log.Fatalf("[FATAL] Initial PostgreSQL application state save failed: %v", err)
 	}
 
-	authHandler := handlers.NewAuthHandler(authService, jwtMw)
+	authHandler := handlers.NewAuthHandler(authService, jwtMw, services.NewSMTPEmailSenderFromEnv())
 	userHandler := handlers.NewUserHandler(userService)
 	kycHandler := handlers.NewKYCHandler(kycService)
 	listingHandler := handlers.NewListingHandler(listingService)
@@ -249,7 +264,7 @@ func main() {
 }
 
 func loadLocalEnv() error {
-	for _, path := range []string{".env.local", "../.env.local"} {
+	for _, path := range []string{".env", ".env.local", "../.env", "../.env.local"} {
 		file, err := os.Open(path)
 		if err != nil {
 			if os.IsNotExist(err) {

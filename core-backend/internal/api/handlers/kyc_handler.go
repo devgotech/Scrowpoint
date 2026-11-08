@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/google/uuid"
@@ -18,6 +20,46 @@ func NewKYCHandler(kycService *services.KYCService) *KYCHandler {
 	return &KYCHandler{
 		kycService: kycService,
 	}
+}
+
+func (h *KYCHandler) StartSmileIDSession(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	if r.Method != http.MethodPost {
+		JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+	session, err := h.kycService.StartSmileIDSession(
+		r.Context(),
+		userID,
+		os.Getenv("SMILE_ID_CALLBACK_URL"),
+		os.Getenv("FRONTEND_BASE_URL"),
+	)
+	if err != nil {
+		JSONError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	JSONSuccess(w, http.StatusOK, session)
+}
+
+func (h *KYCHandler) SmileIDWebhook(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		JSONError(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+	payload, err := io.ReadAll(r.Body)
+	if err != nil {
+		JSONError(w, http.StatusBadRequest, "Invalid Smile ID webhook body")
+		return
+	}
+	if err := h.kycService.HandleSmileIDWebhook(
+		r.Header.Get("Response-Timestamp"),
+		r.Header.Get("Response-Signature"),
+		payload,
+	); err != nil {
+		JSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	JSONSuccess(w, http.StatusOK, map[string]string{"status": "processed"})
 }
 
 func (h *KYCHandler) SubmitKYC(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {

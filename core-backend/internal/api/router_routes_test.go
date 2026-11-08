@@ -93,7 +93,7 @@ func TestRouterDispatchesPublicAndAuthenticatedRoutes(t *testing.T) {
 		{"signup", http.MethodPost, "/api/auth/register", "{}", "", http.StatusBadRequest},
 		{"login", http.MethodPost, "/api/auth/login", "{}", "", http.StatusUnauthorized},
 		{"oauth", http.MethodPost, "/api/auth/oauth/google", "{}", "", http.StatusBadRequest},
-		{"verify email", http.MethodPost, "/api/auth/verify-email", "{}", "", http.StatusBadRequest},
+		{"verify email", http.MethodPost, "/api/auth/verify-email", "{}", buyerToken, http.StatusBadRequest},
 		{"request password reset", http.MethodPost, "/api/auth/request-password-reset", "{}", "", http.StatusBadRequest},
 		{"reset password", http.MethodPost, "/api/auth/reset-password", "{}", "", http.StatusBadRequest},
 		{"waitlist status", http.MethodGet, "/api/waitlist/status", "", "", http.StatusOK},

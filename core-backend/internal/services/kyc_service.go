@@ -1,10 +1,20 @@
 package services
 
 import (
+	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"net/url"
+	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -31,33 +41,146 @@ type KYCStatusResponse struct {
 	Message         string       `json:"message"`
 }
 
+type SmileIDWebSession struct {
+	Token       string `json:"token"`
+	Environment string `json:"environment"`
+	PartnerID   string `json:"partnerId"`
+	CallbackURL string `json:"callbackUrl"`
+	SessionID   string `json:"sessionId"`
+	PartnerName string `json:"partnerName"`
+	LogoURL     string `json:"logoUrl"`
+	PolicyURL   string `json:"policyUrl"`
+	ThemeColor  string `json:"themeColor"`
+}
+
 type SmileIDClient struct {
-	partnerID  string
-	apiKey     string
-	apiBaseURL string
-	httpClient *http.Client
+	partnerID   string
+	apiKey      string
+	apiBaseURL  string
+	environment string
+	httpClient  *http.Client
 }
 
-func NewSmileIDClient(partnerID, apiKey string) *SmileIDClient {
+type SmileIDClientConfig struct {
+	Environment string
+	APIBaseURL  string
+	HTTPClient  *http.Client
+}
+
+func NewSmileIDClient(partnerID, apiKey string, configs ...SmileIDClientConfig) *SmileIDClient {
+	config := SmileIDClientConfig{}
+	if len(configs) > 0 {
+		config = configs[0]
+	}
+	if config.Environment == "" {
+		config.Environment = strings.ToLower(strings.TrimSpace(os.Getenv("SMILE_ID_ENVIRONMENT")))
+	}
+	config.Environment = strings.ToLower(strings.TrimSpace(config.Environment))
+	if config.Environment == "" {
+		config.Environment = "sandbox"
+	}
+	if config.APIBaseURL == "" {
+		if config.Environment == "production" {
+			config.APIBaseURL = "https://api.smileidentity.com"
+		} else {
+			config.APIBaseURL = "https://testapi.smileidentity.com"
+		}
+	}
+	if config.HTTPClient == nil {
+		config.HTTPClient = &http.Client{Timeout: 15 * time.Second}
+	}
 	return &SmileIDClient{
-		partnerID:  partnerID,
-		apiKey:     apiKey,
-		apiBaseURL: "https://api.smileidentity.com/v1",
-		httpClient: &http.Client{Timeout: 10 * time.Second},
+		partnerID:   partnerID,
+		apiKey:      apiKey,
+		apiBaseURL:  strings.TrimRight(config.APIBaseURL, "/"),
+		environment: config.Environment,
+		httpClient:  config.HTTPClient,
 	}
 }
 
-func (c *SmileIDClient) QueryJobStatus(ctx context.Context, providerRef string) (string, error) {
-	if providerRef == "sim_timeout_error" || providerRef == "sim_503_error" {
-		return "", errors.New("SmileID API 503 Service Unavailable")
+func (c *SmileIDClient) CreateWebToken(
+	ctx context.Context,
+	userID, sessionID uuid.UUID,
+	callbackURL string,
+) (string, error) {
+	if c.partnerID == "" || c.apiKey == "" {
+		return "", errors.New("Smile ID is not configured")
 	}
-	if providerRef == "sim_rejected" {
-		return "REJECTED", nil
+	if c.environment != "sandbox" && c.environment != "production" {
+		return "", errors.New("SMILE_ID_ENVIRONMENT must be sandbox or production")
 	}
-	if providerRef == "sim_approved" || providerRef == "sm_approved" || providerRef == "approved" {
-		return "APPROVED", nil
+	if callbackURL == "" {
+		return "", errors.New("SMILE_ID_CALLBACK_URL must be configured")
 	}
-	return "PENDING", nil
+	callback, err := url.Parse(callbackURL)
+	if err != nil || callback.Scheme != "https" || callback.Host == "" {
+		return "", errors.New("Smile ID callback URL must be an absolute HTTPS URL")
+	}
+
+	body := &bytes.Buffer{}
+	form := multipart.NewWriter(body)
+	partnerParams, err := json.Marshal(map[string]string{
+		"internal_reference": sessionID.String(),
+		"internal_user_id":   userID.String(),
+	})
+	if err != nil {
+		return "", fmt.Errorf("encode Smile ID partner parameters: %w", err)
+	}
+	payload, err := json.Marshal(map[string]string{"callback_url": callbackURL})
+	if err != nil {
+		return "", fmt.Errorf("encode Smile ID token payload: %w", err)
+	}
+	for name, value := range map[string]string{
+		"product":        "biometric_kyc",
+		"user_id":        userID.String(),
+		"partner_params": string(partnerParams),
+		"payload":        string(payload),
+	} {
+		if err := form.WriteField(name, value); err != nil {
+			return "", fmt.Errorf("write Smile ID token field %s: %w", name, err)
+		}
+	}
+	if err := form.Close(); err != nil {
+		return "", fmt.Errorf("finish Smile ID token request: %w", err)
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.apiBaseURL+"/v3/token", body)
+	if err != nil {
+		return "", fmt.Errorf("create Smile ID token request: %w", err)
+	}
+	req.Header.Set("Content-Type", form.FormDataContentType())
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("SmileID-Partner-ID", c.partnerID)
+	req.Header.Set("SmileID-API-Key", c.apiKey)
+
+	res, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("request Smile ID Web SDK token: %w", err)
+	}
+	defer res.Body.Close()
+	responseBody, err := io.ReadAll(io.LimitReader(res.Body, 1<<20))
+	if err != nil {
+		return "", fmt.Errorf("read Smile ID token response: %w", err)
+	}
+	var response struct {
+		Token string `json:"token"`
+	}
+	if err := json.Unmarshal(responseBody, &response); err != nil {
+		return "", fmt.Errorf("decode Smile ID token response (HTTP %d): %w", res.StatusCode, err)
+	}
+	if res.StatusCode != http.StatusOK || response.Token == "" {
+		return "", fmt.Errorf("Smile ID token request failed (HTTP %d)", res.StatusCode)
+	}
+	return response.Token, nil
+}
+
+func (c *SmileIDClient) VerifyWebhookSignature(timestamp, signature string) bool {
+	if c.partnerID == "" || c.apiKey == "" || timestamp == "" || signature == "" {
+		return false
+	}
+	mac := hmac.New(sha256.New, []byte(c.apiKey))
+	_, _ = mac.Write([]byte(timestamp + c.partnerID + "sid_request"))
+	expected := base64.StdEncoding.EncodeToString(mac.Sum(nil))
+	return hmac.Equal([]byte(expected), []byte(signature))
 }
 
 type KYCService struct {
@@ -78,8 +201,11 @@ func NewKYCService(authService *AuthService, smileClient *SmileIDClient) *KYCSer
 }
 
 func (s *KYCService) SubmitKYC(ctx context.Context, userID uuid.UUID, in KYCSubmitInput) (*db.UserVerification, error) {
-	if in.ProviderRef == "" && in.DocumentURL == "" && in.SelfieURL == "" && in.IDNumber == "" && in.IDType == "" {
-		return nil, errors.New("providerVerificationRef or identity documents are required")
+	if in.ProviderRef != "" {
+		return nil, errors.New("Smile ID results can only be recorded from a verified provider webhook")
+	}
+	if in.DocumentURL == "" && in.SelfieURL == "" {
+		return nil, errors.New("private identity document or selfie upload is required")
 	}
 
 	user, err := s.authService.GetUserByID(ctx, userID)
@@ -91,34 +217,12 @@ func (s *KYCService) SubmitKYC(ctx context.Context, userID uuid.UUID, in KYCSubm
 	defer s.Mu.Unlock()
 
 	now := time.Now()
-	var initialStatus db.KYCStatus = db.KYCPending
-	var rejectionReason string
-
-	providerRef := in.ProviderRef
-	if providerRef == "" {
-		providerRef = "media_" + uuid.NewString()
-		initialStatus = db.KYCPending
-	} else {
-		jobStatus, err := s.smileIDClient.QueryJobStatus(ctx, providerRef)
-		if err != nil {
-			// FALLBACK LOGIC per Product Requirements §6:
-			// If the external API times out (503) or fails, set status to MANUAL_REVIEW_REQUIRED
-			initialStatus = db.KYCManualReviewRequired
-			rejectionReason = "External verification timed out. Flagged for manual admin verification."
-		} else if jobStatus == "APPROVED" {
-			initialStatus = db.KYCApproved
-		} else if jobStatus == "REJECTED" {
-			initialStatus = db.KYCRejected
-			rejectionReason = "Biometric liveness check failed or ID document mismatch."
-		} else {
-			initialStatus = db.KYCPending
-		}
-	}
+	initialStatus := db.KYCManualReviewRequired
+	providerRef := "manual_" + uuid.NewString()
 
 	metadataObj := map[string]interface{}{
-		"provider":    "SmileID",
+		"provider":    "manual_review",
 		"idType":      in.IDType,
-		"idNumber":    in.IDNumber,
 		"documentUrl": in.DocumentURL,
 		"selfieUrl":   in.SelfieURL,
 		"submittedAt": now.Format(time.RFC3339),
@@ -127,14 +231,13 @@ func (s *KYCService) SubmitKYC(ctx context.Context, userID uuid.UUID, in KYCSubm
 	metadataBytes, _ := json.Marshal(metadataObj)
 
 	verification := &db.UserVerification{
-		ID:              uuid.New(),
-		UserID:          user.ID,
-		ProviderRef:     providerRef,
-		Status:          initialStatus,
-		RejectionReason: rejectionReason,
-		Metadata:        metadataBytes,
-		CreatedAt:       now,
-		UpdatedAt:       now,
+		ID:          uuid.New(),
+		UserID:      user.ID,
+		ProviderRef: providerRef,
+		Status:      initialStatus,
+		Metadata:    metadataBytes,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	}
 
 	s.authService.Mu.Lock()
@@ -146,6 +249,150 @@ func (s *KYCService) SubmitKYC(ctx context.Context, userID uuid.UUID, in KYCSubm
 	s.activeJobMap[providerRef] = user.ID
 
 	return verification, nil
+}
+
+func (s *KYCService) StartSmileIDSession(
+	ctx context.Context,
+	userID uuid.UUID,
+	callbackURL, frontendBaseURL string,
+) (*SmileIDWebSession, error) {
+	user, err := s.authService.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	sessionID := uuid.New()
+	token, err := s.smileIDClient.CreateWebToken(ctx, userID, sessionID, callbackURL)
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now()
+	verification := &db.UserVerification{
+		ID:          uuid.New(),
+		UserID:      user.ID,
+		ProviderRef: sessionID.String(),
+		Status:      db.KYCPending,
+		Metadata:    []byte(`{"provider":"SmileID","product":"biometric_kyc"}`),
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+	s.Mu.Lock()
+	s.Verifications[user.ID] = append(s.Verifications[user.ID], verification)
+	s.activeJobMap[sessionID.String()] = user.ID
+	s.Mu.Unlock()
+
+	s.authService.Mu.Lock()
+	user.KYCStatus = db.KYCPending
+	user.UpdatedAt = now
+	s.authService.Mu.Unlock()
+
+	environment := s.smileIDClient.environment
+	if environment == "" {
+		environment = "sandbox"
+	}
+	baseURL := strings.TrimRight(frontendBaseURL, "/")
+	if baseURL == "" {
+		baseURL = "http://localhost:3000"
+	}
+	return &SmileIDWebSession{
+		Token:       token,
+		Environment: environment,
+		PartnerID:   s.smileIDClient.partnerID,
+		CallbackURL: callbackURL,
+		SessionID:   sessionID.String(),
+		PartnerName: "Scrowpoint",
+		LogoURL:     baseURL + "/favicon.ico",
+		PolicyURL:   baseURL + "/legal/privacy",
+		ThemeColor:  "#FF5A25",
+	}, nil
+}
+
+func (s *KYCService) HandleSmileIDWebhook(timestamp, signature string, payload []byte) error {
+	if !s.smileIDClient.VerifyWebhookSignature(timestamp, signature) {
+		return errors.New("invalid Smile ID webhook signature")
+	}
+	var event struct {
+		Product       string `json:"product"`
+		Status        string `json:"status"`
+		Reason        string `json:"reason"`
+		Message       string `json:"message"`
+		PartnerParams struct {
+			InternalReference string `json:"internal_reference"`
+			InternalUserID    string `json:"internal_user_id"`
+		} `json:"partner_params"`
+	}
+	if err := json.Unmarshal(payload, &event); err != nil {
+		return errors.New("invalid Smile ID webhook payload")
+	}
+	if event.Product != "biometric_kyc" {
+		return fmt.Errorf("unsupported Smile ID product %q", event.Product)
+	}
+	sessionID, err := uuid.Parse(event.PartnerParams.InternalReference)
+	if err != nil {
+		return errors.New("Smile ID webhook is missing a valid session reference")
+	}
+	var expectedUserID uuid.UUID
+	if event.PartnerParams.InternalUserID != "" {
+		expectedUserID, err = uuid.Parse(event.PartnerParams.InternalUserID)
+		if err != nil {
+			return errors.New("Smile ID webhook has an invalid user reference")
+		}
+	}
+
+	var status db.KYCStatus
+	var reviewReason string
+	switch strings.ToLower(event.Status) {
+	case "clear":
+		status = db.KYCApproved
+	case "attention":
+		status = db.KYCManualReviewRequired
+		reviewReason = event.Message
+	case "block":
+		status = db.KYCRejected
+		reviewReason = event.Message
+	case "error":
+		status = db.KYCManualReviewRequired
+		reviewReason = event.Message
+	default:
+		return fmt.Errorf("unsupported Smile ID verification status %q", event.Status)
+	}
+	if reviewReason == "" && status == db.KYCRejected {
+		reviewReason = event.Reason
+	}
+
+	s.Mu.Lock()
+	userID, exists := s.activeJobMap[sessionID.String()]
+	if !exists || (expectedUserID != uuid.Nil && userID != expectedUserID) {
+		s.Mu.Unlock()
+		return errors.New("Smile ID webhook session does not match an active user verification")
+	}
+	var verification *db.UserVerification
+	for _, record := range s.Verifications[userID] {
+		if record.ProviderRef == sessionID.String() {
+			verification = record
+			break
+		}
+	}
+	if verification == nil {
+		s.Mu.Unlock()
+		return errors.New("Smile ID verification record not found")
+	}
+	now := time.Now()
+	verification.Status = status
+	verification.RejectionReason = reviewReason
+	verification.UpdatedAt = now
+	s.Mu.Unlock()
+
+	s.authService.Mu.Lock()
+	user := s.authService.UsersByID[userID]
+	if user == nil {
+		s.authService.Mu.Unlock()
+		return errors.New("Smile ID verification user not found")
+	}
+	user.KYCStatus = status
+	user.UpdatedAt = now
+	s.authService.Mu.Unlock()
+	return nil
 }
 
 func (s *KYCService) GetStatus(ctx context.Context, userID uuid.UUID) (*KYCStatusResponse, error) {

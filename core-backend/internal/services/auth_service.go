@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"math/big"
 	"net/mail"
 	"strings"
 	"sync"
@@ -64,12 +65,14 @@ func NewAuthService() *AuthService {
 }
 
 type SignUpInput struct {
-	Email    string      `json:"email"`
-	Password string      `json:"password"`
-	Name     string      `json:"name"`
-	Phone    string      `json:"phone,omitempty"`
-	Location string      `json:"location,omitempty"`
-	Role     db.UserRole `json:"role,omitempty"`
+	Email           string      `json:"email"`
+	Password        string      `json:"password"`
+	Name            string      `json:"name"`
+	Phone           string      `json:"phone,omitempty"`
+	Location        string      `json:"location,omitempty"`
+	Role            db.UserRole `json:"role,omitempty"`
+	TermsAcceptedAt *time.Time  `json:"termsAcceptedAt,omitempty"`
+	TermsVersion    string      `json:"termsVersion,omitempty"`
 }
 
 func (s *AuthService) SignUp(ctx context.Context, in SignUpInput) (*db.User, error) {
@@ -120,6 +123,8 @@ func (s *AuthService) createUserLocked(in SignUpInput, role db.UserRole, emailVe
 		RatingCount:     0,
 		IsSuspended:     false,
 		EmailVerifiedAt: emailVerifiedAt,
+		TermsAcceptedAt: in.TermsAcceptedAt,
+		TermsVersion:    in.TermsVersion,
 		CreatedAt:       now,
 		UpdatedAt:       now,
 	}
@@ -240,6 +245,15 @@ func (s *AuthService) Login(ctx context.Context, email, password, userAgent, ip 
 }
 
 func (s *AuthService) OAuthLogin(ctx context.Context, provider, email, name, providerUID, userAgent, ip string) (*db.User, *Session, error) {
+	return s.OAuthLoginWithTerms(ctx, provider, email, name, providerUID, userAgent, ip, nil, "")
+}
+
+func (s *AuthService) OAuthLoginWithTerms(
+	ctx context.Context,
+	provider, email, name, providerUID, userAgent, ip string,
+	termsAcceptedAt *time.Time,
+	termsVersion string,
+) (*db.User, *Session, error) {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
@@ -252,6 +266,9 @@ func (s *AuthService) OAuthLogin(ctx context.Context, provider, email, name, pro
 	now := time.Now()
 
 	if !exists {
+		if termsAcceptedAt == nil || termsVersion == "" {
+			return nil, nil, errors.New("accepting the terms of service is required to create an account")
+		}
 		randomBytes := make([]byte, 24)
 		_, _ = rand.Read(randomBytes)
 		randomPassword, _ := bcrypt.GenerateFromPassword(randomBytes, bcrypt.DefaultCost)
@@ -267,6 +284,8 @@ func (s *AuthService) OAuthLogin(ctx context.Context, provider, email, name, pro
 			RatingCount:     0,
 			IsSuspended:     false,
 			EmailVerifiedAt: &now,
+			TermsAcceptedAt: termsAcceptedAt,
+			TermsVersion:    termsVersion,
 			CreatedAt:       now,
 			UpdatedAt:       now,
 		}
@@ -321,22 +340,37 @@ func (s *AuthService) RequestEmailVerification(ctx context.Context, userID uuid.
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
-	token := generateSecureToken()
+	token, err := generateUniqueEmailOTP(s.TokensByValue)
+	if err != nil {
+		return "", err
+	}
 	s.TokensByValue[token] = &VerificationToken{
 		Token:     token,
 		UserID:    userID,
 		TokenType: "email_verify",
-		ExpiresAt: time.Now().Add(24 * time.Hour),
+		ExpiresAt: time.Now().Add(10 * time.Minute),
 	}
 	return token, nil
 }
 
 func (s *AuthService) VerifyEmail(ctx context.Context, tokenStr string) error {
+	return s.verifyEmail(ctx, uuid.Nil, tokenStr)
+}
+
+func (s *AuthService) VerifyEmailForUser(ctx context.Context, userID uuid.UUID, tokenStr string) error {
+	if userID == uuid.Nil {
+		return errors.New("authenticated user is required")
+	}
+	return s.verifyEmail(ctx, userID, tokenStr)
+}
+
+func (s *AuthService) verifyEmail(_ context.Context, userID uuid.UUID, tokenStr string) error {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
 	tokenRecord, exists := s.TokensByValue[tokenStr]
-	if !exists || tokenRecord.TokenType != "email_verify" {
+	if !exists || tokenRecord.TokenType != "email_verify" ||
+		(userID != uuid.Nil && tokenRecord.UserID != userID) {
 		return errors.New("invalid or expired verification token")
 	}
 
@@ -356,6 +390,20 @@ func (s *AuthService) VerifyEmail(ctx context.Context, tokenStr string) error {
 
 	delete(s.TokensByValue, tokenStr)
 	return nil
+}
+
+func generateUniqueEmailOTP(existing map[string]*VerificationToken) (string, error) {
+	for attempt := 0; attempt < 10; attempt++ {
+		code, err := rand.Int(rand.Reader, big.NewInt(1_000_000))
+		if err != nil {
+			return "", fmt.Errorf("generate email verification code: %w", err)
+		}
+		token := fmt.Sprintf("%06d", code.Int64())
+		if _, exists := existing[token]; !exists {
+			return token, nil
+		}
+	}
+	return "", errors.New("could not generate a unique email verification code")
 }
 
 func (s *AuthService) RequestPasswordReset(ctx context.Context, email string) (string, error) {
