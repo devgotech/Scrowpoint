@@ -13,9 +13,11 @@ from dotenv import load_dotenv
 # Load .env file automatically when starting
 load_dotenv()
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, status
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+import jwt
 from pydantic import BaseModel, Field
 
 from .processor import (
@@ -57,16 +59,12 @@ else:
 
 storage = StorageService()
 
-# In local/test mode, mount StaticFiles for public assets (listing photos & dispute evidence)
-# Note: kyc_vault is strictly segregated and NOT mounted publicly to protect sensitive PII.
+# Only public listing media is mounted. KYC documents and dispute evidence are never
+# exposed through a static-file route.
 if storage.backend == "local":
     local_path = Path(storage.local_dir)
     (local_path / "listing_media").mkdir(parents=True, exist_ok=True)
-    (local_path / "dispute_evidence").mkdir(parents=True, exist_ok=True)
-    (local_path / "kyc_vault").mkdir(parents=True, exist_ok=True)
-
     app.mount("/media/listing_media", StaticFiles(directory=str(local_path / "listing_media")), name="listing_media")
-    app.mount("/media/dispute_evidence", StaticFiles(directory=str(local_path / "dispute_evidence")), name="dispute_evidence")
 
 
 # ============================================================================
@@ -74,7 +72,8 @@ if storage.backend == "local":
 # ============================================================================
 
 class MediaUploadResponse(BaseModel):
-    mediaUrl: str = Field(..., description="Public CDN URL of the sanitized media file")
+    mediaUrl: Optional[str] = Field(None, description="Public CDN URL; null for private files")
+    storageKey: str = Field(..., description="Storage key; private files are accessible only to admins")
     mediaType: str = Field(..., description="Category partition: listing_media, kyc_document, or dispute_evidence")
     originalFilename: str = Field(..., description="Original client-supplied filename")
     sanitized: bool = Field(True, description="True when EXIF and private metadata were purged")
@@ -107,6 +106,51 @@ def health_check():
         "stripExif": STRIP_EXIF_ENABLED,
         "allowedMimeTypes": sorted(list(ALLOWED_IMAGE_TYPES))
     }
+
+
+@app.get("/private/{storage_key:path}", include_in_schema=False)
+def get_private_file(storage_key: str, request: Request):
+    authorization = request.headers.get("Authorization", "")
+    scheme, separator, token = authorization.partition(" ")
+    if not separator or scheme.lower() != "bearer" or not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Admin authentication required")
+
+    jwt_secret = os.getenv("JWT_SECRET")
+    if not jwt_secret:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Media authentication is not configured")
+
+    try:
+        claims = jwt.decode(
+            token,
+            jwt_secret,
+            algorithms=["HS256"],
+            issuer="buyers-high-escrow",
+            options={"require": ["exp", "iss", "userId", "role"]},
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
+
+    if claims.get("role") != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin role required")
+
+    if storage.backend == "s3":
+        return RedirectResponse(
+            storage.create_private_download_url(storage_key),
+            status_code=status.HTTP_307_TEMPORARY_REDIRECT,
+            headers={"Cache-Control": "no-store"},
+        )
+
+    try:
+        file_path = storage.get_private_file_path(storage_key)
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Private file not found")
+    if not file_path.is_file():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Private file not found")
+    return FileResponse(
+        file_path,
+        media_type="application/octet-stream",
+        headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
+    )
 
 
 # ============================================================================
@@ -162,6 +206,7 @@ async def _process_and_store(
 
     return MediaUploadResponse(
         mediaUrl=record["mediaUrl"],
+        storageKey=record["storageKey"],
         mediaType=media_type_label,
         originalFilename=file.filename or "uploaded_media.jpg",
         sanitized=True,

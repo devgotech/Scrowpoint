@@ -76,9 +76,15 @@ The frontend is a Next.js application. API requests use same-origin `/api/*` pat
 | `ENVIRONMENT` | FastAPI runtime environment | `development` | `staging` | `production` |
 | `STRIP_EXIF` | Enforces removal of GPS & camera metadata on uploaded gadget photos | `"true"` | `"true"` | `"true"` (Must always be `"true"` in production to prevent off-platform contact leaks) |
 | `MAX_UPLOAD_SIZE_MB` | Maximum size per inspection photo/video upload | `"15"` | `"15"` | `"15"` |
-| `STORAGE_BACKEND` | Where sanitized gadget media files are stored (`local` or `s3`) | `local` | `local` or `s3` (Staging bucket) | `s3` (AWS S3 / Cloudflare R2 recommended for persistent production storage) |
-| `LOCAL_STORAGE_DIR` | Directory path when `STORAGE_BACKEND=local` | `/tmp/scrowpoint_media` | `/tmp/scrowpoint_media` | `/tmp/scrowpoint_media` |
-| `AWS_S3_BUCKET` | S3 / Cloudflare R2 bucket name when `STORAGE_BACKEND=s3` | *(Not required when `STORAGE_BACKEND=local`)* | `scrowpoint-staging-media` | `scrowpoint-prod-media` |
-| `AWS_ACCESS_KEY_ID` | S3 / R2 Access Key ID | *(Not required locally)* | Staging S3 Access Key | Production S3 Access Key |
-| `AWS_SECRET_ACCESS_KEY` | S3 / R2 Secret Access Key | *(Not required locally)* | Staging S3 Secret Key | Production S3 Secret Key |
-| `AWS_REGION` | S3 bucket region | `af-south-1` or `eu-west-1` | `eu-west-1` | `eu-west-1` (or `auto` for Cloudflare R2) |
+| `STORAGE_BACKEND` | Storage adapter (`local` or S3-compatible) | `local` | `local` or `s3` | `s3` |
+| `LOCAL_STORAGE_DIR` | Local storage root when `STORAGE_BACKEND=local`; only listing media is served publicly | `/tmp/scrowpoint_media` | Persistent disk path or `/tmp/scrowpoint_media` | Not used when `STORAGE_BACKEND=s3` |
+| `S3_PUBLIC_BUCKET_NAME` | Bucket for public listing photos | Not required for local storage | Staging public bucket | Production public-media bucket |
+| `S3_PRIVATE_BUCKET_NAME` | Private bucket for KYC documents and dispute evidence | Not required for local storage | Staging private bucket | Production private-media bucket |
+| `AWS_ACCESS_KEY_ID` | S3/R2 access key with access to both media buckets | Not required for local storage | Staging key | Production key |
+| `AWS_SECRET_ACCESS_KEY` | S3/R2 secret key | Not required for local storage | Staging secret | Production secret |
+| `S3_REGION` | S3 region (`auto` for Cloudflare R2) | `eu-west-1` when testing S3 | Bucket region or `auto` for R2 | Bucket region or `auto` for R2 |
+| `S3_ENDPOINT_URL` | Optional custom S3-compatible endpoint; required for R2 | Empty for AWS S3 | Provider endpoint | `https://<account-id>.r2.cloudflarestorage.com` for R2; empty for AWS |
+| `CDN_BASE_URL` | Public base URL for listing objects; never used for private files | `http://localhost:8000/media` | Public bucket/CDN URL | Public bucket custom-domain/CDN URL |
+| `JWT_SECRET` | Must match the Go backend secret; used to verify admin tokens for private-file access | Same local value as core backend | Same staging secret as core backend | Reference the core backend's `JWT_SECRET` in Render |
+
+Listing photos are stored in the public bucket and return `mediaUrl`. KYC documents and dispute evidence go to the private bucket and return a `storageKey` without a public URL. The media service's `GET /private/{storageKey}` route requires a valid admin bearer token and redirects to a five-minute signed object URL (or serves the file locally). Keep the private bucket non-public. A SmileID timeout still sets the KYC status to `manual_review_required`; the KYC submission must retain the private upload's `storageKey` for the manual reviewer to retrieve the document.

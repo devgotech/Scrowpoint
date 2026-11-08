@@ -1,117 +1,136 @@
 """
-Buyer's High Secure Object Storage Microservice Component
-Handles saving sanitized media and returning secure CDN / object storage URLs.
-Supports local directory storage (testing/development) and cloud object store adapters (S3/GCS in production).
+Storage for public listing media and private KYC/dispute files.
 """
 
 import hashlib
 import logging
 import os
-import re
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import Dict, Any, Optional
+from pathlib import Path, PurePosixPath
+from typing import Any, Dict
 
 logger = logging.getLogger("buyers_high_media.storage")
 
 
 class StorageService:
-    """
-    Manages partitioned, tamper-evident object storage for Buyer's High media assets.
-    Enforces path traversal defenses, generates cryptographically random identifiers,
-    and supports both Local and AWS S3 backends for testing and production readiness.
-    """
-
-    ALLOWED_FOLDERS = {"listing_media", "kyc_vault", "dispute_evidence", "gadgets"}
+    PUBLIC_FOLDERS = {"listing_media", "gadgets"}
+    PRIVATE_FOLDERS = {"kyc_vault", "dispute_evidence"}
+    ALLOWED_FOLDERS = PUBLIC_FOLDERS | PRIVATE_FOLDERS
 
     def __init__(self):
         self.backend = os.getenv("STORAGE_BACKEND", "local").lower()
         self.local_dir = Path(os.getenv("LOCAL_STORAGE_DIR", "/tmp/buyers_high_media"))
-        self.cdn_base = os.getenv("CDN_BASE_URL", "http://localhost:8000/media").rstrip("/")
-        self.s3_bucket = os.getenv("S3_BUCKET_NAME", "buyers-high-secure-media-vault")
-        self.aws_region = os.getenv("AWS_REGION", "eu-west-1")
-
+        public_base_url = os.getenv("CDN_BASE_URL")
+        self.cdn_base = (public_base_url or "http://localhost:8000/media").rstrip("/")
+        self.public_bucket = os.getenv("S3_PUBLIC_BUCKET_NAME", "")
+        self.private_bucket = os.getenv("S3_PRIVATE_BUCKET_NAME", "")
         self.s3_client = None
 
         if self.backend == "local":
             self.local_dir.mkdir(parents=True, exist_ok=True)
             for folder in self.ALLOWED_FOLDERS:
                 (self.local_dir / folder).mkdir(parents=True, exist_ok=True)
-            logger.info("StorageService initialized in LOCAL mode: %s", self.local_dir)
-
         elif self.backend == "s3":
-            try:
-                import boto3
-                self.s3_client = boto3.client(
-                    "s3",
-                    region_name=self.aws_region,
-                    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-                    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
+            if not self.public_bucket or not self.private_bucket:
+                raise ValueError(
+                    "S3_PUBLIC_BUCKET_NAME and S3_PRIVATE_BUCKET_NAME are required "
+                    "when STORAGE_BACKEND=s3"
                 )
-                logger.info("StorageService initialized in S3 mode. Bucket: %s", self.s3_bucket)
-            except Exception as e:
-                logger.warning("Failed to initialize boto3 S3 client: %s. Falling back to local storage.", e)
-                self.backend = "local"
-                self.local_dir.mkdir(parents=True, exist_ok=True)
-                for folder in self.ALLOWED_FOLDERS:
-                    (self.local_dir / folder).mkdir(parents=True, exist_ok=True)
+            if not public_base_url:
+                raise ValueError("CDN_BASE_URL is required when STORAGE_BACKEND=s3")
+
+            import boto3
+
+            client_options: Dict[str, Any] = {
+                "region_name": os.getenv("S3_REGION", "eu-west-1"),
+            }
+            endpoint_url = os.getenv("S3_ENDPOINT_URL")
+            if endpoint_url:
+                client_options["endpoint_url"] = endpoint_url
+
+            access_key = os.getenv("AWS_ACCESS_KEY_ID")
+            secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+            if access_key:
+                client_options["aws_access_key_id"] = access_key
+            if secret_key:
+                client_options["aws_secret_access_key"] = secret_key
+
+            self.s3_client = boto3.client("s3", **client_options)
+        else:
+            raise ValueError("STORAGE_BACKEND must be either 'local' or 's3'")
+
+        logger.info("StorageService initialized with %s storage", self.backend.upper())
+
+    @staticmethod
+    def _normalize_private_key(storage_key: str) -> str:
+        key_path = PurePosixPath(storage_key)
+        if (
+            key_path.is_absolute()
+            or "\\" in storage_key
+            or "\x00" in storage_key
+            or any(part in {"", ".", ".."} for part in key_path.parts)
+            or len(key_path.parts) < 2
+            or key_path.parts[0] not in StorageService.PRIVATE_FOLDERS
+        ):
+            raise ValueError("Invalid private storage key")
+        return key_path.as_posix()
 
     def store_file(
         self,
         file_bytes: bytes,
         folder: str,
-        extension: str = "webp"
+        extension: str = "webp",
     ) -> Dict[str, Any]:
-        """
-        Stores sanitized bytes into a segregated partition and returns storage metadata.
+        if folder not in self.ALLOWED_FOLDERS:
+            raise ValueError("Unsupported storage category")
 
-        Args:
-            file_bytes: Sanitized image bytes.
-            folder: Partition key ('listing_media', 'kyc_vault', or 'dispute_evidence').
-            extension: File extension without leading period (default: 'webp').
-
-        Returns:
-            Dict containing mediaUrl, sha256Checksum, sizeBytes, and storagePath.
-        """
-        # 1. Folder validation & path traversal defense
-        clean_folder = re.sub(r"[^a-zA-Z0-9_\-]", "", folder)
-        if clean_folder not in self.ALLOWED_FOLDERS:
-            clean_folder = "listing_media"
-
-        # 2. Cryptographic checksum calculation (for non-repudiation and dispute evidence)
-        sha256_hash = hashlib.sha256(file_bytes).hexdigest()
-
-        # 3. Collision-resistant partitioned filename: YYYYMMDD_UUIDv4.ext
+        is_private = folder in self.PRIVATE_FOLDERS
+        checksum = hashlib.sha256(file_bytes).hexdigest()
         date_prefix = datetime.now(timezone.utc).strftime("%Y%m%d")
-        unique_token = uuid.uuid4().hex
-        filename = f"{date_prefix}_{unique_token}.{extension.lower().lstrip('.')}"
-        relative_path = f"{clean_folder}/{filename}"
+        filename = f"{date_prefix}_{uuid.uuid4().hex}.{extension.lower().lstrip('.')}"
+        storage_key = f"{folder}/{filename}"
 
-        # 4. Save to target backend
         if self.backend == "local":
-            target_dir = self.local_dir / clean_folder
-            target_dir.mkdir(parents=True, exist_ok=True)
-            target_path = target_dir / filename
-            with open(target_path, "wb") as f:
-                f.write(file_bytes)
-
-        elif self.backend == "s3" and self.s3_client:
+            target_path = self.local_dir / folder / filename
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            target_path.write_bytes(file_bytes)
+        else:
+            bucket = self.private_bucket if is_private else self.public_bucket
             self.s3_client.put_object(
-                Bucket=self.s3_bucket,
-                Key=relative_path,
+                Bucket=bucket,
+                Key=storage_key,
                 Body=file_bytes,
-                ContentType=f"image/{extension}",
-                ServerSideEncryption="AES256"
+                ContentType=f"image/{extension.lower().lstrip('.')}",
+                CacheControl="private, no-store" if is_private else "public, max-age=31536000, immutable",
             )
 
-        # 5. Build public or CDN URL
-        media_url = f"{self.cdn_base}/{relative_path}"
-
         return {
-            "mediaUrl": media_url,
-            "sha256Checksum": sha256_hash,
+            "mediaUrl": None if is_private else f"{self.cdn_base}/{storage_key}",
+            "storageKey": storage_key,
+            "sha256Checksum": checksum,
             "sizeBytes": len(file_bytes),
-            "storagePath": relative_path,
-            "createdAt": datetime.now(timezone.utc).isoformat()
+            "createdAt": datetime.now(timezone.utc).isoformat(),
         }
+
+    def get_private_file_path(self, storage_key: str) -> Path:
+        normalized_key = self._normalize_private_key(storage_key)
+        root = self.local_dir.resolve()
+        target = (root / Path(*PurePosixPath(normalized_key).parts)).resolve()
+        if not target.is_relative_to(root):
+            raise ValueError("Invalid private storage key")
+        return target
+
+    def create_private_download_url(self, storage_key: str, expires_in: int = 300) -> str:
+        if self.backend != "s3" or self.s3_client is None:
+            raise RuntimeError("Signed download URLs are only available with S3 storage")
+        normalized_key = self._normalize_private_key(storage_key)
+        return self.s3_client.generate_presigned_url(
+            "get_object",
+            Params={
+                "Bucket": self.private_bucket,
+                "Key": normalized_key,
+                "ResponseCacheControl": "no-store",
+            },
+            ExpiresIn=expires_in,
+        )
