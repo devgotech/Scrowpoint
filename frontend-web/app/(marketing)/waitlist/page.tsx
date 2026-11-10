@@ -176,7 +176,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
       try {
         const saved =
           localStorage.getItem("sp_waitlist_user") ||
-          localStorage.getItem("bh_waitlist_user");
+          localStorage.getItem("sp_waitlist_user");
         if (saved) {
           const parsed = JSON.parse(saved);
           // Restore client-only reservation data after hydration to avoid an SSR mismatch.
@@ -348,7 +348,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
   const handleResetForNew = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("sp_waitlist_user");
-      localStorage.removeItem("bh_waitlist_user");
+      localStorage.removeItem("sp_waitlist_user");
     }
     setSubmittedData(null);
     setFormData({

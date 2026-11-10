@@ -66,7 +66,7 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
     // Dispatch event to open floating live chat widget if present
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
-      window.dispatchEvent(new CustomEvent("bh_open_live_chat"));
+      window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
     }
   };
 

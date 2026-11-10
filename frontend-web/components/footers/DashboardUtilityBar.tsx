@@ -207,7 +207,7 @@ export function DashboardUtilityBar({
               onClick={() => {
                 if (typeof window !== "undefined") {
                   window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
-                  window.dispatchEvent(new CustomEvent("bh_open_live_chat"));
+                  window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
                 }
               }}
               className="hover:text-[#FF5A25] transition-colors flex items-center gap-1"

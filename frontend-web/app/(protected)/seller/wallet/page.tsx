@@ -111,7 +111,7 @@ export default function SellerWalletPage({
       const token =
         typeof window !== "undefined"
           ? localStorage.getItem("sp_access_token") ||
-            localStorage.getItem("bh_access_token")
+            localStorage.getItem("sp_access_token")
           : null;
       if (token) {
         await fetch("/api/users/me/payment-methods", {
@@ -152,7 +152,7 @@ export default function SellerWalletPage({
         typeof window !== "undefined"
           ? localStorage.getItem("sp_auth_token") ||
             localStorage.getItem("sp_access_token") ||
-            localStorage.getItem("bh_access_token")
+            localStorage.getItem("sp_access_token")
           : null;
       await fetch("/api/payouts", {
         method: "POST",

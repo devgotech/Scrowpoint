@@ -159,7 +159,7 @@ export function ChatMessageList({
         const token =
           typeof window !== "undefined"
             ? localStorage.getItem("sp_access_token") ||
-              localStorage.getItem("bh_access_token")
+              localStorage.getItem("sp_access_token")
             : null;
         const headers: Record<string, string> = {};
         if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -280,7 +280,7 @@ export function ChatMessageList({
       const token =
         typeof window !== "undefined"
           ? localStorage.getItem("sp_access_token") ||
-            localStorage.getItem("bh_access_token")
+            localStorage.getItem("sp_access_token")
           : null;
       const headers: Record<string, string> = {
         "Content-Type": "application/json",

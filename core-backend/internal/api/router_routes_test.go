@@ -112,7 +112,7 @@ func TestRouterDispatchesPublicAndAuthenticatedRoutes(t *testing.T) {
 		{"media complete", http.MethodPost, "/api/media/complete", "{", buyerToken, http.StatusBadRequest},
 		{"current user", http.MethodGet, "/api/auth/me", "", buyerToken, http.StatusOK},
 		{"logout", http.MethodPost, "/api/auth/logout", "", buyerToken, http.StatusOK},
-		{"resend verification", http.MethodPost, "/api/auth/resend-verification", "", buyerToken, http.StatusOK},
+		{"resend verification without SMTP outside development", http.MethodPost, "/api/auth/resend-verification", "", buyerToken, http.StatusBadGateway},
 		{"change password", http.MethodPost, "/api/auth/change-password", "{", buyerToken, http.StatusBadRequest},
 		{"sessions", http.MethodGet, "/api/auth/sessions", "", buyerToken, http.StatusOK},
 		{"update profile", http.MethodPut, "/api/users/me/profile", `{"name":"Changed"}`, buyerToken, http.StatusOK},

@@ -153,12 +153,12 @@ function AppInner() {
     };
 
     window.addEventListener("sp_route_change", handleRouteChange);
-    window.addEventListener("bh_route_change", handleRouteChange);
+    window.addEventListener("sp_route_change", handleRouteChange);
     window.addEventListener("popstate", handleRouteChange);
 
     return () => {
       window.removeEventListener("sp_route_change", handleRouteChange);
-      window.removeEventListener("bh_route_change", handleRouteChange);
+      window.removeEventListener("sp_route_change", handleRouteChange);
       window.removeEventListener("popstate", handleRouteChange);
     };
   }, []);

@@ -432,7 +432,10 @@ func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Reques
 
 func (h *AuthHandler) deliverEmail(r *http.Request, to, subject, body string) (bool, error) {
 	if h.emailSender == nil {
-		return false, nil
+		if os.Getenv("ENV") == "development" {
+			return true, nil
+		}
+		return false, errors.New("SMTP email delivery is not configured")
 	}
 	if !h.emailSender.Configured() {
 		if os.Getenv("ENV") == "development" {

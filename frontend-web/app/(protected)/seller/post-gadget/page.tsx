@@ -199,7 +199,7 @@ export default function PostGadgetPage({
         typeof window !== "undefined"
           ? localStorage.getItem("sp_auth_token") ||
             localStorage.getItem("sp_access_token") ||
-            localStorage.getItem("bh_access_token")
+            localStorage.getItem("sp_access_token")
           : null;
       const res = await fetch("/api/listings", {
         method: "POST",
