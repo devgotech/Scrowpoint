@@ -59,7 +59,7 @@ func main() {
 	smilePartnerID := os.Getenv("SMILE_ID_PARTNER_ID")
 	smileAPIKey := os.Getenv("SMILE_ID_API_KEY")
 
-	log.Printf("[INFO] Initializing Buyer's High Escrow Core Backend (Environment: %s)...", env)
+	log.Printf("[INFO] Initializing Scrowpoint Escrow Core Backend (Environment: %s)...", env)
 
 	startupCtx, startupCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	postgres, err := db.OpenPostgres(startupCtx, os.Getenv("DATABASE_URL"), os.Getenv("DATABASE_URL_UNPOOLED"))
