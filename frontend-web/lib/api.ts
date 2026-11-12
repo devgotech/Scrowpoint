@@ -15,7 +15,7 @@ export function getAuthToken(): string | null {
   return (
     localStorage.getItem("sp_auth_token") ||
     localStorage.getItem("sp_access_token") ||
-    localStorage.getItem("bh_access_token") ||
+    localStorage.getItem("sp_access_token") ||
     null
   );
 }
@@ -24,7 +24,7 @@ export function setAuthSession(token: string, user?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
   localStorage.setItem("sp_auth_token", token);
   localStorage.setItem("sp_access_token", token);
-  localStorage.setItem("bh_access_token", token);
+  localStorage.setItem("sp_access_token", token);
   if (user) {
     localStorage.setItem("sp_user", JSON.stringify(user));
     localStorage.setItem("sp_auth_user", JSON.stringify(user));
@@ -40,7 +40,7 @@ export function clearAuthSession() {
   if (typeof window === "undefined") return;
   localStorage.removeItem("sp_auth_token");
   localStorage.removeItem("sp_access_token");
-  localStorage.removeItem("bh_access_token");
+  localStorage.removeItem("sp_access_token");
   localStorage.removeItem("sp_user");
   localStorage.removeItem("sp_auth_user");
 
@@ -363,10 +363,8 @@ export interface EscrowLedgerEntryDTO {
 
 export const ordersApi = {
   create: (payload: {
-    listing_id: string;
-    shipping_address: string;
-    logistics_provider?: string;
-    logistics_fee_kobo?: number;
+    listingId: string;
+    fulfillmentMethod: "shipping" | "local_handoff";
   }) =>
     apiFetch<BackendOrderDTO>("/api/orders", {
       method: "POST",

@@ -140,7 +140,7 @@ export async function uploadToPresignedUrl(
       ? null
       : localStorage.getItem("sp_auth_token") ||
         localStorage.getItem("sp_access_token") ||
-        localStorage.getItem("bh_access_token");
+        localStorage.getItem("sp_access_token");
 
   // --------------------------------------------------------------------------
   // Step 1: Request presigned S3 URL from Go backend

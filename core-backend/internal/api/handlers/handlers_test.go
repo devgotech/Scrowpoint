@@ -42,6 +42,7 @@ func assertHandlerStatus(t *testing.T, recorder *httptest.ResponseRecorder, want
 }
 
 func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
+	t.Setenv("ENV", "development")
 	auth := services.NewAuthService()
 	handler := NewAuthHandler(auth, handlerTokenGenerator{})
 
@@ -84,9 +85,20 @@ func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
 		`{"email":"handler@example.com","password":"password-123"}`), http.StatusOK)
 
 	user := signupResponse.Data.User
-	token, err := auth.RequestEmailVerification(context.Background(), user.ID)
-	if err != nil {
-		t.Fatalf("RequestEmailVerification: %v", err)
+	resendVerification := func(w http.ResponseWriter, r *http.Request) {
+		handler.ResendVerification(w, r, user.ID)
+	}
+	resend := performHandlerRequest(resendVerification, http.MethodPost, "/api/auth/resend-verification", "")
+	assertHandlerStatus(t, resend, http.StatusOK)
+	var resendResponse struct {
+		Data map[string]string `json:"data"`
+	}
+	if err := json.Unmarshal(resend.Body.Bytes(), &resendResponse); err != nil {
+		t.Fatalf("decode resend verification response: %v", err)
+	}
+	token := resendResponse.Data["verificationCodePreview"]
+	if len(token) != 6 {
+		t.Fatalf("development resend preview = %q, want a 6-digit code", token)
 	}
 	verifyEmail := func(w http.ResponseWriter, r *http.Request) {
 		handler.VerifyEmail(w, r, user.ID)
@@ -103,7 +115,39 @@ func TestAuthHandlerSignUpLoginAndEmailVerification(t *testing.T) {
 	assertHandlerStatus(t, recorder, http.StatusNotFound)
 }
 
+func TestResendVerificationPreviewRequiresDevelopmentModeWithoutSMTP(t *testing.T) {
+	auth := services.NewAuthService()
+	user, err := auth.SignUp(context.Background(), services.SignUpInput{
+		Email: "preview@example.com", Password: "password-123", Name: "Preview User",
+	})
+	if err != nil {
+		t.Fatalf("SignUp: %v", err)
+	}
+	handler := NewAuthHandler(auth, handlerTokenGenerator{})
+	resend := func(w http.ResponseWriter, r *http.Request) {
+		handler.ResendVerification(w, r, user.ID)
+	}
+
+	t.Setenv("ENV", "development")
+	devResponse := performHandlerRequest(resend, http.MethodPost, "/api/auth/resend-verification", "")
+	assertHandlerStatus(t, devResponse, http.StatusOK)
+	var previewResponse struct {
+		Data map[string]string `json:"data"`
+	}
+	if err := json.Unmarshal(devResponse.Body.Bytes(), &previewResponse); err != nil {
+		t.Fatalf("decode development resend response: %v", err)
+	}
+	if len(previewResponse.Data["verificationCodePreview"]) != 6 {
+		t.Fatalf("development resend did not return a 6-digit preview: %+v", previewResponse.Data)
+	}
+
+	t.Setenv("ENV", "staging")
+	stagingResponse := performHandlerRequest(resend, http.MethodPost, "/api/auth/resend-verification", "")
+	assertHandlerStatus(t, stagingResponse, http.StatusBadGateway)
+}
+
 func TestAuthOAuthHandlerAndAdditionalValidation(t *testing.T) {
+	t.Setenv("ENV", "development")
 	auth := services.NewAuthService()
 	handler := NewAuthHandler(auth, handlerTokenGenerator{})
 	assertHandlerStatus(t, performHandlerRequest(handler.OAuth, http.MethodGet, "/api/auth/oauth/google", ""), http.StatusMethodNotAllowed)
@@ -141,6 +185,7 @@ func TestAuthOAuthHandlerAndAdditionalValidation(t *testing.T) {
 }
 
 func TestAuthHandlerTokenFailureAndPasswordRoutes(t *testing.T) {
+	t.Setenv("ENV", "development")
 	auth := services.NewAuthService()
 	handler := NewAuthHandler(auth, handlerTokenGenerator{err: errors.New("token unavailable")})
 	assertHandlerStatus(t, performHandlerRequest(handler.SignUp, http.MethodPost, "/api/auth/signup",

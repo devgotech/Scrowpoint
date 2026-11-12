@@ -67,12 +67,27 @@ export default function GadgetDetailPage({
   const fallbackGadget =
     INITIAL_GADGETS.find((g) => g.id === gadgetId) || INITIAL_GADGETS[0];
   const [liveGadget, setLiveGadget] = useState<GadgetListingData | null>(null);
-  const gadget = liveGadget || fallbackGadget;
+  const [listingStatus, setListingStatus] = useState<{
+    listingId: string;
+    status: "available" | "unavailable";
+  } | null>(null);
+  const gadget =
+    liveGadget?.id === gadgetId ? liveGadget : fallbackGadget;
+  const isRegisteredListing =
+    liveGadget?.id === gadgetId &&
+    listingStatus?.listingId === gadgetId &&
+    listingStatus.status === "available";
+  const currentListingStatus =
+    listingStatus?.listingId === gadgetId ? listingStatus.status : "loading";
 
   useEffect(() => {
     let mounted = true;
     listingsApi.getById(gadgetId).then((res) => {
-      if (!mounted || !res.ok || !res.data) return;
+      if (!mounted) return;
+      if (!res.ok || !res.data || res.data.status?.toLowerCase() !== "live") {
+        setListingStatus({ listingId: gadgetId, status: "unavailable" });
+        return;
+      }
       const dto = res.data;
       const rawCond = (dto.condition_grade || "mint").toLowerCase();
       const condition: "mint" | "good" | "fair" =
@@ -108,6 +123,11 @@ export default function GadgetDetailPage({
             : fallbackGadget.images,
         videoUrl: fallbackGadget.videoUrl,
       });
+      setListingStatus({ listingId: gadgetId, status: "available" });
+    }).catch(() => {
+      if (mounted) {
+        setListingStatus({ listingId: gadgetId, status: "unavailable" });
+      }
     });
     return () => {
       mounted = false;
@@ -173,6 +193,7 @@ export default function GadgetDetailPage({
   };
 
   const handleLockEscrow = () => {
+    if (!isRegisteredListing) return;
     if (onLockEscrow) {
       onLockEscrow(gadget.id);
       return;
@@ -722,10 +743,18 @@ export default function GadgetDetailPage({
                     </div>
 
                     {/* Primary Pill CTA */}
+                    {!isRegisteredListing && (
+                      <p role={currentListingStatus === "loading" ? "status" : "alert"} className="text-xs text-[#975a16]">
+                        {currentListingStatus === "loading"
+                          ? "Confirming this listing with the marketplace..."
+                          : "This is a preview item, not a registered listing, so it cannot be purchased."}
+                      </p>
+                    )}
                     <button
                       type="button"
                       onClick={handleLockEscrow}
-                      className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
+                      disabled={!isRegisteredListing}
+                      className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <Lock className="h-4 w-4 text-[#22c55e]" />
                       <span>Lock Funds &amp; Start Escrow Trade</span>
@@ -809,7 +838,8 @@ export default function GadgetDetailPage({
         <button
           type="button"
           onClick={handleLockEscrow}
-          className="btn-primary h-11 px-6 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold flex items-center gap-2"
+          disabled={!isRegisteredListing}
+          className="btn-primary h-11 px-6 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
           <span>Lock Funds</span>

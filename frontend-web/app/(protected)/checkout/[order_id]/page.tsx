@@ -47,23 +47,15 @@ export default function CheckoutPage({
   const { user } = useAuth();
   const orderId = providedOrderId ?? routeParams.order_id ?? "SP-ORD-9421";
   const requestedGadgetId = searchParams.get("gadget") ?? "g-001";
-  const fallbackGadget = INITIAL_GADGETS.find((item) => item.id === requestedGadgetId);
   const [liveGadget, setLiveGadget] = useState<GadgetListingData | null>(null);
   const [failedListingId, setFailedListingId] = useState<string | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethodId>("bank");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
-  const gadget = fallbackGadget ?? (liveGadget?.id === requestedGadgetId ? liveGadget : null);
+  const gadget = liveGadget?.id === requestedGadgetId ? liveGadget : null;
   const isListingLoading = !gadget && failedListingId !== requestedGadgetId;
-  const resolvedGadget = gadget ?? INITIAL_GADGETS[0];
-  const amountKobo = resolvedGadget.price;
-  const escrowFeeKobo = Math.round((amountKobo * 250) / 10000);
-  const logisticsFeeKobo = 450000;
-  const totalDepositKobo = amountKobo + escrowFeeKobo + logisticsFeeKobo;
-
   useEffect(() => {
-    if (fallbackGadget) return;
     let active = true;
     const lookupTimeout = window.setTimeout(() => {
       if (active) setFailedListingId(requestedGadgetId);
@@ -71,7 +63,7 @@ export default function CheckoutPage({
     listingsApi.getById(requestedGadgetId).then((result) => {
       if (!active) return;
       window.clearTimeout(lookupTimeout);
-      if (!result.ok || !result.data) {
+      if (!result.ok || !result.data || result.data.status?.toLowerCase() !== "live") {
         setFailedListingId(requestedGadgetId);
         return;
       }
@@ -122,7 +114,7 @@ export default function CheckoutPage({
       active = false;
       window.clearTimeout(lookupTimeout);
     };
-  }, [fallbackGadget, requestedGadgetId]);
+  }, [requestedGadgetId]);
 
   useEffect(() => {
     if (searchParams.get("payment") !== "complete") return;
@@ -140,61 +132,6 @@ export default function CheckoutPage({
       active = false;
     };
   }, [orderId, searchParams]);
-
-  const orderData: EscrowOrderData = {
-    orderId,
-    gadgetId: resolvedGadget.id,
-    gadgetTitle: resolvedGadget.title,
-    gadgetImage: resolvedGadget.images[0],
-    condition: resolvedGadget.condition,
-    amount: amountKobo / 100,
-    escrowFee: escrowFeeKobo / 100,
-    logisticsFee: logisticsFeeKobo / 100,
-    totalDeposit: totalDepositKobo / 100,
-    buyerName: "Adeola Fashola",
-    sellerName: "Chidi Tech Hub",
-    status: "PENDING_PAYMENT",
-    courierPartner: "GIG Logistics Express",
-  };
-
-  const handlePaymentSuccess = (resolvedOrderId = orderId) => {
-    if (onPaymentSuccess) {
-      onPaymentSuccess(resolvedOrderId);
-      return;
-    }
-    router.push(`/escrow/${encodeURIComponent(resolvedOrderId)}`);
-  };
-
-  const handlePay = async () => {
-    setIsProcessing(true);
-    setPaymentError(null);
-    try {
-      const created = await ordersApi.create({
-        listing_id: orderData.gadgetId,
-        shipping_address: "14 Allen Avenue, Ikeja GRA, Lagos",
-        logistics_provider: orderData.courierPartner,
-        logistics_fee_kobo: orderData.logisticsFee * 100,
-      });
-      if (!created.ok || !created.data?.id) {
-        throw new Error(created.error || "Unable to create the escrow order.");
-      }
-      const resolvedOrderId = created.data.id;
-      if (!user?.email) {
-        throw new Error("Your account email is unavailable. Sign in again before paying.");
-      }
-
-      const paystackInit = await paymentsApi.initializePaystack({
-        order_id: resolvedOrderId,
-      });
-      if (!paystackInit.ok || !paystackInit.data?.authorization_url) {
-        throw new Error(paystackInit.error || "Unable to initialize Paystack checkout.");
-      }
-      window.location.assign(paystackInit.data.authorization_url);
-    } catch {
-      setPaymentError("We couldn't start secure checkout. No funds are held; please try again shortly.");
-      setIsProcessing(false);
-    }
-  };
 
   if (!gadget) {
     return (
@@ -221,6 +158,67 @@ export default function CheckoutPage({
       </div>
     );
   }
+
+  const amountKobo = gadget.price;
+  const escrowFeeKobo = Math.round((amountKobo * 250) / 10000);
+  const logisticsFeeKobo = 450000;
+  const totalDepositKobo = amountKobo + escrowFeeKobo + logisticsFeeKobo;
+  const orderData: EscrowOrderData = {
+    orderId,
+    gadgetId: gadget.id,
+    gadgetTitle: gadget.title,
+    gadgetImage: gadget.images[0],
+    condition: gadget.condition,
+    amount: amountKobo / 100,
+    escrowFee: escrowFeeKobo / 100,
+    logisticsFee: logisticsFeeKobo / 100,
+    totalDeposit: totalDepositKobo / 100,
+    buyerName: "Adeola Fashola",
+    sellerName: "Chidi Tech Hub",
+    status: "PENDING_PAYMENT",
+    courierPartner: "GIG Logistics Express",
+  };
+
+  const handlePaymentSuccess = (resolvedOrderId = orderId) => {
+    if (onPaymentSuccess) {
+      onPaymentSuccess(resolvedOrderId);
+      return;
+    }
+    router.push(`/escrow/${encodeURIComponent(resolvedOrderId)}`);
+  };
+
+  const handlePay = async () => {
+    setIsProcessing(true);
+    setPaymentError(null);
+    try {
+      const created = await ordersApi.create({
+        listingId: orderData.gadgetId,
+        fulfillmentMethod: "shipping",
+      });
+      if (!created.ok || !created.data?.id) {
+        throw new Error(created.error || "Unable to create the escrow order.");
+      }
+      const resolvedOrderId = created.data.id;
+      if (!user?.email) {
+        throw new Error("Your account email is unavailable. Sign in again before paying.");
+      }
+
+      const paystackInit = await paymentsApi.initializePaystack({
+        order_id: resolvedOrderId,
+      });
+      if (!paystackInit.ok || !paystackInit.data?.authorization_url) {
+        throw new Error(paystackInit.error || "Unable to initialize Paystack checkout.");
+      }
+      window.location.assign(paystackInit.data.authorization_url);
+    } catch (error) {
+      setPaymentError(
+        error instanceof Error
+          ? `${error.message} No funds are held.`
+          : "We couldn't start secure checkout. No funds are held; please try again shortly."
+      );
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">

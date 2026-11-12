@@ -25,10 +25,10 @@ export function LiveChatWidget({ className }: LiveChatWidgetProps) {
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
     window.addEventListener("sp_open_live_chat", handleOpen);
-    window.addEventListener("bh_open_live_chat", handleOpen);
+    window.addEventListener("sp_open_live_chat", handleOpen);
     return () => {
       window.removeEventListener("sp_open_live_chat", handleOpen);
-      window.removeEventListener("bh_open_live_chat", handleOpen);
+      window.removeEventListener("sp_open_live_chat", handleOpen);
     };
   }, []);
 
