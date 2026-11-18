@@ -28,7 +28,7 @@ import { listingsApi, type BackendListingDTO } from "@/lib/api";
  *
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Deep Carbon Ink (#111113)
- * - Sharp 0px architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
+ * - Sharp 0px architectural cards (border-ink-faint) paired with 999px pill primary CTAs
  */
 
 export const INITIAL_GADGETS: GadgetListingData[] = [
@@ -293,37 +293,37 @@ export default function MarketplacePage({
   }, [catalogListings, searchQuery, filters]);
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full">
         {/* Marketplace Header Strip */}
-        <div className="bg-white border-b border-[#111113]/12 py-8 sm:py-10">
+        <div className="bg-surface border-b border-ink-faint py-8 sm:py-10">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-3">
               <Link
                 href="/"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Home</span>
               </Link>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="font-bold text-[#111113]">
+              <span className="font-bold text-ink">
                 Verified Marketplace
               </span>
             </div>
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] uppercase leading-[0.95]">
+                <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-ink uppercase leading-[0.95]">
                   VERIFIED SECONDHAND GADGETS
-                  <span className="text-[#FF5A25]">.</span>
+                  <span className="text-accent-orange">.</span>
                 </h1>
-                <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-2">
+                <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-2">
                   100% Paystack Escrow Custody • 48-Hour Hardware Diagnostic SLA
                   • SmileID Biometric Merchants
                 </p>
@@ -334,11 +334,11 @@ export default function MarketplacePage({
                 <button
                   type="button"
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className="h-11 px-4 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] flex items-center gap-2"
+                  className="h-11 px-4 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink flex items-center gap-2 rounded-ui"
                 >
-                  <SlidersHorizontal className="h-4 w-4 text-[#FF5A25]" />
+                  <SlidersHorizontal className="h-4 w-4 text-accent-orange" />
                   <span>Filter Catalog</span>
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#111113] text-white text-[10px] font-mono">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-ink text-white text-caption font-mono">
                     {
                       [
                         filters.category !== "all",
@@ -354,19 +354,19 @@ export default function MarketplacePage({
 
             {/* Live Search Input Bar */}
             <div className="mt-6 relative max-w-2xl">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#111113]/50" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink/50" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by brand, model, SKU or condition (e.g. iPhone 14 Pro, M2 MacBook)..."
-                className="w-full h-11 pl-10 pr-16 rounded-none border border-[#111113]/15 bg-[#F8F7F4] text-xs sm:text-sm font-secondary text-[#111113] placeholder:text-[#111113]/45 focus:bg-white focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none transition-colors"
+                className="w-full h-11 pl-10 pr-16 rounded-ui border border-ink/15 bg-paper text-xs sm:text-sm font-secondary text-ink placeholder:text-ink/45 focus:bg-surface focus:border-ink focus:ring-1 focus:ring-ink outline-none transition-colors"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono uppercase tracking-wider font-bold text-[#FF5A25] hover:text-[#111113]"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono uppercase tracking-wider font-bold text-accent-orange hover:text-ink"
                 >
                   Clear
                 </button>
@@ -391,17 +391,17 @@ export default function MarketplacePage({
               {/* Main Catalog View Area */}
               <div className="flex-1 w-full min-w-0">
                 {/* Result Status Strip */}
-                <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#111113]/12">
-                  <span className="font-mono text-xs uppercase tracking-wider text-[#111113]/65">
+                <div className="flex items-center justify-between pb-4 mb-6 border-b border-ink-faint">
+                  <span className="font-mono text-xs uppercase tracking-wider text-ink/65">
                     Showing{" "}
-                    <strong className="text-[#111113] font-bold">
+                    <strong className="text-ink font-bold">
                       {filteredListings.length}
                     </strong>{" "}
                     verified gadgets
                   </span>
 
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-                    <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-trust-strong/10 px-3 py-1 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+                    <ShieldCheck className="h-3.5 w-3.5 text-trust" />
                     <span>Vault Protection Active</span>
                   </div>
                 </div>

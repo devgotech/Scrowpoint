@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 3):
  * - Mobile glance-and-approve moderation view for admin disputes.
  * - Responsive Visibility: Visible strictly on screens under 768px (`md:hidden`).
- * - Corner Radius: --radius-card (8px -> rounded-[8px]). Inner elements: 4px.
+ * - Corner Radius: --radius-card (8px -> rounded-ui). Inner elements: 4px.
  * - Displays locked amount in `font-mono`, status badge, buyer/seller parties, and SLA countdown timer.
  * - Highlights dispute reason and evidence count.
  * - Transitions: strict duration-200 ease-out (NEVER bouncy).
@@ -38,37 +38,37 @@ export function StackedCard({
     open: {
       label: "Open Dispute",
       variant: "secondary" as const,
-      className: "bg-[#F0EFEA] text-[#111113] border-[#111113]/15",
+      className: "bg-surface-muted text-ink border-ink/15",
     },
     evidence_collection: {
       label: "Evidence Gathering",
       variant: "warning" as const,
-      className: "bg-[#ecc94b]/20 text-[#975a16] border-[#ecc94b]/40",
+      className: "bg-state-warning/20 text-state-warning-strong border-state-warning/40",
     },
     seller_review: {
       label: "Seller Review",
       variant: "warning" as const,
-      className: "bg-[#ecc94b]/20 text-[#975a16] border-[#ecc94b]/40",
+      className: "bg-state-warning/20 text-state-warning-strong border-state-warning/40",
     },
     admin_mediation: {
       label: "Admin Arbitration",
       variant: "warning" as const,
-      className: "bg-[#ecc94b]/25 text-[#975a16] border-[#ecc94b]/50 font-bold",
+      className: "bg-state-warning/25 text-state-warning-strong border-state-warning/50 font-bold",
     },
     resolved: {
       label: "Settled / Closed",
       variant: "trust" as const,
-      className: "bg-[#22c55e]/15 text-[#15803d] border-[#22c55e]/30",
+      className: "bg-trust/15 text-trust-strong border-trust/30",
     },
     appealed: {
       label: "Under Appeal",
       variant: "destructive" as const,
-      className: "bg-[#f56565]/15 text-[#c53030] border-[#f56565]/40 font-bold",
+      className: "bg-state-error/15 text-state-error-strong border-state-error/40 font-bold",
     },
   }[dispute.status] || {
     label: dispute.status,
     variant: "secondary" as const,
-    className: "bg-[#F0EFEA] text-[#111113] border-[#111113]/15",
+    className: "bg-surface-muted text-ink border-ink/15",
   };
 
   return (
@@ -76,8 +76,8 @@ export function StackedCard({
       role="article"
       aria-label={`Dispute case ${dispute.id}`}
       className={cn(
-        "block md:hidden w-full border border-[#111113]/12 bg-white p-4 space-y-3 transition-colors duration-200 ease-out hover:border-[#111113]/35",
-        dispute.isUrgentSla && "border-[#ecc94b]/80 bg-[#ecc94b]/5",
+        "block md:hidden w-full border border-ink-faint bg-surface p-4 space-y-3 transition-colors duration-200 ease-out hover:border-ink/35 rounded-card",
+        dispute.isUrgentSla && "border-state-warning/80 bg-state-warning/5",
         className
       )}
     >
@@ -87,14 +87,14 @@ export function StackedCard({
           <span className="label">
             Dispute #{dispute.id.slice(0, 8)}
           </span>
-          <h4 className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113] line-clamp-1 mt-0.5">
+          <h4 className="font-primary text-sm font-bold tracking-[-0.03em] text-ink line-clamp-1 mt-0.5">
             {dispute.gadgetTitle}
           </h4>
         </div>
 
         <Badge
           variant={statusConfig.variant}
-          className={cn("gap-1 py-0.5 px-2 text-[10px] font-mono tracking-wider font-semibold shrink-0", statusConfig.className)}
+          className={cn("gap-1 py-0.5 px-2 text-caption font-mono tracking-wider font-semibold shrink-0", statusConfig.className)}
         >
           <Scale className="h-3 w-3" />
           <span>{statusConfig.label}</span>
@@ -102,23 +102,23 @@ export function StackedCard({
       </div>
 
       {/* 2. Dispute Reason Callout */}
-      <div className="bg-[#F8F7F4] p-2.5 text-xs border border-[#111113]/10 space-y-1">
+      <div className="bg-paper p-2.5 text-xs border border-ink/10 space-y-1 rounded-card">
         <span className="label block">
           Reported Issue:
         </span>
-        <p className="font-secondary text-[#111113] line-clamp-2 leading-relaxed">
+        <p className="font-secondary text-ink line-clamp-2 leading-relaxed">
           {dispute.reason}
         </p>
       </div>
 
       {/* 3. Middle Metrics: Locked Amount + Evidence + SLA */}
-      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#111113]/10 text-xs">
+      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-ink/10 text-xs">
         <div>
           <span className="label block">
             Locked in Vault
           </span>
-          <span className="font-mono text-sm font-bold text-[#111113] flex items-center gap-1 mt-0.5">
-            <Lock className="h-3 w-3 text-[#22c55e]" />
+          <span className="font-mono text-sm font-bold text-ink flex items-center gap-1 mt-0.5">
+            <Lock className="h-3 w-3 text-trust" />
             {formattedLockedAmount}
           </span>
         </div>
@@ -131,25 +131,25 @@ export function StackedCard({
             className={cn(
               "font-mono text-xs font-medium flex items-center justify-end gap-1 mt-0.5",
               dispute.isUrgentSla
-                ? "text-[#975a16] animate-pulse font-bold"
-                : "text-[#111113]/65"
+                ? "text-state-warning-strong animate-pulse font-bold"
+                : "text-ink/65"
             )}
           >
-            <Clock className="h-3 w-3 text-[#ecc94b]" />
+            <Clock className="h-3 w-3 text-state-warning" />
             {dispute.slaRemainingString}
           </span>
         </div>
       </div>
 
       {/* 4. Parties & Evidence Metadata */}
-      <div className="flex items-center justify-between text-xs text-[#111113]/65 pt-1">
+      <div className="flex items-center justify-between text-xs text-ink/65 pt-1">
         <div className="truncate max-w-[180px] font-secondary">
-          <span className="font-medium text-[#111113]">{dispute.buyerName}</span>
+          <span className="font-medium text-ink">{dispute.buyerName}</span>
           <span className="mx-1">vs</span>
-          <span className="font-medium text-[#111113]">{dispute.sellerName}</span>
+          <span className="font-medium text-ink">{dispute.sellerName}</span>
         </div>
 
-        <span className="font-mono text-[11px] inline-flex items-center gap-1 text-[#111113]/65">
+        <span className="font-mono text-meta inline-flex items-center gap-1 text-ink/65">
           <FileText className="h-3 w-3" />
           {dispute.evidenceCount} files
         </span>

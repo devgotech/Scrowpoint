@@ -100,7 +100,7 @@ export function LegalSidebarNav({
   return (
     <aside className={cn("w-full md:w-64 shrink-0 space-y-6", className)}>
       {/* Mobile Select Dropdown (Visible on mobile only < md) */}
-      <div className="md:hidden bg-white p-3 border border-[#111113]/12">
+      <div className="md:hidden bg-surface p-3 border border-ink-faint rounded-card">
         <label
           htmlFor="legal-select"
           className="block label mb-1.5"
@@ -111,7 +111,7 @@ export function LegalSidebarNav({
           id="legal-select"
           value={activeSlug}
           onChange={(e) => onSelectSlug?.(e.target.value)}
-          className="w-full h-11 px-3 border border-[#111113]/15 bg-[#F8F7F4] text-xs font-medium text-[#111113] outline-none focus:border-[#111113]"
+          className="w-full h-11 px-3 border border-ink/15 bg-paper text-xs font-medium text-ink outline-none focus:border-ink rounded-ui"
         >
           {LEGAL_DOCUMENTS.map((doc) => (
             <option key={doc.slug} value={doc.slug}>
@@ -122,12 +122,12 @@ export function LegalSidebarNav({
       </div>
 
       {/* Desktop Vertical Nav (Hidden on mobile < md) */}
-      <div className="hidden md:block border border-[#111113]/12 bg-white p-3">
-        <div className="px-3 py-2 border-b border-[#111113]/12 mb-2 flex items-center justify-between">
+      <div className="hidden md:block border border-ink-faint bg-surface p-3 rounded-card">
+        <div className="px-3 py-2 border-b border-ink-faint mb-2 flex items-center justify-between">
           <span className="label">
             Legal & Trust Shield
           </span>
-          <span className="font-mono text-[10px] text-[#15803d] font-semibold bg-[#22c55e]/15 px-1.5 py-0.5">
+          <span className="font-mono text-caption text-trust-strong font-semibold bg-trust/15 px-1.5 py-0.5">
             v2.026
           </span>
         </div>
@@ -150,15 +150,15 @@ export function LegalSidebarNav({
                 className={cn(
                   "group flex items-center justify-between px-3 py-2.5 text-xs font-medium transition-all duration-200 ease-out",
                   isActive
-                    ? "bg-[#111113] text-white font-semibold"
-                    : "text-[#111113]/70 hover:bg-[#F8F7F4] hover:text-[#111113]"
+                    ? "bg-ink text-white font-semibold"
+                    : "text-ink/70 hover:bg-paper hover:text-ink"
                 )}
               >
                 <div className="flex items-center gap-2.5 truncate">
                   <Icon
                     className={cn(
                       "h-4 w-4 shrink-0 transition-colors",
-                      isActive ? "text-white" : "text-[#111113]/60 group-hover:text-[#111113]"
+                      isActive ? "text-white" : "text-ink/60 group-hover:text-ink"
                     )}
                   />
                   <span className="truncate">{doc.title}</span>
@@ -167,10 +167,10 @@ export function LegalSidebarNav({
                 {doc.badge && (
                   <span
                     className={cn(
-                      "font-mono text-[9px] px-1.5 py-0.5 font-bold shrink-0 ml-1.5",
+                      "font-mono text-micro px-1.5 py-0.5 font-bold shrink-0 ml-1.5",
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-[#F0EFEA] text-[#111113]/70"
+                        : "bg-surface-muted text-ink/70"
                     )}
                   >
                     {doc.badge}

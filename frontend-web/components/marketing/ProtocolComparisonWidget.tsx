@@ -123,12 +123,12 @@ export function ProtocolComparisonWidget({
   return (
     <div
       className={cn(
-        "border border-[#111113]/15 bg-white text-left overflow-hidden",
+        "border border-ink/15 bg-surface text-left overflow-hidden rounded-card",
         className
       )}
     >
       {/* 1. Interactive Scenario Selector Tabs (Single-Focus Navigation) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-[#111113]/12 bg-[#F8F7F4] divide-y sm:divide-y-0 divide-x divide-[#111113]/12">
+      <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-ink-faint bg-paper divide-y sm:divide-y-0 divide-x divide-ink-faint">
         {SCENARIOS.map((item, idx) => {
           const isActive = idx === activeIndex;
           return (
@@ -139,20 +139,20 @@ export function ProtocolComparisonWidget({
               className={cn(
                 "p-4 sm:px-5 sm:py-4 text-left transition-colors cursor-pointer flex flex-col justify-between gap-1.5",
                 isActive
-                  ? "bg-[#111113] text-white"
-                  : "bg-[#F8F7F4] text-[#111113]/70 hover:bg-white hover:text-[#111113]"
+                  ? "bg-ink text-white"
+                  : "bg-paper text-ink/70 hover:bg-surface hover:text-ink"
               )}
             >
               <div className="flex items-center justify-between w-full">
                 <span
                   className={cn(
-                    "font-mono text-[10px] uppercase tracking-[0.15em] font-bold",
-                    isActive ? "text-[#FF5A25]" : "text-[#111113]/50"
+                    "font-mono text-caption uppercase tracking-[0.15em] font-bold",
+                    isActive ? "text-accent-orange" : "text-ink/50"
                   )}
                 >
                   [{item.index}] Scenario
                 </span>
-                <span className={cn(isActive ? "text-white" : "text-[#111113]/50")}>
+                <span className={cn(isActive ? "text-white" : "text-ink/50")}>
                   {item.icon}
                 </span>
               </div>
@@ -165,12 +165,12 @@ export function ProtocolComparisonWidget({
       </div>
 
       {/* 2. Single Focused Side-by-Side Comparison View (Only 2 Cards at a Glance) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[#111113]/12">
+      <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-ink-faint">
         {/* Left Card: Without Escrow */}
-        <div className="p-6 sm:p-10 bg-[#F8F7F4]/40 flex flex-col justify-between space-y-6">
+        <div className="p-6 sm:p-10 bg-paper/40 flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] font-bold text-[#c53030]">
+              <span className="inline-flex items-center gap-1.5 font-mono text-meta uppercase tracking-[0.14em] font-bold text-state-error-strong">
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                 <span>Unprotected P2P Channels</span>
               </span>
@@ -178,55 +178,55 @@ export function ProtocolComparisonWidget({
             </div>
 
             <div className="flex items-start gap-3 pt-1">
-              <XCircle className="h-5 w-5 text-[#c53030] shrink-0 mt-1" />
+              <XCircle className="h-5 w-5 text-state-error-strong shrink-0 mt-1" />
               <div className="space-y-2">
-                <h4 className="font-primary text-xl sm:text-2xl font-bold text-[#111113] tracking-[-0.03em]">
+                <h4 className="font-primary text-xl sm:text-2xl font-bold text-ink tracking-[-0.03em]">
                   {current.unprotectedTitle}
                 </h4>
-                <p className="font-secondary text-sm text-[#111113]/70 leading-relaxed max-w-md">
+                <p className="font-secondary text-sm text-ink/70 leading-relaxed max-w-md">
                   {current.unprotectedSummary}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#111113]/10 flex items-center justify-between font-mono text-xs">
-            <span className="text-[#111113]/55 uppercase tracking-wider">Outcome:</span>
-            <span className="text-[#c53030] font-bold uppercase tracking-wider">
+          <div className="pt-4 border-t border-ink/10 flex items-center justify-between font-mono text-xs">
+            <span className="text-ink/55 uppercase tracking-wider">Outcome:</span>
+            <span className="text-state-error-strong font-bold uppercase tracking-wider">
               {current.unprotectedConsequence}
             </span>
           </div>
         </div>
 
         {/* Right Card: With Scrowpoint Custody */}
-        <div className="p-6 sm:p-10 bg-white flex flex-col justify-between space-y-6">
+        <div className="p-6 sm:p-10 bg-surface flex flex-col justify-between space-y-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] font-bold text-[#15803d]">
-                <ShieldCheck className="h-4 w-4 text-[#22c55e] shrink-0" />
+              <span className="inline-flex items-center gap-1.5 font-mono text-meta uppercase tracking-[0.14em] font-bold text-trust-strong">
+                <ShieldCheck className="h-4 w-4 text-trust shrink-0" />
                 <span>Scrowpoint Custodial Protocol</span>
               </span>
-              <span className="label !opacity-100 text-[#111113]">
+              <span className="label !opacity-100 text-ink">
                 {current.roleFocus}
               </span>
             </div>
 
             <div className="flex items-start gap-3 pt-1">
-              <CheckCircle2 className="h-5 w-5 text-[#22c55e] shrink-0 mt-1" />
+              <CheckCircle2 className="h-5 w-5 text-trust shrink-0 mt-1" />
               <div className="space-y-2">
-                <h4 className="font-primary text-xl sm:text-2xl font-bold text-[#111113] tracking-[-0.03em]">
+                <h4 className="font-primary text-xl sm:text-2xl font-bold text-ink tracking-[-0.03em]">
                   {current.protectedTitle}
                 </h4>
-                <p className="font-secondary text-sm text-[#111113]/80 leading-relaxed max-w-md">
+                <p className="font-secondary text-sm text-ink/80 leading-relaxed max-w-md">
                   {current.protectedSummary}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#111113]/10 flex items-center justify-between font-mono text-xs">
-            <span className="text-[#111113]/55 uppercase tracking-wider">Protection:</span>
-            <span className="bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider text-[11px]">
+          <div className="pt-4 border-t border-ink/10 flex items-center justify-between font-mono text-xs">
+            <span className="text-ink/55 uppercase tracking-wider">Protection:</span>
+            <span className="bg-trust/15 text-trust-strong border border-trust/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider text-meta">
               {current.protectedGuarantee}
             </span>
           </div>
@@ -234,10 +234,10 @@ export function ProtocolComparisonWidget({
       </div>
 
       {/* 3. Subtle Bottom Stepper Bar */}
-      <div className="px-6 py-3.5 border-t border-[#111113]/12 bg-[#F8F7F4] flex items-center justify-between text-xs font-mono">
-        <span className="text-[#111113]/65 uppercase tracking-wider">
+      <div className="px-6 py-3.5 border-t border-ink-faint bg-paper flex items-center justify-between text-xs font-mono">
+        <span className="text-ink/65 uppercase tracking-wider">
           Risk Vector {activeIndex + 1} of {SCENARIOS.length}:{" "}
-          <strong className="text-[#111113]">{current.shortLabel}</strong>
+          <strong className="text-ink">{current.shortLabel}</strong>
         </span>
 
         <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ export function ProtocolComparisonWidget({
             type="button"
             onClick={handlePrev}
             aria-label="Previous scenario"
-            className="h-8 w-8 border border-[#111113]/15 bg-white hover:border-[#111113] flex items-center justify-center text-[#111113] transition-colors cursor-pointer"
+            className="h-8 w-8 border border-ink/15 bg-surface hover:border-ink flex items-center justify-center text-ink transition-colors cursor-pointer rounded-ui"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
           </button>
@@ -253,7 +253,7 @@ export function ProtocolComparisonWidget({
             type="button"
             onClick={handleNext}
             aria-label="Next scenario"
-            className="h-8 px-3 border border-[#111113]/15 bg-white hover:border-[#111113] flex items-center gap-1.5 text-[#111113] font-bold uppercase tracking-wider text-[11px] transition-colors cursor-pointer"
+            className="h-8 px-3 border border-ink/15 bg-surface hover:border-ink flex items-center gap-1.5 text-ink font-bold uppercase tracking-wider text-meta transition-colors cursor-pointer rounded-ui"
           >
             <span>Next Vector</span>
             <ArrowRight className="h-3.5 w-3.5" />

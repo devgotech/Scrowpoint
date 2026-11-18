@@ -31,37 +31,37 @@ export default function TrustAndSafetyPage({
   onNavigatePricing,
 }: TrustAndSafetyPageProps) {
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-[#F8F7F4]">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-paper">
       <Navbar />
 
       <main className="flex-1 w-full">
         {/* Header Breadcrumb & Editorial Hero */}
-        <div className="bg-[#F8F7F4] border-b border-[#111113]/12 py-12 sm:py-20">
+        <div className="bg-paper border-b border-ink-faint py-12 sm:py-20">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8">
             <div className="flex items-center gap-2 mb-5">
               <Link
                 href="/"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-[#111113]/60 hover:text-[#111113] transition-colors"
+                className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-ink/60 hover:text-ink transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Home</span>
               </Link>
-              <span className="text-[#111113]/30 text-xs">/</span>
-              <span className="font-mono text-xs uppercase tracking-wider font-bold text-[#111113]">
+              <span className="text-ink/30 text-xs">/</span>
+              <span className="font-mono text-xs uppercase tracking-wider font-bold text-ink">
                 Trust &amp; Safety Hub
               </span>
             </div>
 
             <div className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-[#15803d] font-bold">
-                <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+              <div className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-trust-strong font-bold">
+                <ShieldCheck className="h-4 w-4 text-trust" />
                 <span>Institutional Fraud Prevention Protocol</span>
               </div>
-              <h1 className="font-primary text-4xl sm:text-6xl font-bold tracking-[-0.04em] text-[#111113] leading-[0.95] uppercase">
-                TRUST &amp; SAFETY AT SCROWPOINT<span className="text-[#FF5A25]">.</span>
+              <h1 className="font-primary text-4xl sm:text-6xl font-bold tracking-[-0.04em] text-ink leading-[0.95] uppercase">
+                TRUST &amp; SAFETY AT SCROWPOINT<span className="text-accent-orange">.</span>
               </h1>
-              <p className="font-secondary text-base sm:text-lg text-[#111113]/70 leading-relaxed max-w-2xl">
+              <p className="font-secondary text-base sm:text-lg text-ink/70 leading-relaxed max-w-2xl">
                 We engineered Nigeria&apos;s custodial escrow framework for high-value secondhand gadgets. Every trade is fortified with SmileID biometric KYC, segregated Paystack holding vaults, and an enforceable 48-hour hardware diagnostic SLA.
               </p>
             </div>
@@ -71,17 +71,17 @@ export default function TrustAndSafetyPage({
         {/* Section 1: Interactive Single-Focus Comparison (Unprotected P2P vs. Scrowpoint Custody) */}
         <section
           aria-label="Unprotected P2P vs Scrowpoint Custody"
-          className="py-14 sm:py-20 border-b border-[#111113]/12 bg-[#F8F7F4]"
+          className="py-14 sm:py-20 border-b border-ink-faint bg-paper"
         >
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
                 <span className="label block mb-2">Interactive Risk Comparison</span>
-                <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
-                  UNPROTECTED P2P CHANNELS VS. SCROWPOINT CUSTODY<span className="text-[#FF5A25]">.</span>
+                <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
+                  UNPROTECTED P2P CHANNELS VS. SCROWPOINT CUSTODY<span className="text-accent-orange">.</span>
                 </h2>
               </div>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 max-w-md">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 max-w-md">
                 Select any of the 4 trade stages below to see how Scrowpoint eliminates counterparty fraud compared to direct WhatsApp or classified transfers.
               </p>
             </div>
@@ -93,13 +93,13 @@ export default function TrustAndSafetyPage({
         {/* Section 2: 4 Core Pillars */}
         <section
           aria-label="Trust Pillars"
-          className="py-14 sm:py-20 border-b border-[#111113]/12 bg-[#F8F7F4]"
+          className="py-14 sm:py-20 border-b border-ink-faint bg-paper"
         >
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-8">
             <div className="max-w-xl space-y-2">
               <span className="label block">Pillars of Integrity</span>
-              <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
-                HOW WE ELIMINATE COUNTERPARTY FRAUD<span className="text-[#FF5A25]">.</span>
+              <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
+                HOW WE ELIMINATE COUNTERPARTY FRAUD<span className="text-accent-orange">.</span>
               </h2>
             </div>
 
@@ -110,7 +110,7 @@ export default function TrustAndSafetyPage({
         {/* Section 3: Escrow Timeline Explainer */}
         <section
           aria-label="Escrow Timeline"
-          className="py-14 sm:py-20 bg-white border-b border-[#111113]/12"
+          className="py-14 sm:py-20 bg-surface border-b border-ink-faint"
         >
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8">
             <EscrowTimelineExplainer />
@@ -118,14 +118,14 @@ export default function TrustAndSafetyPage({
         </section>
 
         {/* Section 4: Detailed Policy Accordion */}
-        <section aria-label="Policy Details" className="py-14 sm:py-20 bg-[#F8F7F4]">
+        <section aria-label="Policy Details" className="py-14 sm:py-20 bg-paper">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-8">
             <div className="max-w-2xl">
               <span className="label block mb-2">Statutory Guidelines</span>
-              <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
-                FREQUENTLY CLARIFIED TRUST POLICIES<span className="text-[#FF5A25]">.</span>
+              <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
+                FREQUENTLY CLARIFIED TRUST POLICIES<span className="text-accent-orange">.</span>
               </h2>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-2">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-2">
                 Transparent rules governing inspection claims, counterfeit devices, and payment releases.
               </p>
             </div>
@@ -136,10 +136,10 @@ export default function TrustAndSafetyPage({
             <div className="mt-12 v7-card flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>
                 <span className="label block mb-1">Zero Counterparty Exposure</span>
-                <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink">
                   Ready to trade with 100% escrow protection?
                 </h3>
-                <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+                <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
                   Browse verified gadgets in the marketplace or calculate your escrow fee in seconds.
                 </p>
               </div>
@@ -160,7 +160,7 @@ export default function TrustAndSafetyPage({
                   <button
                     type="button"
                     onClick={onNavigatePricing}
-                    className="w-full sm:w-auto rounded-full border border-[#111113]/20 bg-white px-6 py-3.5 text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors cursor-pointer"
+                    className="w-full sm:w-auto rounded-full border border-ink/20 bg-surface px-6 py-3.5 text-xs font-mono uppercase tracking-wider font-bold text-ink hover:border-ink transition-colors cursor-pointer"
                   >
                     <span>Fee Calculator</span>
                   </button>

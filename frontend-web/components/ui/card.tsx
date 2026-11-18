@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Card Component adhering to Design Variation 7 (4_ui_system.md):
- * - Geometry: Architectural border (border-[#111113]/12) on white surface (#ffffff)
+ * - Geometry: Architectural border (border-ink-faint) on white surface (#ffffff)
  * - Typography: Space Grotesk (font-primary, tracking-[-0.04em]) for headings, Plus Jakarta Sans (font-secondary) for body
  */
 const Card = React.forwardRef<
@@ -13,7 +13,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-none border border-[#111113]/12 bg-white text-[#111113] transition-all duration-200 ease-out",
+      "rounded-card border border-ink-faint bg-surface text-ink transition-all duration-200 ease-out",
       className
     )}
     {...props}
@@ -39,7 +39,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("font-primary text-lg font-medium leading-6 tracking-[-0.04em] text-[#111113]", className)}
+    className={cn("font-primary text-lg font-medium leading-6 tracking-[-0.04em] text-ink", className)}
     {...props}
   />
 ));
@@ -51,7 +51,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("font-secondary text-sm font-normal text-[#111113]/65 leading-5", className)}
+    className={cn("font-secondary text-sm font-normal text-ink/65 leading-5", className)}
     {...props}
   />
 ));
@@ -61,7 +61,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0 font-secondary text-sm text-[#111113]", className)} {...props} />
+  <div ref={ref} className={cn("p-6 pt-0 font-secondary text-sm text-ink", className)} {...props} />
 ));
 CardContent.displayName = "CardContent";
 

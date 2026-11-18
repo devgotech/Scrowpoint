@@ -105,24 +105,24 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
   return (
     <footer
       className={cn(
-        "w-full border-t border-[#111113]/12 bg-[#F8F7F4] text-[#111113] font-secondary antialiased",
+        "w-full border-t border-ink-faint bg-paper text-ink font-secondary antialiased",
         className
       )}
     >
       <div className="mx-auto max-w-[1600px] px-4 sm:px-8 pt-16 pb-10">
         {/* Directory & Newsletter Grid */}
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 pb-14 border-b border-[#111113]/12">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 pb-14 border-b border-ink-faint">
           {/* Left Column: Wordmark & Newsletter */}
           <div className="space-y-6 lg:col-span-4">
             <Link
               href="/"
               onClick={() => onNavigate?.("/")}
-              className="font-primary text-2xl font-extrabold tracking-[-0.05em] text-[#111113] inline-block"
+              className="font-primary text-2xl font-extrabold tracking-[-0.05em] text-ink inline-block"
             >
-              SCROWPOINT<span className="text-[#FF5A25]">.</span>
+              SCROWPOINT<span className="text-accent-orange">.</span>
             </Link>
 
-            <p className="font-secondary text-sm text-[#111113]/70 leading-relaxed max-w-sm">
+            <p className="font-secondary text-sm text-ink/70 leading-relaxed max-w-sm">
               Nigeria’s trusted platform for secure gadget exchange. Funds locked in custody until your 48-hour hardware inspection is complete.
             </p>
 
@@ -130,7 +130,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
             <div className="v7-card !p-5 space-y-3">
               <span className="label block">Security &amp; Market Alerts</span>
               {newsletterSubscribed ? (
-                <div className="p-2.5 bg-[#22c55e]/15 text-xs font-mono font-bold text-[#15803d] flex items-center gap-1.5">
+                <div className="p-2.5 bg-trust/15 text-xs font-mono font-bold text-trust-strong flex items-center gap-1.5">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   <span>Subscribed to Scrowpoint updates.</span>
                 </div>
@@ -142,7 +142,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     placeholder="Enter your email..."
-                    className="h-10 flex-1 border border-[#111113]/15 bg-[#F8F7F4] px-3 text-xs text-[#111113] focus:outline-none focus:border-[#111113]"
+                    className="h-10 flex-1 border border-ink/15 bg-paper px-3 text-xs text-ink focus:outline-none focus:border-ink rounded-ui"
                   />
                   <button
                     type="submit"
@@ -161,7 +161,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Twitter / X"
-                className="h-9 w-9 border border-[#111113]/15 bg-white flex items-center justify-center text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors"
+                className="h-9 w-9 border border-ink/15 bg-surface flex items-center justify-center text-ink/70 hover:text-ink hover:border-ink transition-colors rounded-ui"
               >
                 <IconBrandX className="h-4 w-4" />
               </a>
@@ -170,7 +170,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
-                className="h-9 w-9 border border-[#111113]/15 bg-white flex items-center justify-center text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors"
+                className="h-9 w-9 border border-ink/15 bg-surface flex items-center justify-center text-ink/70 hover:text-ink hover:border-ink transition-colors rounded-ui"
               >
                 <IconBrandLinkedin className="h-4 w-4" />
               </a>
@@ -179,14 +179,14 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
-                className="h-9 w-9 border border-[#111113]/15 bg-white flex items-center justify-center text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors"
+                className="h-9 w-9 border border-ink/15 bg-surface flex items-center justify-center text-ink/70 hover:text-ink hover:border-ink transition-colors rounded-ui"
               >
                 <IconBrandInstagram className="h-4 w-4" />
               </a>
               <a
                 href="mailto:compliance@scrowpoint.com"
                 aria-label="Email Compliance"
-                className="h-9 w-9 border border-[#111113]/15 bg-white flex items-center justify-center text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors"
+                className="h-9 w-9 border border-ink/15 bg-surface flex items-center justify-center text-ink/70 hover:text-ink hover:border-ink transition-colors rounded-ui"
               >
                 <Mail className="h-4 w-4" />
               </a>
@@ -206,11 +206,11 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                       <Link
                         href={link.href}
                         onClick={() => onNavigate?.(link.href)}
-                        className="text-[#111113]/70 hover:text-[#111113] transition-colors inline-flex items-center gap-1.5"
+                        className="text-ink/70 hover:text-ink transition-colors inline-flex items-center gap-1.5"
                       >
                         <span>{link.label}</span>
                         {link.badge && (
-                          <span className="font-mono text-[9px] bg-[#111113] text-white px-1.5 py-0.5">
+                          <span className="font-mono text-micro bg-ink text-white px-1.5 py-0.5">
                             {link.badge}
                           </span>
                         )}
@@ -223,7 +223,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
           </div>
 
           {/* Mobile Accordion */}
-          <div className="block md:hidden border-t border-[#111113]/12 divide-y divide-[#111113]/12">
+          <div className="block md:hidden border-t border-ink-faint divide-y divide-ink-faint">
             {FAT_FOOTER_COLUMNS.map((column, index) => {
               const isOpen = openAccordion === index;
               return (
@@ -231,14 +231,14 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                   <button
                     type="button"
                     onClick={() => toggleAccordion(index)}
-                    className="flex w-full items-center justify-between py-1 text-left font-primary text-sm font-bold text-[#111113]"
+                    className="flex w-full items-center justify-between py-1 text-left font-primary text-sm font-bold text-ink"
                     aria-expanded={isOpen}
                   >
                     <span>{column.title}</span>
                     <ChevronDown
                       className={cn(
-                        "h-4 w-4 text-[#111113]/60 transition-transform duration-200",
-                        isOpen && "rotate-180 text-[#111113]"
+                        "h-4 w-4 text-ink/60 transition-transform duration-200",
+                        isOpen && "rotate-180 text-ink"
                       )}
                     />
                   </button>
@@ -249,7 +249,7 @@ export function MarketingFatFooter({ className, onNavigate }: MarketingFatFooter
                           <Link
                             href={link.href}
                             onClick={() => onNavigate?.(link.href)}
-                            className="text-[#111113]/70 hover:text-[#111113] inline-flex items-center gap-1.5 py-1"
+                            className="text-ink/70 hover:text-ink inline-flex items-center gap-1.5 py-1"
                           >
                             <span>{link.label}</span>
                           </Link>

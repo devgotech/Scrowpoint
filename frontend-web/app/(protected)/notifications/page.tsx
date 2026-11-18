@@ -45,31 +45,31 @@ export default function NotificationsPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full py-8 sm:py-12">
         <div className="mx-auto max-w-[920px] px-4 sm:px-8 space-y-8">
-          <div className="pb-6 border-b border-[#111113]/12">
+          <div className="pb-6 border-b border-ink-faint">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-2">
               <Link
                 href="/marketplace"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Marketplace</span>
               </Link>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="font-bold text-[#111113]">Notifications</span>
+              <span className="font-bold text-ink">Notifications</span>
             </div>
-            <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
+            <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
               ESCROW &amp; SECURITY ALERTS
-              <span className="text-[#FF5A25]">.</span>
+              <span className="text-accent-orange">.</span>
             </h1>
-            <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+            <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
               Live updates on custodial deposit locks, courier transit
               milestones, and 48-hour hardware diagnostic countdowns.
             </p>

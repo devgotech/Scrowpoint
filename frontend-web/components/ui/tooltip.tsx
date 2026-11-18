@@ -43,7 +43,7 @@ export function Tooltip({
         <TooltipPrimitive.Positioner sideOffset={4}>
           <TooltipPrimitive.Popup
             className={cn(
-              "z-50 rounded-md bg-primary px-2 py-1 label-caps text-primary-foreground shadow-[var(--shadow-soft-sm)] duration-200 ease-out data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+              "z-50 rounded-md bg-primary px-2 py-1 label-caps text-primary-foreground shadow-soft-sm duration-200 ease-out data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
               className
             )}
           >

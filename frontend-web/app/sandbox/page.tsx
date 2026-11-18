@@ -153,13 +153,13 @@ function EvidenceUploadSandboxDemo() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 border border-dashed border-[#111113]/20 bg-[#F8F7F4] text-center space-y-3 w-full max-w-md mx-auto">
-      <div className="flex h-10 w-10 items-center justify-center bg-[#f56565]/15 text-[#c53030]">
+    <div className="flex flex-col items-center justify-center p-6 border border-dashed border-ink/20 bg-paper text-center space-y-3 w-full max-w-md mx-auto rounded-card">
+      <div className="flex h-10 w-10 items-center justify-center bg-state-error/15 text-state-error-strong">
         <AlertTriangle className="h-5 w-5" />
       </div>
       <div>
-        <h4 className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">Dispute Evidence Submission Modal</h4>
-        <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
+        <h4 className="font-primary text-sm font-bold text-ink tracking-[-0.02em]">Dispute Evidence Submission Modal</h4>
+        <p className="font-secondary text-xs text-ink/65 mt-0.5">
           Modal stays closed by default. Tap the button below to test opening, reviewing, and dismissing the arbitration drawer.
         </p>
       </div>
@@ -169,7 +169,7 @@ function EvidenceUploadSandboxDemo() {
         onClick={() => setIsOpen(true)}
         className="gap-2"
       >
-        <AlertTriangle className="h-4 w-4 text-[#ecc94b]" />
+        <AlertTriangle className="h-4 w-4 text-state-warning" />
         <span>Open Dispute Modal Preview</span>
       </Button>
 
@@ -208,45 +208,45 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
             [01] Color Palette &amp; Semantic Tokens (Variation 7)
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
-              <div className="h-6 w-full bg-[#F8F7F4] border border-[#111113]/15 mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--bg / --color-bg-base</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#F8F7F4 (Warm Paper)</div>
+            <div className="p-3 border border-ink-faint bg-paper rounded-card">
+              <div className="h-6 w-full bg-paper border border-ink/15 mb-2 rounded-ui" />
+              <div className="font-mono font-bold text-ink">--bg / --color-bg-base</div>
+              <div className="font-mono text-caption text-ink/65">#F8F7F4 (Warm Paper)</div>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-white">
-              <div className="h-6 w-full bg-[#111113] mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--ink / --action-primary</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#111113 (Deep Carbon Ink)</div>
+            <div className="p-3 border border-ink-faint bg-surface rounded-card">
+              <div className="h-6 w-full bg-ink mb-2" />
+              <div className="font-mono font-bold text-ink">--ink / --action-primary</div>
+              <div className="font-mono text-caption text-ink/65">#111113 (Deep Carbon Ink)</div>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-white">
-              <div className="h-6 w-full bg-[#FF5A25] mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--accent</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#FF5A25 (Vermilion Orange)</div>
+            <div className="p-3 border border-ink-faint bg-surface rounded-card">
+              <div className="h-6 w-full bg-accent-orange mb-2" />
+              <div className="font-mono font-bold text-ink">--accent</div>
+              <div className="font-mono text-caption text-ink/65">#FF5A25 (Vermilion Orange)</div>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-white">
-              <div className="h-6 w-full bg-[#F0EFEA] border border-[#111113]/12 mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--color-bg-muted</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#F0EFEA (Warm Stone)</div>
+            <div className="p-3 border border-ink-faint bg-surface rounded-card">
+              <div className="h-6 w-full bg-surface-muted border border-ink-faint mb-2 rounded-ui" />
+              <div className="font-mono font-bold text-ink">--color-bg-muted</div>
+              <div className="font-mono text-caption text-ink/65">#F0EFEA (Warm Stone)</div>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-white">
-              <div className="h-6 w-full bg-[#22c55e] mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--color-trust</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#22c55e (Escrow &amp; KYC)</div>
+            <div className="p-3 border border-ink-faint bg-surface rounded-card">
+              <div className="h-6 w-full bg-trust mb-2" />
+              <div className="font-mono font-bold text-ink">--color-trust</div>
+              <div className="font-mono text-caption text-ink/65">#22c55e (Escrow &amp; KYC)</div>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-white">
-              <div className="h-6 w-full bg-[#15803d] mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--color-trust-strong</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#15803d (WCAG Trust Text)</div>
+            <div className="p-3 border border-ink-faint bg-surface rounded-card">
+              <div className="h-6 w-full bg-trust-strong mb-2" />
+              <div className="font-mono font-bold text-ink">--color-trust-strong</div>
+              <div className="font-mono text-caption text-ink/65">#15803d (WCAG Trust Text)</div>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-white">
-              <div className="h-6 w-full bg-[#ecc94b] mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--color-state-warning</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#ecc94b (48H SLA / Dispute)</div>
+            <div className="p-3 border border-ink-faint bg-surface rounded-card">
+              <div className="h-6 w-full bg-state-warning mb-2" />
+              <div className="font-mono font-bold text-ink">--color-state-warning</div>
+              <div className="font-mono text-caption text-ink/65">#ecc94b (48H SLA / Dispute)</div>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-white">
-              <div className="h-6 w-full bg-[#f56565] mb-2" />
-              <div className="font-mono font-bold text-[#111113]">--color-state-error</div>
-              <div className="font-mono text-[10px] text-[#111113]/65">#f56565 (Verification Fail)</div>
+            <div className="p-3 border border-ink-faint bg-surface rounded-card">
+              <div className="h-6 w-full bg-state-error mb-2" />
+              <div className="font-mono font-bold text-ink">--color-state-error</div>
+              <div className="font-mono text-caption text-ink/65">#f56565 (Verification Fail)</div>
             </div>
           </div>
         </div>
@@ -256,51 +256,51 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
             [02] Structural Geometry &amp; Typography Semantics (Variation 7)
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
-              <span className="font-mono font-bold text-[#111113] block">.card (0px Hairline Frame)</span>
-              <p className="font-secondary text-[#111113]/70 text-[11px] mt-1">
-                Architectural cards, tables, and containers use <code className="font-mono bg-white px-1 border border-[#111113]/12">1px solid rgba(17,17,19,0.12)</code> on <code className="font-mono bg-white px-1 border border-[#111113]/12">#FFFFFF</code> with sharp 0px corners.
+            <div className="p-3 border border-ink-faint bg-paper rounded-card">
+              <span className="font-mono font-bold text-ink block">.card (Responsive Radius Frame)</span>
+              <p className="font-secondary text-ink/70 text-meta mt-1">
+                Architectural cards, tables, and containers use <code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">1px solid rgba(17,17,19,0.12)</code> on <code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">#FFFFFF</code> with <code className="font-mono bg-surface px-1 border border-ink-faint rounded-ui">rounded-card</code> corners (8px desktop · 6px tablet · 4px mobile).
               </p>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
-              <span className="font-mono font-bold text-[#111113] block">.btn-primary &amp; Badges (999px Pill)</span>
-              <p className="font-secondary text-[#111113]/70 text-[11px] mt-1">
-                Primary CTAs (<code className="font-mono bg-white px-1 border border-[#111113]/12">#111113</code> fill, <code className="font-mono bg-white px-1 border border-[#111113]/12">#FF5A25</code> hover) and status badges use <code className="font-mono bg-white px-1 border border-[#111113]/12">border-radius: 999px</code>.
+            <div className="p-3 border border-ink-faint bg-paper rounded-card">
+              <span className="font-mono font-bold text-ink block">.btn-primary &amp; Badges (999px Pill)</span>
+              <p className="font-secondary text-ink/70 text-meta mt-1">
+                Primary CTAs (<code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">#111113</code> fill, <code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">#FF5A25</code> hover) and status badges use <code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">border-radius: 999px</code>.
               </p>
             </div>
-            <div className="p-3 border border-[#111113]/12 bg-[#F8F7F4]">
-              <span className="font-mono font-bold text-[#111113] block">Space Grotesk + Plus Jakarta Sans</span>
-              <p className="font-secondary text-[#111113]/70 text-[11px] mt-1">
-                Headings: <code className="font-mono bg-white px-1 border border-[#111113]/12">Space Grotesk (-0.04em)</code>. Body: <code className="font-mono bg-white px-1 border border-[#111113]/12">Plus Jakarta Sans</code>. Labels &amp; NGN: <code className="font-mono bg-white px-1 border border-[#111113]/12">Space Grotesk Mono</code>.
+            <div className="p-3 border border-ink-faint bg-paper rounded-card">
+              <span className="font-mono font-bold text-ink block">Space Grotesk + Plus Jakarta Sans</span>
+              <p className="font-secondary text-ink/70 text-meta mt-1">
+                Headings: <code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">Space Grotesk (-0.04em)</code>. Body: <code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">Plus Jakarta Sans</code>. Labels &amp; NGN: <code className="font-mono bg-surface px-1 border border-ink-faint rounded-card">Space Grotesk Mono</code>.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="border border-[#111113]/15 bg-[#F8F7F4] p-5">
-          <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-[#111113]/12">
-            <span className="font-mono text-xs uppercase tracking-[0.15em] text-[#111113] block font-bold">
+        <div className="border border-ink/15 bg-paper p-5 rounded-card">
+          <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-ink-faint">
+            <span className="font-mono text-xs uppercase tracking-[0.15em] text-ink block font-bold">
               [03] The 6 NEVER Rules (4_ui_system.md — Variation 7)
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-wider bg-[#FF5A25]/15 text-[#FF5A25] border border-[#FF5A25]/30 px-2 py-0.5 font-bold">
+            <span className="font-mono text-caption uppercase tracking-wider bg-accent-orange/15 text-accent-orange border border-accent-orange/30 px-2 py-0.5 font-bold">
               Strict Enforcement
             </span>
           </div>
-          <ol className="space-y-2 text-xs font-secondary text-[#111113] list-decimal list-inside leading-relaxed">
+          <ol className="space-y-2 text-xs font-secondary text-ink list-decimal list-inside leading-relaxed">
             <li>
-              <strong>NEVER</strong> use legacy cool slate backgrounds (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#f8fafc</code>) or navy ink (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#0f172a</code>) — always use Warm Editorial Paper (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#F8F7F4</code>), Deep Carbon Ink (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#111113</code>), and Vermilion Orange (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#FF5A25]">#FF5A25</code>) for accents and hover states.
+              <strong>NEVER</strong> use legacy cool slate backgrounds (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">#f8fafc</code>) or navy ink (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">#0f172a</code>) — always use Warm Editorial Paper (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">#F8F7F4</code>), Deep Carbon Ink (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">#111113</code>), and Vermilion Orange (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint text-accent-orange rounded-card">#FF5A25</code>) for accents and hover states.
             </li>
             <li>
-              <strong>NEVER</strong> place raw Trust Green (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">#22c55e</code>) text directly on light backgrounds (fails WCAG). Always use <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#15803d]">--color-trust-strong (#15803d)</code> and reserve green strictly for verified escrow/KYC signals.
+              <strong>NEVER</strong> place raw Trust Green (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">#22c55e</code>) text directly on light backgrounds (fails WCAG). Always use <code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint text-trust-strong rounded-card">--color-trust-strong (#15803d)</code> and reserve green strictly for verified escrow/KYC signals.
             </li>
             <li>
-              <strong>NEVER</strong> apply rounded corners to architectural <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">.card</code> surfaces (must remain crisp <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">0px</code> with <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">1px solid rgba(17, 17, 19, 0.12)</code> borders), while primary CTAs (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">.btn-primary</code>) and status badges strictly use <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">999px</code> pill radius (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">rounded-full</code>).
+              <strong>NEVER</strong> hard-code a radius (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-ui">rounded-[8px]</code>, <code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-ui">rounded-none</code>). Cards, panels and inputs use <code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-ui">rounded-card</code> / <code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-ui">rounded-ui</code>, driven by one responsive token (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-ui">--radius-base</code>: 8px desktop, 6px tablet, 4px mobile). Primary CTAs (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-ui">.btn-primary</code>) and status badges keep the <code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-ui">rounded-full</code> pill.
             </li>
             <li>
-              <strong>NEVER</strong> use Warning amber for failures or Error red for disputes. 48H SLA &amp; Dispute Open = warning (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#975a16]">#ecc94b</code>), Verification Failed = error (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#c53030]">#f56565</code>), Escrow Funded = success (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12 text-[#15803d]">#088235</code>).
+              <strong>NEVER</strong> use Warning amber for failures or Error red for disputes. 48H SLA &amp; Dispute Open = warning (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint text-state-warning-strong rounded-card">#ecc94b</code>), Verification Failed = error (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint text-state-error-strong rounded-card">#f56565</code>), Escrow Funded = success (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint text-trust-strong rounded-card">#088235</code>).
             </li>
             <li>
-              <strong>NEVER</strong> set NGN currency amounts, order IDs (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">SP-ORD-*</code>), or <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">.label</code> index tags (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">[01] VAULT</code>) in body font — always use <code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">Space Grotesk</code> monospace (<code className="font-mono bg-white px-1 py-0.5 border border-[#111113]/12">font-mono</code>).
+              <strong>NEVER</strong> set NGN currency amounts, order IDs (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">SP-ORD-*</code>), or <code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">.label</code> index tags (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">[01] VAULT</code>) in body font — always use <code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">Space Grotesk</code> monospace (<code className="font-mono bg-surface px-1 py-0.5 border border-ink-faint rounded-card">font-mono</code>).
             </li>
             <li>
               <strong>NEVER</strong> write or compute money values in floating-point major units — always store and calculate in integer kobo/cents before formatting for display.
@@ -322,7 +322,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Editorial P2P Gadget Escrow hero: Space Grotesk display typography ('SECURE EXCHANGE. VERIFIED TECH.'), Plus Jakarta Sans subcopy, pill primary CTA, and 3-column architectural vault/KYC/SLA cards.",
     tags: ["Hero", "Variation 7", "Space Grotesk", "Plus Jakarta Sans", "3-Column Cards"],
     render: () => (
-      <div className="w-full border border-[#111113]/12 overflow-hidden">
+      <div className="w-full border border-ink-faint overflow-hidden">
         <InstitutionalHero />
       </div>
     ),
@@ -403,7 +403,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
         <Button variant="outline">Outline Button</Button>
         <Button variant="ghost">Ghost Button</Button>
         <Button variant="destructive">Destructive (Dispute)</Button>
-        <Button className="bg-[#22c55e] text-[#111113] hover:bg-[#16a34a] font-semibold">Trust Action (Release)</Button>
+        <Button className="bg-trust text-ink hover:bg-state-success-bright font-semibold">Trust Action (Release)</Button>
       </div>
     ),
   },
@@ -417,7 +417,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     render: () => (
       <div className="flex flex-wrap items-center gap-3">
         <Badge variant="trust" className="gap-1.5 font-mono text-xs">
-          <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+          <ShieldCheck className="h-3.5 w-3.5 text-trust" />
           <span>Escrow Active (Verified)</span>
         </Badge>
         <Badge variant="secondary" className="font-mono text-xs">
@@ -855,7 +855,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Reconciled bottom navigation for mobile screens (<768px): Market, Trust Hub, Escrow, Seller Hub (authenticated only), and Profile.",
     tags: ["Mobile Bottom Bar", "Webapp Nav", "Touch Friendly", "44px Targets"],
     render: () => (
-      <div className="w-full max-w-md mx-auto relative h-20 overflow-hidden border border-[#111113]/12 bg-[#F8F7F4] p-2">
+      <div className="w-full max-w-md mx-auto relative h-20 overflow-hidden border border-ink-faint bg-paper p-2 rounded-card">
         <span className="label block text-center mb-1">
           Simulated Mobile Screen Nav Bar
         </span>
@@ -873,7 +873,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Comprehensive safety-net directory for landing and pricing pages: secondary CTA banner ('Get Started for Free'), multi-column doormat navigation, newsletter signup, NDPR/ISO security badges, and trust certificates.",
     tags: ["Footer", "Marketing", "Directory", "Trust Badges", "Newsletter"],
     render: () => (
-      <div className="w-full border border-[#111113]/12 overflow-hidden">
+      <div className="w-full border border-ink-faint overflow-hidden">
         <MarketingFatFooter />
       </div>
     ),
@@ -886,8 +886,8 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Clean, distraction-free single-row footer eliminating funnel leaks on login, register, KYC camera verify, and checkout screens. Features interactive locale selector and live help modal.",
     tags: ["Footer", "Minimalist", "Auth", "Onboarding", "Locale Selector"],
     render: () => (
-      <div className="w-full border border-[#111113]/12 overflow-hidden bg-[#F8F7F4] p-4">
-        <div className="py-6 px-4 bg-white border border-[#111113]/12 mb-4 text-center">
+      <div className="w-full border border-ink-faint overflow-hidden bg-paper p-4 rounded-card">
+        <div className="py-6 px-4 bg-surface border border-ink-faint mb-4 text-center rounded-card">
           <span className="label">Simulated Form Wizard Screen Area</span>
         </div>
         <MinimalistAuthFooter />
@@ -902,7 +902,7 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
     description: "Preserves vertical screen real estate for dashboards, feeds, and dispute desks. Features live system operational pulse dot, build metadata (v2.4.1), interactive ⌘K keyboard shortcuts modal dialog, and release notes drawer.",
     tags: ["Footer", "Utility Bar", "System Status", "Shortcuts ⌘K", "Build Version"],
     render: () => (
-      <div className="w-full border border-[#111113]/12 overflow-hidden bg-[#F8F7F4]">
+      <div className="w-full border border-ink-faint overflow-hidden bg-paper rounded-card">
         <div className="py-12 px-6 text-center">
           <span className="label">
             Simulated Logged-In Workspace (e.g., Seller Hub / Wallet / Escrow Desk)
@@ -992,22 +992,22 @@ export default function SandboxPage() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <div className="min-h-screen bg-[#F8F7F4] text-[#111113] font-secondary">
+        <div className="min-h-screen bg-paper text-ink font-secondary">
           {/* Header Banner */}
-          <div className="border-b border-[#111113]/12 bg-[#F8F7F4]/95 backdrop-blur-md sticky top-0 z-30">
+          <div className="border-b border-ink-faint bg-paper/95 backdrop-blur-md sticky top-0 z-30">
             <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-8">
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center bg-[#111113] text-white">
+                <div className="flex h-8 w-8 items-center justify-center bg-ink text-white">
                   <Boxes className="h-4 w-4" />
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <span className="font-primary text-lg font-extrabold tracking-[-0.05em] text-[#111113]">
-                    SCROWPOINT<span className="text-[#FF5A25]">.</span>
+                  <span className="font-primary text-lg font-extrabold tracking-[-0.05em] text-ink">
+                    SCROWPOINT<span className="text-accent-orange">.</span>
                   </span>
-                  <span className="text-[#111113]/25">/</span>
-                  <h1 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] flex items-center gap-2">
+                  <span className="text-ink/25">/</span>
+                  <h1 className="font-primary text-sm font-bold tracking-[-0.02em] text-ink flex items-center gap-2">
                     <span>Component Sandbox</span>
-                    <span className="font-mono text-[10px] bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                    <span className="font-mono text-caption bg-trust/15 text-trust-strong border border-trust/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
                       Variation 7 • 4_ui_system.md
                     </span>
                   </h1>
@@ -1031,13 +1031,13 @@ export default function SandboxPage() {
               <aside className="w-full md:w-64 shrink-0 space-y-6 md:sticky md:top-24">
                 {/* Search Bar */}
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#111113]/50" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink/50" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Filter registry..."
-                    className="h-9 w-full border border-[#111113]/15 bg-white pl-8 pr-3 text-xs text-[#111113] placeholder:text-[#111113]/45 focus:bg-white focus:outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113] transition-colors duration-200 ease-out"
+                    className="h-9 w-full border border-ink/15 bg-surface pl-8 pr-3 text-xs text-ink placeholder:text-ink/45 focus:bg-surface focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-colors duration-200 ease-out rounded-ui"
                   />
                 </div>
 
@@ -1057,17 +1057,17 @@ export default function SandboxPage() {
                         className={cn(
                           "flex w-full items-center justify-between px-3 py-2 text-xs font-medium transition-colors duration-200 ease-out text-left select-none cursor-pointer",
                           isActive
-                            ? "bg-[#111113] text-white font-semibold"
-                            : "text-[#111113]/70 hover:bg-[#F0EFEA] hover:text-[#111113]"
+                            ? "bg-ink text-white font-semibold"
+                            : "text-ink/70 hover:bg-surface-muted hover:text-ink"
                         )}
                       >
                         <span>{cat.label}</span>
                         <span
                           className={cn(
-                            "font-mono text-[10px] px-1.5 py-0.5",
+                            "font-mono text-caption px-1.5 py-0.5",
                             isActive
-                              ? "bg-[#FF5A25] text-white font-bold"
-                              : "bg-[#F0EFEA] text-[#111113]/65"
+                              ? "bg-accent-orange text-white font-bold"
+                              : "bg-surface-muted text-ink/65"
                           )}
                         >
                           {cat.count}
@@ -1078,12 +1078,12 @@ export default function SandboxPage() {
                 </div>
 
                 {/* Design System Rules Reference Box */}
-                <div className="border border-[#111113]/12 bg-white p-4 space-y-2.5 text-xs text-[#111113]/70">
-                  <div className="flex items-center gap-1.5 font-primary font-bold text-[#111113] tracking-[-0.02em]">
-                    <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                <div className="border border-ink-faint bg-surface p-4 space-y-2.5 text-xs text-ink/70 rounded-card">
+                  <div className="flex items-center gap-1.5 font-primary font-bold text-ink tracking-[-0.02em]">
+                    <ShieldCheck className="h-4 w-4 text-trust" />
                     <span>Variation 7 Directives</span>
                   </div>
-                  <ul className="space-y-1.5 text-[11px] leading-relaxed list-disc list-inside font-secondary">
+                  <ul className="space-y-1.5 text-meta leading-relaxed list-disc list-inside font-secondary">
                     <li>Canvas: Warm Paper (#F8F7F4)</li>
                     <li>Ink: Deep Carbon (#111113)</li>
                     <li>Accent: Vermilion (#FF5A25)</li>
@@ -1100,12 +1100,12 @@ export default function SandboxPage() {
                   RIGHT COLUMN: MAIN COMPONENT DISPLAY VIEWPORT
                   ================================================================== */}
               <main className="flex-1 space-y-8 overflow-y-auto w-full">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#111113]/12">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-ink-faint">
                   <div>
-                    <h2 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+                    <h2 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
                       {categories.find((c) => c.value === activeCategory)?.label}
                     </h2>
-                    <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
+                    <p className="font-secondary text-xs text-ink/65 mt-0.5">
                       Displaying {filteredComponents.length} production-ready React components complying with Design Variation 7 (4_ui_system.md).
                     </p>
                   </div>
@@ -1132,23 +1132,23 @@ export default function SandboxPage() {
                       <Card
                         key={item.id}
                         id={item.id}
-                        className="w-full border border-[#111113]/12 bg-white overflow-hidden transition-all duration-200 ease-out hover:border-[#111113]/30"
+                        className="w-full border border-ink-faint bg-surface overflow-hidden transition-all duration-200 ease-out hover:border-ink/30 rounded-card"
                       >
                         {/* Component Card Header */}
-                        <CardHeader className="bg-[#F8F7F4] p-5 border-b border-[#111113]/12 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <CardHeader className="bg-paper p-5 border-b border-ink-faint flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div>
                             <div className="flex items-center gap-2">
-                              <CardTitle className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
+                              <CardTitle className="font-primary text-base font-bold text-ink tracking-[-0.03em]">
                                 {item.title}
                               </CardTitle>
                               <Badge
                                 variant="secondary"
-                                className="font-mono text-[10px] py-0 tracking-wider uppercase"
+                                className="font-mono text-caption py-0 tracking-wider uppercase"
                               >
                                 {item.tierLabel}
                               </Badge>
                             </div>
-                            <CardDescription className="font-secondary text-xs text-[#111113]/65 mt-1 max-w-2xl leading-relaxed">
+                            <CardDescription className="font-secondary text-xs text-ink/65 mt-1 max-w-2xl leading-relaxed">
                               {item.description}
                             </CardDescription>
                           </div>
@@ -1158,7 +1158,7 @@ export default function SandboxPage() {
                             {item.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="font-mono text-[10px] uppercase tracking-wider bg-white border border-[#111113]/12 px-2 py-0.5 text-[#111113]/70"
+                                className="font-mono text-caption uppercase tracking-wider bg-surface border border-ink-faint px-2 py-0.5 text-ink/70 rounded-card"
                               >
                                 {tag}
                               </span>
@@ -1167,7 +1167,7 @@ export default function SandboxPage() {
                         </CardHeader>
 
                         {/* Component Live Render Canvas */}
-                        <CardContent className="p-6 bg-white flex flex-col items-center justify-center min-h-36">
+                        <CardContent className="p-6 bg-surface flex flex-col items-center justify-center min-h-36">
                           <div className="w-full">{item.render()}</div>
                         </CardContent>
                       </Card>

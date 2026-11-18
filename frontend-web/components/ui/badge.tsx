@@ -38,35 +38,35 @@ function Badge({
   const variantStyles = {
     // Trust Green Badge: Backgrounds, badges, icons with --color-trust-strong text on white
     trust:
-      "border border-[#22c55e]/30 bg-[#22c55e]/15 text-[#15803d] font-semibold",
+      "border border-trust/30 bg-trust/15 text-trust-strong font-semibold",
     "trust-solid":
-      "border-transparent bg-[#22c55e] text-white font-semibold",
+      "border-transparent bg-trust text-white font-semibold",
     // Semantic Success: Escrow Funded (#088235)
     success:
-      "border border-[#088235]/30 bg-[#088235]/15 text-[#088235] font-semibold",
+      "border border-state-success/30 bg-state-success/15 text-state-success font-semibold",
     // Semantic Warning: Dispute Open / Action Required (#ecc94b)
     warning:
-      "border border-[#ecc94b]/50 bg-[#ecc94b]/20 text-[#975a16] font-semibold",
+      "border border-state-warning/50 bg-state-warning/20 text-state-warning-strong font-semibold",
     // Semantic Error: Verification Failed (#f56565)
     destructive:
-      "border border-[#f56565]/40 bg-[#f56565]/15 text-[#c53030] font-semibold",
+      "border border-state-error/40 bg-state-error/15 text-state-error-strong font-semibold",
     // In Transit: Courier Item (#111113)
     transit:
-      "border border-[#111113]/20 bg-[#111113] text-white font-semibold",
+      "border border-ink/20 bg-ink text-white font-semibold",
     // Default / Secondary / Outline (Variation 7)
     default:
-      "border-transparent bg-[#111113] text-white",
+      "border-transparent bg-ink text-white",
     secondary:
-      "border border-[#111113]/12 bg-[#F0EFEA] text-[#111113]/75",
+      "border border-ink-faint bg-surface-muted text-ink/75 rounded-card",
     outline:
-      "border border-[#111113]/15 text-[#111113] bg-white",
+      "border border-ink/15 text-ink bg-surface rounded-card",
   };
 
   return (
     <div
       className={cn(
         "inline-flex items-center gap-1 px-2.5 py-0.5 font-mono text-[10.5px] font-semibold tracking-[0.12em] uppercase transition-colors duration-200 ease-out select-none",
-        usePillRadius ? "rounded-full" : "rounded-none",
+        usePillRadius ? "rounded-full" : "rounded-ui",
         variantStyles[variant],
         className
       )}

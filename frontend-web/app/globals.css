@@ -1,76 +1,164 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   SCROWPOINT DESIGN SYSTEM — single source of truth
+   --------------------------------------------------------------------------
+   Think of this file like Figma variables:
+   - Change a value here and every component using that token updates.
+   - Components must use token classes (bg-paper, text-ink, rounded-card,
+     text-caption…) — never raw hex (bg-[#111113]) or raw px (rounded-[8px]).
+   - Every other variable (shadcn aliases, legacy names) points back here.
+   ========================================================================== */
+
 @theme {
-  --color-bg-base: #F8F7F4;
-  --color-bg-surface: #FFFFFF;
-  --color-bg-card: #FFFFFF;
-  --color-text-primary: #111113;
-  --color-text-secondary: rgba(17, 17, 19, 0.65);
-  --color-action-primary: #111113;
-  --color-border-default: rgba(17, 17, 19, 0.12);
+  /* ---------- Colour: neutrals ---------- */
+  --color-ink: #111113;                       /* Deep carbon ink — text, primary CTA */
+  --color-ink-faint: rgba(17, 17, 19, 0.12);  /* Default hairline border */
+  --color-ink-medium: rgba(17, 17, 19, 0.65); /* Secondary text */
+  --color-paper: #F8F7F4;                     /* Warm editorial page background */
+  --color-surface: #FFFFFF;                   /* Card / panel / input surface */
+  --color-surface-muted: #F0EFEA;             /* Muted panel, chips, table heads */
+  --color-surface-muted-alt: #E8E6DF;         /* Deeper muted canvas */
 
-  --color-state-success: #088235;
-  --color-state-warning: #ecc94b;
-  --color-state-error: #f56565;
+  /* ---------- Colour: brand ---------- */
+  --color-accent-orange: #FF5A25;
 
+  /* ---------- Colour: trust (escrow-protected / released) ---------- */
   --color-trust: #22c55e;
   --color-trust-strong: #15803d;
 
+  /* ---------- Colour: semantic states ---------- */
+  --color-state-success: #088235;
+  --color-state-success-bright: #16a34a;
+  --color-state-success-strong: #166534;
+
+  --color-state-warning: #ecc94b;
+  --color-state-warning-strong: #975a16;
+
+  --color-state-error: #f56565;
+  --color-state-error-hover: #e53e3e;
+  --color-state-error-strong: #c53030;
+  --color-state-error-dark: #9b2c2c;
+  --color-state-error-deep: #7f1d1d;
+
+  /* ---------- Typography ---------- */
   --font-primary: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-secondary: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "Space Grotesk", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-inter: "Plus Jakarta Sans", sans-serif;
-  --font-space-mono: "Space Grotesk", monospace;
+  --font-inter: var(--font-secondary);
+  --font-space-mono: var(--font-mono);
 
-  --color-ink: #111113;
-  --color-ink-faint: rgba(17, 17, 19, 0.12);
-  --color-ink-medium: rgba(17, 17, 19, 0.65);
-  --color-paper: #F8F7F4;
-  --color-pane: #FFFFFF;
-  --color-accent-orange: #FF5A25;
+  /* Small UI text sizes (Tailwind's own text-xs … text-9xl still apply above these) */
+  --text-micro: 9px;     /* text-micro   — tiny tags, stamps */
+  --text-caption: 10px;  /* text-caption — mono captions, meta labels */
+  --text-meta: 11px;     /* text-meta    — secondary details, helper text */
+  --text-label: 0.65rem; /* text-label   — uppercase .label eyebrow */
 
-  --radius-control: 9999px;
-  --radius-card: 0px;
-  --radius-badge: 9999px;
+  /* ---------- Radius ----------
+     Every radius derives from --radius-base (set responsively in :root below).
+     Change the base once and cards, inputs, menus, dialogs… all follow.      */
+  --radius-ui: var(--radius-base);       /* rounded-ui    — general elements */
+  --radius-card: var(--radius-base);     /* rounded-card  — cards & panels */
+  --radius-control: 9999px;              /* rounded-control — pill buttons */
+  --radius-badge: 9999px;                /* rounded-badge   — pill badges */
 
+  /* Tailwind's built-in scale, re-based on the same knob */
+  --radius: var(--radius-base);                                   /* rounded */
+  --radius-xs: max(calc(var(--radius-base) - 4px), 1px);         /* rounded-xs  */
+  --radius-sm: max(calc(var(--radius-base) - 2px), 2px);         /* rounded-sm  */
+  --radius-md: var(--radius-base);                                /* rounded-md  */
+  --radius-lg: calc(var(--radius-base) + 2px);                    /* rounded-lg  */
+  --radius-xl: calc(var(--radius-base) + 4px);                    /* rounded-xl  */
+  --radius-2xl: calc(var(--radius-base) + 8px);                   /* rounded-2xl */
+
+  /* ---------- Elevation ---------- */
   --shadow-soft-sm: 0 2px 4px rgba(17, 17, 19, 0.04);
   --shadow-soft-md: 0 4px 8px rgba(17, 17, 19, 0.06);
   --shadow-soft-lg: 0 6px 16px rgba(17, 17, 19, 0.06);
-
   --shadow-sharp-sm: 0 2px 2px rgba(17, 17, 19, 0.12);
   --shadow-sharp-md: 0 4px 4px rgba(17, 17, 19, 0.12);
   --shadow-sharp-lg: 0 6px 6px rgba(17, 17, 19, 0.12);
+
+  /* ---------- Motion ---------- */
+  --duration-regular: 200ms;
+  --ease-standard: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Aliases — they only point at the tokens above, so they never drift.
+   (shadcn/ui component names + older Scrowpoint names.)                      */
+@theme inline {
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-ink);
+  --color-primary-foreground: var(--color-surface);
+  --color-secondary: var(--color-surface-muted);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted: var(--color-surface-muted);
+  --color-muted-foreground: rgba(17, 17, 19, 0.6);
+  --color-accent: var(--color-surface-muted);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: var(--color-state-error);
+  --color-destructive-foreground: var(--color-surface);
+  --color-border: var(--color-ink-faint);
+  --color-input: var(--color-ink-faint);
+  --color-ring: var(--color-ink);
+
+  --color-pane: var(--color-surface);
+  --color-bg-base: var(--color-paper);
+  --color-bg-surface: var(--color-surface);
+  --color-bg-card: var(--color-surface);
+  --color-text-primary: var(--color-ink);
+  --color-text-secondary: var(--color-ink-medium);
+  --color-action-primary: var(--color-ink);
+  --color-border-default: var(--color-ink-faint);
 }
 
 @layer base {
+  /* ---------- Responsive radius knob ----------
+     mobile (<768px) 4px · tablet (768–1023px) 6px · desktop (≥1024px) 8px   */
   :root {
-    /* === VARIATION 7 CORE TOKENS — Scrowpoint P2P Gadget Escrow === */
-    --bg: #F8F7F4;
-    --ink: #111113;
-    --accent: #FF5A25;
-    --ink-faint: rgba(17, 17, 19, 0.12);
+    --radius-base: 4px;
+  }
+  @media (width >= 48rem) {
+    :root {
+      --radius-base: 6px;
+    }
+  }
+  @media (width >= 64rem) {
+    :root {
+      --radius-base: 8px;
+    }
+  }
 
-    --color-bg-base: #F8F7F4;            /* Warm Editorial Paper */
-    --color-bg-surface: #FFFFFF;         /* Pure White Card Surface */
-    --color-bg-card: #FFFFFF;            /* Card fill */
-    --color-text-primary: #111113;       /* Deep Carbon Ink */
-    --color-text-secondary: rgba(17, 17, 19, 0.68);
-    --color-action-primary: #111113;     /* Primary Pill CTA */
-    --color-border-default: rgba(17, 17, 19, 0.12);
+  :root {
+    /* Legacy short names used by plain-CSS classes below */
+    --bg: var(--color-paper);
+    --ink: var(--color-ink);
+    --accent: var(--color-accent-orange);
+    --ink-faint: var(--color-ink-faint);
 
-    /* Semantic Escrow States */
-    --color-state-success: #088235;      /* Escrow Funded */
-    --color-state-warning: #ecc94b;      /* Dispute Open / Action Required */
-    --color-state-error: #f56565;        /* Verification Failed */
-
-    /* Trust Signals */
-    --color-trust: #22c55e;
-    --color-trust-strong: #15803d;
-
-    /* Typography — Variation 7 */
-    --font-primary: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-secondary: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-mono: "Space Grotesk", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    /* shadcn/ui raw variables */
+    --background: var(--color-paper);
+    --foreground: var(--color-ink);
+    --card: var(--color-surface);
+    --card-foreground: var(--color-ink);
+    --popover: var(--color-surface);
+    --popover-foreground: var(--color-ink);
+    --primary: var(--color-ink);
+    --primary-foreground: var(--color-surface);
+    --secondary: var(--color-surface-muted);
+    --secondary-foreground: var(--color-ink);
+    --muted: var(--color-surface-muted);
+    --muted-foreground: rgba(17, 17, 19, 0.6);
+    --destructive: var(--color-state-error);
+    --destructive-foreground: var(--color-surface);
+    --border: var(--color-ink-faint);
+    --input: var(--color-ink-faint);
+    --ring: var(--color-ink);
 
     /* Spacing */
     --space-xs: 4px;
@@ -81,59 +169,16 @@
     --space-2xl: 24px;
     --space-3xl: 32px;
     --space-4xl: 40px;
-
-    /* Radius Semantics */
-    --radius-control: 9999px;
-    --radius-card: 0px;
-    --radius-badge: 9999px;
-
-    /* Composite Mappings */
-    --background: #F8F7F4;
-    --foreground: #111113;
-    --card: #FFFFFF;
-    --card-foreground: #111113;
-    --popover: #FFFFFF;
-    --popover-foreground: #111113;
-    --primary: #111113;
-    --primary-foreground: #FFFFFF;
-    --secondary: #F0EFEA;
-    --secondary-foreground: #111113;
-    --muted: #F0EFEA;
-    --muted-foreground: rgba(17, 17, 19, 0.6);
-    --destructive: #f56565;
-    --destructive-foreground: #FFFFFF;
-    --border: rgba(17, 17, 19, 0.12);
-    --input: rgba(17, 17, 19, 0.12);
-    --ring: #111113;
-
-    --trust: #22c55e;
-    --trust-strong: #15803d;
-    --state-success: #088235;
-    --warning: #ecc94b;
-    --state-error: #f56565;
-
-    /* Elevation & Shadows */
-    --shadow-soft-sm: 0 2px 4px rgba(17, 17, 19, 0.04);
-    --shadow-soft-md: 0 4px 8px rgba(17, 17, 19, 0.06);
-    --shadow-soft-lg: 0 6px 16px rgba(17, 17, 19, 0.06);
-
-    --shadow-sharp-sm: 0 2px 2px rgba(17, 17, 19, 0.12);
-    --shadow-sharp-md: 0 4px 4px rgba(17, 17, 19, 0.12);
-    --shadow-sharp-lg: 0 6px 6px rgba(17, 17, 19, 0.12);
-
-    /* Motion */
-    --duration-regular: 200ms;
-    --ease-standard: cubic-bezier(0, 0, 0.2, 1);
   }
 
   ::selection {
-    background: var(--accent);
-    color: var(--bg);
+    background: var(--color-accent-orange);
+    color: var(--color-paper);
   }
 
   body {
-    background-color: var(--bg);
-    color: var(--ink);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
     font-family: var(--font-secondary);
     margin: 0;
     padding: 0;
@@ -149,11 +194,11 @@
 
 /* Variation 7 Classes & Typography Utilities */
 .label {
-  font-family: "Space Grotesk", monospace;
-  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--ink);
+  color: var(--color-ink);
   opacity: 0.6;
 }
 
@@ -166,25 +211,26 @@
 }
 
 .v7-card {
-  border: 1px solid var(--ink-faint);
+  border: 1px solid var(--color-ink-faint);
+  border-radius: var(--radius-card);
   padding: 2rem;
-  background: #FFFFFF;
+  background: var(--color-surface);
 }
 
 .btn-primary {
-  background: var(--ink);
-  color: #FFFFFF;
+  background: var(--color-ink);
+  color: var(--color-surface);
   padding: 1rem 2rem;
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   font-family: var(--font-secondary);
   font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: background-color 200ms ease, transform 150ms ease;
+  transition: background-color var(--duration-regular) ease, transform 150ms ease;
 }
 
 .btn-primary:hover {
-  background: var(--accent);
+  background: var(--color-accent-orange);
 }
 
 .font-primary {
@@ -236,7 +282,7 @@
 .type-label-caps {
   font-family: var(--font-mono);
   font-weight: 500;
-  font-size: 0.65rem;
+  font-size: var(--text-label);
   line-height: 1rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;

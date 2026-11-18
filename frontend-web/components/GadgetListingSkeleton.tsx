@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (4_ui_system.md & Spec 3, §2):
  * - Rule of Parity: Exactly mirrors the height, padding, 8px radius, and grid structure of `GadgetListingCard`.
- * - Image Skeleton: 4:3 `bg-[#f1f5f9]` block for the image with a condition pill skeleton at top-3 left-3.
+ * - Image Skeleton: 4:3 `bg-slate-100` block for the image with a condition pill skeleton at top-3 left-3.
  * - Title Block: `h-6 w-3/4` block.
  * - Price Block: `h-5 w-1/4` block in `font-mono`.
  * - Zero Cumulative Layout Shift (CLS).
@@ -27,17 +27,17 @@ export function GadgetListingSkeleton({
       role="status"
       aria-label="Loading gadget listing"
       className={cn(
-        "flex flex-col overflow-hidden border border-[#111113]/12 bg-white",
+        "flex flex-col overflow-hidden border border-ink-faint bg-surface rounded-card",
         className
       )}
       {...props}
     >
       {/* 4:3 Aspect Ratio Image Block */}
-      <div className="relative aspect-4/3 w-full bg-[#F0EFEA] border-b border-[#111113]/10">
-        <Skeleton className="h-full w-full rounded-none bg-[#111113]/8" />
+      <div className="relative aspect-4/3 w-full bg-surface-muted border-b border-ink/10">
+        <Skeleton className="h-full w-full rounded-ui bg-ink/8" />
         {/* Condition Badge Placeholder */}
         <div className="absolute top-3 left-3">
-          <Skeleton className="h-5 w-16 rounded-none bg-[#111113]/15" />
+          <Skeleton className="h-5 w-16 rounded-ui bg-ink/15" />
         </div>
       </div>
 
@@ -45,21 +45,21 @@ export function GadgetListingSkeleton({
       <div className="flex flex-1 flex-col p-5 space-y-3">
         {/* Category & Verified Seller Row */}
         <div className="flex items-center justify-between">
-          <Skeleton className="h-3.5 w-20 rounded-none bg-[#111113]/10" />
-          <Skeleton className="h-3.5 w-24 rounded-none bg-[#111113]/10" />
+          <Skeleton className="h-3.5 w-20 rounded-ui bg-ink/10" />
+          <Skeleton className="h-3.5 w-24 rounded-ui bg-ink/10" />
         </div>
 
         {/* Title Block: h-6 w-3/4 */}
-        <Skeleton className="h-6 w-3/4 rounded-none bg-[#111113]/12" />
+        <Skeleton className="h-6 w-3/4 rounded-ui bg-ink/12" />
 
         {/* Specs / Storage metadata */}
-        <Skeleton className="h-4 w-1/2 rounded-none bg-[#111113]/8" />
+        <Skeleton className="h-4 w-1/2 rounded-ui bg-ink/8" />
 
         {/* Price & Escrow Footer */}
-        <div className="pt-3.5 mt-auto flex items-center justify-between border-t border-[#111113]/12">
+        <div className="pt-3.5 mt-auto flex items-center justify-between border-t border-ink-faint">
           {/* Price Block: h-5 w-1/4 */}
-          <Skeleton className="h-5 w-1/4 rounded-none bg-[#111113]/12" />
-          <Skeleton className="h-5 w-20 rounded-full bg-[#111113]/10" />
+          <Skeleton className="h-5 w-1/4 rounded-ui bg-ink/12" />
+          <Skeleton className="h-5 w-20 rounded-full bg-ink/10" />
         </div>
       </div>
     </div>

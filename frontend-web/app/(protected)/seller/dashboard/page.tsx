@@ -21,7 +21,7 @@ import { ordersApi, paymentsApi } from "@/lib/api";
  *
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Deep Carbon Ink (#111113)
- * - Sharp 0px architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
+ * - Sharp 0px architectural cards (border-ink-faint) paired with 999px pill primary CTAs
  */
 
 export interface SellerDashboardPageProps {
@@ -103,32 +103,32 @@ export default function SellerDashboardPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full py-8 sm:py-12">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 space-y-8">
           {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#111113]/12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-ink-faint">
             <div>
               <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-2">
                 <Link
                   href="/marketplace"
                   onClick={onNavigateHome}
-                  className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   <span>Marketplace</span>
                 </Link>
-                <span aria-hidden="true" className="text-[#111113]/25">
+                <span aria-hidden="true" className="text-ink/25">
                   /
                 </span>
-                <span className="font-bold text-[#111113]">Merchant Desk</span>
+                <span className="font-bold text-ink">Merchant Desk</span>
               </div>
-              <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
-                MERCHANT ESCROW CONSOLE<span className="text-[#FF5A25]">.</span>
+              <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
+                MERCHANT ESCROW CONSOLE<span className="text-accent-orange">.</span>
               </h1>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
                 Manage active courier dispatches, monitor 48-hour hardware
                 inspections, and track Paystack split-settlement disbursements.
               </p>
@@ -138,14 +138,14 @@ export default function SellerDashboardPage({
               <button
                 type="button"
                 onClick={handleNavigateWallet}
-                className="h-10 px-4 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors inline-flex items-center gap-2"
+                className="h-10 px-4 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink hover:border-ink transition-colors inline-flex items-center gap-2 rounded-ui"
               >
-                <Wallet className="h-4 w-4 text-[#FF5A25]" />
+                <Wallet className="h-4 w-4 text-accent-orange" />
                 <span>Wallet (₦{walletBalanceNaira.toLocaleString("en-NG")})</span>
               </button>
 
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-trust-strong/10 px-3.5 py-1.5 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+                <ShieldCheck className="h-3.5 w-3.5 text-trust" />
                 <span>SmileID Verified Merchant</span>
               </div>
             </div>

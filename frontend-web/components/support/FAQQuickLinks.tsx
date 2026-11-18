@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (5_screen_flows.md Phase 5 §3 & 4_ui_system.md):
  * - Renders tap-friendly suggested FAQ pill items for instant inquiry routing.
- * - Controls: 4px radius (rounded-[4px]), 44px min-touch boundary friendly.
+ * - Controls: 4px radius (rounded-ui), 44px min-touch boundary friendly.
  */
 
 export interface FAQQuickLinksProps {
@@ -31,9 +31,9 @@ export function FAQQuickLinks({
   className,
 }: FAQQuickLinksProps) {
   return (
-    <div className={cn("bg-[#F8F7F4] border-b border-[#111113]/12 p-3 space-y-2", className)}>
+    <div className={cn("bg-paper border-b border-ink-faint p-3 space-y-2", className)}>
       <div className="flex items-center gap-1.5 label">
-        <HelpCircle className="h-3 w-3 text-[#22c55e]" />
+        <HelpCircle className="h-3 w-3 text-trust" />
         <span>Quick FAQ Suggestions:</span>
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -42,7 +42,7 @@ export function FAQQuickLinks({
             key={i}
             type="button"
             onClick={() => onSelect(faq)}
-            className="text-[11px] font-secondary text-[#111113] bg-white border border-[#111113]/15 hover:bg-[#111113] hover:text-white px-2.5 py-1 rounded-full text-left transition-colors duration-150 cursor-pointer"
+            className="text-meta font-secondary text-ink bg-surface border border-ink/15 hover:bg-ink hover:text-white px-2.5 py-1 rounded-full text-left transition-colors duration-150 cursor-pointer"
           >
             {faq}
           </button>

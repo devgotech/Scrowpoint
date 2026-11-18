@@ -25,14 +25,14 @@ export default function RegisterPage({
   onNavigateHome,
 }: RegisterPageProps) {
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col justify-between antialiased font-secondary selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col justify-between antialiased font-secondary selection:bg-accent-orange selection:text-white">
       {/* Top Bar with Home Link & Logo */}
-      <div className="w-full border-b border-[#111113]/12 bg-white py-3.5 px-4 sm:px-6">
+      <div className="w-full border-b border-ink-faint bg-surface py-3.5 px-4 sm:px-6">
         <div className="mx-auto max-w-md flex items-center justify-between">
           <Link
             href="/"
             onClick={onNavigateHome}
-            className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.12em] text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.12em] text-ink/65 hover:text-accent-orange transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Marketplace</span>
@@ -41,9 +41,9 @@ export default function RegisterPage({
           <Link
             href="/"
             onClick={onNavigateHome}
-            className="font-primary text-xl font-extrabold tracking-[-0.05em] text-[#111113] select-none hover:opacity-80 transition-opacity"
+            className="font-primary text-xl font-extrabold tracking-[-0.05em] text-ink select-none hover:opacity-80 transition-opacity"
           >
-            SCROWPOINT<span className="text-[#FF5A25]">.</span>
+            SCROWPOINT<span className="text-accent-orange">.</span>
           </Link>
         </div>
       </div>

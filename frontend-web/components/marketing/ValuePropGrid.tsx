@@ -103,18 +103,18 @@ export function ValuePropGrid({ className }: ValuePropGridProps) {
   return (
     <section
       aria-label="Value Propositions"
-      className={cn("py-20 sm:py-24 bg-[#F8F7F4]", className)}
+      className={cn("py-20 sm:py-24 bg-paper", className)}
     >
       <div className="mx-auto max-w-[1600px] px-4 sm:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div>
             <span className="label block mb-3">Architectural Guarantees</span>
-            <h2 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] leading-none">
+            <h2 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-ink leading-none">
               BUILT FOR ABSOLUTE TRUST.
             </h2>
           </div>
-          <p className="font-secondary text-sm sm:text-base text-[#111113]/70 max-w-md leading-relaxed">
+          <p className="font-secondary text-sm sm:text-base text-ink/70 max-w-md leading-relaxed">
             Standard classifieds leave buyers and sellers exposed to scams. Scrowpoint engineers every trade with bank-grade custodial rules.
           </p>
         </div>
@@ -127,28 +127,28 @@ export function ValuePropGrid({ className }: ValuePropGridProps) {
             return (
               <div
                 key={prop.id}
-                className="v7-card group flex flex-col justify-between transition-colors duration-200 hover:border-[#111113]/40"
+                className="v7-card group flex flex-col justify-between transition-colors duration-200 hover:border-ink/40"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <span className="label">[{prop.index}] {prop.subtitle}</span>
-                    <div className="flex h-10 w-10 items-center justify-center border border-[#111113]/15 bg-[#F8F7F4] text-[#111113] group-hover:bg-[#111113] group-hover:text-white transition-colors duration-200">
+                    <div className="flex h-10 w-10 items-center justify-center border border-ink/15 bg-paper text-ink group-hover:bg-ink group-hover:text-white transition-colors duration-200 rounded-ui">
                       <Icon className="h-4 w-4" />
                     </div>
                   </div>
 
-                  <h3 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+                  <h3 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
                     {prop.title}
                   </h3>
 
-                  <p className="mt-3 font-secondary text-sm text-[#111113]/70 leading-relaxed">
+                  <p className="mt-3 font-secondary text-sm text-ink/70 leading-relaxed">
                     {prop.description}
                   </p>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-[#111113]/12 flex items-center justify-between">
+                <div className="mt-8 pt-4 border-t border-ink-faint flex items-center justify-between">
                   <span className="label">{prop.highlightText}</span>
-                  <span className="font-mono text-xs font-bold text-[#111113]">
+                  <span className="font-mono text-xs font-bold text-ink">
                     ENFORCED
                   </span>
                 </div>

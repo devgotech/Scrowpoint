@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils";
  * - Primary Ink: Deep Carbon Ink (#111113), Secondary Ink: rgba(17,17,19,0.65)
  * - Accent: International Vermilion Orange (#FF5A25)
  * - Semantic Trust: #15803d (--color-trust-strong) for text on light backgrounds; #22c55e for icons/dark surfaces
- * - Primary CTAs: 999px pill geometry (.btn-primary / rounded-full bg-[#111113] text-white hover:bg-[#FF5A25])
+ * - Primary CTAs: 999px pill geometry (.btn-primary / rounded-full bg-ink text-white hover:bg-accent-orange)
  * - Financial Math: Integer kobo storage & calculation (NEVER floating-point Naira math)
  */
 
@@ -246,41 +246,41 @@ export default function PostGadgetPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full pb-20">
         {/* Top Utility & Breadcrumb Ledger Strip */}
-        <div className="border-b border-[#111113]/12 bg-white py-3.5">
+        <div className="border-b border-ink-faint bg-surface py-3.5">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em]">
                 <Link
                   href="/seller/dashboard"
                   onClick={onNavigateDashboard}
-                  className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   <span>Merchant Desk</span>
                 </Link>
-                <span aria-hidden="true" className="text-[#111113]/25">
+                <span aria-hidden="true" className="text-ink/25">
                   /
                 </span>
-                <span className="font-bold text-[#111113]">
+                <span className="font-bold text-ink">
                   New Escrow Listing
                 </span>
               </div>
 
               {/* Unboxed Editorial Verification Metadata */}
               <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.12em]">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#15803d]" />
-                <span className="font-bold text-[#15803d]">
+                <ShieldCheck className="h-3.5 w-3.5 text-trust-strong" />
+                <span className="font-bold text-trust-strong">
                   SmileID Biometric Verified
                 </span>
-                <span aria-hidden="true" className="text-[#111113]/25">
+                <span aria-hidden="true" className="text-ink/25">
                   •
                 </span>
-                <span className="hidden sm:inline text-[#111113]/65">
+                <span className="hidden sm:inline text-ink/65">
                   Paystack Split-Settlement Ready
                 </span>
               </div>
@@ -289,26 +289,26 @@ export default function PostGadgetPage({
         </div>
 
         {/* Architectural Editorial Header & 4-Step Ledger Strip */}
-        <section className="border-b border-[#111113]/12 bg-[#F8F7F4] pt-10 pb-8">
+        <section className="border-b border-ink-faint bg-paper pt-10 pb-8">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 pb-8">
               <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono uppercase tracking-[0.15em] text-[#111113]/65">
-                  <span className="font-bold text-[#FF5A25]">
+                <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono uppercase tracking-[0.15em] text-ink/65">
+                  <span className="font-bold text-accent-orange">
                     [STEP 0{currentStep} OF 04]
                   </span>
-                  <span aria-hidden="true" className="text-[#111113]/25">
+                  <span aria-hidden="true" className="text-ink/25">
                     •
                   </span>
                   <span>Pre-Verified Hardware Protocol</span>
                 </div>
 
-                <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] uppercase leading-[0.96]">
+                <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-ink uppercase leading-[0.96]">
                   POST GADGET FOR ESCROW SALE
-                  <span className="text-[#FF5A25]">.</span>
+                  <span className="text-accent-orange">.</span>
                 </h1>
 
-                <p className="font-secondary text-sm sm:text-base text-[#111113]/70 max-w-2xl leading-relaxed">
+                <p className="font-secondary text-sm sm:text-base text-ink/70 max-w-2xl leading-relaxed">
                   Complete the hardware diagnostic audit and attach a 30-second
                   inspection sweep. Buyers lock 100% of funds in Paystack
                   custody before you dispatch via courier.
@@ -316,16 +316,16 @@ export default function PostGadgetPage({
               </div>
 
               {/* Architectural Ledger Metric Box (0px Sharp Corners) */}
-              <div className="grid grid-cols-2 border border-[#111113]/12 bg-white divide-x divide-[#111113]/12 shrink-0">
+              <div className="grid grid-cols-2 border border-ink-faint bg-surface divide-x divide-ink-faint shrink-0 rounded-card">
                 <div className="px-5 py-3.5">
                   <span className="label block">Merchant Fee</span>
-                  <span className="font-mono text-2xl font-bold tracking-[-0.04em] text-[#15803d]">
+                  <span className="font-mono text-2xl font-bold tracking-[-0.04em] text-trust-strong">
                     0.00%
                   </span>
                 </div>
                 <div className="px-5 py-3.5">
                   <span className="label block">Net Payout Ratio</span>
-                  <span className="font-mono text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+                  <span className="font-mono text-2xl font-bold tracking-[-0.04em] text-ink">
                     100%
                   </span>
                 </div>
@@ -333,7 +333,7 @@ export default function PostGadgetPage({
             </div>
 
             {/* 4-Step Architectural Stepper Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 divide-x divide-[#111113]/12">
+            <div className="grid grid-cols-2 sm:grid-cols-4 border border-ink-faint bg-surface divide-y sm:divide-y-0 divide-x divide-ink-faint rounded-card">
               {[
                 {
                   num: 1,
@@ -371,30 +371,30 @@ export default function PostGadgetPage({
                     className={cn(
                       "text-left p-4 sm:p-5 transition-colors relative group",
                       isCurrent
-                        ? "bg-[#111113] text-white"
+                        ? "bg-ink text-white"
                         : isCompleted
-                        ? "bg-[#F0EFEA]/60 text-[#111113] hover:bg-[#F0EFEA]"
-                        : "bg-white text-[#111113]/55 hover:bg-[#F8F7F4] hover:text-[#111113]"
+                        ? "bg-surface-muted/60 text-ink hover:bg-surface-muted"
+                        : "bg-surface text-ink/55 hover:bg-paper hover:text-ink"
                     )}
                   >
                     {isCurrent && (
-                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#FF5A25]" />
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-accent-orange" />
                     )}
                     <div className="flex items-center justify-between mb-1.5">
                       <span
                         className={cn(
-                          "font-mono text-[10px] uppercase tracking-[0.15em] font-bold",
+                          "font-mono text-caption uppercase tracking-[0.15em] font-bold",
                           isCurrent
-                            ? "text-[#FF5A25]"
+                            ? "text-accent-orange"
                             : isCompleted
-                            ? "text-[#15803d]"
-                            : "text-[#111113]/50"
+                            ? "text-trust-strong"
+                            : "text-ink/50"
                         )}
                       >
                         {step.code}
                       </span>
                       {isCompleted && (
-                        <Check className="h-3.5 w-3.5 text-[#15803d]" />
+                        <Check className="h-3.5 w-3.5 text-trust-strong" />
                       )}
                     </div>
                     <div className="font-primary text-sm sm:text-base font-bold tracking-[-0.02em]">
@@ -403,7 +403,7 @@ export default function PostGadgetPage({
                     <div
                       className={cn(
                         "hidden sm:block text-xs font-secondary mt-0.5 truncate",
-                        isCurrent ? "text-white/70" : "text-[#111113]/60"
+                        isCurrent ? "text-white/70" : "text-ink/60"
                       )}
                     >
                       {step.desc}
@@ -424,27 +424,27 @@ export default function PostGadgetPage({
             <div className="lg:col-span-8 space-y-8">
               {/* STEP 1: DEVICE IDENTITY & HARDWARE SPECS */}
               {currentStep === 1 && (
-                <div className="border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-8">
-                  <div className="border-b border-[#111113]/12 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div className="border border-ink-faint bg-surface p-6 sm:p-8 space-y-8 rounded-card">
+                  <div className="border-b border-ink-faint pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <span className="label block mb-1">
                         [01] Hardware Specification Ledger
                       </span>
-                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-ink">
                         Device Category &amp; Serial Identity
                       </h2>
                     </div>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#15803d] font-bold">
+                    <span className="font-mono text-meta uppercase tracking-wider text-trust-strong font-bold">
                       Mandatory Escrow Binding
                     </span>
                   </div>
 
                   {/* Category Selector */}
                   <div className="space-y-2.5">
-                    <label className="label block !opacity-100 text-[#111113] font-bold">
+                    <label className="label block !opacity-100 text-ink font-bold">
                       Select Hardware Category
                     </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 divide-x divide-[#111113]/12">
+                    <div className="grid grid-cols-2 sm:grid-cols-5 border border-ink-faint bg-surface divide-y sm:divide-y-0 divide-x divide-ink-faint rounded-card">
                       {[
                         { id: "smartphone", label: "Phone", icon: Smartphone },
                         { id: "laptop", label: "Laptop", icon: HardDrive },
@@ -475,14 +475,14 @@ export default function PostGadgetPage({
                             className={cn(
                               "flex flex-col items-center justify-center p-4 text-center transition-colors",
                               isSelected
-                                ? "bg-[#111113] text-white"
-                                : "bg-white text-[#111113]/65 hover:bg-[#F8F7F4] hover:text-[#111113]"
+                                ? "bg-ink text-white"
+                                : "bg-surface text-ink/65 hover:bg-paper hover:text-ink"
                             )}
                           >
                             <Icon
                               className={cn(
                                 "h-5 w-5 mb-1.5",
-                                isSelected ? "text-[#FF5A25]" : "text-current"
+                                isSelected ? "text-accent-orange" : "text-current"
                               )}
                             />
                             <span className="font-mono text-xs uppercase tracking-wider font-bold">
@@ -497,13 +497,13 @@ export default function PostGadgetPage({
                   {/* Brand & Model */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="label block !opacity-100 text-[#111113] font-bold">
+                      <label className="label block !opacity-100 text-ink font-bold">
                         Brand Manufacturer
                       </label>
                       <select
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
-                        className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 text-sm font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 text-sm font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       >
                         <option value="Apple">Apple</option>
                         <option value="Samsung">Samsung</option>
@@ -517,7 +517,7 @@ export default function PostGadgetPage({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="label block !opacity-100 text-[#111113] font-bold">
+                      <label className="label block !opacity-100 text-ink font-bold">
                         Model Name &amp; Variant
                       </label>
                       <input
@@ -525,7 +525,7 @@ export default function PostGadgetPage({
                         value={model}
                         onChange={(e) => setModel(e.target.value)}
                         placeholder="e.g. iPhone 15 Pro Max, Galaxy S24 Ultra"
-                        className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 text-sm font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 text-sm font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       />
                     </div>
                   </div>
@@ -533,13 +533,13 @@ export default function PostGadgetPage({
                   {/* Storage, RAM & Color */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div className="space-y-2">
-                      <label className="label block !opacity-100 text-[#111113] font-bold">
+                      <label className="label block !opacity-100 text-ink font-bold">
                         Storage Capacity
                       </label>
                       <select
                         value={storage}
                         onChange={(e) => setStorage(e.target.value)}
-                        className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 text-sm font-mono text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 text-sm font-mono text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       >
                         <option value="128GB">128GB</option>
                         <option value="256GB">256GB</option>
@@ -550,7 +550,7 @@ export default function PostGadgetPage({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="label block !opacity-100 text-[#111113] font-bold">
+                      <label className="label block !opacity-100 text-ink font-bold">
                         Unified / System RAM
                       </label>
                       <input
@@ -558,12 +558,12 @@ export default function PostGadgetPage({
                         value={ram}
                         onChange={(e) => setRam(e.target.value)}
                         placeholder="e.g. 8GB, 16GB"
-                        className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 text-sm font-mono text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 text-sm font-mono text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="label block !opacity-100 text-[#111113] font-bold">
+                      <label className="label block !opacity-100 text-ink font-bold">
                         Factory Finish / Color
                       </label>
                       <input
@@ -571,19 +571,19 @@ export default function PostGadgetPage({
                         value={color}
                         onChange={(e) => setColor(e.target.value)}
                         placeholder="e.g. Natural Titanium"
-                        className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 text-sm font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 text-sm font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       />
                     </div>
                   </div>
 
                   {/* Serial / IMEI Number (Warm Stone Panel #F0EFEA) */}
-                  <div className="p-5 border border-[#111113]/12 bg-[#F0EFEA] space-y-2.5">
+                  <div className="p-5 border border-ink-faint bg-surface-muted space-y-2.5 rounded-card">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="font-mono text-xs font-bold text-[#111113] uppercase tracking-wider flex items-center gap-1.5">
-                        <Lock className="h-3.5 w-3.5 text-[#15803d]" />
+                      <label className="font-mono text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                        <Lock className="h-3.5 w-3.5 text-trust-strong" />
                         <span>IMEI or Hardware Serial Number</span>
                       </label>
-                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#15803d] font-bold">
+                      <span className="font-mono text-caption uppercase tracking-wider text-trust-strong font-bold">
                         Encrypted • Verified at Unboxing
                       </span>
                     </div>
@@ -596,13 +596,13 @@ export default function PostGadgetPage({
                           setImeiVerificationResult(null);
                         }}
                         placeholder="e.g. 358941092837461 (15-digit IMEI)"
-                        className="h-11 flex-1 rounded-none border border-[#111113]/15 bg-white px-3.5 font-mono text-sm text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 flex-1 rounded-ui border border-ink/15 bg-surface px-3.5 font-mono text-sm text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       />
                       <button
                         type="button"
                         onClick={handleVerifyImei}
                         disabled={isVerifyingImei || !imei.trim()}
-                        className="h-11 px-4 border border-[#111113] bg-[#111113] text-white hover:bg-[#FF5A25] hover:border-[#FF5A25] disabled:opacity-40 font-mono text-xs uppercase tracking-wider font-bold transition-colors shrink-0"
+                        className="h-11 px-4 border border-ink bg-ink text-white hover:bg-accent-orange hover:border-accent-orange disabled:opacity-40 font-mono text-xs uppercase tracking-wider font-bold transition-colors shrink-0"
                       >
                         {isVerifyingImei ? "Checking GSMA..." : "Verify IMEI"}
                       </button>
@@ -612,17 +612,17 @@ export default function PostGadgetPage({
                         className={cn(
                           "p-3 border text-xs font-mono flex items-center justify-between gap-2",
                           imeiVerificationResult.valid
-                            ? "bg-[#15803d]/10 border-[#15803d]/30 text-[#15803d]"
-                            : "bg-[#c53030]/10 border-[#c53030]/30 text-[#c53030]"
+                            ? "bg-trust-strong/10 border-trust-strong/30 text-trust-strong"
+                            : "bg-state-error-strong/10 border-state-error-strong/30 text-state-error-strong"
                         )}
                       >
                         <span>{imeiVerificationResult.message}</span>
-                        <span className="text-[10px] uppercase font-bold shrink-0">
+                        <span className="text-caption uppercase font-bold shrink-0">
                           {imeiVerificationResult.ref}
                         </span>
                       </div>
                     )}
-                    <p className="text-xs text-[#111113]/65 font-secondary">
+                    <p className="text-xs text-ink/65 font-secondary">
                       The buyer must verify this exact serial/IMEI match during
                       their 48-hour diagnostic window before funds release.
                     </p>
@@ -632,27 +632,27 @@ export default function PostGadgetPage({
 
               {/* STEP 2: DIAGNOSTIC AUDIT & CONDITION */}
               {currentStep === 2 && (
-                <div className="border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-8">
-                  <div className="border-b border-[#111113]/12 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div className="border border-ink-faint bg-surface p-6 sm:p-8 space-y-8 rounded-card">
+                  <div className="border-b border-ink-faint pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <span className="label block mb-1">
                         [02] Hardware Condition Disclosure
                       </span>
-                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-ink">
                         Diagnostic Audit &amp; Cosmetic Grade
                       </h2>
                     </div>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#15803d] font-bold">
+                    <span className="font-mono text-meta uppercase tracking-wider text-trust-strong font-bold">
                       48H SLA Protected
                     </span>
                   </div>
 
                   {/* Overall Condition Grade */}
                   <div className="space-y-2.5">
-                    <label className="label block !opacity-100 text-[#111113] font-bold">
+                    <label className="label block !opacity-100 text-ink font-bold">
                       Physical Cosmetic Condition
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 sm:divide-x divide-[#111113]/12">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 border border-ink-faint bg-surface divide-y sm:divide-y-0 sm:divide-x divide-ink-faint rounded-card">
                       {[
                         {
                           id: "mint",
@@ -684,8 +684,8 @@ export default function PostGadgetPage({
                             className={cn(
                               "p-5 text-left transition-colors relative",
                               isSelected
-                                ? "bg-[#111113] text-white"
-                                : "bg-white text-[#111113] hover:bg-[#F8F7F4]"
+                                ? "bg-ink text-white"
+                                : "bg-surface text-ink hover:bg-paper"
                             )}
                           >
                             <div className="flex items-center justify-between mb-2">
@@ -694,10 +694,10 @@ export default function PostGadgetPage({
                               </span>
                               <span
                                 className={cn(
-                                  "font-mono text-[10px] uppercase tracking-widest font-bold",
+                                  "font-mono text-caption uppercase tracking-widest font-bold",
                                   isSelected
-                                    ? "text-[#FF5A25]"
-                                    : "text-[#111113]/60"
+                                    ? "text-accent-orange"
+                                    : "text-ink/60"
                                 )}
                               >
                                 {item.badge}
@@ -708,7 +708,7 @@ export default function PostGadgetPage({
                                 "text-xs font-secondary leading-relaxed",
                                 isSelected
                                   ? "text-white/75"
-                                  : "text-[#111113]/65"
+                                  : "text-ink/65"
                               )}
                             >
                               {item.desc}
@@ -720,15 +720,15 @@ export default function PostGadgetPage({
                   </div>
 
                   {/* Battery Health Slider */}
-                  <div className="p-5 border border-[#111113]/12 bg-[#F0EFEA] space-y-3">
+                  <div className="p-5 border border-ink-faint bg-surface-muted space-y-3 rounded-card">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <BatteryCharging className="h-4 w-4 text-[#15803d]" />
-                        <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#111113]">
+                        <BatteryCharging className="h-4 w-4 text-trust-strong" />
+                        <span className="font-mono text-xs font-bold uppercase tracking-wider text-ink">
                           Maximum Battery Capacity
                         </span>
                       </div>
-                      <span className="font-mono text-lg font-bold text-[#111113] bg-white border border-[#111113]/15 px-3 py-0.5">
+                      <span className="font-mono text-lg font-bold text-ink bg-surface border border-ink/15 px-3 py-0.5 rounded-card">
                         {batteryHealth}%
                       </span>
                     </div>
@@ -739,10 +739,10 @@ export default function PostGadgetPage({
                       max="100"
                       value={batteryHealth}
                       onChange={(e) => setBatteryHealth(Number(e.target.value))}
-                      className="w-full accent-[#111113] cursor-pointer"
+                      className="w-full accent-ink cursor-pointer"
                     />
 
-                    <div className="flex justify-between text-[10px] font-mono uppercase tracking-wider text-[#111113]/60">
+                    <div className="flex justify-between text-caption font-mono uppercase tracking-wider text-ink/60">
                       <span>70% (Service Threshold)</span>
                       <span>85% (Healthy Standard)</span>
                       <span>100% (Factory Peak)</span>
@@ -751,9 +751,9 @@ export default function PostGadgetPage({
 
                   {/* 4-Grid Verification Checkpoints */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="p-4 border border-[#111113]/12 bg-white space-y-3">
-                      <label className="font-mono text-xs font-bold text-[#111113] uppercase tracking-wider flex items-center gap-1.5">
-                        <Lock className="h-3.5 w-3.5 text-[#15803d]" />
+                    <div className="p-4 border border-ink-faint bg-surface space-y-3 rounded-card">
+                      <label className="font-mono text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                        <Lock className="h-3.5 w-3.5 text-trust-strong" />
                         <span>iCloud / MDM Activation Lock</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
@@ -763,8 +763,8 @@ export default function PostGadgetPage({
                           className={cn(
                             "h-10 px-3 text-xs font-mono uppercase tracking-wider border transition-colors",
                             icloudStatus === "clean_unlocked"
-                              ? "bg-[#111113] text-white border-[#111113] font-bold"
-                              : "border-[#111113]/15 bg-[#F8F7F4] text-[#111113]/65 hover:text-[#111113]"
+                              ? "bg-ink text-white border-ink font-bold"
+                              : "border-ink/15 bg-paper text-ink/65 hover:text-ink"
                           )}
                         >
                           Clean / Signed Out
@@ -775,8 +775,8 @@ export default function PostGadgetPage({
                           className={cn(
                             "h-10 px-3 text-xs font-mono uppercase tracking-wider border transition-colors",
                             icloudStatus === "locked"
-                              ? "bg-[#c53030] text-white border-[#c53030] font-bold"
-                              : "border-[#111113]/15 bg-[#F8F7F4] text-[#111113]/65 hover:text-[#111113]"
+                              ? "bg-state-error-strong text-white border-state-error-strong font-bold"
+                              : "border-ink/15 bg-paper text-ink/65 hover:text-ink"
                           )}
                         >
                           MDM / Locked
@@ -784,9 +784,9 @@ export default function PostGadgetPage({
                       </div>
                     </div>
 
-                    <div className="p-4 border border-[#111113]/12 bg-white space-y-3">
-                      <label className="font-mono text-xs font-bold text-[#111113] uppercase tracking-wider flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#15803d]" />
+                    <div className="p-4 border border-ink-faint bg-surface space-y-3 rounded-card">
+                      <label className="font-mono text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-trust-strong" />
                         <span>FaceID / TouchID Biometrics</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
@@ -796,8 +796,8 @@ export default function PostGadgetPage({
                           className={cn(
                             "h-10 px-3 text-xs font-mono uppercase tracking-wider border transition-colors",
                             biometricsStatus === "functional"
-                              ? "bg-[#111113] text-white border-[#111113] font-bold"
-                              : "border-[#111113]/15 bg-[#F8F7F4] text-[#111113]/65 hover:text-[#111113]"
+                              ? "bg-ink text-white border-ink font-bold"
+                              : "border-ink/15 bg-paper text-ink/65 hover:text-ink"
                           )}
                         >
                           100% Functional
@@ -808,8 +808,8 @@ export default function PostGadgetPage({
                           className={cn(
                             "h-10 px-3 text-xs font-mono uppercase tracking-wider border transition-colors",
                             biometricsStatus === "disabled"
-                              ? "bg-[#c53030] text-white border-[#c53030] font-bold"
-                              : "border-[#111113]/15 bg-[#F8F7F4] text-[#111113]/65 hover:text-[#111113]"
+                              ? "bg-state-error-strong text-white border-state-error-strong font-bold"
+                              : "border-ink/15 bg-paper text-ink/65 hover:text-ink"
                           )}
                         >
                           Inoperative
@@ -817,9 +817,9 @@ export default function PostGadgetPage({
                       </div>
                     </div>
 
-                    <div className="p-4 border border-[#111113]/12 bg-white space-y-2.5">
-                      <label className="font-mono text-xs font-bold text-[#111113] uppercase tracking-wider flex items-center gap-1.5">
-                        <Smartphone className="h-3.5 w-3.5 text-[#111113]" />
+                    <div className="p-4 border border-ink-faint bg-surface space-y-2.5 rounded-card">
+                      <label className="font-mono text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                        <Smartphone className="h-3.5 w-3.5 text-ink" />
                         <span>Display Panel Integrity</span>
                       </label>
                       <select
@@ -832,7 +832,7 @@ export default function PostGadgetPage({
                               | "replaced"
                           )
                         }
-                        className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3 text-xs font-mono text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3 text-xs font-mono text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       >
                         <option value="flawless">
                           Flawless Original OEM Panel
@@ -846,9 +846,9 @@ export default function PostGadgetPage({
                       </select>
                     </div>
 
-                    <div className="p-4 border border-[#111113]/12 bg-white space-y-2.5">
-                      <label className="font-mono text-xs font-bold text-[#111113] uppercase tracking-wider flex items-center gap-1.5">
-                        <ShieldCheck className="h-3.5 w-3.5 text-[#15803d]" />
+                    <div className="p-4 border border-ink-faint bg-surface space-y-2.5 rounded-card">
+                      <label className="font-mono text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                        <ShieldCheck className="h-3.5 w-3.5 text-trust-strong" />
                         <span>Carrier Network Lock</span>
                       </label>
                       <select
@@ -858,7 +858,7 @@ export default function PostGadgetPage({
                             e.target.value as "unlocked" | "locked"
                           )
                         }
-                        className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3 text-xs font-mono text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3 text-xs font-mono text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       >
                         <option value="unlocked">
                           Factory Unlocked (All Physical / eSIMs)
@@ -872,7 +872,7 @@ export default function PostGadgetPage({
 
                   {/* Written Description */}
                   <div className="space-y-2">
-                    <label className="label block !opacity-100 text-[#111113] font-bold">
+                    <label className="label block !opacity-100 text-ink font-bold">
                       Merchant Audit Notes &amp; Box Accessories Included
                     </label>
                     <textarea
@@ -880,7 +880,7 @@ export default function PostGadgetPage({
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Specify included cables, original box, purchase receipt, or any cosmetic notes..."
-                      className="w-full rounded-none border border-[#111113]/15 bg-white p-3.5 text-sm font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                      className="w-full rounded-ui border border-ink/15 bg-surface p-3.5 text-sm font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                     />
                   </div>
                 </div>
@@ -888,18 +888,18 @@ export default function PostGadgetPage({
 
               {/* STEP 3: MEDIA & MANDATORY INSPECTION VIDEO */}
               {currentStep === 3 && (
-                <div className="border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-8">
-                  <div className="border-b border-[#111113]/12 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div className="border border-ink-faint bg-surface p-6 sm:p-8 space-y-8 rounded-card">
+                  <div className="border-b border-ink-faint pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <span className="label block mb-1">
                         [03] Cryptographic Media Evidence
                       </span>
-                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-ink">
                         Multi-Angle Photos &amp; 30s Inspection Sweep
                       </h2>
                     </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-                      <CheckCircle2 className="h-3 w-3 text-[#22c55e]" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-trust-strong/10 px-3 py-1 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+                      <CheckCircle2 className="h-3 w-3 text-trust" />
                       <span>Escrow Proof Required</span>
                     </span>
                   </div>
@@ -907,14 +907,14 @@ export default function PostGadgetPage({
                   {/* Multi-Photo Grid */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <label className="font-mono text-xs font-bold text-[#111113] uppercase tracking-wider flex items-center gap-1.5">
-                        <Camera className="h-4 w-4 text-[#111113]" />
+                      <label className="font-mono text-xs font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+                        <Camera className="h-4 w-4 text-ink" />
                         <span>Hardware Angle Photos ({images.length} Attached)</span>
                       </label>
                       <button
                         type="button"
                         onClick={handleAddSamplePhoto}
-                        className="font-mono text-xs uppercase tracking-wider font-bold text-[#FF5A25] hover:text-[#111113] flex items-center gap-1 transition-colors"
+                        className="font-mono text-xs uppercase tracking-wider font-bold text-accent-orange hover:text-ink flex items-center gap-1 transition-colors"
                       >
                         <Plus className="h-3.5 w-3.5" />
                         <span>Add Sample Angle</span>
@@ -925,24 +925,24 @@ export default function PostGadgetPage({
                       {images.map((img, idx) => (
                         <div
                           key={idx}
-                          className="relative aspect-4/3 border border-[#111113]/12 bg-[#F8F7F4] group overflow-hidden"
+                          className="relative aspect-4/3 border border-ink-faint bg-paper group overflow-hidden rounded-card"
                         >
                           <img
                             src={img}
                             alt={`Device angle ${idx + 1}`}
                             className="h-full w-full object-cover"
                           />
-                          <div className="absolute inset-0 bg-[#111113]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <button
                               type="button"
                               onClick={() => handleRemovePhoto(idx)}
-                              className="h-9 w-9 rounded-full bg-[#c53030] text-white flex items-center justify-center hover:bg-red-700 transition-colors"
+                              className="h-9 w-9 rounded-full bg-state-error-strong text-white flex items-center justify-center hover:bg-red-700 transition-colors"
                               title="Remove photo"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
-                          <div className="absolute bottom-0 left-0 bg-[#111113] text-white font-mono text-[10px] uppercase tracking-wider px-2 py-0.5">
+                          <div className="absolute bottom-0 left-0 bg-ink text-white font-mono text-caption uppercase tracking-wider px-2 py-0.5">
                             ANGLE 0{idx + 1}
                           </div>
                         </div>
@@ -952,13 +952,13 @@ export default function PostGadgetPage({
                       <button
                         type="button"
                         onClick={handleAddSamplePhoto}
-                        className="aspect-4/3 border border-dashed border-[#111113]/30 hover:border-[#111113] bg-[#F8F7F4] flex flex-col items-center justify-center p-3 text-center transition-colors"
+                        className="aspect-4/3 border border-dashed border-ink/30 hover:border-ink bg-paper flex flex-col items-center justify-center p-3 text-center transition-colors rounded-card"
                       >
-                        <Upload className="h-5 w-5 text-[#111113]/65 mb-1.5" />
-                        <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#111113]">
+                        <Upload className="h-5 w-5 text-ink/65 mb-1.5" />
+                        <span className="font-mono text-meta font-bold uppercase tracking-wider text-ink">
                           Add Photo
                         </span>
-                        <span className="text-[10px] text-[#111113]/60 font-secondary mt-0.5">
+                        <span className="text-caption text-ink/60 font-secondary mt-0.5">
                            chassis, ports, box
                         </span>
                       </button>
@@ -966,22 +966,22 @@ export default function PostGadgetPage({
                   </div>
 
                   {/* Mandatory 30-Second Inspection Video Block */}
-                  <div className="border border-[#111113]/15 bg-[#F0EFEA] p-5 sm:p-6 space-y-5">
+                  <div className="border border-ink/15 bg-surface-muted p-5 sm:p-6 space-y-5 rounded-card">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div className="flex items-start gap-3">
-                        <div className="h-9 w-9 shrink-0 bg-[#111113] text-white flex items-center justify-center">
-                          <Video className="h-4 w-4 text-[#FF5A25]" />
+                        <div className="h-9 w-9 shrink-0 bg-ink text-white flex items-center justify-center">
+                          <Video className="h-4 w-4 text-accent-orange" />
                         </div>
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-[#111113]">
+                            <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-ink">
                               30-Second Hardware Inspection Video
                             </h3>
-                            <span className="font-mono text-[10px] uppercase tracking-widest font-bold text-[#FF5A25]">
+                            <span className="font-mono text-caption uppercase tracking-widest font-bold text-accent-orange">
                               • MANDATORY PROOF
                             </span>
                           </div>
-                          <p className="text-xs text-[#111113]/65 font-secondary mt-0.5">
+                          <p className="text-xs text-ink/65 font-secondary mt-0.5">
                             Recorded proof of physical condition, Settings &gt;
                             About IMEI screen, and live touch response.
                           </p>
@@ -989,15 +989,15 @@ export default function PostGadgetPage({
                       </div>
 
                       {videoUploaded && (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#111113]/12 px-3 py-1 font-mono text-[11px] font-bold text-[#15803d] self-start sm:self-auto">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-[#22c55e]" />
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-ink-faint px-3 py-1 font-mono text-meta font-bold text-trust-strong self-start sm:self-auto">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-trust" />
                           <span>30s Sweep Verified</span>
                         </span>
                       )}
                     </div>
 
                     {/* Video Player */}
-                    <div className="relative aspect-video w-full bg-[#111113] border border-[#111113]">
+                    <div className="relative aspect-video w-full bg-ink border border-ink">
                       <video
                         src={videoUrl}
                         controls
@@ -1005,28 +1005,28 @@ export default function PostGadgetPage({
                         poster={images[0]}
                         className="h-full w-full object-contain"
                       />
-                      <div className="absolute top-3 left-3 bg-[#111113]/90 text-white font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
+                      <div className="absolute top-3 left-3 bg-ink/90 text-white font-mono text-caption uppercase tracking-wider px-2.5 py-1 flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-trust" />
                         <span>Escrow Evidence Stream</span>
                       </div>
                     </div>
 
                     {/* 4-Point Sweep Protocol */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-white border border-[#111113]/12 p-4 text-xs font-secondary text-[#111113]/80">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-surface border border-ink-faint p-4 text-xs font-secondary text-ink/80 rounded-card">
                       <div className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-[#15803d] shrink-0" />
+                        <Check className="h-3.5 w-3.5 text-trust-strong shrink-0" />
                         <span>01. 360° chassis &amp; display glass sweep</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-[#15803d] shrink-0" />
+                        <Check className="h-3.5 w-3.5 text-trust-strong shrink-0" />
                         <span>02. Settings &gt; General &gt; About IMEI match</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-[#15803d] shrink-0" />
+                        <Check className="h-3.5 w-3.5 text-trust-strong shrink-0" />
                         <span>03. Battery Health maximum capacity screen</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-[#15803d] shrink-0" />
+                        <Check className="h-3.5 w-3.5 text-trust-strong shrink-0" />
                         <span>04. Full-screen digitizer touch drag test</span>
                       </div>
                     </div>
@@ -1036,34 +1036,34 @@ export default function PostGadgetPage({
 
               {/* STEP 4: ESCROW PRICING (INTEGER KOBO) & LOGISTICS */}
               {currentStep === 4 && (
-                <div className="border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-8">
-                  <div className="border-b border-[#111113]/12 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div className="border border-ink-faint bg-surface p-6 sm:p-8 space-y-8 rounded-card">
+                  <div className="border-b border-ink-faint pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <span className="label block mb-1">
                         [04] Custodial Settlement &amp; Waybill
                       </span>
-                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                      <h2 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-ink">
                         Escrow Pricing &amp; Courier Dispatch
                       </h2>
                     </div>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#15803d] font-bold">
+                    <span className="font-mono text-meta uppercase tracking-wider text-trust-strong font-bold">
                       0% Merchant Fee • 100% Net Payout
                     </span>
                   </div>
 
                   {/* Asking Price Input (Integer Kobo State) */}
-                  <div className="p-5 border border-[#111113]/12 bg-[#F0EFEA] space-y-3">
+                  <div className="p-5 border border-ink-faint bg-surface-muted space-y-3 rounded-card">
                     <div className="flex items-center justify-between">
-                      <label className="font-mono text-xs font-bold uppercase tracking-wider text-[#111113]">
+                      <label className="font-mono text-xs font-bold uppercase tracking-wider text-ink">
                         Your Listed Asking Price (NGN)
                       </label>
-                      <span className="font-mono text-xs font-bold text-[#15803d]">
+                      <span className="font-mono text-xs font-bold text-trust-strong">
                         100% Disbursed to Your Bank
                       </span>
                     </div>
 
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-lg font-bold text-[#111113]/60">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-lg font-bold text-ink/60">
                         ₦
                       </span>
                       <input
@@ -1074,7 +1074,7 @@ export default function PostGadgetPage({
                           const nairaVal = Math.max(0, Number(e.target.value));
                           setAskingPriceKobo(Math.round(nairaVal * 100));
                         }}
-                        className="h-12 w-full rounded-none border border-[#111113]/20 bg-white pl-9 pr-4 font-mono text-xl font-bold text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                        className="h-12 w-full rounded-ui border border-ink/20 bg-surface pl-9 pr-4 font-mono text-xl font-bold text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                       />
                     </div>
 
@@ -1089,10 +1089,10 @@ export default function PostGadgetPage({
                               type="button"
                               onClick={() => setAskingPriceKobo(presetKobo)}
                               className={cn(
-                                "px-3 py-1.5 border text-[11px] uppercase tracking-wider transition-colors",
+                                "px-3 py-1.5 border text-meta uppercase tracking-wider transition-colors",
                                 isSelected
-                                  ? "bg-[#111113] text-white border-[#111113] font-bold"
-                                  : "bg-white text-[#111113]/70 border-[#111113]/15 hover:border-[#111113] hover:text-[#111113]"
+                                  ? "bg-ink text-white border-ink font-bold"
+                                  : "bg-surface text-ink/70 border-ink/15 hover:border-ink hover:text-ink"
                               )}
                             >
                               ₦{(presetKobo / 100000).toLocaleString()}k
@@ -1104,48 +1104,48 @@ export default function PostGadgetPage({
                   </div>
 
                   {/* Custodial Split-Settlement Ledger */}
-                  <div className="border border-[#111113]/12 bg-white divide-y divide-[#111113]/12 text-xs">
-                    <div className="px-5 py-3.5 bg-[#F8F7F4] flex items-center justify-between">
-                      <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#111113]">
+                  <div className="border border-ink-faint bg-surface divide-y divide-ink-faint text-xs rounded-card">
+                    <div className="rounded-t-card px-5 py-3.5 bg-paper flex items-center justify-between">
+                      <span className="font-mono text-meta font-bold uppercase tracking-wider text-ink">
                         Automated Escrow Settlement Ledger
                       </span>
-                      <span className="font-mono text-[10px] uppercase tracking-wider font-bold text-[#15803d]">
+                      <span className="font-mono text-caption uppercase tracking-wider font-bold text-trust-strong">
                         Integer Kobo Verified
                       </span>
                     </div>
 
                     <div className="px-5 py-3.5 flex items-center justify-between">
-                      <span className="font-secondary text-[#111113]/75">
+                      <span className="font-secondary text-ink/75">
                         Your Net Seller Payout (NIBSS Instant Transfer)
                       </span>
-                      <span className="font-mono font-bold text-sm text-[#15803d]">
+                      <span className="font-mono font-bold text-sm text-trust-strong">
                         {formatKoboToNgn(sellerNetPayoutKobo)}
                       </span>
                     </div>
 
                     <div className="px-5 py-3.5 flex items-center justify-between">
-                      <span className="font-secondary text-[#111113]/65">
+                      <span className="font-secondary text-ink/65">
                         Buyer Custodial Escrow Fee (2.5% Tier)
                       </span>
-                      <span className="font-mono text-[#111113]/70">
+                      <span className="font-mono text-ink/70">
                         +{formatKoboToNgn(escrowFeeKobo)}
                       </span>
                     </div>
 
                     <div className="px-5 py-3.5 flex items-center justify-between">
-                      <span className="font-secondary text-[#111113]/65">
+                      <span className="font-secondary text-ink/65">
                         Insured Waybill &amp; Tamper-Seal Dispatch
                       </span>
-                      <span className="font-mono text-[#111113]/70">
+                      <span className="font-mono text-ink/70">
                         +{formatKoboToNgn(shippingFeeKobo)}
                       </span>
                     </div>
 
-                    <div className="px-5 py-4 bg-[#F0EFEA]/60 flex items-center justify-between font-bold text-[#111113]">
+                    <div className="px-5 py-4 bg-surface-muted/60 flex items-center justify-between font-bold text-ink">
                       <span className="font-primary text-sm">
                         Total Buyer Locks in Paystack Custody
                       </span>
-                      <span className="font-mono text-base text-[#111113]">
+                      <span className="font-mono text-base text-ink">
                         {formatKoboToNgn(buyerTotalKobo)}
                       </span>
                     </div>
@@ -1154,21 +1154,21 @@ export default function PostGadgetPage({
                   {/* Logistics Pickup Section */}
                   <div className="space-y-5 pt-2">
                     <div className="flex items-center gap-2">
-                      <Truck className="h-4 w-4 text-[#FF5A25]" />
-                      <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-[#111113]">
+                      <Truck className="h-4 w-4 text-accent-orange" />
+                      <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-ink">
                         Origin Hub &amp; Insured Courier Handoff
                       </h3>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="label block !opacity-100 text-[#111113] font-bold">
+                        <label className="label block !opacity-100 text-ink font-bold">
                           Dispatch State / Region
                         </label>
                         <select
                           value={stateRegion}
                           onChange={(e) => setStateRegion(e.target.value)}
-                          className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 text-xs font-mono text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                          className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 text-xs font-mono text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                         >
                           <option value="Lagos State">Lagos State</option>
                           <option value="Abuja FCT">Abuja FCT</option>
@@ -1181,7 +1181,7 @@ export default function PostGadgetPage({
                       </div>
 
                       <div className="space-y-2">
-                        <label className="label block !opacity-100 text-[#111113] font-bold">
+                        <label className="label block !opacity-100 text-ink font-bold">
                           Pickup Area / Hub Locality
                         </label>
                         <input
@@ -1189,16 +1189,16 @@ export default function PostGadgetPage({
                           value={pickupCity}
                           onChange={(e) => setPickupCity(e.target.value)}
                           placeholder="e.g. Ikeja GRA, Lagos"
-                          className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 text-xs font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] focus:outline-none"
+                          className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 text-xs font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2.5">
-                      <label className="label block !opacity-100 text-[#111113] font-bold">
+                      <label className="label block !opacity-100 text-ink font-bold">
                         Preferred Insured Logistics Partner
                       </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 sm:divide-x divide-[#111113]/12">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 border border-ink-faint bg-surface divide-y sm:divide-y-0 sm:divide-x divide-ink-faint rounded-card">
                         {[
                           {
                             id: "gig",
@@ -1229,8 +1229,8 @@ export default function PostGadgetPage({
                               className={cn(
                                 "p-4 text-left transition-colors",
                                 isSelected
-                                  ? "bg-[#111113] text-white"
-                                  : "bg-white text-[#111113] hover:bg-[#F8F7F4]"
+                                  ? "bg-ink text-white"
+                                  : "bg-surface text-ink hover:bg-paper"
                               )}
                             >
                               <div className="font-mono text-xs font-bold uppercase tracking-wider">
@@ -1238,10 +1238,10 @@ export default function PostGadgetPage({
                               </div>
                               <div
                                 className={cn(
-                                  "text-[11px] font-secondary mt-0.5",
+                                  "text-meta font-secondary mt-0.5",
                                   isSelected
-                                    ? "text-[#FF5A25]"
-                                    : "text-[#111113]/60"
+                                    ? "text-accent-orange"
+                                    : "text-ink/60"
                                 )}
                               >
                                 {item.badge}
@@ -1256,12 +1256,12 @@ export default function PostGadgetPage({
               )}
 
               {/* Wizard Action Bar (999px Pill Primary CTA + Sharp Outline Secondary) */}
-              <div className="flex items-center justify-between pt-4 border-t border-[#111113]/12">
+              <div className="flex items-center justify-between pt-4 border-t border-ink-faint">
                 {currentStep > 1 ? (
                   <button
                     type="button"
                     onClick={() => setCurrentStep(currentStep - 1)}
-                    className="h-11 px-5 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors inline-flex items-center gap-2"
+                    className="h-11 px-5 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink hover:border-ink transition-colors inline-flex items-center gap-2 rounded-ui"
                   >
                     <ArrowLeft className="h-3.5 w-3.5" />
                     <span>Previous Step</span>
@@ -1269,7 +1269,7 @@ export default function PostGadgetPage({
                 ) : (
                   <Link
                     href="/seller/dashboard"
-                    className="h-11 px-5 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors inline-flex items-center"
+                    className="h-11 px-5 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink/70 hover:text-ink hover:border-ink transition-colors inline-flex items-center rounded-ui"
                   >
                     Cancel
                   </Link>
@@ -1279,7 +1279,7 @@ export default function PostGadgetPage({
                   <button
                     type="button"
                     onClick={() => setCurrentStep(currentStep + 1)}
-                    className="btn-primary h-11 px-7 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-2"
+                    className="btn-primary h-11 px-7 rounded-full bg-ink text-white hover:bg-accent-orange text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-2"
                   >
                     <span>Continue to Step 0{currentStep + 1}</span>
                     <ArrowRight className="h-4 w-4" />
@@ -1289,7 +1289,7 @@ export default function PostGadgetPage({
                     type="button"
                     onClick={handlePublish}
                     disabled={isSubmitting}
-                    className="btn-primary h-11 px-8 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] disabled:opacity-50 text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-2"
+                    className="btn-primary h-11 px-8 rounded-full bg-ink text-white hover:bg-accent-orange disabled:opacity-50 text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -1298,7 +1298,7 @@ export default function PostGadgetPage({
                       </>
                     ) : (
                       <>
-                        <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                        <ShieldCheck className="h-4 w-4 text-trust" />
                         <span>Publish Verified Listing</span>
                       </>
                     )}
@@ -1311,40 +1311,40 @@ export default function PostGadgetPage({
                 RIGHT COLUMN: STICKY ARCHITECTURAL LIVE PREVIEW (4 COLS)
                 ============================================================ */}
             <div className="lg:col-span-4 lg:sticky lg:top-24">
-              <div className="border border-[#111113]/15 bg-white">
+              <div className="border border-ink/15 bg-surface rounded-card">
                 {/* Dark Carbon Ledger Header */}
-                <div className="bg-[#111113] text-white px-5 py-3.5 flex items-center justify-between">
+                <div className="rounded-t-card bg-ink text-white px-5 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.15em] font-bold">
+                    <span className="h-2 w-2 rounded-full bg-trust" />
+                    <span className="font-mono text-meta uppercase tracking-[0.15em] font-bold">
                       Live Marketplace Card
                     </span>
                   </div>
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF5A25] font-bold">
+                  <span className="font-mono text-caption uppercase tracking-wider text-accent-orange font-bold">
                     Escrow Ready
                   </span>
                 </div>
 
                 <div className="p-5 space-y-5">
-                  {/* Architectural Preview Card (0px Corners) */}
-                  <div className="border border-[#111113]/12 bg-white">
-                    <div className="relative aspect-4/3 bg-[#F0EFEA] border-b border-[#111113]/12 overflow-hidden">
+                  {/* Architectural Preview Card (rounded-card) */}
+                  <div className="border border-ink-faint bg-surface rounded-card">
+                    <div className="rounded-t-card relative aspect-4/3 bg-surface-muted border-b border-ink-faint overflow-hidden">
                       <img
                         src={images[0]}
                         alt="Device preview"
                         className="h-full w-full object-cover"
                       />
-                      <div className="absolute top-2.5 left-2.5 bg-[#111113] text-white font-mono text-[10px] px-2.5 py-1 uppercase tracking-wider font-bold">
+                      <div className="absolute top-2.5 left-2.5 bg-ink text-white font-mono text-caption px-2.5 py-1 uppercase tracking-wider font-bold">
                         {condition} Grade
                       </div>
-                      <div className="absolute top-2.5 right-2.5 rounded-full bg-white/95 border border-[#111113]/15 text-[#15803d] font-mono text-[10px] font-bold px-2.5 py-0.5 flex items-center gap-1">
-                        <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
+                      <div className="absolute top-2.5 right-2.5 rounded-full bg-white/95 border border-ink/15 text-trust-strong font-mono text-caption font-bold px-2.5 py-0.5 flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3 text-trust" />
                         <span>SmileID KYC</span>
                       </div>
 
                       {videoUploaded && (
-                        <div className="absolute bottom-2.5 left-2.5 bg-[#111113]/90 text-white font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 flex items-center gap-1.5">
-                          <Video className="h-3 w-3 text-[#FF5A25]" />
+                        <div className="absolute bottom-2.5 left-2.5 bg-ink/90 text-white font-mono text-caption uppercase tracking-wider px-2.5 py-1 flex items-center gap-1.5">
+                          <Video className="h-3 w-3 text-accent-orange" />
                           <span>30s Sweep Attached</span>
                         </div>
                       )}
@@ -1352,34 +1352,34 @@ export default function PostGadgetPage({
 
                     <div className="p-4 space-y-3">
                       <div>
-                        <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#111113]/60 mb-0.5">
+                        <div className="flex items-center gap-1.5 text-caption font-mono uppercase tracking-wider text-ink/60 mb-0.5">
                           <span>{brand}</span>
                           <span>•</span>
                           <span>{storage}</span>
                           <span>•</span>
                           <span>{color}</span>
                         </div>
-                        <div className="font-primary font-bold text-base tracking-[-0.02em] text-[#111113] truncate">
+                        <div className="font-primary font-bold text-base tracking-[-0.02em] text-ink truncate">
                           {brand} {model}
                         </div>
                       </div>
 
                       <div className="flex items-baseline justify-between pt-1">
-                        <div className="font-mono text-xl font-bold tracking-[-0.03em] text-[#111113]">
+                        <div className="font-mono text-xl font-bold tracking-[-0.03em] text-ink">
                           {formatKoboToNgn(askingPriceKobo)}
                         </div>
-                        <div className="font-mono text-xs text-[#15803d] font-bold flex items-center gap-1">
+                        <div className="font-mono text-xs text-trust-strong font-bold flex items-center gap-1">
                           <BatteryCharging className="h-3.5 w-3.5" />
                           <span>{batteryHealth}% BAT</span>
                         </div>
                       </div>
 
-                      <div className="pt-3 border-t border-[#111113]/12 flex items-center justify-between text-[11px] font-mono text-[#111113]/65">
+                      <div className="pt-3 border-t border-ink-faint flex items-center justify-between text-meta font-mono text-ink/65">
                         <div className="flex items-center gap-1 truncate max-w-[150px]">
-                          <MapPin className="h-3 w-3 shrink-0 text-[#FF5A25]" />
+                          <MapPin className="h-3 w-3 shrink-0 text-accent-orange" />
                           <span className="truncate">{pickupCity}</span>
                         </div>
-                        <span className="font-bold text-[#111113] truncate">
+                        <span className="font-bold text-ink truncate">
                           {user?.name || "Adeola Tech Hub"}
                         </span>
                       </div>
@@ -1387,16 +1387,16 @@ export default function PostGadgetPage({
                   </div>
 
                   {/* Protocol Assurance Summary */}
-                  <div className="space-y-2.5 pt-1 text-xs font-secondary text-[#111113]/75">
+                  <div className="space-y-2.5 pt-1 text-xs font-secondary text-ink/75">
                     <div className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#15803d] shrink-0 mt-0.5" />
+                      <CheckCircle2 className="h-4 w-4 text-trust-strong shrink-0 mt-0.5" />
                       <span>
                         100% of buyer funds lock in segregated Paystack custody
                         before waybill generation.
                       </span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#15803d] shrink-0 mt-0.5" />
+                      <CheckCircle2 className="h-4 w-4 text-trust-strong shrink-0 mt-0.5" />
                       <span>
                         48-hour post-delivery diagnostic SLA automatically
                         disburses your net payout if undisputed.
@@ -1414,48 +1414,48 @@ export default function PostGadgetPage({
           PUBLISH SUCCESS ARCHITECTURAL MODAL
           ============================================================ */}
       {publishedListingId && (
-        <div className="fixed inset-0 z-50 bg-[#111113]/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md border border-[#111113] bg-white p-6 sm:p-8 text-center space-y-6">
-            <div className="mx-auto h-12 w-12 rounded-full bg-[#15803d]/10 border border-[#15803d]/25 flex items-center justify-center">
-              <CheckCircle2 className="h-6 w-6 text-[#15803d]" />
+        <div className="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-md border border-ink bg-surface p-6 sm:p-8 text-center space-y-6 rounded-card">
+            <div className="mx-auto h-12 w-12 rounded-full bg-trust-strong/10 border border-trust-strong/25 flex items-center justify-center">
+              <CheckCircle2 className="h-6 w-6 text-trust-strong" />
             </div>
 
             <div className="space-y-2">
-              <span className="inline-flex items-center rounded-full bg-[#15803d]/10 px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#15803d]">
+              <span className="inline-flex items-center rounded-full bg-trust-strong/10 px-3 py-0.5 font-mono text-caption font-bold uppercase tracking-widest text-trust-strong">
                 Escrow Listing Live
               </span>
-              <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
-                Gadget Published<span className="text-[#FF5A25]">.</span>
+              <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink uppercase">
+                Gadget Published<span className="text-accent-orange">.</span>
               </h3>
-              <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
+              <p className="font-secondary text-xs text-ink/70 leading-relaxed">
                 Your pre-verified hardware listing{" "}
-                <span className="font-mono font-bold text-[#111113]">
+                <span className="font-mono font-bold text-ink">
                   {publishedListingId}
                 </span>{" "}
                 is now live on the Scrowpoint Marketplace.
               </p>
             </div>
 
-            <div className="p-4 bg-[#F0EFEA] border border-[#111113]/12 text-left text-xs font-mono space-y-2">
+            <div className="p-4 bg-surface-muted border border-ink-faint text-left text-xs font-mono space-y-2 rounded-card">
               <div className="flex justify-between">
-                <span className="text-[#111113]/65 uppercase">Hardware:</span>
-                <span className="font-bold text-[#111113]">
+                <span className="text-ink/65 uppercase">Hardware:</span>
+                <span className="font-bold text-ink">
                   {brand} {model} ({storage})
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#111113]/65 uppercase">
+                <span className="text-ink/65 uppercase">
                   Net Seller Payout:
                 </span>
-                <span className="font-bold text-[#15803d]">
+                <span className="font-bold text-trust-strong">
                   {formatKoboToNgn(askingPriceKobo)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#111113]/65 uppercase">
+                <span className="text-ink/65 uppercase">
                   30s Sweep Proof:
                 </span>
-                <span className="font-bold text-[#15803d]">
+                <span className="font-bold text-trust-strong">
                   Verified &amp; Attached
                 </span>
               </div>
@@ -1464,13 +1464,13 @@ export default function PostGadgetPage({
             <div className="grid grid-cols-2 gap-3 pt-1">
               <Link
                 href={`/gadget/${publishedListingId}`}
-                className="h-11 border border-[#111113]/20 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors flex items-center justify-center"
+                className="h-11 border border-ink/20 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink hover:border-ink transition-colors flex items-center justify-center rounded-ui"
               >
                 View Listing
               </Link>
               <Link
                 href="/seller/dashboard"
-                className="btn-primary h-11 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center"
+                className="btn-primary h-11 rounded-full bg-ink text-white hover:bg-accent-orange text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center"
               >
                 Merchant Desk
               </Link>

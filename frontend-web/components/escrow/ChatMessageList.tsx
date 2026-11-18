@@ -328,23 +328,23 @@ export function ChatMessageList({
   return (
     <div
       className={cn(
-        "flex flex-col h-[680px] border border-[#111113]/12 bg-white overflow-hidden",
+        "flex flex-col h-[680px] border border-ink-faint bg-surface overflow-hidden rounded-ui",
         className
       )}
     >
       {/* 1. Friendly Trade Conversation Header */}
-      <div className="p-4 sm:px-5 border-b border-[#111113]/12 bg-white flex flex-wrap items-center justify-between gap-3">
+      <div className="p-4 sm:px-5 border-b border-ink-faint bg-surface flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           {/* Overlapping Participant Avatars */}
           <div className="flex -space-x-2">
             <div
-              className="h-9 w-9 rounded-full bg-[#111113] text-white font-mono text-xs font-bold flex items-center justify-center ring-2 ring-white"
+              className="h-9 w-9 rounded-full bg-ink text-white font-mono text-xs font-bold flex items-center justify-center ring-2 ring-white"
               title={sellerName}
             >
               CG
             </div>
             <div
-              className="h-9 w-9 rounded-full bg-[#FF5A25] text-white font-mono text-xs font-bold flex items-center justify-center ring-2 ring-white"
+              className="h-9 w-9 rounded-full bg-accent-orange text-white font-mono text-xs font-bold flex items-center justify-center ring-2 ring-white"
               title={buyerName}
             >
               AD
@@ -353,17 +353,17 @@ export function ChatMessageList({
 
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+              <h3 className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
                 Trade Chat &amp; Live Milestones
               </h3>
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-[#15803d] font-bold">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+              <span className="inline-flex items-center gap-1 text-caption font-mono uppercase tracking-wider text-trust-strong font-bold">
+                <span className="h-1.5 w-1.5 rounded-full bg-trust" />
                 <span>Seller Online</span>
               </span>
             </div>
-            <p className="font-secondary text-xs text-[#111113]/65">
+            <p className="font-secondary text-xs text-ink/65">
               Chat directly with{" "}
-              <strong className="font-semibold text-[#111113]">
+              <strong className="font-semibold text-ink">
                 {sellerName.replace(" (Seller)", "")}
               </strong>{" "}
               • Typically replies in 2 mins
@@ -372,16 +372,16 @@ export function ChatMessageList({
         </div>
 
         {/* Friendly Protection Pill */}
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-          <Shield className="h-3 w-3 text-[#22c55e]" />
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-trust-strong/10 px-3 py-1 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+          <Shield className="h-3 w-3 text-trust" />
           <span>Protected Chat • {orderId}</span>
         </div>
       </div>
 
       {/* Reassuring Welcome Strip */}
-      <div className="bg-[#F0EFEA] border-b border-[#111113]/10 px-4 sm:px-5 py-2 flex items-center justify-between gap-2 text-[11px] font-secondary text-[#111113]/75">
+      <div className="bg-surface-muted border-b border-ink/10 px-4 sm:px-5 py-2 flex items-center justify-between gap-2 text-meta font-secondary text-ink/75">
         <div className="flex items-center gap-2">
-          <MessageSquareHeart className="h-3.5 w-3.5 text-[#FF5A25] shrink-0" />
+          <MessageSquareHeart className="h-3.5 w-3.5 text-accent-orange shrink-0" />
           <span>
             Ask questions, share unboxing photos, or confirm delivery right here.
             Everything is saved to protect both of you.
@@ -391,7 +391,7 @@ export function ChatMessageList({
 
       {/* 2. Dispute Read-Only Banner */}
       {isDisputed && (
-        <div className="bg-[#c53030] text-white px-5 py-3 flex items-center justify-between text-xs font-secondary">
+        <div className="bg-state-error-strong text-white px-5 py-3 flex items-center justify-between text-xs font-secondary">
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>
@@ -399,7 +399,7 @@ export function ChatMessageList({
               our team reviews your hardware report. Your ₦850,000 remains safe.
             </span>
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-wider bg-black/25 px-2.5 py-0.5 shrink-0">
+          <span className="font-mono text-caption uppercase tracking-wider bg-black/25 px-2.5 py-0.5 shrink-0">
             Under Review
           </span>
         </div>
@@ -407,15 +407,15 @@ export function ChatMessageList({
 
       {/* 3. Polite Trust Shield Toast */}
       {regexWarning && (
-        <div className="bg-[#ecc94b]/20 border-b border-[#ecc94b]/50 text-[#975a16] px-5 py-3 flex items-start justify-between gap-3 text-xs font-secondary">
+        <div className="bg-state-warning/20 border-b border-state-warning/50 text-state-warning-strong px-5 py-3 flex items-start justify-between gap-3 text-xs font-secondary">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-[#975a16]" />
+            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-state-warning-strong" />
             <span>{regexWarning}</span>
           </div>
           <button
             type="button"
             onClick={() => setRegexWarning(null)}
-            className="text-[#975a16] hover:text-[#111113] p-0.5"
+            className="text-state-warning-strong hover:text-ink p-0.5"
             aria-label="Dismiss notice"
           >
             <X className="h-4 w-4" />
@@ -426,7 +426,7 @@ export function ChatMessageList({
       {/* 4. Message & Milestone Stream */}
       <div
         ref={chatScrollRef}
-        className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#F8F7F4]"
+        className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-paper"
       >
         {messages.map((msg) => {
           if (msg.isMilestone && msg.milestoneData) {
@@ -452,10 +452,10 @@ export function ChatMessageList({
               {/* Sender Avatar */}
               <div
                 className={cn(
-                  "h-7 w-7 rounded-full shrink-0 font-mono text-[10px] font-bold flex items-center justify-center",
+                  "h-7 w-7 rounded-full shrink-0 font-mono text-caption font-bold flex items-center justify-center",
                   isMe
-                    ? "bg-[#FF5A25] text-white"
-                    : "bg-[#111113] text-white"
+                    ? "bg-accent-orange text-white"
+                    : "bg-ink text-white"
                 )}
               >
                 {initials}
@@ -468,10 +468,10 @@ export function ChatMessageList({
                 )}
               >
                 <div className="flex items-center gap-2 mb-1 px-0.5">
-                  <span className="font-primary text-[11px] font-bold text-[#111113]/75">
+                  <span className="font-primary text-meta font-bold text-ink/75">
                     {isMe ? "You (Adeola)" : msg.senderName}
                   </span>
-                  <span className="font-mono text-[10px] text-[#111113]/50">
+                  <span className="font-mono text-caption text-ink/50">
                     {msg.timestamp}
                   </span>
                 </div>
@@ -480,8 +480,8 @@ export function ChatMessageList({
                   className={cn(
                     "p-3.5 text-xs sm:text-[13px] font-secondary leading-relaxed",
                     isMe
-                      ? "bg-[#111113] text-white"
-                      : "bg-white text-[#111113] border border-[#111113]/12"
+                      ? "bg-ink text-white"
+                      : "bg-surface text-ink border border-ink-faint rounded-card"
                   )}
                 >
                   <p>{msg.text}</p>
@@ -494,8 +494,8 @@ export function ChatMessageList({
                         className="h-36 w-full object-cover"
                       />
                       {msg.attachmentCaption && (
-                        <div className="px-2.5 py-1.5 text-[10px] font-mono text-white/80 flex items-center gap-1.5">
-                          <CheckCircle2 className="h-3 w-3 text-[#22c55e]" />
+                        <div className="px-2.5 py-1.5 text-caption font-mono text-white/80 flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3 w-3 text-trust" />
                           <span>{msg.attachmentCaption}</span>
                         </div>
                       )}
@@ -504,7 +504,7 @@ export function ChatMessageList({
                 </div>
 
                 {isMe && (
-                  <div className="flex items-center gap-1 mt-1 px-0.5 text-[10px] font-mono text-[#15803d]">
+                  <div className="flex items-center gap-1 mt-1 px-0.5 text-caption font-mono text-trust-strong">
                     <CheckCheck className="h-3 w-3" />
                     <span>Delivered • Saved to Trade Record</span>
                   </div>
@@ -516,9 +516,9 @@ export function ChatMessageList({
       </div>
 
       {/* 5. Quick Replies & Friendly Input Dock */}
-      <div className="bg-white border-t border-[#111113]/12 p-3.5 sm:p-4 space-y-3">
+      <div className="bg-surface border-t border-ink-faint p-3.5 sm:p-4 space-y-3">
         {isDisputed ? (
-          <div className="bg-[#F0EFEA] border border-[#111113]/12 p-3 text-center font-secondary text-xs text-[#111113]/75">
+          <div className="bg-surface-muted border border-ink-faint p-3 text-center font-secondary text-xs text-ink/75 rounded-card">
             Direct chat is paused while your dedicated mediation officer reviews
             the inspection photos.
           </div>
@@ -526,8 +526,8 @@ export function ChatMessageList({
           <>
             {/* One-Tap Quick Reply Suggestions */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/50 shrink-0 flex items-center gap-1 pr-1">
-                <Sparkles className="h-3 w-3 text-[#FF5A25]" />
+              <span className="font-mono text-caption uppercase tracking-wider text-ink/50 shrink-0 flex items-center gap-1 pr-1">
+                <Sparkles className="h-3 w-3 text-accent-orange" />
                 <span>Quick reply:</span>
               </span>
               {QUICK_REPLIES.map((suggestion) => (
@@ -535,7 +535,7 @@ export function ChatMessageList({
                   key={suggestion}
                   type="button"
                   onClick={() => pushMessage(suggestion)}
-                  className="shrink-0 px-2.5 py-1 border border-[#111113]/15 bg-[#F8F7F4] hover:bg-[#111113] hover:text-white hover:border-[#111113] text-[11px] font-secondary text-[#111113]/80 transition-colors"
+                  className="shrink-0 px-2.5 py-1 border border-ink/15 bg-paper hover:bg-ink hover:text-white hover:border-ink text-meta font-secondary text-ink/80 transition-colors rounded-card"
                 >
                   {suggestion}
                 </button>
@@ -551,9 +551,9 @@ export function ChatMessageList({
                 type="button"
                 onClick={handleShareUnboxingPhoto}
                 title="Share a quick unboxing photo in chat"
-                className="h-11 px-3 border border-[#111113]/15 bg-[#F8F7F4] text-[#111113] hover:border-[#111113] transition-colors inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider font-bold shrink-0"
+                className="h-11 px-3 border border-ink/15 bg-paper text-ink hover:border-ink transition-colors inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider font-bold shrink-0 rounded-ui"
               >
-                <ImageIcon className="h-4 w-4 text-[#FF5A25]" />
+                <ImageIcon className="h-4 w-4 text-accent-orange" />
                 <span className="hidden sm:inline">Share Photo</span>
               </button>
 
@@ -562,7 +562,7 @@ export function ChatMessageList({
                   type="button"
                   onClick={onOpenEvidenceModal}
                   title="Report a hardware issue"
-                  className="h-11 w-11 border border-[#111113]/15 bg-[#F8F7F4] text-[#111113]/70 hover:text-[#111113] hover:border-[#111113] transition-colors flex items-center justify-center shrink-0"
+                  className="h-11 w-11 border border-ink/15 bg-paper text-ink/70 hover:text-ink hover:border-ink transition-colors flex items-center justify-center shrink-0 rounded-ui"
                 >
                   <Camera className="h-4 w-4" />
                 </button>
@@ -573,13 +573,13 @@ export function ChatMessageList({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Write a message to Chidi Gadgets..."
-                className="flex-1 h-11 px-3.5 rounded-none border border-[#111113]/15 bg-white text-xs sm:text-sm font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                className="flex-1 h-11 px-3.5 rounded-ui border border-ink/15 bg-surface text-xs sm:text-sm font-secondary text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink"
               />
 
               <button
                 type="submit"
                 disabled={!inputText.trim()}
-                className="btn-primary h-11 px-5 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] disabled:opacity-40 text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-1.5 shrink-0"
+                className="btn-primary h-11 px-5 rounded-full bg-ink text-white hover:bg-accent-orange disabled:opacity-40 text-xs font-mono uppercase tracking-wider font-bold transition-colors inline-flex items-center gap-1.5 shrink-0"
               >
                 <span>Send</span>
                 <Send className="h-3.5 w-3.5" />

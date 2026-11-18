@@ -28,10 +28,10 @@ export function FormHelperText({
   icon = true,
 }: FormHelperTextProps) {
   const variantStyles = {
-    default: "text-[#111113]/65",
-    error: "text-[#c53030]",
-    success: "text-[#15803d]",
-    warning: "text-[#975a16]",
+    default: "text-ink/65",
+    error: "text-state-error-strong",
+    success: "text-trust-strong",
+    warning: "text-state-warning-strong",
   }[variant];
 
   const IconComponent = {
@@ -44,7 +44,7 @@ export function FormHelperText({
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 text-[11px] font-secondary mt-1 transition-colors duration-150",
+        "flex items-center gap-1.5 text-meta font-secondary mt-1 transition-colors duration-150",
         variantStyles,
         className
       )}

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Alert Component adhering to 4_ui_system.md:
- * - Radius: --radius-card (8px -> rounded-[8px])
+ * - Radius: --radius-card (8px -> rounded-ui)
  * - Colors:
  *   - destructive: Verification Failed (#f56565 border & tint)
  *   - warning: Dispute Open / Action Required (#ecc94b border & tint)
@@ -18,13 +18,13 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   ({ className, variant = "default", ...props }, ref) => {
     const variantStyles = {
-      default: "bg-white text-[#111113] border-[#111113]/12",
+      default: "bg-surface text-ink border-ink-faint",
       destructive:
-        "border-[#f56565]/40 text-[#c53030] [&>svg]:text-[#f56565] bg-[#f56565]/10",
+        "border-state-error/40 text-state-error-strong [&>svg]:text-state-error bg-state-error/10",
       warning:
-        "border-[#ecc94b]/50 text-[#975a16] [&>svg]:text-[#ecc94b] bg-[#ecc94b]/15",
+        "border-state-warning/50 text-state-warning-strong [&>svg]:text-state-warning bg-state-warning/15",
       trust:
-        "border-[#22c55e]/40 text-[#15803d] [&>svg]:text-[#22c55e] bg-[#22c55e]/10",
+        "border-trust/40 text-trust-strong [&>svg]:text-trust bg-trust/10",
     };
 
     return (
@@ -32,7 +32,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         ref={ref}
         role="alert"
         className={cn(
-          "relative w-full rounded-none border p-4 [&>svg~*]:pl-8 [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 transition-colors duration-200 ease-out",
+          "relative w-full rounded-card border p-4 [&>svg~*]:pl-8 [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 transition-colors duration-200 ease-out",
           variantStyles[variant],
           className
         )}
@@ -49,7 +49,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("mb-1 font-primary font-medium text-sm leading-5 tracking-[-0.03em] text-[#111113]", className)}
+    className={cn("mb-1 font-primary font-medium text-sm leading-5 tracking-[-0.03em] text-ink", className)}
     {...props}
   />
 ));
@@ -61,7 +61,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("font-secondary text-xs font-normal leading-5 text-[#111113]/70 [&_p]:leading-5", className)}
+    className={cn("font-secondary text-xs font-normal leading-5 text-ink/70 [&_p]:leading-5", className)}
     {...props}
   />
 ));

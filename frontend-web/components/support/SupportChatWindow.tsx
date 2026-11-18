@@ -175,22 +175,22 @@ export function SupportChatWindow({
   return (
     <div
       className={cn(
-        "w-[340px] sm:w-[380px] h-[520px] border border-[#111113]/15 bg-white shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50",
+        "w-[340px] sm:w-[380px] h-[520px] border border-ink/15 bg-surface shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-50 rounded-ui",
         className
       )}
     >
       {/* Header */}
-      <div className="bg-[#111113] text-white p-3.5 flex items-center justify-between shrink-0">
+      <div className="bg-ink text-white p-3.5 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center bg-[#22c55e] text-[#111113] font-bold">
+          <div className="flex h-8 w-8 items-center justify-center bg-trust text-ink font-bold">
             <ShieldCheck className="h-4 w-4" />
           </div>
           <div>
             <h4 className="font-primary text-xs font-bold leading-tight tracking-[-0.02em]">
               Scrowpoint Escrow Support
             </h4>
-            <span className="font-mono text-[10px] text-white/70 flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+            <span className="font-mono text-caption text-white/70 flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-trust" />
               <span>Officers Online (SLA 3m)</span>
             </span>
           </div>
@@ -210,7 +210,7 @@ export function SupportChatWindow({
       <FAQQuickLinks onSelect={(faq) => handleSend(faq)} />
 
       {/* Messages Stream */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8F7F4]/70">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-paper/70">
         {messages.map((msg) => {
           const isUser = msg.sender === "user";
 
@@ -226,13 +226,13 @@ export function SupportChatWindow({
                 className={cn(
                   "p-3 text-xs font-secondary leading-relaxed",
                   isUser
-                    ? "bg-[#111113] text-white"
-                    : "bg-white text-[#111113] border border-[#111113]/12"
+                    ? "bg-ink text-white"
+                    : "bg-surface text-ink border border-ink-faint rounded-card"
                 )}
               >
                 {msg.text}
               </div>
-              <span className="font-mono text-[9px] text-[#111113]/55 mt-0.5 px-1">
+              <span className="font-mono text-micro text-ink/55 mt-0.5 px-1">
                 {msg.time}
               </span>
             </div>
@@ -241,7 +241,7 @@ export function SupportChatWindow({
       </div>
 
       {/* Input Dock */}
-      <div className="p-3 bg-white border-t border-[#111113]/12 flex items-center gap-2 shrink-0">
+      <div className="p-3 bg-surface border-t border-ink-faint flex items-center gap-2 shrink-0">
         <input
           type="text"
           value={inputText}
@@ -250,7 +250,7 @@ export function SupportChatWindow({
             if (e.key === "Enter") handleSend();
           }}
           placeholder="Ask an escrow specialist..."
-          className="flex-1 h-9 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+          className="flex-1 h-9 px-3 border border-ink/15 bg-surface text-xs font-secondary text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
         />
         <Button
           type="button"

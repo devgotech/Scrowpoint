@@ -88,8 +88,8 @@ export function SellerStatsOverview({
           <div
             key={i}
             className={cn(
-              "border bg-white p-5 flex flex-col justify-between transition-all duration-200 ease-out hover:border-[#111113]/35",
-              card.isHighlight ? "border-[#22c55e]/40 ring-1 ring-[#22c55e]/20" : "border-[#111113]/12"
+              "border bg-surface p-5 flex flex-col justify-between transition-all duration-200 ease-out hover:border-ink/35 rounded-card",
+              card.isHighlight ? "border-trust/40 ring-1 ring-trust/20" : "border-ink-faint"
             )}
           >
             <div>
@@ -99,24 +99,24 @@ export function SellerStatsOverview({
                 </span>
                 <span
                   className={cn(
-                    "font-mono text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider",
+                    "font-mono text-caption font-bold px-2 py-0.5 uppercase tracking-wider",
                     card.isHighlight
-                      ? "bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30"
-                      : "bg-[#F0EFEA] text-[#111113]/70 border border-[#111113]/12"
+                      ? "bg-trust/15 text-trust-strong border border-trust/30"
+                      : "bg-surface-muted text-ink/70 border border-ink-faint rounded-card"
                   )}
                 >
                   {card.badgeText}
                 </span>
               </div>
 
-              <div className="font-mono text-2xl font-extrabold text-[#111113] tracking-[-0.04em]">
+              <div className="font-mono text-2xl font-extrabold text-ink tracking-[-0.04em]">
                 {card.value}
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#111113]/12 flex items-center justify-between text-[11px] font-secondary text-[#111113]/65">
+            <div className="mt-4 pt-3 border-t border-ink-faint flex items-center justify-between text-meta font-secondary text-ink/65">
               <span>{card.subtext}</span>
-              <Icon className="h-3.5 w-3.5 text-[#111113]" />
+              <Icon className="h-3.5 w-3.5 text-ink" />
             </div>
           </div>
         );

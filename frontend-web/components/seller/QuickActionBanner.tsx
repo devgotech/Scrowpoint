@@ -27,12 +27,12 @@ export function QuickActionBanner({
   return (
     <div
       className={cn(
-        "border border-[#111113] bg-[#111113] text-white p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden",
+        "border border-ink bg-ink text-white p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden",
         className
       )}
     >
       <div className="space-y-1.5 z-10 max-w-xl">
-        <div className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.12em] font-bold text-[#FF5A25]">
+        <div className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.12em] font-bold text-accent-orange">
           <Sparkles className="h-3.5 w-3.5" />
           <span>ZERO CHARGEBACK PLATFORM</span>
         </div>
@@ -50,7 +50,7 @@ export function QuickActionBanner({
           variant="default"
           size="lg"
           onClick={onNewListing}
-          className="w-full sm:w-auto h-11 px-6 rounded-full bg-[#FF5A25] hover:bg-[#FF5A25]/90 text-white font-primary font-bold text-xs gap-2 transition-colors"
+          className="w-full sm:w-auto h-11 px-6 rounded-full bg-accent-orange hover:bg-accent-orange/90 text-white font-primary font-bold text-xs gap-2 transition-colors"
         >
           <Plus className="h-4 w-4 text-white" />
           <span>Post New Gadget</span>
