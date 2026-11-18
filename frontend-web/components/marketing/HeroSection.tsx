@@ -32,37 +32,37 @@ const TRUSTED_PARTNERS = [
   {
     name: "Paystack",
     role: "Custodial Escrow",
-    icon: <CreditCard className="h-3.5 w-3.5 text-[#111113]" />,
+    icon: <CreditCard className="h-3.5 w-3.5 text-ink" />,
   },
   {
     name: "SmileID",
     role: "Biometric KYC",
-    icon: <Fingerprint className="h-3.5 w-3.5 text-[#FF5A25]" />,
+    icon: <Fingerprint className="h-3.5 w-3.5 text-accent-orange" />,
   },
   {
     name: "DHL Express",
     role: "Insured Transit",
-    icon: <Truck className="h-3.5 w-3.5 text-[#111113]" />,
+    icon: <Truck className="h-3.5 w-3.5 text-ink" />,
   },
   {
     name: "GIG Logistics",
     role: "Hub Delivery",
-    icon: <Truck className="h-3.5 w-3.5 text-[#111113]" />,
+    icon: <Truck className="h-3.5 w-3.5 text-ink" />,
   },
   {
     name: "NIBSS",
     role: "Instant Settlement",
-    icon: <Building2 className="h-3.5 w-3.5 text-[#111113]" />,
+    icon: <Building2 className="h-3.5 w-3.5 text-ink" />,
   },
   {
     name: "Apple GSMA",
     role: "IMEI Diagnostic",
-    icon: <CheckCircle2 className="h-3.5 w-3.5 text-[#15803d]" />,
+    icon: <CheckCircle2 className="h-3.5 w-3.5 text-trust-strong" />,
   },
   {
     name: "Interswitch",
     role: "Direct Settlement",
-    icon: <CreditCard className="h-3.5 w-3.5 text-[#111113]" />,
+    icon: <CreditCard className="h-3.5 w-3.5 text-ink" />,
   },
 ];
 
@@ -76,7 +76,7 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
     <section
       aria-label="Hero Section"
       className={cn(
-        "relative overflow-hidden bg-[#F8F7F4] pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-[#111113]/12",
+        "relative overflow-hidden bg-paper pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-ink-faint",
         className
       )}
     >
@@ -90,23 +90,23 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
         <header className="text-center mb-20 sm:mb-28">
           <div className="inline-flex flex-wrap items-center justify-center gap-3 mb-4">
             <span className="label">P2P Escrow Engine v.2026</span>
-            <span className="text-[#111113]/25">•</span>
-            <span className="inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.15em] text-[#111113]">
+            <span className="text-ink/25">•</span>
+            <span className="inline-flex items-center gap-1.5 font-mono text-label uppercase tracking-[0.15em] text-ink">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF5A25] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF5A25]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-orange opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-orange" />
               </span>
               <span>Waitlist is Active</span>
             </span>
           </div>
 
-          <h1 className="font-primary font-bold tracking-[-0.04em] text-[#111113] text-5xl sm:text-7xl md:text-8xl lg:text-[7.25rem] xl:text-[8rem] leading-[0.9] my-6 uppercase">
+          <h1 className="font-primary font-bold tracking-[-0.04em] text-ink text-5xl sm:text-7xl md:text-8xl lg:text-[7.25rem] xl:text-[8rem] leading-[0.9] my-6 uppercase">
             SECURE EXCHANGE.
             <br />
-            VERIFIED TECH<span className="text-[#FF5A25]">.</span>
+            VERIFIED TECH<span className="text-accent-orange">.</span>
           </h1>
 
-          <p className="font-secondary text-base sm:text-xl text-[#111113]/70 max-w-[600px] mx-auto mb-10 leading-relaxed">
+          <p className="font-secondary text-base sm:text-xl text-ink/70 max-w-[600px] mx-auto mb-10 leading-relaxed">
             Nigeria’s trusted platform for secure gadget exchange. Funds locked in
             custody until your inspection is complete.
           </p>
@@ -126,7 +126,7 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
             <Link href="/pricing">
               <button
                 type="button"
-                className="rounded-full border border-[#111113]/20 bg-white px-7 py-4 text-[0.95rem] font-secondary font-semibold text-[#111113] hover:border-[#111113] transition-colors cursor-pointer"
+                className="rounded-full border border-ink/20 bg-surface px-7 py-4 text-[0.95rem] font-secondary font-semibold text-ink hover:border-ink transition-colors cursor-pointer"
               >
                 Calculate Escrow Fee
               </button>
@@ -145,71 +145,71 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 text-left"
         >
           {/* Card 01: Vault */}
-          <div className="v7-card flex flex-col justify-between transition-colors duration-200 hover:border-[#111113]/40">
+          <div className="v7-card flex flex-col justify-between transition-colors duration-200 hover:border-ink/40">
             <div>
               <div className="flex items-center justify-between">
                 <span className="label">[01] Vault</span>
-                <span className="font-mono text-xs font-bold text-[#111113]">
+                <span className="font-mono text-xs font-bold text-ink">
                   100% CUSTODY
                 </span>
               </div>
-              <h3 className="font-primary text-[1.85rem] sm:text-[2rem] font-bold tracking-[-0.04em] text-[#111113] my-4 leading-none">
+              <h3 className="font-primary text-[1.85rem] sm:text-[2rem] font-bold tracking-[-0.04em] text-ink my-4 leading-none">
                 Paystack Custody
               </h3>
-              <p className="font-secondary text-[0.95rem] text-[#111113]/70 leading-relaxed">
+              <p className="font-secondary text-[0.95rem] text-ink/70 leading-relaxed">
                 Funds are held in secure escrow vaults, ensuring sellers only
                 get paid when you are satisfied.
               </p>
             </div>
-            <div className="mt-8 pt-4 border-t border-[#111113]/12 flex items-center justify-between">
+            <div className="mt-8 pt-4 border-t border-ink-faint flex items-center justify-between">
               <span className="label">Segregated Settlement</span>
-              <Lock className="h-4 w-4 text-[#111113]/60" />
+              <Lock className="h-4 w-4 text-ink/60" />
             </div>
           </div>
 
           {/* Card 02: Verification */}
-          <div className="v7-card flex flex-col justify-between transition-colors duration-200 hover:border-[#111113]/40">
+          <div className="v7-card flex flex-col justify-between transition-colors duration-200 hover:border-ink/40">
             <div>
               <div className="flex items-center justify-between">
                 <span className="label">[02] Verification</span>
-                <span className="font-mono text-xs font-bold text-[#FF5A25]">
+                <span className="font-mono text-xs font-bold text-accent-orange">
                   BIOMETRIC ID
                 </span>
               </div>
-              <h3 className="font-primary text-[1.85rem] sm:text-[2rem] font-bold tracking-[-0.04em] text-[#111113] my-4 leading-none">
+              <h3 className="font-primary text-[1.85rem] sm:text-[2rem] font-bold tracking-[-0.04em] text-ink my-4 leading-none">
                 SmileID KYC
               </h3>
-              <p className="font-secondary text-[0.95rem] text-[#111113]/70 leading-relaxed">
+              <p className="font-secondary text-[0.95rem] text-ink/70 leading-relaxed">
                 Every seller must pass biometric government ID verification to
                 prevent anonymous fraud.
               </p>
             </div>
-            <div className="mt-8 pt-4 border-t border-[#111113]/12 flex items-center justify-between">
+            <div className="mt-8 pt-4 border-t border-ink-faint flex items-center justify-between">
               <span className="label">NIN / BVN Liveness</span>
-              <Fingerprint className="h-4 w-4 text-[#FF5A25]" />
+              <Fingerprint className="h-4 w-4 text-accent-orange" />
             </div>
           </div>
 
           {/* Card 03: Assurance */}
-          <div className="v7-card flex flex-col justify-between transition-colors duration-200 hover:border-[#111113]/40">
+          <div className="v7-card flex flex-col justify-between transition-colors duration-200 hover:border-ink/40">
             <div>
               <div className="flex items-center justify-between">
                 <span className="label">[03] Assurance</span>
-                <span className="font-mono text-xs font-bold text-[#15803d]">
+                <span className="font-mono text-xs font-bold text-trust-strong">
                   48-HOUR WINDOW
                 </span>
               </div>
-              <h3 className="font-primary text-[1.85rem] sm:text-[2rem] font-bold tracking-[-0.04em] text-[#111113] my-4 leading-none">
+              <h3 className="font-primary text-[1.85rem] sm:text-[2rem] font-bold tracking-[-0.04em] text-ink my-4 leading-none">
                 48H Audit SLA
               </h3>
-              <p className="font-secondary text-[0.95rem] text-[#111113]/70 leading-relaxed">
+              <p className="font-secondary text-[0.95rem] text-ink/70 leading-relaxed">
                 You have 48 hours after delivery to perform hardware
                 diagnostics. Failure triggers automatic mediation.
               </p>
             </div>
-            <div className="mt-8 pt-4 border-t border-[#111113]/12 flex items-center justify-between">
+            <div className="mt-8 pt-4 border-t border-ink-faint flex items-center justify-between">
               <span className="label">Automated Arbitration</span>
-              <Clock className="h-4 w-4 text-[#111113]/60" />
+              <Clock className="h-4 w-4 text-ink/60" />
             </div>
           </div>
         </div>
@@ -217,7 +217,7 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
         {/* =================================================================
             3. INTEGRATED PARTNERS MARQUEE (Moves infinitely left to right)
             ================================================================= */}
-        <div className="mt-12 pt-6 border-t border-[#111113]/12">
+        <div className="mt-12 pt-6 border-t border-ink-faint">
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <span className="label shrink-0">Integrated Infrastructure:</span>
 
@@ -230,10 +230,10 @@ export function HeroSection({ className, onExploreClick }: HeroSectionProps) {
                       className="flex items-center gap-2.5 shrink-0 opacity-75 hover:opacity-100 transition-opacity"
                     >
                       {partner.icon}
-                      <span className="font-primary text-xs font-bold tracking-[-0.02em] text-[#111113]">
+                      <span className="font-primary text-xs font-bold tracking-[-0.02em] text-ink">
                         {partner.name}
                       </span>
-                      <span className="label border border-[#111113]/12 bg-white px-2 py-0.5">
+                      <span className="label border border-ink-faint bg-surface px-2 py-0.5 rounded-card">
                         {partner.role}
                       </span>
                     </div>

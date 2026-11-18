@@ -80,25 +80,25 @@ export function ReadonlyChatTranscript({
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white flex flex-col h-[520px] overflow-hidden",
+        "border border-ink-faint bg-surface flex flex-col h-[520px] overflow-hidden rounded-ui",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#111113]/12 bg-[#F8F7F4]">
+      <div className="flex items-center justify-between p-4 border-b border-ink-faint bg-paper">
         <div className="flex items-center gap-2">
-          <MessageSquare className="h-4 w-4 text-[#111113]" />
-          <h4 className="font-primary text-xs font-bold text-[#111113] tracking-[-0.02em]">
+          <MessageSquare className="h-4 w-4 text-ink" />
+          <h4 className="font-primary text-xs font-bold text-ink tracking-[-0.02em]">
             Forensic P2P Chat Transcript
           </h4>
         </div>
-        <span className="font-mono text-[10px] uppercase tracking-wider bg-[#111113] text-white px-2 py-0.5 font-bold">
+        <span className="font-mono text-caption uppercase tracking-wider bg-ink text-white px-2 py-0.5 font-bold">
           Immutable Evidence Record
         </span>
       </div>
 
       {/* Stream */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F8F7F4]/60">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-paper/60">
         {messages.map((m) => {
           const isSystem = m.sender === "system";
           const isBuyer = m.sender === "buyer";
@@ -109,13 +109,13 @@ export function ReadonlyChatTranscript({
               className={cn(
                 "p-3 text-xs font-secondary space-y-1",
                 isSystem
-                  ? "bg-[#ecc94b]/20 border border-[#ecc94b]/40 text-[#975a16]"
+                  ? "bg-state-warning/20 border border-state-warning/40 text-state-warning-strong"
                   : isBuyer
-                  ? "bg-[#111113] text-white ml-6"
-                  : "bg-white text-[#111113] border border-[#111113]/12 mr-6"
+                  ? "bg-ink text-white ml-6"
+                  : "bg-surface text-ink border border-ink-faint mr-6 rounded-card"
               )}
             >
-              <div className="flex items-center justify-between text-[10px]">
+              <div className="flex items-center justify-between text-caption">
                 <span className="font-mono font-bold">{m.senderName}</span>
                 <span className="opacity-75 font-mono">{m.timestamp}</span>
               </div>
@@ -123,7 +123,7 @@ export function ReadonlyChatTranscript({
               <div className="leading-relaxed">{m.text}</div>
 
               {m.hasMaskedContent && (
-                <div className="mt-1 font-mono text-[9px] text-[#f56565] font-bold">
+                <div className="mt-1 font-mono text-micro text-state-error font-bold">
                   [Trust Shield Flag: Off-Platform Contact Attempt Detected]
                 </div>
               )}

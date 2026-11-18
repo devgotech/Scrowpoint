@@ -50,21 +50,21 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white p-6 space-y-6",
+        "border border-ink-faint bg-surface p-6 space-y-6 rounded-card",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
+      <div className="flex items-center justify-between pb-3 border-b border-ink-faint">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center bg-[#111113] text-white">
+          <div className="flex h-7 w-7 items-center justify-center bg-ink text-white">
             <IdCard className="h-3.5 w-3.5" />
           </div>
-          <span className="font-primary text-xs font-bold text-[#111113] tracking-[-0.02em]">
+          <span className="font-primary text-xs font-bold text-ink tracking-[-0.02em]">
             Government Identity Verification
           </span>
         </div>
-        <Badge variant="trust" className="text-[10px] font-mono">
+        <Badge variant="trust" className="text-caption font-mono">
           NIMC / SmileID
         </Badge>
       </div>
@@ -86,8 +86,8 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
               className={cn(
                 "p-2.5 border text-center text-xs font-medium transition-all duration-200 ease-out cursor-pointer",
                 docType === opt.id
-                  ? "bg-[#111113] text-white border-[#111113]"
-                  : "bg-white border-[#111113]/15 text-[#111113] hover:bg-[#F8F7F4]"
+                  ? "bg-ink text-white border-ink"
+                  : "bg-surface border-ink/15 text-ink hover:bg-paper"
               )}
             >
               {opt.label}
@@ -112,10 +112,10 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
             onChange={(e) => setDocNumber(e.target.value)}
             placeholder={currentOption.placeholder}
             maxLength={docType === "nin" ? 11 : 20}
-            className="w-full h-11 pl-3 pr-4 border border-[#111113]/15 bg-white font-mono text-xs font-bold text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+            className="w-full h-11 pl-3 pr-4 border border-ink/15 bg-surface font-mono text-xs font-bold text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
           />
         </div>
-        <p className="font-secondary text-[11px] text-[#111113]/60">
+        <p className="font-secondary text-meta text-ink/60">
           Verified against national databases in real-time.
         </p>
       </div>
@@ -127,16 +127,16 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
         </label>
 
         {frontFile ? (
-          <div className="relative border border-[#22c55e]/40 bg-[#22c55e]/10 p-3 flex items-center justify-between">
+          <div className="relative border border-trust/40 bg-trust/10 p-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center bg-[#22c55e] text-white">
+              <div className="flex h-10 w-10 items-center justify-center bg-trust text-white">
                 <FileCheck className="h-5 w-5" />
               </div>
               <div>
-                <span className="font-primary text-xs font-bold text-[#15803d] block">
+                <span className="font-primary text-xs font-bold text-trust-strong block">
                   Document Captured & Scanned
                 </span>
-                <span className="font-mono text-[10px] text-[#111113]/65">
+                <span className="font-mono text-caption text-ink/65">
                   {docType.toUpperCase()}_SCAN_VERIFIED.JPEG (1.4 MB)
                 </span>
               </div>
@@ -145,7 +145,7 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
             <button
               type="button"
               onClick={() => setFrontFile(null)}
-              className="p-1 hover:bg-black/10 text-[#111113]/60"
+              className="p-1 hover:bg-black/10 text-ink/60"
             >
               <X className="h-4 w-4" />
             </button>
@@ -166,17 +166,17 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
             className={cn(
               "border-2 border-dashed p-6 text-center cursor-pointer transition-all duration-200 ease-out",
               isDragging
-                ? "border-[#111113] bg-[#F8F7F4]"
-                : "border-[#111113]/25 hover:border-[#111113] hover:bg-[#F8F7F4]"
+                ? "border-ink bg-paper"
+                : "border-ink/25 hover:border-ink hover:bg-paper"
             )}
           >
-            <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#F0EFEA] text-[#111113] mb-2">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center bg-surface-muted text-ink mb-2">
               <UploadCloud className="h-5 w-5" />
             </div>
-            <span className="font-primary text-xs font-bold text-[#111113] block">
+            <span className="font-primary text-xs font-bold text-ink block">
               Click to select or drop {currentOption.label} photo
             </span>
-            <span className="font-secondary text-[11px] text-[#111113]/60 block mt-1">
+            <span className="font-secondary text-meta text-ink/60 block mt-1">
               Supports JPEG, PNG or PDF up to 10MB. Must not be blurry or cut off.
             </span>
           </div>
@@ -184,7 +184,7 @@ export function DocumentUploadArea({ onComplete, className }: DocumentUploadArea
       </div>
 
       {/* Anti-Glare Advice */}
-      <div className="border border-[#ecc94b]/40 bg-[#ecc94b]/15 p-3 flex items-start gap-2.5 text-xs text-[#975a16]">
+      <div className="border border-state-warning/40 bg-state-warning/15 p-3 flex items-start gap-2.5 text-xs text-state-warning-strong">
         <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
         <span>
           <strong>Avoid Rejection:</strong> Place your card on a flat surface in good lighting. Flash glare or cropped corners will cause the automated OCR validator to fail.

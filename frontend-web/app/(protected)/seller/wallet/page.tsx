@@ -19,7 +19,7 @@ import { TransactionHistoryLedger } from "@/components/seller/TransactionHistory
  *
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Deep Carbon Ink (#111113)
- * - Sharp 0px architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
+ * - Sharp 0px architectural cards (border-ink-faint) paired with 999px pill primary CTAs
  */
 
 export interface SellerWalletPageProps {
@@ -179,42 +179,42 @@ export default function SellerWalletPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full py-8 sm:py-12">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 space-y-8">
           {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#111113]/12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-ink-faint">
             <div>
               <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-2">
                 <Link
                   href="/seller/dashboard"
                   onClick={onBackToDashboard}
-                  className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   <span>Merchant Desk</span>
                 </Link>
-                <span aria-hidden="true" className="text-[#111113]/25">
+                <span aria-hidden="true" className="text-ink/25">
                   /
                 </span>
-                <span className="font-bold text-[#111113]">
+                <span className="font-bold text-ink">
                   Wallet &amp; Payouts
                 </span>
               </div>
-              <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
-                ESCROW SETTLEMENT WALLET<span className="text-[#FF5A25]">.</span>
+              <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
+                ESCROW SETTLEMENT WALLET<span className="text-accent-orange">.</span>
               </h1>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
                 Manage verified NUBAN bank accounts, initiate instant NIBSS NIP
                 payouts, and inspect immutable settlement records.
               </p>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-trust-strong/10 px-3.5 py-1.5 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+                <ShieldCheck className="h-3.5 w-3.5 text-trust" />
                 <span>NIBSS NIP Automated Rails</span>
               </span>
             </div>
@@ -245,20 +245,20 @@ export default function SellerWalletPage({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111113]/75 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/75 backdrop-blur-xs animate-in fade-in"
         >
           <form
             onSubmit={handleSaveNewBank}
-            className="w-full max-w-md border border-[#111113] bg-white p-6 sm:p-8 space-y-5"
+            className="w-full max-w-md border border-ink bg-surface p-6 sm:p-8 space-y-5 rounded-card"
           >
             <div>
               <span className="label block mb-1">
                 Paystack NIBSS Name Enquiry
               </span>
-              <h3 className="font-primary text-xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
-                Link NUBAN Settlement Bank<span className="text-[#FF5A25]">.</span>
+              <h3 className="font-primary text-xl font-bold tracking-[-0.03em] text-ink uppercase">
+                Link NUBAN Settlement Bank<span className="text-accent-orange">.</span>
               </h3>
-              <p className="font-secondary text-xs text-[#111113]/70 mt-1">
+              <p className="font-secondary text-xs text-ink/70 mt-1">
                 Account name is verified automatically via NIBSS NIP and must
                 match your SmileID KYC identity.
               </p>
@@ -266,7 +266,7 @@ export default function SellerWalletPage({
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="font-mono text-[11px] uppercase tracking-wider font-bold text-[#111113]">
+                <label className="font-mono text-meta uppercase tracking-wider font-bold text-ink">
                   Select Commercial Bank
                 </label>
                 <select
@@ -277,7 +277,7 @@ export default function SellerWalletPage({
                       handleResolveNuban(nubanInput, e.target.value);
                     }
                   }}
-                  className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3 text-xs font-mono text-[#111113] focus:border-[#111113] focus:outline-none"
+                  className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3 text-xs font-mono text-ink focus:border-ink focus:outline-none"
                 >
                   {NIGERIAN_BANKS.map((b) => (
                     <option key={b.code} value={b.code}>
@@ -288,7 +288,7 @@ export default function SellerWalletPage({
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-mono text-[11px] uppercase tracking-wider font-bold text-[#111113]">
+                <label className="font-mono text-meta uppercase tracking-wider font-bold text-ink">
                   10-Digit NUBAN Account Number
                 </label>
                 <input
@@ -305,32 +305,32 @@ export default function SellerWalletPage({
                     }
                   }}
                   placeholder="e.g. 0123456789"
-                  className="h-11 w-full rounded-none border border-[#111113]/15 bg-white px-3.5 font-mono text-sm text-[#111113] focus:border-[#111113] focus:outline-none"
+                  className="h-11 w-full rounded-ui border border-ink/15 bg-surface px-3.5 font-mono text-sm text-ink focus:border-ink focus:outline-none"
                 />
               </div>
 
               {isResolvingNuban && (
-                <div className="p-3 bg-[#F0EFEA] border border-[#111113]/12 text-xs font-mono text-[#111113]/75">
+                <div className="p-3 bg-surface-muted border border-ink-faint text-xs font-mono text-ink/75 rounded-card">
                   Resolving NUBAN account holder via Paystack NIP...
                 </div>
               )}
 
               {resolvedAccountName && !isResolvingNuban && (
-                <div className="p-3.5 bg-[#15803d]/10 border border-[#15803d]/25 flex items-center justify-between text-xs font-mono">
+                <div className="p-3.5 bg-trust-strong/10 border border-trust-strong/25 flex items-center justify-between text-xs font-mono">
                   <div>
-                    <span className="block text-[10px] uppercase tracking-wider text-[#15803d] font-bold">
+                    <span className="block text-caption uppercase tracking-wider text-trust-strong font-bold">
                       Verified Account Holder (KYC Match)
                     </span>
-                    <span className="font-bold text-[#111113] mt-0.5 block">
+                    <span className="font-bold text-ink mt-0.5 block">
                       {resolvedAccountName}
                     </span>
                   </div>
-                  <CheckCircle2 className="h-4 w-4 text-[#15803d] shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-trust-strong shrink-0" />
                 </div>
               )}
 
               {nubanError && (
-                <p className="text-xs font-mono text-[#c53030]">{nubanError}</p>
+                <p className="text-xs font-mono text-state-error-strong">{nubanError}</p>
               )}
             </div>
 
@@ -341,14 +341,14 @@ export default function SellerWalletPage({
                   setIsAddBankModalOpen(false);
                   setNubanError(null);
                 }}
-                className="flex-1 h-11 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors"
+                className="flex-1 h-11 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink hover:border-ink transition-colors rounded-ui"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!resolvedAccountName || isResolvingNuban}
-                className="btn-primary flex-1 h-11 rounded-full bg-[#111113] hover:bg-[#FF5A25] disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
+                className="btn-primary flex-1 h-11 rounded-full bg-ink hover:bg-accent-orange disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
               >
                 Save Account
               </button>
@@ -362,21 +362,21 @@ export default function SellerWalletPage({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111113]/75 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/75 backdrop-blur-xs animate-in fade-in"
         >
-          <div className="w-full max-w-md border border-[#111113] bg-white p-6 sm:p-8 space-y-5">
+          <div className="w-full max-w-md border border-ink bg-surface p-6 sm:p-8 space-y-5 rounded-card">
             {withdrawSuccess ? (
               <div className="text-center py-4 space-y-3">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#15803d]/10 border border-[#15803d]/25 text-[#15803d]">
-                  <CheckCircle2 className="h-6 w-6 text-[#15803d]" />
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-trust-strong/10 border border-trust-strong/25 text-trust-strong">
+                  <CheckCircle2 className="h-6 w-6 text-trust-strong" />
                 </div>
-                <h3 className="font-primary text-xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
+                <h3 className="font-primary text-xl font-bold tracking-[-0.03em] text-ink uppercase">
                   ₦420,000 Dispatched to GTBank
-                  <span className="text-[#FF5A25]">.</span>
+                  <span className="text-accent-orange">.</span>
                 </h3>
-                <p className="font-secondary text-xs text-[#111113]/70">
+                <p className="font-secondary text-xs text-ink/70">
                   Payment reference{" "}
-                  <span className="font-mono font-bold text-[#111113]">
+                  <span className="font-mono font-bold text-ink">
                     NIP-49102-CBN
                   </span>{" "}
                   confirmed. Funds settle within seconds via NIBSS NIP.
@@ -388,27 +388,27 @@ export default function SellerWalletPage({
                   <span className="label block mb-1">
                     Confirm NIBSS Bank Transfer
                   </span>
-                  <h3 className="font-primary text-xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
-                    Withdraw ₦420,000 NGN<span className="text-[#FF5A25]">.</span>
+                  <h3 className="font-primary text-xl font-bold tracking-[-0.03em] text-ink uppercase">
+                    Withdraw ₦420,000 NGN<span className="text-accent-orange">.</span>
                   </h3>
-                  <p className="font-secondary text-xs text-[#111113]/70 mt-1">
+                  <p className="font-secondary text-xs text-ink/70 mt-1">
                     Funds will be settled directly to Guaranty Trust Bank
                     (0238491029).
                   </p>
                 </div>
 
-                <div className="p-4 border border-[#111113]/12 bg-[#F0EFEA] text-xs font-mono space-y-2">
+                <div className="p-4 border border-ink-faint bg-surface-muted text-xs font-mono space-y-2 rounded-card">
                   <div className="flex justify-between">
-                    <span className="text-[#111113]/65">
+                    <span className="text-ink/65">
                       Withdrawal Amount:
                     </span>
-                    <span className="font-bold text-[#111113]">₦420,000</span>
+                    <span className="font-bold text-ink">₦420,000</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#111113]/65">NIP Transfer Fee:</span>
-                    <span className="text-[#15803d] font-bold">₦0 (Waived)</span>
+                    <span className="text-ink/65">NIP Transfer Fee:</span>
+                    <span className="text-trust-strong font-bold">₦0 (Waived)</span>
                   </div>
-                  <div className="flex justify-between font-bold pt-2 border-t border-[#111113]/12 text-[#111113]">
+                  <div className="flex justify-between font-bold pt-2 border-t border-ink-faint text-ink">
                     <span>Net Received:</span>
                     <span>₦420,000</span>
                   </div>
@@ -418,14 +418,14 @@ export default function SellerWalletPage({
                   <button
                     type="button"
                     onClick={() => setIsWithdrawModalOpen(false)}
-                    className="flex-1 h-11 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors"
+                    className="flex-1 h-11 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink hover:border-ink transition-colors rounded-ui"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleExecuteWithdraw}
-                    className="btn-primary flex-1 h-11 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
+                    className="btn-primary flex-1 h-11 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
                   >
                     Confirm Payout
                   </button>

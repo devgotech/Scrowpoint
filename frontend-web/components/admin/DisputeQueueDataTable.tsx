@@ -85,24 +85,24 @@ export function DisputeQueueDataTable({
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white overflow-hidden",
+        "border border-ink-faint bg-surface overflow-hidden rounded-card",
         className
       )}
     >
-      <div className="flex items-center justify-between p-5 border-b border-[#111113]/12">
+      <div className="flex items-center justify-between p-5 border-b border-ink-faint">
         <div>
           <div className="flex items-center gap-2">
-            <Scale className="h-4 w-4 text-[#111113]" />
-            <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
+            <Scale className="h-4 w-4 text-ink" />
+            <h3 className="font-primary text-base font-bold text-ink tracking-[-0.03em]">
               Arbitration Case Triage Queue
             </h3>
           </div>
-          <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
+          <p className="font-secondary text-xs text-ink/65 mt-0.5">
             Ranked by priority SLA urgency and locked escrow capital.
           </p>
         </div>
 
-        <span className="font-mono text-[11px] uppercase tracking-[0.12em] bg-[#f56565]/15 text-[#c53030] border border-[#f56565]/30 px-2.5 py-1 font-bold">
+        <span className="font-mono text-meta uppercase tracking-[0.12em] bg-state-error/15 text-state-error-strong border border-state-error/30 px-2.5 py-1 font-bold">
           {cases.length} Open Cases
         </span>
       </div>
@@ -110,7 +110,7 @@ export function DisputeQueueDataTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[#111113]/12 bg-[#F8F7F4] font-mono text-[10px] uppercase tracking-[0.15em] font-bold text-[#111113]/60">
+            <tr className="border-b border-ink-faint bg-paper font-mono text-caption uppercase tracking-[0.15em] font-bold text-ink/60">
               <th className="p-3.5">Case / Order</th>
               <th className="p-3.5">Device & Reason</th>
               <th className="p-3.5">Parties</th>
@@ -119,45 +119,45 @@ export function DisputeQueueDataTable({
               <th className="p-3.5 text-right">Adjudicate</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#111113]/12">
+          <tbody className="divide-y divide-ink-faint">
             {cases.map((c) => (
-              <tr key={c.id} className="hover:bg-[#F8F7F4] transition-colors">
+              <tr key={c.id} className="hover:bg-paper transition-colors">
                 <td className="p-3.5">
-                  <span className="font-mono font-bold text-[#111113] block">
+                  <span className="font-mono font-bold text-ink block">
                     {c.id}
                   </span>
-                  <span className="font-mono text-[10px] text-[#111113]/60">
+                  <span className="font-mono text-caption text-ink/60">
                     {c.orderNumber}
                   </span>
                 </td>
 
                 <td className="p-3.5 max-w-xs">
-                  <span className="font-primary font-bold text-[#111113] tracking-[-0.02em] block truncate">
+                  <span className="font-primary font-bold text-ink tracking-[-0.02em] block truncate">
                     {c.gadgetTitle}
                   </span>
-                  <span className="font-secondary text-[11px] text-[#c53030] block truncate">
+                  <span className="font-secondary text-meta text-state-error-strong block truncate">
                     {c.reason}
                   </span>
                 </td>
 
                 <td className="p-3.5">
-                  <span className="font-medium text-[#111113] block">B: {c.buyerName}</span>
-                  <span className="font-secondary text-[11px] text-[#111113]/65 block">
+                  <span className="font-medium text-ink block">B: {c.buyerName}</span>
+                  <span className="font-secondary text-meta text-ink/65 block">
                     S: {c.sellerName}
                   </span>
                 </td>
 
-                <td className="p-3.5 font-mono font-bold text-[#111113] text-sm">
+                <td className="p-3.5 font-mono font-bold text-ink text-sm">
                   {formatNaira(c.lockedAmountNaira)}
                 </td>
 
                 <td className="p-3.5">
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1 font-mono text-[10px] font-bold px-2 py-0.5 border",
+                      "inline-flex items-center gap-1 font-mono text-caption font-bold px-2 py-0.5 border",
                       c.isUrgent
-                        ? "bg-[#f56565]/15 text-[#c53030] border-[#f56565]/30 animate-pulse"
-                        : "bg-[#ecc94b]/20 text-[#975a16] border-[#ecc94b]/40"
+                        ? "bg-state-error/15 text-state-error-strong border-state-error/30 animate-pulse"
+                        : "bg-state-warning/20 text-state-warning-strong border-state-warning/40"
                     )}
                   >
                     <Clock className="h-3 w-3" />
@@ -169,7 +169,7 @@ export function DisputeQueueDataTable({
                   <button
                     type="button"
                     onClick={() => onSelectCase?.(c.id)}
-                    className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-[#111113] text-white hover:bg-[#FF5A25] font-mono text-xs font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-ink text-white hover:bg-accent-orange font-mono text-xs font-semibold transition-colors cursor-pointer"
                   >
                     <span>Inspect</span>
                     <ArrowRight className="h-3 w-3" />

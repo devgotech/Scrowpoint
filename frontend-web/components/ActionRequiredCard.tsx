@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 1, Spec 4 §5):
  * - Wrapper using the Shadcn Alert primitive.
- * - Corner Radius: --radius-card (8px -> rounded-[8px]). Inner controls: 4px.
+ * - Corner Radius: --radius-card (8px -> rounded-ui). Inner controls: 4px.
  * - Used on `/dashboard` and `/escrow/[id]/status` to highlight blocking steps.
  * - Primary Action Button: Immediately unblocks the transaction (e.g. "Approve Item", "Submit Tracking Waybill").
  * - Secondary Action Button: Optional secondary route (e.g. "Raise Dispute").
@@ -132,8 +132,8 @@ export function ActionRequiredCard({
     <Alert
       variant={config.variant}
       className={cn(
-        "relative overflow-hidden rounded-none border transition-all duration-200 ease-out",
-        config.urgent && "border-[#ecc94b]/80",
+        "relative overflow-hidden rounded-ui border transition-all duration-200 ease-out",
+        config.urgent && "border-state-warning/80",
         className
       )}
     >
@@ -144,12 +144,12 @@ export function ActionRequiredCard({
             className={cn(
               "flex h-10 w-10 shrink-0 items-center justify-center border transition-colors duration-200 ease-out",
               config.variant === "warning"
-                ? "bg-[#ecc94b]/20 text-[#975a16] border-[#ecc94b]/40"
+                ? "bg-state-warning/20 text-state-warning-strong border-state-warning/40"
                 : config.variant === "trust"
-                ? "bg-[#22c55e]/15 text-[#15803d] border-[#22c55e]/30"
+                ? "bg-trust/15 text-trust-strong border-trust/30"
                 : config.variant === "destructive"
-                ? "bg-[#f56565]/15 text-[#c53030] border-[#f56565]/30"
-                : "bg-[#F0EFEA] text-[#111113] border-[#111113]/12"
+                ? "bg-state-error/15 text-state-error-strong border-state-error/30"
+                : "bg-surface-muted text-ink border-ink-faint"
             )}
           >
             <Icon className="h-5 w-5" />
@@ -157,29 +157,29 @@ export function ActionRequiredCard({
 
           <div className="space-y-1 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <AlertTitle className="font-primary text-base font-bold tracking-[-0.03em] text-[#111113]">
+              <AlertTitle className="font-primary text-base font-bold tracking-[-0.03em] text-ink">
                 {config.title}
               </AlertTitle>
 
               {/* Order Reference Badge */}
-              <span className="font-mono text-[10px] bg-[#F0EFEA] border border-[#111113]/15 px-2 py-0.5 font-semibold text-[#111113]/75">
+              <span className="font-mono text-caption bg-surface-muted border border-ink/15 px-2 py-0.5 font-semibold text-ink/75 rounded-card">
                 {orderNumber}
               </span>
             </div>
 
-            <AlertDescription className="font-secondary text-xs text-[#111113]/70 leading-relaxed max-w-2xl">
+            <AlertDescription className="font-secondary text-xs text-ink/70 leading-relaxed max-w-2xl">
               {config.description}
             </AlertDescription>
 
             {/* Countdown Warning Bar if Active */}
             {countdownString && (
               <div className="mt-2 flex items-center gap-2 text-xs font-mono font-medium">
-                <Clock className="h-3.5 w-3.5 text-[#ecc94b] animate-spin" />
-                <span className="text-[#111113]/65 font-secondary">Time Remaining:</span>
-                <span className="font-bold text-[#975a16]">
+                <Clock className="h-3.5 w-3.5 text-state-warning animate-spin" />
+                <span className="text-ink/65 font-secondary">Time Remaining:</span>
+                <span className="font-bold text-state-warning-strong">
                   {countdownString}
                 </span>
-                <span className="text-[10px] text-[#111113]/55 font-secondary">
+                <span className="text-caption text-ink/55 font-secondary">
                   (auto-resolves upon expiration)
                 </span>
               </div>
@@ -188,7 +188,7 @@ export function ActionRequiredCard({
         </div>
 
         {/* Right: Primary and Optional Secondary Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:self-center shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-[#111113]/12">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:self-center shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-ink-faint">
           {config.secondaryLabel && onSecondaryAction && (
             <Button
               type="button"

@@ -67,7 +67,7 @@ export default function GlobalLoading() {
             >
               {/* 4:3 Aspect Ratio Image Skeleton */}
               <div className="relative aspect-4/3 w-full bg-muted">
-                <Skeleton className="h-full w-full rounded-none" />
+                <Skeleton className="h-full w-full rounded-ui" />
                 <div className="absolute top-3 left-3">
                   <Skeleton className="h-5 w-16 rounded-full" />
                 </div>

@@ -137,9 +137,9 @@ export function EscrowStatusBar({
       role="region"
       aria-label="Active Escrow Status"
       className={cn(
-        "relative w-full bg-[#111113] text-white border-b border-white/10 px-4 py-2 transition-all duration-300",
+        "relative w-full bg-ink text-white border-b border-white/10 px-4 py-2 transition-all duration-300",
         statusConfig.barAccent,
-        isUrgent && "bg-[#111113] ring-inset ring-1 ring-amber-400/50 animate-pulse",
+        isUrgent && "bg-ink ring-inset ring-1 ring-amber-400/50 animate-pulse",
         className
       )}
     >
@@ -147,7 +147,7 @@ export function EscrowStatusBar({
         {/* Left: Escrow Order ID & Status Badge */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
           <div className="flex items-center gap-1.5 font-mono font-medium text-white/75">
-            <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
+            <Lock className="h-3.5 w-3.5 text-trust" />
             <span className="hidden sm:inline text-white/50">Order:</span>
             <span className="text-white font-semibold">{orderShortId}</span>
           </div>
@@ -164,7 +164,7 @@ export function EscrowStatusBar({
           {/* Status Badge */}
           <Badge
             variant={statusConfig.variant}
-            className="gap-1 py-0.5 px-2 text-[10px] font-mono tracking-wider"
+            className="gap-1 py-0.5 px-2 text-caption font-mono tracking-wider"
           >
             <StatusIcon className="h-3 w-3" />
             <span>{statusConfig.label}</span>
@@ -176,16 +176,16 @@ export function EscrowStatusBar({
           {/* Countdown Clock */}
           <div
             className={cn(
-              "flex items-center gap-1.5 font-mono text-[11px] sm:text-xs px-2.5 py-0.5",
+              "flex items-center gap-1.5 font-mono text-meta sm:text-xs px-2.5 py-0.5",
               isUrgent
-                ? "bg-[#ecc94b]/20 text-[#ecc94b] font-bold"
+                ? "bg-state-warning/20 text-state-warning font-bold"
                 : "bg-white/10 text-white/90"
             )}
           >
             <Clock
               className={cn(
                 "h-3.5 w-3.5",
-                isUrgent ? "text-[#ecc94b] animate-spin" : "text-white/60"
+                isUrgent ? "text-state-warning animate-spin" : "text-white/60"
               )}
             />
             <span className="hidden sm:inline text-white/60 font-secondary">
@@ -197,7 +197,7 @@ export function EscrowStatusBar({
           {/* Escrow Status Link */}
           <Link
             href={`/escrow/${orderId}`}
-            className="group flex items-center gap-1 rounded-full bg-[#FF5A25] hover:bg-[#FF5A25]/90 px-3 py-1 text-[11px] font-primary uppercase tracking-[0.06em] font-semibold text-white transition-colors duration-200 ease-out"
+            className="group flex items-center gap-1 rounded-full bg-accent-orange hover:bg-accent-orange/90 px-3 py-1 text-meta font-primary uppercase tracking-[0.06em] font-semibold text-white transition-colors duration-200 ease-out"
           >
             <span>View Trade</span>
             <ArrowRight className="h-3 w-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />

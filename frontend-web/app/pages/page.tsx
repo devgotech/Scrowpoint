@@ -336,37 +336,37 @@ function AppInner() {
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] font-secondary flex flex-col relative">
+      <div className="min-h-screen bg-slate-900 text-slate-50 font-secondary flex flex-col relative">
           {/* =================================================================
               TOP MASTER SCREEN FLOW & RESPONSIVE ARCHITECTURE CONTROLLER
               ================================================================= */}
-          <header className="border-b border-slate-800 bg-[#020617] sticky top-0 z-50 text-white shadow-md">
+          <header className="border-b border-slate-800 bg-slate-950 sticky top-0 z-50 text-white shadow-md">
             <div className="max-w-[1440px] mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3">
               {/* Brand & Document Anchor */}
               <div className="flex items-center gap-2.5 shrink-0">
-                <div className="flex h-7 w-7 items-center justify-center rounded-[4px] bg-[#22c55e] text-[#020617] font-bold">
+                <div className="flex h-7 w-7 items-center justify-center rounded-ui bg-trust text-slate-950 font-bold">
                   <ShieldCheck className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="font-primary text-xs font-bold tracking-tight flex items-center gap-1.5">
                     <span>SCROWPOINT</span>
-                    <span className="font-mono text-[9px] bg-slate-800 text-[#22c55e] px-1.5 py-0.2 rounded-[2px] font-semibold border border-slate-700">
+                    <span className="font-mono text-micro bg-slate-800 text-trust px-1.5 py-0.2 rounded-ui font-semibold border border-slate-700">
                       5_SCREEN_FLOWS
                     </span>
                   </div>
-                  <div className="font-mono text-[10px] text-slate-400">
+                  <div className="font-mono text-caption text-slate-400">
                     Full Responsive Screen Flow Architecture
                   </div>
                 </div>
               </div>
 
               {/* Responsive Device Viewport Switcher */}
-              <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-0.5 rounded-[4px]">
+              <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-0.5 rounded-ui">
                 <button
                   type="button"
                   onClick={() => setViewportMode("desktop")}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-xs font-mono transition-colors",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-ui text-xs font-mono transition-colors",
                     viewportMode === "desktop"
                       ? "bg-slate-700 text-white font-bold"
                       : "text-slate-400 hover:text-white"
@@ -381,7 +381,7 @@ function AppInner() {
                   type="button"
                   onClick={() => setViewportMode("tablet")}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-xs font-mono transition-colors",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-ui text-xs font-mono transition-colors",
                     viewportMode === "tablet"
                       ? "bg-slate-700 text-white font-bold"
                       : "text-slate-400 hover:text-white"
@@ -396,9 +396,9 @@ function AppInner() {
                   type="button"
                   onClick={() => setViewportMode("mobile")}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-xs font-mono transition-colors",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-ui text-xs font-mono transition-colors",
                     viewportMode === "mobile"
-                      ? "bg-[#22c55e] text-[#020617] font-bold"
+                      ? "bg-trust text-slate-950 font-bold"
                       : "text-slate-400 hover:text-white"
                   )}
                   title="Mobile View (390px iPhone Viewport)"
@@ -409,15 +409,15 @@ function AppInner() {
               </div>
 
               {/* Persona Switcher: Guest vs Logged In */}
-              <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-0.5 rounded-[4px]">
-                <span className="text-[10px] font-mono text-slate-400 px-1.5 hidden md:inline">
+              <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-0.5 rounded-ui">
+                <span className="text-caption font-mono text-slate-400 px-1.5 hidden md:inline">
                   Navbar Mode:
                 </span>
                 <button
                   type="button"
                   onClick={() => logout()}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-xs font-mono transition-colors",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-ui text-xs font-mono transition-colors",
                     !isAuthenticated
                       ? "bg-slate-700 text-white font-bold"
                       : "text-slate-400 hover:text-white"
@@ -431,9 +431,9 @@ function AppInner() {
                   type="button"
                   onClick={() => login("adeola@techhub.ng", "Adeola Tech Hub", "seller")}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-xs font-mono transition-colors",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-ui text-xs font-mono transition-colors",
                     isAuthenticated
-                      ? "bg-[#22c55e] text-[#020617] font-bold"
+                      ? "bg-trust text-slate-950 font-bold"
                       : "text-slate-400 hover:text-white"
                   )}
                   title="Simulate Logged-In Verified Trader (Avatar, Notifications, Sell Gadget in Navbar)"
@@ -444,13 +444,13 @@ function AppInner() {
               </div>
 
               {/* Active Route & URL Bar */}
-              <div className="hidden xl:flex items-center gap-2 font-mono text-[11px] text-slate-400">
+              <div className="hidden xl:flex items-center gap-2 font-mono text-meta text-slate-400">
                 <span className="text-slate-500">Route:</span>
-                <span className="text-[#22c55e] bg-slate-900 px-2 py-0.5 rounded-[2px] border border-slate-800 font-semibold truncate max-w-[260px]">
+                <span className="text-trust bg-slate-900 px-2 py-0.5 rounded-ui border border-slate-800 font-semibold truncate max-w-[260px]">
                   {screensConfig.find((s) => s.id === activeRoute)?.routePath}
                 </span>
                 <span className="text-slate-600">|</span>
-                <span className="text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded-[2px] border border-slate-700">
+                <span className="text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded-ui border border-slate-700">
                   {screensConfig.find((s) => s.id === activeRoute)?.urlPath}
                 </span>
               </div>
@@ -468,9 +468,9 @@ function AppInner() {
                       type="button"
                       onClick={() => handleSelectScreen(sc)}
                       className={cn(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] text-xs font-mono whitespace-nowrap transition-all duration-150 shrink-0",
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-ui text-xs font-mono whitespace-nowrap transition-all duration-150 shrink-0",
                         isActive
-                          ? "bg-white text-[#020617] font-bold shadow-xs"
+                          ? "bg-surface text-slate-950 font-bold shadow-xs"
                           : "text-slate-400 hover:text-white hover:bg-slate-800/80"
                       )}
                     >
@@ -478,10 +478,10 @@ function AppInner() {
                       {sc.badge && (
                         <span
                           className={cn(
-                            "text-[9px] px-1 py-0.2 rounded-[2px] font-semibold",
+                            "text-micro px-1 py-0.2 rounded-ui font-semibold",
                             isActive
-                              ? "bg-[#22c55e] text-[#020617]"
-                              : "bg-slate-800 text-[#22c55e]"
+                              ? "bg-trust text-slate-950"
+                              : "bg-slate-800 text-trust"
                           )}
                         >
                           {sc.badge}
@@ -497,10 +497,10 @@ function AppInner() {
           {/* =================================================================
               MAIN VIEWPORT CANVAS
               ================================================================= */}
-          <main className="flex-1 w-full bg-[#E8E6DF] flex justify-center items-start py-0 sm:py-0 overflow-x-auto">
+          <main className="flex-1 w-full bg-surface-muted-alt flex justify-center items-start py-0 sm:py-0 overflow-x-auto">
             <div
               className={cn(
-                "transition-all duration-300 ease-out bg-[#F8F7F4] text-[#111113] shadow-xl overflow-hidden",
+                "transition-all duration-300 ease-out bg-paper text-ink shadow-xl overflow-hidden",
                 viewportMode === "desktop" && "w-full min-h-[calc(100vh-110px)]",
                 viewportMode === "tablet" &&
                   "w-[768px] min-h-[900px] rounded-[16px] border-8 border-slate-800 shadow-2xl my-4",
@@ -510,13 +510,13 @@ function AppInner() {
             >
               {/* Simulated Mobile Status Bar */}
               {viewportMode === "mobile" && (
-                <div className="bg-[#020617] text-white px-6 py-2.5 flex items-center justify-between text-[11px] font-mono shrink-0 select-none sticky top-0 z-50">
+                <div className="bg-slate-950 text-white px-6 py-2.5 flex items-center justify-between text-meta font-mono shrink-0 select-none sticky top-0 z-50">
                   <span>9:41</span>
                   <div className="h-4 w-24 bg-black rounded-full" />
-                  <div className="flex items-center gap-1.5 text-[10px]">
+                  <div className="flex items-center gap-1.5 text-caption">
                     <span>5G</span>
-                    <div className="h-2.5 w-5 border border-white rounded-[2px] p-0.5 flex items-center">
-                      <div className="h-full w-full bg-[#22c55e] rounded-[1px]" />
+                    <div className="h-2.5 w-5 border border-white rounded-ui p-0.5 flex items-center">
+                      <div className="h-full w-full bg-trust rounded-[1px]" />
                     </div>
                   </div>
                 </div>

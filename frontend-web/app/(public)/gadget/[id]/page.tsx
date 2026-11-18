@@ -41,7 +41,7 @@ import { cn } from "@/lib/utils";
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Warm Stone (#F0EFEA)
  * - Deep Carbon Ink (#111113), Vermilion Orange (#FF5A25), Forest Trust Green (#15803d)
- * - 0px sharp architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
+ * - 0px sharp architectural cards (border-ink-faint) paired with 999px pill primary CTAs
  * - Integer kobo financial calculations (NEVER Rule #6)
  */
 
@@ -203,31 +203,31 @@ export default function GadgetDetailPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased pb-20 lg:pb-0 selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased pb-20 lg:pb-0 selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full">
         {/* Breadcrumb Header */}
-        <div className="bg-white border-b border-[#111113]/12 py-3.5">
+        <div className="bg-surface border-b border-ink-faint py-3.5">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.12em]">
                 <Link
                   href="/marketplace"
                   onClick={onBackToMarketplace}
-                  className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   <span>Marketplace</span>
                 </Link>
-                <span aria-hidden="true" className="text-[#111113]/25">
+                <span aria-hidden="true" className="text-ink/25">
                   /
                 </span>
-                <span className="text-[#111113]/65">{gadget.category}</span>
-                <span aria-hidden="true" className="text-[#111113]/25">
+                <span className="text-ink/65">{gadget.category}</span>
+                <span aria-hidden="true" className="text-ink/25">
                   /
                 </span>
-                <span className="font-bold text-[#111113] truncate max-w-[180px] sm:max-w-none">
+                <span className="font-bold text-ink truncate max-w-[180px] sm:max-w-none">
                   {gadget.model || gadget.title}
                 </span>
               </div>
@@ -236,7 +236,7 @@ export default function GadgetDetailPage({
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="h-9 px-3 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider text-[#111113]/75 hover:text-[#111113] hover:border-[#111113] flex items-center gap-1.5 transition-colors"
+                  className="h-9 px-3 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider text-ink/75 hover:text-ink hover:border-ink flex items-center gap-1.5 transition-colors rounded-ui"
                 >
                   <Share2 className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">
@@ -249,8 +249,8 @@ export default function GadgetDetailPage({
                   className={cn(
                     "h-9 px-3 border text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition-colors",
                     isSaved
-                      ? "border-[#FF5A25] text-[#FF5A25] bg-[#FF5A25]/10 font-bold"
-                      : "border-[#111113]/15 bg-white text-[#111113]/75 hover:text-[#111113] hover:border-[#111113]"
+                      ? "border-accent-orange text-accent-orange bg-accent-orange/10 font-bold"
+                      : "border-ink/15 bg-surface text-ink/75 hover:text-ink hover:border-ink"
                   )}
                 >
                   <Heart
@@ -274,9 +274,9 @@ export default function GadgetDetailPage({
                   ============================================================= */}
               <div className="lg:col-span-7 space-y-8">
                 {/* Media Container: Photos & Hardware Inspection Video */}
-                <div className="border border-[#111113]/12 bg-white p-5 space-y-4">
+                <div className="border border-ink-faint bg-surface p-5 space-y-4 rounded-card">
                   {/* Media Mode Tabs: [Photos] vs [Inspection Video (30s)] */}
-                  <div className="flex items-center justify-between pb-3.5 border-b border-[#111113]/12">
+                  <div className="flex items-center justify-between pb-3.5 border-b border-ink-faint">
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
@@ -284,8 +284,8 @@ export default function GadgetDetailPage({
                         className={cn(
                           "flex items-center gap-1.5 px-3.5 py-2 text-xs font-mono uppercase tracking-wider font-bold transition-colors border",
                           activeMediaTab === "photos"
-                            ? "bg-[#111113] text-white border-[#111113]"
-                            : "bg-[#F8F7F4] text-[#111113]/70 hover:text-[#111113] border-[#111113]/15"
+                            ? "bg-ink text-white border-ink"
+                            : "bg-paper text-ink/70 hover:text-ink border-ink/15"
                         )}
                       >
                         <Camera className="h-3.5 w-3.5" />
@@ -304,17 +304,17 @@ export default function GadgetDetailPage({
                         className={cn(
                           "flex items-center gap-1.5 px-3.5 py-2 text-xs font-mono uppercase tracking-wider font-bold transition-colors border",
                           activeMediaTab === "video"
-                            ? "bg-[#111113] text-white border-[#111113]"
-                            : "bg-[#F8F7F4] text-[#111113]/70 hover:text-[#111113] border-[#111113]/15"
+                            ? "bg-ink text-white border-ink"
+                            : "bg-paper text-ink/70 hover:text-ink border-ink/15"
                         )}
                       >
-                        <Video className="h-3.5 w-3.5 text-[#FF5A25]" />
+                        <Video className="h-3.5 w-3.5 text-accent-orange" />
                         <span>30s Inspection Sweep</span>
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-trust" />
                       </button>
                     </div>
 
-                    <div className="text-[11px] font-mono uppercase tracking-wider text-[#111113]/60 hidden sm:block">
+                    <div className="text-meta font-mono uppercase tracking-wider text-ink/60 hidden sm:block">
                       {activeMediaTab === "photos"
                         ? `Angle 0${activeImageIndex + 1} of 0${totalImages}`
                         : "Verified 30s Hardware Sweep"}
@@ -324,7 +324,7 @@ export default function GadgetDetailPage({
                   {/* Viewport 1: High-Res Photo Gallery */}
                   {activeMediaTab === "photos" && (
                     <div className="space-y-4">
-                      <div className="relative aspect-4/3 w-full overflow-hidden bg-[#F0EFEA] flex items-center justify-center border border-[#111113]/12 group">
+                      <div className="relative aspect-4/3 w-full overflow-hidden bg-surface-muted flex items-center justify-center border border-ink-faint group rounded-card">
                         <img
                           src={
                             gadget.images[activeImageIndex] || gadget.images[0]
@@ -334,14 +334,14 @@ export default function GadgetDetailPage({
                         />
 
                         {/* Top Left: Condition Label */}
-                        <div className="absolute top-3 left-3 bg-[#111113] text-white px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider">
+                        <div className="absolute top-3 left-3 bg-ink text-white px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider">
                           {gadget.condition} Grade
                         </div>
 
                         {/* Top Right: SmileID Verified Pill */}
                         {gadget.sellerVerified && (
-                          <div className="absolute top-3 right-3 rounded-full bg-white/95 border border-[#111113]/15 text-[#15803d] px-3 py-1 font-mono text-xs font-bold flex items-center gap-1.5">
-                            <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+                          <div className="absolute top-3 right-3 rounded-full bg-white/95 border border-ink/15 text-trust-strong px-3 py-1 font-mono text-xs font-bold flex items-center gap-1.5">
+                            <ShieldCheck className="h-3.5 w-3.5 text-trust" />
                             <span>SmileID Verified</span>
                           </div>
                         )}
@@ -351,7 +351,7 @@ export default function GadgetDetailPage({
                           type="button"
                           onClick={handlePrevImage}
                           aria-label="Previous photo"
-                          className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/95 hover:bg-[#111113] hover:text-white text-[#111113] flex items-center justify-center opacity-85 group-hover:opacity-100 transition-colors border border-[#111113]/15"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/95 hover:bg-ink hover:text-white text-ink flex items-center justify-center opacity-85 group-hover:opacity-100 transition-colors border border-ink/15"
                         >
                           <ChevronLeft className="h-5 w-5" />
                         </button>
@@ -359,19 +359,19 @@ export default function GadgetDetailPage({
                           type="button"
                           onClick={handleNextImage}
                           aria-label="Next photo"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/95 hover:bg-[#111113] hover:text-white text-[#111113] flex items-center justify-center opacity-85 group-hover:opacity-100 transition-colors border border-[#111113]/15"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/95 hover:bg-ink hover:text-white text-ink flex items-center justify-center opacity-85 group-hover:opacity-100 transition-colors border border-ink/15"
                         >
                           <ChevronRight className="h-5 w-5" />
                         </button>
 
                         {/* Bottom Counter Bar */}
                         <div className="absolute bottom-3 inset-x-0 flex justify-center">
-                          <div className="bg-[#111113]/90 text-white font-mono text-xs px-3.5 py-1 flex items-center gap-2">
+                          <div className="bg-ink/90 text-white font-mono text-xs px-3.5 py-1 flex items-center gap-2">
                             <span>
                               0{activeImageIndex + 1} / 0{totalImages}
                             </span>
                             <span className="text-white/30">•</span>
-                            <span className="text-[#22c55e] text-[10px] uppercase tracking-wider font-bold">
+                            <span className="text-trust text-caption uppercase tracking-wider font-bold">
                               Authentic Inspection Photos
                             </span>
                           </div>
@@ -380,9 +380,9 @@ export default function GadgetDetailPage({
 
                       {/* Scrollable Thumbnail Carousel Strip */}
                       <div className="space-y-1.5">
-                        <div className="text-[11px] font-mono uppercase tracking-wider text-[#111113]/60 flex items-center justify-between">
+                        <div className="text-meta font-mono uppercase tracking-wider text-ink/60 flex items-center justify-between">
                           <span>Inspect Hardware Angles:</span>
-                          <span className="text-[10px]">
+                          <span className="text-caption">
                             Click thumbnail or video proof
                           </span>
                         </div>
@@ -400,8 +400,8 @@ export default function GadgetDetailPage({
                                 className={cn(
                                   "relative h-16 w-20 sm:h-20 sm:w-24 shrink-0 overflow-hidden border transition-all duration-150",
                                   isCurrent
-                                    ? "border-[#111113] ring-2 ring-[#111113]"
-                                    : "border-[#111113]/15 opacity-70 hover:opacity-100 hover:border-[#111113]/50"
+                                    ? "border-ink ring-2 ring-ink"
+                                    : "border-ink/15 opacity-70 hover:opacity-100 hover:border-ink/50"
                                 )}
                               >
                                 <img
@@ -409,7 +409,7 @@ export default function GadgetDetailPage({
                                   alt={`Thumbnail ${idx + 1}`}
                                   className="h-full w-full object-cover"
                                 />
-                                <div className="absolute bottom-0 inset-x-0 bg-[#111113]/85 text-white font-mono text-[9px] uppercase tracking-wider text-center py-0.5">
+                                <div className="absolute bottom-0 inset-x-0 bg-ink/85 text-white font-mono text-micro uppercase tracking-wider text-center py-0.5">
                                   Angle 0{idx + 1}
                                 </div>
                               </button>
@@ -426,10 +426,10 @@ export default function GadgetDetailPage({
                                 setIsVideoPlaying(true);
                               }
                             }}
-                            className="relative h-16 w-24 sm:h-20 sm:w-28 shrink-0 border border-dashed border-[#15803d] bg-[#15803d]/5 flex flex-col items-center justify-center p-1 text-center hover:bg-[#15803d]/10 transition-colors"
+                            className="relative h-16 w-24 sm:h-20 sm:w-28 shrink-0 border border-dashed border-trust-strong bg-trust-strong/5 flex flex-col items-center justify-center p-1 text-center hover:bg-trust-strong/10 transition-colors"
                           >
-                            <Play className="h-5 w-5 text-[#15803d] mb-1 fill-[#15803d]" />
-                            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
+                            <Play className="h-5 w-5 text-trust-strong mb-1 fill-trust-strong" />
+                            <span className="font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
                               30s Video
                             </span>
                           </button>
@@ -441,7 +441,7 @@ export default function GadgetDetailPage({
                   {/* Viewport 2: Dedicated Hardware Inspection Video Segment */}
                   {activeMediaTab === "video" && (
                     <div className="space-y-4 animate-in fade-in duration-200">
-                      <div className="relative aspect-video w-full overflow-hidden bg-[#111113] border border-[#111113]">
+                      <div className="relative aspect-video w-full overflow-hidden bg-ink border border-ink">
                         <video
                           ref={videoRef}
                           src={
@@ -460,8 +460,8 @@ export default function GadgetDetailPage({
                         {/* Video Controls Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none flex flex-col justify-between p-4">
                           <div className="flex items-center justify-between pointer-events-auto">
-                            <div className="bg-[#111113]/90 text-white font-mono text-[11px] uppercase tracking-wider px-3 py-1 flex items-center gap-2 border border-white/15">
-                              <span className="h-2 w-2 rounded-full bg-[#FF5A25] animate-pulse" />
+                            <div className="bg-ink/90 text-white font-mono text-meta uppercase tracking-wider px-3 py-1 flex items-center gap-2 border border-white/15">
+                              <span className="h-2 w-2 rounded-full bg-accent-orange animate-pulse" />
                               <span className="font-bold">
                                 VERIFIED SELLER SWEEP
                               </span>
@@ -471,7 +471,7 @@ export default function GadgetDetailPage({
                             <button
                               type="button"
                               onClick={handleToggleMute}
-                              className="h-9 w-9 rounded-full bg-[#111113]/80 hover:bg-[#111113] text-white flex items-center justify-center transition-colors border border-white/20"
+                              className="h-9 w-9 rounded-full bg-ink/80 hover:bg-ink text-white flex items-center justify-center transition-colors border border-white/20"
                               title={isVideoMuted ? "Unmute" : "Mute"}
                             >
                               {isVideoMuted ? (
@@ -486,7 +486,7 @@ export default function GadgetDetailPage({
                             <button
                               type="button"
                               onClick={handleToggleVideoPlay}
-                              className="h-11 w-11 rounded-full bg-[#FF5A25] hover:bg-white hover:text-[#111113] text-white flex items-center justify-center transition-colors"
+                              className="h-11 w-11 rounded-full bg-accent-orange hover:bg-surface hover:text-ink text-white flex items-center justify-center transition-colors"
                               title={
                                 isVideoPlaying ? "Pause Video" : "Play Video"
                               }
@@ -498,7 +498,7 @@ export default function GadgetDetailPage({
                               )}
                             </button>
 
-                            <div className="font-mono text-xs text-white bg-[#111113]/85 px-3 py-1 border border-white/15">
+                            <div className="font-mono text-xs text-white bg-ink/85 px-3 py-1 border border-white/15">
                               Hardware: {gadget.model}
                             </div>
                           </div>
@@ -506,37 +506,37 @@ export default function GadgetDetailPage({
                       </div>
 
                       {/* Video Diagnostic Checkpoints Banner */}
-                      <div className="p-5 border border-[#111113]/12 bg-[#F0EFEA] space-y-3">
+                      <div className="p-5 border border-ink-faint bg-surface-muted space-y-3 rounded-card">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 font-primary text-xs font-bold uppercase tracking-wider text-[#111113]">
-                            <ShieldCheck className="h-4 w-4 text-[#15803d]" />
+                          <div className="flex items-center gap-2 font-primary text-xs font-bold uppercase tracking-wider text-ink">
+                            <ShieldCheck className="h-4 w-4 text-trust-strong" />
                             <span>Pre-Escrow Video Inspection Checkpoints</span>
                           </div>
-                          <span className="font-mono text-[10px] uppercase tracking-wider font-bold text-[#15803d]">
+                          <span className="font-mono text-caption uppercase tracking-wider font-bold text-trust-strong">
                             Mandatory Proof
                           </span>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-secondary">
-                          <div className="flex items-center gap-2 text-[#15803d] font-medium">
+                          <div className="flex items-center gap-2 text-trust-strong font-medium">
                             <Check className="h-3.5 w-3.5 shrink-0" />
                             <span>
                               IMEI on screen matches listing registry
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 text-[#15803d] font-medium">
+                          <div className="flex items-center gap-2 text-trust-strong font-medium">
                             <Check className="h-3.5 w-3.5 shrink-0" />
                             <span>
                               Full screen digitizer touch sweep verified
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 text-[#15803d] font-medium">
+                          <div className="flex items-center gap-2 text-trust-strong font-medium">
                             <Check className="h-3.5 w-3.5 shrink-0" />
                             <span>
                               Front &amp; Rear cameras autofocus active
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 text-[#15803d] font-medium">
+                          <div className="flex items-center gap-2 text-trust-strong font-medium">
                             <Check className="h-3.5 w-3.5 shrink-0" />
                             <span>
                               iCloud / Activation Lock clean &amp; signed out
@@ -549,97 +549,97 @@ export default function GadgetDetailPage({
                 </div>
 
                 {/* Hardware Diagnostic Report Card */}
-                <div className="border border-[#111113]/12 bg-white p-6 space-y-5">
-                  <div className="flex items-center justify-between pb-3.5 border-b border-[#111113]/12">
+                <div className="border border-ink-faint bg-surface p-6 space-y-5 rounded-card">
+                  <div className="flex items-center justify-between pb-3.5 border-b border-ink-faint">
                     <div className="flex items-center gap-2">
-                      <Cpu className="h-4 w-4 text-[#FF5A25]" />
-                      <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-[#111113]">
+                      <Cpu className="h-4 w-4 text-accent-orange" />
+                      <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-ink">
                         Hardware Diagnostic Audit
                       </h3>
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#15803d]/10 px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-                      <CheckCircle2 className="h-3 w-3 text-[#22c55e]" />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-trust-strong/10 px-3 py-0.5 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+                      <CheckCircle2 className="h-3 w-3 text-trust" />
                       <span>Pre-Inspected</span>
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 border border-[#111113]/12 bg-white divide-y divide-x divide-[#111113]/12">
-                    <div className="p-4 bg-[#F8F7F4]/60">
-                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#111113]/60 mb-1">
-                        <BatteryCharging className="h-3.5 w-3.5 text-[#15803d]" />
+                  <div className="grid grid-cols-2 sm:grid-cols-3 border border-ink-faint bg-surface divide-y divide-x divide-ink-faint rounded-card overflow-hidden">
+                    <div className="p-4 bg-paper/60">
+                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-ink/60 mb-1">
+                        <BatteryCharging className="h-3.5 w-3.5 text-trust-strong" />
                         <span>Battery Health</span>
                       </div>
-                      <div className="font-mono text-lg font-bold text-[#111113]">
+                      <div className="font-mono text-lg font-bold text-ink">
                         {gadget.batteryHealth
                           ? `${gadget.batteryHealth}% Max`
                           : "Tested 95%+"}
                       </div>
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-[#15803d] font-bold mt-0.5">
+                      <div className="text-caption font-mono uppercase tracking-wider text-trust-strong font-bold mt-0.5">
                         OEM Original Cell
                       </div>
                     </div>
 
-                    <div className="p-4 bg-[#F8F7F4]/60">
-                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#111113]/60 mb-1">
-                        <HardDrive className="h-3.5 w-3.5 text-[#111113]" />
+                    <div className="p-4 bg-paper/60">
+                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-ink/60 mb-1">
+                        <HardDrive className="h-3.5 w-3.5 text-ink" />
                         <span>Storage &amp; RAM</span>
                       </div>
-                      <div className="font-mono text-lg font-bold text-[#111113]">
+                      <div className="font-mono text-lg font-bold text-ink">
                         {gadget.storage || "256GB NVMe"}
                       </div>
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-[#111113]/55 mt-0.5">
+                      <div className="text-caption font-mono uppercase tracking-wider text-ink/55 mt-0.5">
                         Factory Partition
                       </div>
                     </div>
 
-                    <div className="p-4 bg-[#F8F7F4]/60">
-                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#111113]/60 mb-1">
-                        <Lock className="h-3.5 w-3.5 text-[#15803d]" />
+                    <div className="p-4 bg-paper/60">
+                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-ink/60 mb-1">
+                        <Lock className="h-3.5 w-3.5 text-trust-strong" />
                         <span>Activation Lock</span>
                       </div>
-                      <div className="font-mono text-lg font-bold text-[#15803d]">
+                      <div className="font-mono text-lg font-bold text-trust-strong">
                         Clean / Off
                       </div>
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-[#111113]/55 mt-0.5">
+                      <div className="text-caption font-mono uppercase tracking-wider text-ink/55 mt-0.5">
                         No MDM / No iCloud
                       </div>
                     </div>
 
-                    <div className="p-4 bg-[#F8F7F4]/60">
-                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#111113]/60 mb-1">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#15803d]" />
+                    <div className="p-4 bg-paper/60">
+                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-ink/60 mb-1">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-trust-strong" />
                         <span>FaceID / Biometrics</span>
                       </div>
-                      <div className="font-mono text-lg font-bold text-[#111113]">
+                      <div className="font-mono text-lg font-bold text-ink">
                         Passed 100%
                       </div>
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-[#111113]/55 mt-0.5">
+                      <div className="text-caption font-mono uppercase tracking-wider text-ink/55 mt-0.5">
                         Sensor Clean
                       </div>
                     </div>
 
-                    <div className="p-4 bg-[#F8F7F4]/60">
-                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#111113]/60 mb-1">
-                        <Smartphone className="h-3.5 w-3.5 text-[#111113]" />
+                    <div className="p-4 bg-paper/60">
+                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-ink/60 mb-1">
+                        <Smartphone className="h-3.5 w-3.5 text-ink" />
                         <span>Display / TrueTone</span>
                       </div>
-                      <div className="font-mono text-lg font-bold text-[#111113]">
+                      <div className="font-mono text-lg font-bold text-ink">
                         Active OEM
                       </div>
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-[#111113]/55 mt-0.5">
+                      <div className="text-caption font-mono uppercase tracking-wider text-ink/55 mt-0.5">
                         No Dead Pixels
                       </div>
                     </div>
 
-                    <div className="p-4 bg-[#F8F7F4]/60">
-                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#111113]/60 mb-1">
-                        <ShieldCheck className="h-3.5 w-3.5 text-[#15803d]" />
+                    <div className="p-4 bg-paper/60">
+                      <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-ink/60 mb-1">
+                        <ShieldCheck className="h-3.5 w-3.5 text-trust-strong" />
                         <span>Carrier Status</span>
                       </div>
-                      <div className="font-mono text-lg font-bold text-[#111113]">
+                      <div className="font-mono text-lg font-bold text-ink">
                         Unlocked
                       </div>
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-[#111113]/55 mt-0.5">
+                      <div className="text-caption font-mono uppercase tracking-wider text-ink/55 mt-0.5">
                         All Physical / eSIMs
                       </div>
                     </div>
@@ -647,19 +647,19 @@ export default function GadgetDetailPage({
                 </div>
 
                 {/* Seller Description */}
-                <div className="border border-[#111113]/12 bg-white p-6 space-y-3">
-                  <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-[#111113]">
+                <div className="border border-ink-faint bg-surface p-6 space-y-3 rounded-card">
+                  <h3 className="font-primary text-base font-bold tracking-[-0.02em] text-ink">
                     Merchant Condition Notes
                   </h3>
-                  <p className="font-secondary text-sm text-[#111113]/75 leading-relaxed">
+                  <p className="font-secondary text-sm text-ink/75 leading-relaxed">
                     Device was bought brand new from an authorized reseller and
                     kept inside a protective case with a tempered glass screen
                     protector since day one. Flawless front display, comes with
                     original fast charging brick and braided USB-C cable.
                   </p>
 
-                  <div className="pt-3 border-t border-[#111113]/12 flex items-center gap-2 text-xs font-mono text-[#111113]/65">
-                    <MapPin className="h-3.5 w-3.5 text-[#FF5A25]" />
+                  <div className="pt-3 border-t border-ink-faint flex items-center gap-2 text-xs font-mono text-ink/65">
+                    <MapPin className="h-3.5 w-3.5 text-accent-orange" />
                     <span>
                       Dispatches from: {gadget.location} (Insured Tracked
                       Courier)
@@ -673,15 +673,15 @@ export default function GadgetDetailPage({
                   ============================================================= */}
               <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
                 {/* 1. Escrow Lock Purchase Card */}
-                <div className="border border-[#111113]/15 bg-white">
-                  <div className="bg-[#111113] text-white px-6 py-4 flex items-center justify-between">
+                <div className="border border-ink/15 bg-surface rounded-card overflow-hidden">
+                  <div className="bg-ink text-white px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#22c55e]" />
-                      <span className="font-mono text-[11px] uppercase tracking-[0.15em] font-bold">
+                      <span className="h-2 w-2 rounded-full bg-trust" />
+                      <span className="font-mono text-meta uppercase tracking-[0.15em] font-bold">
                         Custodial Escrow Desk
                       </span>
                     </div>
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF5A25] font-bold">
+                    <span className="font-mono text-caption uppercase tracking-wider text-accent-orange font-bold">
                       100% Fraud Shield
                     </span>
                   </div>
@@ -691,21 +691,21 @@ export default function GadgetDetailPage({
                       <span className="label block mb-1">
                         Verified Hardware Listing
                       </span>
-                      <h1 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                      <h1 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-ink">
                         {gadget.title}
                       </h1>
                     </div>
 
                     {/* Price Callout */}
-                    <div className="p-4 bg-[#F0EFEA] border border-[#111113]/12">
-                      <div className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/60 mb-1">
+                    <div className="p-4 bg-surface-muted border border-ink-faint rounded-card">
+                      <div className="font-mono text-caption uppercase tracking-wider text-ink/60 mb-1">
                         Agreed Marketplace Price
                       </div>
-                      <div className="font-mono text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                      <div className="font-mono text-3xl font-bold tracking-[-0.04em] text-ink">
                         {formatKoboToNgn(priceKobo)}
                       </div>
-                      <div className="font-mono text-[11px] text-[#15803d] flex items-center gap-1.5 mt-1.5 font-bold">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-[#15803d]" />
+                      <div className="font-mono text-meta text-trust-strong flex items-center gap-1.5 mt-1.5 font-bold">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-trust-strong" />
                         <span>
                           Locked in Paystack Custody until 48H inspection passes
                         </span>
@@ -713,30 +713,30 @@ export default function GadgetDetailPage({
                     </div>
 
                     {/* Escrow Fee Breakdown (Integer Kobo) */}
-                    <div className="space-y-2.5 font-secondary text-xs border-y border-[#111113]/12 py-4">
+                    <div className="space-y-2.5 font-secondary text-xs border-y border-ink-faint py-4">
                       <div className="flex items-center justify-between">
-                        <span className="text-[#111113]/65">
+                        <span className="text-ink/65">
                           Custodial Escrow Fee (2.5%)
                         </span>
-                        <span className="font-mono font-semibold text-[#111113]">
+                        <span className="font-mono font-semibold text-ink">
                           +{formatKoboToNgn(escrowFeeKobo)}
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span className="text-[#111113]/65">
+                        <span className="text-ink/65">
                           Tracked &amp; Insured Courier Waybill
                         </span>
-                        <span className="font-mono font-semibold text-[#111113]">
+                        <span className="font-mono font-semibold text-ink">
                           +{formatKoboToNgn(shippingFeeKobo)}
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between pt-2.5 border-t border-[#111113]/12 font-bold">
-                        <span className="text-[#111113]">
+                      <div className="flex items-center justify-between pt-2.5 border-t border-ink-faint font-bold">
+                        <span className="text-ink">
                           Total Locked in Escrow Vault
                         </span>
-                        <span className="font-mono text-base text-[#111113]">
+                        <span className="font-mono text-base text-ink">
                           {formatKoboToNgn(totalDepositKobo)}
                         </span>
                       </div>
@@ -744,7 +744,7 @@ export default function GadgetDetailPage({
 
                     {/* Primary Pill CTA */}
                     {!isRegisteredListing && (
-                      <p role={currentListingStatus === "loading" ? "status" : "alert"} className="text-xs text-[#975a16]">
+                      <p role={currentListingStatus === "loading" ? "status" : "alert"} className="text-xs text-state-warning-strong">
                         {currentListingStatus === "loading"
                           ? "Confirming this listing with the marketplace..."
                           : "This is a preview item, not a registered listing, so it cannot be purchased."}
@@ -754,15 +754,15 @@ export default function GadgetDetailPage({
                       type="button"
                       onClick={handleLockEscrow}
                       disabled={!isRegisteredListing}
-                      className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="btn-primary w-full h-12 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      <Lock className="h-4 w-4 text-[#22c55e]" />
+                      <Lock className="h-4 w-4 text-trust" />
                       <span>Lock Funds &amp; Start Escrow Trade</span>
                       <ArrowRight className="h-4 w-4" />
                     </button>
 
                     {/* 48-Hour SLA Banner */}
-                    <div className="border border-[#ecc94b]/60 bg-[#ecc94b]/15 p-3.5 flex items-start gap-2.5 text-xs text-[#975a16]">
+                    <div className="border border-state-warning/60 bg-state-warning/15 p-3.5 flex items-start gap-2.5 text-xs text-state-warning-strong">
                       <Clock className="h-4 w-4 shrink-0 mt-0.5" />
                       <span>
                         <strong>48-Hour Guarantee:</strong> The merchant does
@@ -774,45 +774,45 @@ export default function GadgetDetailPage({
                 </div>
 
                 {/* 2. Seller Identity Profile Card */}
-                <div className="border border-[#111113]/12 bg-white p-5 space-y-4">
+                <div className="border border-ink-faint bg-surface p-5 space-y-4 rounded-card">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-[#111113] text-white flex items-center justify-center font-mono font-bold text-xs">
+                      <div className="h-10 w-10 rounded-full bg-ink text-white flex items-center justify-center font-mono font-bold text-xs">
                         {(gadget.sellerName || "AT").slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <div className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                        <div className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
                           {gadget.sellerName}
                         </div>
-                        <div className="flex items-center gap-1 font-secondary text-xs text-[#111113]/65">
-                          <MapPin className="h-3 w-3 text-[#FF5A25]" />
+                        <div className="flex items-center gap-1 font-secondary text-xs text-ink/65">
+                          <MapPin className="h-3 w-3 text-accent-orange" />
                           <span>{gadget.location}</span>
                         </div>
                       </div>
                     </div>
 
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#15803d]/10 px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[#15803d]">
-                      <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-trust-strong/10 px-2.5 py-0.5 text-caption font-mono font-bold uppercase tracking-wider text-trust-strong">
+                      <ShieldCheck className="h-3 w-3 text-trust" />
                       <span>SmileID NIN</span>
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 border border-[#111113]/12 bg-[#F8F7F4] divide-x divide-[#111113]/12 text-center font-mono text-xs">
+                  <div className="grid grid-cols-3 border border-ink-faint bg-paper divide-x divide-ink-faint text-center font-mono text-xs rounded-card">
                     <div className="p-2.5">
-                      <div className="font-bold text-[#111113]">4.95 ★</div>
-                      <div className="text-[10px] uppercase tracking-wider text-[#111113]/60">
+                      <div className="font-bold text-ink">4.95 ★</div>
+                      <div className="text-caption uppercase tracking-wider text-ink/60">
                         Rating
                       </div>
                     </div>
                     <div className="p-2.5">
-                      <div className="font-bold text-[#111113]">42</div>
-                      <div className="text-[10px] uppercase tracking-wider text-[#111113]/60">
+                      <div className="font-bold text-ink">42</div>
+                      <div className="text-caption uppercase tracking-wider text-ink/60">
                         Escrows
                       </div>
                     </div>
                     <div className="p-2.5">
-                      <div className="font-bold text-[#15803d]">100%</div>
-                      <div className="text-[10px] uppercase tracking-wider text-[#111113]/60">
+                      <div className="font-bold text-trust-strong">100%</div>
+                      <div className="text-caption uppercase tracking-wider text-ink/60">
                         Settled
                       </div>
                     </div>
@@ -825,12 +825,12 @@ export default function GadgetDetailPage({
       </main>
 
       {/* Sticky Mobile Bottom Bar */}
-      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white border-t border-[#111113]/15 p-3.5 flex items-center justify-between gap-3">
+      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-surface border-t border-ink/15 p-3.5 flex items-center justify-between gap-3">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/60">
+          <div className="font-mono text-caption uppercase tracking-wider text-ink/60">
             Price in Escrow
           </div>
-          <div className="font-mono text-lg font-bold text-[#111113]">
+          <div className="font-mono text-lg font-bold text-ink">
             {formatKoboToNgn(priceKobo)}
           </div>
         </div>
@@ -839,9 +839,9 @@ export default function GadgetDetailPage({
           type="button"
           onClick={handleLockEscrow}
           disabled={!isRegisteredListing}
-          className="btn-primary h-11 px-6 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-primary h-11 px-6 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
+          <Lock className="h-3.5 w-3.5 text-trust" />
           <span>Lock Funds</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </button>

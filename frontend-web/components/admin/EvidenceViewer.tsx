@@ -69,15 +69,15 @@ export function EvidenceViewer({
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white flex flex-col h-[520px] overflow-hidden",
+        "border border-ink-faint bg-surface flex flex-col h-[520px] overflow-hidden rounded-ui",
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#111113]/12 bg-[#F8F7F4]">
+      <div className="flex items-center justify-between p-4 border-b border-ink-faint bg-paper">
         <div className="flex items-center gap-2">
-          <Camera className="h-4 w-4 text-[#111113]" />
-          <h4 className="font-primary text-xs font-bold text-[#111113] tracking-[-0.02em]">
+          <Camera className="h-4 w-4 text-ink" />
+          <h4 className="font-primary text-xs font-bold text-ink tracking-[-0.02em]">
             Submitted Forensic Evidence ({assets.length} Assets)
           </h4>
         </div>
@@ -87,7 +87,7 @@ export function EvidenceViewer({
       </div>
 
       {/* Main Preview Area */}
-      <div className="flex-1 bg-[#111113] relative flex items-center justify-center p-4 overflow-hidden">
+      <div className="flex-1 bg-ink relative flex items-center justify-center p-4 overflow-hidden">
         {isLoading ? (
           <p role="status" className="text-sm text-white/75">Loading private evidence...</p>
         ) : error ? (
@@ -112,16 +112,16 @@ export function EvidenceViewer({
         )}
 
         {activeAsset && !isLoading && !error && (
-          <div className="absolute bottom-3 inset-x-3 bg-[#111113]/85 backdrop-blur-xs text-white p-2.5 text-xs font-secondary flex items-center justify-between gap-2">
+          <div className="absolute bottom-3 inset-x-3 bg-ink/85 backdrop-blur-xs text-white p-2.5 text-xs font-secondary flex items-center justify-between gap-2">
             <div>
               <span className="font-primary font-bold text-xs block">
                 {activeAsset.title}
               </span>
-              <span className="text-[11px] text-white/75">
+              <span className="text-meta text-white/75">
                 {activeAsset.notes}
               </span>
             </div>
-            <span className="font-mono text-[10px] uppercase font-bold px-2 py-0.5 bg-white/15 text-[#22c55e]">
+            <span className="font-mono text-caption uppercase font-bold px-2 py-0.5 bg-white/15 text-trust">
               {activeAsset.source} evidence
             </span>
           </div>
@@ -130,7 +130,7 @@ export function EvidenceViewer({
 
       {/* Thumbnail Strip */}
       {assets.length > 0 && (
-        <div className="p-3 bg-white border-t border-[#111113]/12 flex items-center gap-2 overflow-x-auto">
+        <div className="p-3 bg-surface border-t border-ink-faint flex items-center gap-2 overflow-x-auto">
           {assets.map((item) => (
             <button
               key={item.id}
@@ -139,18 +139,18 @@ export function EvidenceViewer({
               className={cn(
                 "h-16 w-20 border overflow-hidden shrink-0 relative transition-all duration-200 ease-out cursor-pointer",
                 activeAssetId === item.id
-                  ? "border-[#111113] ring-2 ring-[#111113]"
-                  : "border-[#111113]/15 opacity-75 hover:opacity-100"
+                  ? "border-ink ring-2 ring-ink"
+                  : "border-ink/15 opacity-75 hover:opacity-100"
               )}
             >
               {item.type === "video" ? (
-                <div className="h-full w-full flex items-center justify-center bg-[#111113] text-white">
+                <div className="h-full w-full flex items-center justify-center bg-ink text-white">
                   <Film className="h-5 w-5" />
                 </div>
               ) : (
                 <img src={item.url} alt={item.title} className="h-full w-full object-cover" />
               )}
-              <span className="absolute bottom-0 inset-x-0 bg-[#111113]/75 text-[8px] font-mono text-white text-center py-0.5 uppercase">
+              <span className="absolute bottom-0 inset-x-0 bg-ink/75 text-[8px] font-mono text-white text-center py-0.5 uppercase">
                 {item.source}
               </span>
             </button>

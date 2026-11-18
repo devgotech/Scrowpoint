@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
  * EmptyState Component for Scrowpoint.
  *
  * Requirements (4_ui_system.md & UI Context Spec 3, §3):
- * - Corner Radius: --radius-card (8px -> rounded-[8px]).
+ * - Corner Radius: --radius-card (8px -> rounded-ui).
  * - Subtle monochrome Lucide icon sized at `w-12 h-12` with soft circular background.
- * - Bold Heading (font-primary text-lg font-medium text-[#020617]).
- * - Descriptive subtext (font-secondary text-sm text-[#64748b] max-w-md).
+ * - Bold Heading (font-primary text-lg font-medium text-slate-950).
+ * - Descriptive subtext (font-secondary text-sm text-slate-500 max-w-md).
  * - Optional actionable `<Button>` (supports onAction callback or href navigation) with 4px control radius.
  * - Transitions: strict duration-200 ease-out transitions.
  */
@@ -74,22 +74,22 @@ export function EmptyState({
       role="status"
       aria-live="polite"
       className={cn(
-        "flex flex-col items-center justify-center text-center p-8 sm:p-12 w-full border border-dashed border-[#111113]/20 bg-white transition-all duration-200 ease-out",
+        "flex flex-col items-center justify-center text-center p-8 sm:p-12 w-full border border-dashed border-ink/20 bg-surface transition-all duration-200 ease-out rounded-card",
         className
       )}
     >
       {/* 1. Subtle, monochrome Lucide icon with warm circular backdrop */}
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#F0EFEA] text-[#111113]/65">
-        <Icon className="h-8 w-8 text-[#111113]/65" aria-hidden="true" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-muted text-ink/65">
+        <Icon className="h-8 w-8 text-ink/65" aria-hidden="true" />
       </div>
 
       {/* 2. Heading (Space Grotesk) */}
-      <h3 className="font-primary text-lg font-bold tracking-[-0.03em] text-[#111113]">
+      <h3 className="font-primary text-lg font-bold tracking-[-0.03em] text-ink">
         {title}
       </h3>
 
       {/* 3. Descriptive Subtext (Plus Jakarta Sans) */}
-      <p className="mt-2 max-w-md font-secondary text-sm text-[#111113]/65 leading-relaxed">
+      <p className="mt-2 max-w-md font-secondary text-sm text-ink/65 leading-relaxed">
         {description}
       </p>
 

@@ -17,7 +17,7 @@ import {
  *
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Deep Carbon Ink (#111113)
- * - Sharp 0px architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
+ * - Sharp 0px architectural cards (border-ink-faint) paired with 999px pill primary CTAs
  */
 
 export interface PricingPageProps {
@@ -39,41 +39,41 @@ export default function PricingPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       {/* 1. Global Navbar */}
       <Navbar />
 
       <main className="flex-1 w-full">
         {/* Header Breadcrumb & Title */}
-        <div className="bg-white border-b border-[#111113]/12 py-10 sm:py-14">
+        <div className="bg-surface border-b border-ink-faint py-10 sm:py-14">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-4">
               <Link
                 href="/"
                 onClick={onBackToHome}
-                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Home</span>
               </Link>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="font-bold text-[#111113]">
+              <span className="font-bold text-ink">
                 Pricing &amp; Calculator
               </span>
             </div>
 
             <div className="max-w-3xl space-y-3">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.15em] text-[#15803d] font-bold">
-                <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.15em] text-trust-strong font-bold">
+                <Lock className="h-3.5 w-3.5 text-trust" />
                 <span>No Hidden Margins • Pure Custodial Settlement</span>
               </div>
-              <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] uppercase leading-[0.95]">
+              <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-ink uppercase leading-[0.95]">
                 TRANSPARENT ESCROW FEE STRUCTURE
-                <span className="text-[#FF5A25]">.</span>
+                <span className="text-accent-orange">.</span>
               </h1>
-              <p className="font-secondary text-sm sm:text-base text-[#111113]/70 leading-relaxed max-w-2xl">
+              <p className="font-secondary text-sm sm:text-base text-ink/70 leading-relaxed max-w-2xl">
                 We charge a low tiered fee on successful transactions. Sellers
                 always receive 100% of their asking price, while buyer funds
                 lock in segregated Paystack custody with an enforceable 48-hour
@@ -90,11 +90,11 @@ export default function PricingPage({
               <span className="label block mb-1">
                 [01] Custodial Math Simulator
               </span>
-              <h2 className="font-primary text-2xl sm:text-3xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
+              <h2 className="font-primary text-2xl sm:text-3xl font-bold tracking-[-0.03em] text-ink uppercase">
                 Instant Protection Simulation
-                <span className="text-[#FF5A25]">.</span>
+                <span className="text-accent-orange">.</span>
               </h2>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
                 Adjust the gadget price to calculate buyer deposit and 100%
                 merchant net payout.
               </p>
@@ -112,16 +112,16 @@ export default function PricingPage({
         {/* Section 2: Pricing Tier Cards */}
         <section
           aria-label="Pricing Tiers"
-          className="border-t border-[#111113]/12 bg-white py-14 sm:py-20"
+          className="border-t border-ink-faint bg-surface py-14 sm:py-20"
         >
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8 space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <span className="label block">[02] Tiered Custodial Rates</span>
-              <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
+              <h2 className="font-primary text-2xl sm:text-4xl font-bold tracking-[-0.03em] text-ink uppercase">
                 Every Gadget Category Covered
-                <span className="text-[#FF5A25]">.</span>
+                <span className="text-accent-orange">.</span>
               </h2>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70">
                 Select any tier below to simulate representative values in the
                 calculator above.
               </p>
@@ -132,21 +132,21 @@ export default function PricingPage({
         </section>
 
         {/* Section 3: FAQ & Settlement Terms */}
-        <section className="border-t border-[#111113]/12 bg-[#F8F7F4] py-14 sm:py-20">
+        <section className="border-t border-ink-faint bg-paper py-14 sm:py-20">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="max-w-2xl mx-auto text-center mb-10 space-y-2">
               <span className="label block">[03] Settlement FAQ</span>
-              <h3 className="font-primary text-2xl sm:text-3xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
+              <h3 className="font-primary text-2xl sm:text-3xl font-bold tracking-[-0.03em] text-ink uppercase">
                 Frequently Asked Escrow Questions
-                <span className="text-[#FF5A25]">.</span>
+                <span className="text-accent-orange">.</span>
               </h3>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70">
                 How custody, payouts, and chargeback protection work on
                 Scrowpoint.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 border border-[#111113]/12 bg-white divide-y md:divide-x divide-[#111113]/12 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 border border-ink-faint bg-surface divide-y md:divide-x divide-ink-faint max-w-5xl mx-auto rounded-card">
               {[
                 {
                   q: "When does the seller get paid?",
@@ -166,11 +166,11 @@ export default function PricingPage({
                 },
               ].map((faq, i) => (
                 <div key={i} className="p-6 space-y-2.5">
-                  <div className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] flex items-start gap-2.5">
-                    <HelpCircle className="h-4 w-4 text-[#FF5A25] shrink-0 mt-0.5" />
+                  <div className="font-primary text-sm font-bold tracking-[-0.02em] text-ink flex items-start gap-2.5">
+                    <HelpCircle className="h-4 w-4 text-accent-orange shrink-0 mt-0.5" />
                     <span>{faq.q}</span>
                   </div>
-                  <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed pl-6">
+                  <p className="font-secondary text-xs text-ink/70 leading-relaxed pl-6">
                     {faq.a}
                   </p>
                 </div>

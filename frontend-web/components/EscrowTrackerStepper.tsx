@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  *
  * Requirements (4_ui_system.md & UI Context Spec 2 Tier 3):
  * - Macro-view timeline component located in the page body of `/escrow/[id]`.
- * - Corner Radius: --radius-card (8px -> rounded-[8px]). Controls / inner cards: rounded-[4px].
+ * - Corner Radius: --radius-card (8px -> rounded-ui). Controls / inner cards: rounded-ui.
  * - Distinct views:
  *   - Desktop (>=768px): Full horizontal stepper timeline with connecting status lines.
  *   - Mobile (<768px): Vertical stepper timeline with full detail descriptions and timestamps.
@@ -149,18 +149,18 @@ export function EscrowTrackerStepper({
       role="region"
       aria-label="Escrow Transaction Stepper"
       className={cn(
-        "w-full border border-[#111113]/12 bg-white p-6 transition-all duration-200 ease-out",
+        "w-full border border-ink-faint bg-surface p-6 transition-all duration-200 ease-out rounded-card",
         className
       )}
     >
       {/* Header Metadata */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[#111113]/12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-ink-faint">
         <div>
           <span className="label">
             Escrow Timeline Tracker
           </span>
-          <h2 className="font-primary text-lg font-bold tracking-[-0.03em] text-[#111113] mt-0.5">
-            Order Reference: <span className="font-mono font-semibold text-[#111113]">{orderNumber}</span>
+          <h2 className="font-primary text-lg font-bold tracking-[-0.03em] text-ink mt-0.5">
+            Order Reference: <span className="font-mono font-semibold text-ink">{orderNumber}</span>
           </h2>
         </div>
 
@@ -171,7 +171,7 @@ export function EscrowTrackerStepper({
               variant="trust"
               className="gap-1.5 px-3 py-1 text-xs font-semibold animate-pulse"
             >
-              <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
+              <Lock className="h-3.5 w-3.5 text-trust" />
               <span>FUNDS HELD (ACTIVE VAULT)</span>
             </Badge>
           ) : currentState === "disputed" ? (
@@ -179,7 +179,7 @@ export function EscrowTrackerStepper({
               variant="warning"
               className="gap-1.5 px-3 py-1 text-xs font-semibold"
             >
-              <ShieldAlert className="h-3.5 w-3.5 text-[#ecc94b]" />
+              <ShieldAlert className="h-3.5 w-3.5 text-state-warning" />
               <span>DISPUTE ARBITRATION</span>
             </Badge>
           ) : currentState === "completed" ? (
@@ -187,7 +187,7 @@ export function EscrowTrackerStepper({
               variant="trust"
               className="gap-1.5 px-3 py-1 text-xs font-semibold"
             >
-              <CheckCircle2 className="h-3.5 w-3.5 text-[#22c55e]" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-trust" />
               <span>ESCROW SETTLED</span>
             </Badge>
           ) : (
@@ -205,7 +205,7 @@ export function EscrowTrackerStepper({
       <div className="hidden md:block pt-8 pb-4">
         <div className="relative flex items-center justify-between">
           {/* Background Connecting Bar */}
-          <div className="absolute top-5 left-6 right-6 h-0.5 bg-[#111113]/12 -z-0" />
+          <div className="absolute top-5 left-6 right-6 h-0.5 bg-ink-faint -z-0" />
 
           {/* Stepper Node Items */}
           {steps.map((step) => {
@@ -221,14 +221,14 @@ export function EscrowTrackerStepper({
                   className={cn(
                     "flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-200 ease-out",
                     step.isCompleted
-                      ? "border-[#22c55e] bg-[#22c55e] text-white"
+                      ? "border-trust bg-trust text-white"
                       : isFundsHeld
-                      ? "border-[#22c55e] bg-[#22c55e]/15 text-[#15803d] ring-4 ring-[#22c55e]/20 animate-pulse"
+                      ? "border-trust bg-trust/15 text-trust-strong ring-4 ring-trust/20 animate-pulse"
                       : step.isCurrent && step.isWarning
-                      ? "border-[#ecc94b] bg-[#ecc94b]/20 text-[#975a16] ring-4 ring-[#ecc94b]/20"
+                      ? "border-state-warning bg-state-warning/20 text-state-warning-strong ring-4 ring-state-warning/20"
                       : step.isCurrent
-                      ? "border-[#111113] bg-[#111113] text-white ring-4 ring-[#111113]/10"
-                      : "border-[#111113]/15 bg-white text-[#111113]/50"
+                      ? "border-ink bg-ink text-white ring-4 ring-ink/10"
+                      : "border-ink/15 bg-surface text-ink/50"
                   )}
                 >
                   {step.isCompleted ? (
@@ -254,11 +254,11 @@ export function EscrowTrackerStepper({
                     "mt-3 font-primary text-xs font-medium tracking-[-0.02em] leading-tight",
                     step.isCurrent
                       ? isFundsHeld
-                        ? "text-[#15803d] font-bold"
-                        : "text-[#111113] font-bold"
+                        ? "text-trust-strong font-bold"
+                        : "text-ink font-bold"
                       : step.isCompleted
-                      ? "text-[#111113]"
-                      : "text-[#111113]/55"
+                      ? "text-ink"
+                      : "text-ink/55"
                   )}
                 >
                   {step.title}
@@ -266,11 +266,11 @@ export function EscrowTrackerStepper({
 
                 {/* Subtitle / Timestamp */}
                 {step.timestamp ? (
-                  <span className="mt-1 font-mono text-[10px] text-[#111113]/55">
+                  <span className="mt-1 font-mono text-caption text-ink/55">
                     {step.timestamp.split("•")[1] || step.timestamp}
                   </span>
                 ) : (
-                  <span className="mt-1 text-[10px] text-[#111113]/45 font-secondary">Pending</span>
+                  <span className="mt-1 text-caption text-ink/45 font-secondary">Pending</span>
                 )}
               </div>
             );
@@ -278,19 +278,19 @@ export function EscrowTrackerStepper({
         </div>
 
         {/* Active Stage Callout Box */}
-        <div className="mt-8 bg-[#F8F7F4] border border-[#111113]/12 p-4">
+        <div className="mt-8 bg-paper border border-ink-faint p-4 rounded-card">
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center bg-[#22c55e]/15 text-[#15803d]">
-              <Lock className="h-4 w-4 text-[#22c55e]" />
+            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center bg-trust/15 text-trust-strong">
+              <Lock className="h-4 w-4 text-trust" />
             </div>
             <div>
-              <h4 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+              <h4 className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
                 Current Escrow Status:{" "}
-                <span className="text-[#15803d] font-semibold">
+                <span className="text-trust-strong font-semibold">
                   {currentState === "funds_held" ? "Funds Held in Institutional Vault" : currentState.replace("_", " ").toUpperCase()}
                 </span>
               </h4>
-              <p className="mt-1 font-secondary text-xs text-[#111113]/70 leading-relaxed">
+              <p className="mt-1 font-secondary text-xs text-ink/70 leading-relaxed">
                 {steps.find((s) => s.isCurrent)?.description ||
                   "Funds are protected by Scrowpoint escrow. Both buyer and seller are shielded from fraudulent chargebacks and counterfeit items."}
               </p>
@@ -305,7 +305,7 @@ export function EscrowTrackerStepper({
       <div className="block md:hidden pt-6">
         <div className="relative pl-6 space-y-6">
           {/* Vertical Connecting Line */}
-          <div className="absolute top-2 bottom-4 left-[21px] w-0.5 bg-[#111113]/12" />
+          <div className="absolute top-2 bottom-4 left-[21px] w-0.5 bg-ink-faint" />
 
           {steps.map((step) => {
             const isFundsHeld = step.id === "step_funds_held" && step.isCurrent;
@@ -317,14 +317,14 @@ export function EscrowTrackerStepper({
                   className={cn(
                     "absolute -left-6 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-all duration-200 ease-out",
                     step.isCompleted
-                      ? "border-[#22c55e] bg-[#22c55e] text-white"
+                      ? "border-trust bg-trust text-white"
                       : isFundsHeld
-                      ? "border-[#22c55e] bg-[#22c55e]/15 text-[#15803d] ring-4 ring-[#22c55e]/20 animate-pulse"
+                      ? "border-trust bg-trust/15 text-trust-strong ring-4 ring-trust/20 animate-pulse"
                       : step.isCurrent && step.isWarning
-                      ? "border-[#ecc94b] bg-[#ecc94b]/20 text-[#975a16] ring-4 ring-[#ecc94b]/20"
+                      ? "border-state-warning bg-state-warning/20 text-state-warning-strong ring-4 ring-state-warning/20"
                       : step.isCurrent
-                      ? "border-[#111113] bg-[#111113] text-white ring-4 ring-[#111113]/10"
-                      : "border-[#111113]/15 bg-white text-[#111113]/50"
+                      ? "border-ink bg-ink text-white ring-4 ring-ink/10"
+                      : "border-ink/15 bg-surface text-ink/50"
                   )}
                 >
                   {step.isCompleted ? (
@@ -345,23 +345,23 @@ export function EscrowTrackerStepper({
                       className={cn(
                         "font-primary text-sm font-medium tracking-[-0.02em]",
                         isFundsHeld
-                          ? "text-[#15803d] font-bold"
+                          ? "text-trust-strong font-bold"
                           : step.isCurrent
-                          ? "text-[#111113] font-bold"
-                          : "text-[#111113]"
+                          ? "text-ink font-bold"
+                          : "text-ink"
                       )}
                     >
                       {step.title}
                     </h4>
 
                     {step.timestamp && (
-                      <span className="font-mono text-[10px] text-[#111113]/55">
+                      <span className="font-mono text-caption text-ink/55">
                         {step.timestamp.split("•")[1] || step.timestamp}
                       </span>
                     )}
                   </div>
 
-                  <p className="font-secondary text-xs text-[#111113]/70 leading-relaxed">
+                  <p className="font-secondary text-xs text-ink/70 leading-relaxed">
                     {step.description}
                   </p>
                 </div>

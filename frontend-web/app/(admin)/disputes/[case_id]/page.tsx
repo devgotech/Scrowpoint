@@ -101,50 +101,50 @@ export default function ArbitrationRoomPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full py-8 sm:py-12">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 space-y-8">
           {/* Top Breadcrumb */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#111113]/12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-ink-faint">
             <div>
               <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-2">
                 <Link
                   href="/admin/dashboard"
                   onClick={onBackToDashboard}
-                  className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
                   <span>Dispute Queue</span>
                 </Link>
-                <span aria-hidden="true" className="text-[#111113]/25">
+                <span aria-hidden="true" className="text-ink/25">
                   /
                 </span>
-                <span className="font-bold text-[#111113]">
+                <span className="font-bold text-ink">
                   Arbitration Chamber ({caseId})
                 </span>
               </div>
-              <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
+              <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
                 DISPUTE ADJUDICATION: IPHONE 14 PRO MAX
-                <span className="text-[#FF5A25]">.</span>
+                <span className="text-accent-orange">.</span>
               </h1>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
                 Order:{" "}
-                <span className="font-mono font-bold text-[#111113]">
+                <span className="font-mono font-bold text-ink">
                   SP-ORD-9421
                 </span>{" "}
                 • Buyer: Adeola Fashola • Seller: Chidi Tech Hub • Vault
                 Balance:{" "}
-                <span className="font-mono font-bold text-[#111113]">
+                <span className="font-mono font-bold text-ink">
                   ₦850,000 NGN
                 </span>
               </p>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f56565]/15 border border-[#f56565]/30 text-[#c53030] px-3.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider">
-                <ShieldAlert className="h-3.5 w-3.5 text-[#c53030]" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-state-error/15 border border-state-error/30 text-state-error-strong px-3.5 py-1.5 font-mono text-caption font-bold uppercase tracking-wider">
+                <ShieldAlert className="h-3.5 w-3.5 text-state-error-strong" />
                 <span>Vault Frozen in Paystack Custody</span>
               </span>
             </div>
@@ -152,8 +152,8 @@ export default function ArbitrationRoomPage({
 
           {/* Verdict Banner Feedback */}
           {verdictMessage && (
-            <div className="p-4 border border-[#15803d]/40 bg-[#22c55e]/10 text-[#15803d] font-mono text-xs font-bold flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-[#15803d]" />
+            <div className="p-4 border border-trust-strong/40 bg-trust/10 text-trust-strong font-mono text-xs font-bold flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-trust-strong" />
               <span>{verdictMessage}</span>
             </div>
           )}

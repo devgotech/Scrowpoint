@@ -25,7 +25,7 @@ import { kycApi } from "@/lib/api";
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Warm Stone (#F0EFEA)
  * - Deep Carbon Ink (#111113), Vermilion Orange (#FF5A25), Forest Trust Green (#15803d)
- * - 0px sharp architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
+ * - 0px sharp architectural cards (border-ink-faint) paired with 999px pill primary CTAs
  */
 
 export type KycFlowState =
@@ -154,7 +154,7 @@ export default function VerifyIdentityPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Script
         src="https://cdn.usesmileid.com/inline/v12/js/script.min.js"
         strategy="afterInteractive"
@@ -166,20 +166,20 @@ export default function VerifyIdentityPage({
       <main className="flex-1 w-full py-8 sm:py-12">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
           {/* Breadcrumb */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-[#111113]/12">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-ink-faint">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em]">
               <Link
                 href="/"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Home</span>
               </Link>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="font-bold text-[#111113]">
+              <span className="font-bold text-ink">
                 SmileID Biometric KYC
               </span>
             </div>
@@ -193,23 +193,23 @@ export default function VerifyIdentityPage({
             <div className="max-w-4xl mx-auto space-y-8">
               {/* Unboxed Editorial Header */}
               <div className="text-center space-y-3">
-                <div className="flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-[0.15em] text-[#15803d] font-bold">
-                  <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                <div className="flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-[0.15em] text-trust-strong font-bold">
+                  <ShieldCheck className="h-4 w-4 text-trust" />
                   <span>SmileID Biometric Protocol</span>
                 </div>
-                <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
+                <h1 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-ink uppercase">
                   VERIFY IDENTITY TO LIST GADGETS
-                  <span className="text-[#FF5A25]">.</span>
+                  <span className="text-accent-orange">.</span>
                 </h1>
-                <p className="font-secondary text-sm sm:text-base text-[#111113]/70 max-w-xl mx-auto leading-relaxed">
+                <p className="font-secondary text-sm sm:text-base text-ink/70 max-w-xl mx-auto leading-relaxed">
                   To protect buyers from stolen devices and fraudulent bank
                   reversals, all merchants complete mandatory NIMC/BVN and 3D
                   liveness verification.
                 </p>
               </div>
 
-              <div className="mx-auto max-w-xl border border-[#111113]/12 bg-white p-6 sm:p-8 text-center space-y-5">
-                <p className="font-secondary text-sm text-[#111113]/70 leading-relaxed">
+              <div className="mx-auto max-w-xl border border-ink-faint bg-surface p-6 sm:p-8 text-center space-y-5 rounded-card">
+                <p className="font-secondary text-sm text-ink/70 leading-relaxed">
                   Smile ID will securely guide you through identity document capture,
                   biometric liveness, and consent. Scrowpoint receives the final result
                   directly from Smile ID and will not mark verification complete from
@@ -224,13 +224,13 @@ export default function VerifyIdentityPage({
                   type="button"
                   disabled={isSubmitting || !sdkReady}
                   onClick={handleStartVerification}
-                  className="btn-primary h-11 px-7 rounded-full bg-[#111113] hover:bg-[#FF5A25] disabled:opacity-50 text-xs font-mono uppercase tracking-wider font-bold text-white transition-colors inline-flex items-center gap-2"
+                  className="btn-primary h-11 px-7 rounded-full bg-ink hover:bg-accent-orange disabled:opacity-50 text-xs font-mono uppercase tracking-wider font-bold text-white transition-colors inline-flex items-center gap-2"
                 >
                   {isSubmitting ? (
                     <span>Opening secure verification...</span>
                   ) : (
                     <>
-                      <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                      <ShieldCheck className="h-4 w-4 text-trust" />
                       <span>{sdkReady ? "Start Smile ID Verification" : "Loading Smile ID..."}</span>
                     </>
                   )}
@@ -243,20 +243,20 @@ export default function VerifyIdentityPage({
               STATE 2: PENDING REVIEW
               ================================================================= */}
           {kycState === "pending_review" && (
-            <div className="max-w-xl mx-auto border border-[#111113]/12 bg-white p-8 text-center space-y-6">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center bg-[#ecc94b]/20 border border-[#ecc94b]/50 text-[#975a16]">
-                <Clock className="h-7 w-7 text-[#975a16] animate-spin" />
+            <div className="max-w-xl mx-auto border border-ink-faint bg-surface p-8 text-center space-y-6 rounded-card">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center bg-state-warning/20 border border-state-warning/50 text-state-warning-strong">
+                <Clock className="h-7 w-7 text-state-warning-strong animate-spin" />
               </div>
 
               <div className="space-y-2">
-                <span className="inline-flex items-center rounded-full bg-[#ecc94b]/20 px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#975a16]">
+                <span className="inline-flex items-center rounded-full bg-state-warning/20 px-3 py-0.5 font-mono text-caption font-bold uppercase tracking-widest text-state-warning-strong">
                   Verification Pending
                 </span>
-                <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
+                <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink uppercase">
                   Identity In Review with SmileID
-                  <span className="text-[#FF5A25]">.</span>
+                  <span className="text-accent-orange">.</span>
                 </h2>
-                <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed">
+                <p className="font-secondary text-xs sm:text-sm text-ink/70 leading-relaxed">
                   Your National Identity document and 3D biometric selfie have
                   been streamed to our validation engine. Typical turnaround is
                   under 5 minutes.
@@ -264,13 +264,13 @@ export default function VerifyIdentityPage({
               </div>
 
               {/* Locked State Notice */}
-              <div className="border border-[#111113]/12 bg-[#F0EFEA] p-4 text-left flex items-start gap-3">
-                <Lock className="h-5 w-5 text-[#111113] shrink-0 mt-0.5" />
+              <div className="border border-ink-faint bg-surface-muted p-4 text-left flex items-start gap-3 rounded-card">
+                <Lock className="h-5 w-5 text-ink shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <span className="font-primary text-xs font-bold text-[#111113] block">
+                  <span className="font-primary text-xs font-bold text-ink block">
                     Marketplace Listing Locked
                   </span>
-                  <span className="font-secondary text-xs text-[#111113]/70 leading-relaxed block">
+                  <span className="font-secondary text-xs text-ink/70 leading-relaxed block">
                     You cannot publish gadget listings or withdraw escrow
                     balances until your identity is verified.
                   </span>
@@ -281,7 +281,7 @@ export default function VerifyIdentityPage({
                 <button
                   type="button"
                   onClick={() => setKycState("active_form")}
-                  className="flex-1 h-11 border border-[#111113]/15 bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#111113] hover:border-[#111113] transition-colors"
+                  className="flex-1 h-11 border border-ink/15 bg-surface text-xs font-mono uppercase tracking-wider font-bold text-ink hover:border-ink transition-colors rounded-ui"
                 >
                   Edit Submission
                 </button>
@@ -289,7 +289,7 @@ export default function VerifyIdentityPage({
                 <button
                   type="button"
                   onClick={() => setKycState("approved")}
-                  className="btn-primary flex-1 h-11 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
+                  className="btn-primary flex-1 h-11 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
                 >
                   Check Status Refresh
                 </button>
@@ -301,28 +301,28 @@ export default function VerifyIdentityPage({
               STATE 3: REJECTED / RETRY (Uses --destructive #f56565 / #c53030)
               ================================================================= */}
           {kycState === "rejected_retry" && (
-            <div className="max-w-xl mx-auto border-2 border-[#f56565] bg-white p-8 space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-[#111113]/12">
-                <div className="flex h-12 w-12 items-center justify-center bg-[#f56565]/15 text-[#c53030]">
+            <div className="max-w-xl mx-auto border-2 border-state-error bg-surface p-8 space-y-6 rounded-card">
+              <div className="flex items-center gap-3 pb-4 border-b border-ink-faint">
+                <div className="flex h-12 w-12 items-center justify-center bg-state-error/15 text-state-error-strong">
                   <ShieldAlert className="h-6 w-6" />
                 </div>
                 <div>
-                  <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#c53030]">
+                  <span className="font-mono text-xs font-bold uppercase tracking-wider text-state-error-strong">
                     Verification Failed
                   </span>
-                  <h2 className="font-primary text-xl font-bold tracking-[-0.03em] text-[#111113]">
+                  <h2 className="font-primary text-xl font-bold tracking-[-0.03em] text-ink">
                     Biometric Check Rejected
                   </h2>
                 </div>
               </div>
 
               {/* Exact Rejection Reasons Callout */}
-              <div className="border border-[#f56565]/40 bg-[#f56565]/10 p-4 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#c53030]">
+              <div className="border border-state-error/40 bg-state-error/10 p-4 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-state-error-strong">
                   <AlertCircle className="h-4 w-4" />
                   <span>SmileID Flagged 2 Quality Issues:</span>
                 </div>
-                <ul className="list-disc list-inside text-xs font-secondary text-[#111113]/85 space-y-1.5 pl-1 leading-relaxed">
+                <ul className="list-disc list-inside text-xs font-secondary text-ink/85 space-y-1.5 pl-1 leading-relaxed">
                   <li>
                     <strong>Excessive Lighting Glare:</strong> Specular
                     highlights obscured your date of birth and NIN registration
@@ -335,7 +335,7 @@ export default function VerifyIdentityPage({
                 </ul>
               </div>
 
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 leading-relaxed">
                 Please retake your documents in an evenly lit room without
                 flash, and keep your face stationary inside the oval.
               </p>
@@ -344,7 +344,7 @@ export default function VerifyIdentityPage({
                 <button
                   type="button"
                   onClick={() => setKycState("active_form")}
-                  className="w-full h-12 rounded-full bg-[#c53030] hover:bg-[#9b2c2c] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
+                  className="w-full h-12 rounded-full bg-state-error-strong hover:bg-state-error-dark text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
                 >
                   <RotateCcw className="h-4 w-4" />
                   <span>Retry Biometric Verification</span>
@@ -357,46 +357,46 @@ export default function VerifyIdentityPage({
               STATE 4: APPROVED / VERIFIED
               ================================================================= */}
           {kycState === "approved" && (
-            <div className="max-w-xl mx-auto border border-[#111113]/15 bg-white p-8 text-center space-y-6">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#15803d]/10 border border-[#15803d]/30 text-[#15803d]">
-                <ShieldCheck className="h-7 w-7 text-[#15803d]" />
+            <div className="max-w-xl mx-auto border border-ink/15 bg-surface p-8 text-center space-y-6 rounded-card">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-trust-strong/10 border border-trust-strong/30 text-trust-strong">
+                <ShieldCheck className="h-7 w-7 text-trust-strong" />
               </div>
 
               <div className="space-y-2">
-                <span className="inline-flex items-center rounded-full bg-[#15803d]/10 px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#15803d]">
+                <span className="inline-flex items-center rounded-full bg-trust-strong/10 px-3 py-0.5 font-mono text-caption font-bold uppercase tracking-widest text-trust-strong">
                   Government ID Verified
                 </span>
-                <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
+                <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink uppercase">
                   Verified Merchant Status Active
-                  <span className="text-[#FF5A25]">.</span>
+                  <span className="text-accent-orange">.</span>
                 </h2>
-                <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed">
+                <p className="font-secondary text-xs sm:text-sm text-ink/70 leading-relaxed">
                   Your NIMC records and biometric selfie have been sealed in
                   your audit record. You can now post gadget listings with the
                   Verified Merchant Badge.
                 </p>
               </div>
 
-              <div className="border border-[#111113]/12 bg-[#F0EFEA] p-4 text-left font-mono text-xs space-y-2">
+              <div className="border border-ink-faint bg-surface-muted p-4 text-left font-mono text-xs space-y-2 rounded-card">
                 <div className="flex justify-between">
-                  <span className="text-[#111113]/65">
+                  <span className="text-ink/65">
                     Verification Method:
                   </span>
-                  <span className="font-bold text-[#111113]">
+                  <span className="font-bold text-ink">
                     SmileID 3D Liveness (NIN)
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#111113]/65">
+                  <span className="text-ink/65">
                     Trust Badge Granted:
                   </span>
-                  <span className="font-bold text-[#15803d]">
+                  <span className="font-bold text-trust-strong">
                     Government ID Verified
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#111113]/65">48H Inspection SLA:</span>
-                  <span className="font-bold text-[#111113]">
+                  <span className="text-ink/65">48H Inspection SLA:</span>
+                  <span className="font-bold text-ink">
                     Active on All Sales
                   </span>
                 </div>
@@ -406,7 +406,7 @@ export default function VerifyIdentityPage({
                 <button
                   type="button"
                   onClick={handleCompleteKyc}
-                  className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
+                  className="btn-primary w-full h-12 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
                 >
                   <span>Go to Merchant Desk &amp; Post Gadget</span>
                   <ArrowRight className="h-4 w-4" />

@@ -83,25 +83,25 @@ export function EscrowTimelineExplainer({ className }: EscrowTimelineExplainerPr
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-6",
+        "border border-ink-faint bg-surface p-6 sm:p-8 space-y-6 rounded-card",
         className
       )}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#111113]/12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-ink-faint">
         <div>
           <span className="label">
             Protocol Lifecycle
           </span>
-          <h3 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113] mt-1">
+          <h3 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink mt-1">
             The Scrowpoint Escrow Cycle
           </h3>
-          <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+          <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
             How funds, goods, and hardware inspections move through our platform.
           </p>
         </div>
 
-        <div className="inline-flex items-center gap-2 bg-[#22c55e]/15 border border-[#22c55e]/30 px-3 py-1.5 rounded-full text-xs font-mono font-bold text-[#15803d]">
-          <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+        <div className="inline-flex items-center gap-2 bg-trust/15 border border-trust/30 px-3 py-1.5 rounded-full text-xs font-mono font-bold text-trust-strong">
+          <ShieldCheck className="h-4 w-4 text-trust" />
           <span>Paystack Custodial Hold</span>
         </div>
       </div>
@@ -113,22 +113,22 @@ export function EscrowTimelineExplainer({ className }: EscrowTimelineExplainerPr
           return (
             <div
               key={s.step}
-              className="border border-[#111113]/12 bg-[#F8F7F4] p-4 flex flex-col justify-between space-y-3 relative group hover:border-[#111113]/40 hover:bg-white transition-all duration-200 ease-out"
+              className="border border-ink-faint bg-paper p-4 flex flex-col justify-between space-y-3 relative group hover:border-ink/40 hover:bg-surface transition-all duration-200 ease-out rounded-card"
             >
               <div>
                 {/* Step & Badge */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="flex h-7 w-7 items-center justify-center bg-[#111113] text-white font-mono text-xs font-bold">
+                  <span className="flex h-7 w-7 items-center justify-center bg-ink text-white font-mono text-xs font-bold">
                     {s.step}
                   </span>
                   <span
                     className={cn(
-                      "font-mono text-[9px] uppercase font-bold px-1.5 py-0.5",
+                      "font-mono text-micro uppercase font-bold px-1.5 py-0.5",
                       s.badgeVariant === "trust"
-                        ? "bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30"
+                        ? "bg-trust/15 text-trust-strong border border-trust/30"
                         : s.badgeVariant === "warning"
-                        ? "bg-[#ecc94b]/20 text-[#975a16] border border-[#ecc94b]/40"
-                        : "bg-white text-[#111113]/70 border border-[#111113]/12"
+                        ? "bg-state-warning/20 text-state-warning-strong border border-state-warning/40"
+                        : "bg-surface text-ink/70 border border-ink-faint rounded-card"
                     )}
                   >
                     {s.statusBadge}
@@ -136,24 +136,24 @@ export function EscrowTimelineExplainer({ className }: EscrowTimelineExplainerPr
                 </div>
 
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon className="h-4 w-4 text-[#111113]" />
-                  <h4 className="font-primary text-xs font-bold tracking-[-0.02em] text-[#111113] leading-snug">
+                  <Icon className="h-4 w-4 text-ink" />
+                  <h4 className="font-primary text-xs font-bold tracking-[-0.02em] text-ink leading-snug">
                     {s.title}
                   </h4>
                 </div>
 
-                <div className="label text-[9.5px]! mb-2">
+                <div className="label text-micro! mb-2">
                   {s.subtitle}
                 </div>
 
-                <p className="font-secondary text-[11px] text-[#111113]/70 leading-relaxed">
+                <p className="font-secondary text-meta text-ink/70 leading-relaxed">
                   {s.description}
                 </p>
               </div>
 
-              <div className="pt-2 border-t border-[#111113]/12 flex items-center justify-between text-[10px] font-mono text-[#111113]/60">
+              <div className="pt-2 border-t border-ink-faint flex items-center justify-between text-caption font-mono text-ink/60">
                 <span>State</span>
-                <span className="font-bold text-[#111113]">Stage {idx + 1}/5</span>
+                <span className="font-bold text-ink">Stage {idx + 1}/5</span>
               </div>
             </div>
           );

@@ -53,16 +53,16 @@ export function BankAccList({
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white p-6 space-y-4",
+        "border border-ink-faint bg-surface p-6 space-y-4 rounded-card",
         className
       )}
     >
-      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
+      <div className="flex items-center justify-between pb-3 border-b border-ink-faint">
         <div>
-          <h3 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+          <h3 className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
             Linked Settlement Accounts
           </h3>
-          <p className="font-secondary text-xs text-[#111113]/65">
+          <p className="font-secondary text-xs text-ink/65">
             Must match your verified SmileID legal name for instant NIP clearance.
           </p>
         </div>
@@ -70,7 +70,7 @@ export function BankAccList({
         <button
           type="button"
           onClick={onAddAccount}
-          className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-[#111113] hover:text-[#FF5A25] underline underline-offset-4 transition-colors"
+          className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-ink hover:text-accent-orange underline underline-offset-4 transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Add Account</span>
@@ -88,33 +88,33 @@ export function BankAccList({
               className={cn(
                 "p-4 border flex items-center justify-between cursor-pointer transition-all duration-200 ease-out",
                 isSelected
-                  ? "border-[#111113] bg-[#F8F7F4] ring-1 ring-[#111113]"
-                  : "border-[#111113]/12 bg-white hover:bg-[#F8F7F4]"
+                  ? "border-ink bg-paper ring-1 ring-ink"
+                  : "border-ink-faint bg-surface hover:bg-paper"
               )}
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center bg-[#F0EFEA] text-[#111113]">
+                <div className="flex h-10 w-10 items-center justify-center bg-surface-muted text-ink">
                   <Building2 className="h-5 w-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-primary text-xs font-bold text-[#111113]">
+                    <span className="font-primary text-xs font-bold text-ink">
                       {acc.bankName}
                     </span>
                     {acc.isPrimary && (
-                      <span className="font-mono text-[9px] bg-[#22c55e]/15 text-[#15803d] border border-[#22c55e]/30 px-1.5 py-0.2 font-bold">
+                      <span className="font-mono text-micro bg-trust/15 text-trust-strong border border-trust/30 px-1.5 py-0.2 font-bold">
                         Default
                       </span>
                     )}
                   </div>
-                  <div className="font-mono text-xs text-[#111113]/65 mt-0.5">
+                  <div className="font-mono text-xs text-ink/65 mt-0.5">
                     {acc.accountNumber} • {acc.accountName}
                   </div>
                 </div>
               </div>
 
               {isSelected && (
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#111113] text-white">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-ink text-white">
                   <Check className="h-3.5 w-3.5" />
                 </div>
               )}

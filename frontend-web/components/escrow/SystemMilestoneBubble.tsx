@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
  *
  * Friendly, human-centered Escrow Milestone card inside the Trade Conversation.
  * Adheres strictly to Design Variation 7 (4_ui_system.md):
- * - Sharp 0px architectural geometry (border-[#111113]/12)
+ * - Sharp 0px architectural geometry (border-ink-faint)
  * - WCAG-compliant trust green (#15803d) on light surfaces
  * - Space Grotesk headings & monospace timestamps, Plus Jakarta Sans body
  */
@@ -68,14 +68,14 @@ export function SystemMilestoneBubble({
   return (
     <div
       className={cn(
-        "my-4 border bg-white p-4 sm:p-5 transition-all duration-200 ease-out",
+        "my-4 border bg-surface p-4 sm:p-5 transition-all duration-200 ease-out rounded-card",
         isDispute
-          ? "border-[#f56565]/50 bg-[#f56565]/5"
+          ? "border-state-error/50 bg-state-error/5"
           : isSettled
-          ? "border-[#15803d]/25 bg-[#22c55e]/5"
+          ? "border-trust-strong/25 bg-trust/5"
           : isInspection
-          ? "border-[#ecc94b]/60 bg-[#ecc94b]/10"
-          : "border-[#111113]/12 bg-[#F8F7F4]",
+          ? "border-state-warning/60 bg-state-warning/10"
+          : "border-ink-faint bg-paper",
         className
       )}
     >
@@ -84,12 +84,12 @@ export function SystemMilestoneBubble({
           className={cn(
             "flex h-9 w-9 items-center justify-center shrink-0 mt-0.5",
             isDispute
-              ? "bg-[#c53030] text-white"
+              ? "bg-state-error-strong text-white"
               : isSettled
-              ? "bg-[#15803d] text-white"
+              ? "bg-trust-strong text-white"
               : isInspection
-              ? "bg-[#ecc94b] text-[#111113]"
-              : "bg-[#111113] text-white"
+              ? "bg-state-warning text-ink"
+              : "bg-ink text-white"
           )}
         >
           {isDispute ? (
@@ -109,36 +109,36 @@ export function SystemMilestoneBubble({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span
               className={cn(
-                "font-mono text-[10px] font-bold uppercase tracking-[0.14em]",
+                "font-mono text-caption font-bold uppercase tracking-[0.14em]",
                 isDispute
-                  ? "text-[#c53030]"
+                  ? "text-state-error-strong"
                   : isSettled
-                  ? "text-[#15803d]"
+                  ? "text-trust-strong"
                   : isInspection
-                  ? "text-[#975a16]"
-                  : "text-[#111113]/70"
+                  ? "text-state-warning-strong"
+                  : "text-ink/70"
               )}
             >
               {stepBadgeLabel}
             </span>
-            <span className="font-mono text-[10px] text-[#111113]/55">
+            <span className="font-mono text-caption text-ink/55">
               {milestone.timestamp}
             </span>
           </div>
 
-          <h4 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] leading-snug">
+          <h4 className="font-primary text-sm font-bold tracking-[-0.02em] text-ink leading-snug">
             {milestone.title}
           </h4>
 
-          <p className="font-secondary text-xs text-[#111113]/75 leading-relaxed">
+          <p className="font-secondary text-xs text-ink/75 leading-relaxed">
             {milestone.description}
           </p>
 
           {milestone.nextStepHint && (
-            <div className="pt-2 mt-2 border-t border-[#111113]/10 flex items-center gap-1.5 text-[11px] font-secondary text-[#111113]/80">
-              <Sparkles className="h-3.5 w-3.5 text-[#FF5A25] shrink-0" />
+            <div className="pt-2 mt-2 border-t border-ink/10 flex items-center gap-1.5 text-meta font-secondary text-ink/80">
+              <Sparkles className="h-3.5 w-3.5 text-accent-orange shrink-0" />
               <span>
-                <strong className="font-semibold text-[#111113]">
+                <strong className="font-semibold text-ink">
                   What&apos;s next:
                 </strong>{" "}
                 {milestone.nextStepHint}
@@ -147,7 +147,7 @@ export function SystemMilestoneBubble({
           )}
 
           {milestone.actionText && (
-            <div className="pt-1 font-mono text-[11px] font-semibold text-[#15803d] underline underline-offset-2">
+            <div className="pt-1 font-mono text-meta font-semibold text-trust-strong underline underline-offset-2">
               {milestone.actionText}
             </div>
           )}

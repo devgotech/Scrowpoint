@@ -73,7 +73,7 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
   return (
     <footer
       className={cn(
-        "w-full border-t border-[#111113]/12 bg-[#F8F7F4] text-[#111113]/65 text-xs font-secondary py-4 px-4 sm:px-6 lg:px-8 transition-colors",
+        "w-full border-t border-ink-faint bg-paper text-ink/65 text-xs font-secondary py-4 px-4 sm:px-6 lg:px-8 transition-colors",
         className
       )}
     >
@@ -83,9 +83,9 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
           <span className="label">
             © {new Date().getFullYear()} Scrowpoint Technologies
           </span>
-          <span className="hidden md:inline text-[#111113]/25">•</span>
-          <span className="hidden md:flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.1em] text-[#15803d]">
-            <Lock className="h-3 w-3 text-[#22c55e]" />
+          <span className="hidden md:inline text-ink/25">•</span>
+          <span className="hidden md:flex items-center gap-1 font-mono text-caption uppercase tracking-[0.1em] text-trust-strong">
+            <Lock className="h-3 w-3 text-trust" />
             <span>256-Bit SSL Escrow Protected</span>
           </span>
         </div>
@@ -94,19 +94,19 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
         <div className="flex items-center gap-4 sm:gap-6 label">
           <Link
             href="/legal/terms"
-            className="hover:text-[#FF5A25] hover:opacity-100 transition-colors duration-150"
+            className="hover:text-accent-orange hover:opacity-100 transition-colors duration-150"
           >
             Terms of Service
           </Link>
           <Link
             href="/legal/privacy"
-            className="hover:text-[#FF5A25] hover:opacity-100 transition-colors duration-150"
+            className="hover:text-accent-orange hover:opacity-100 transition-colors duration-150"
           >
             Privacy
           </Link>
           <Link
             href="/legal/buyer-protection"
-            className="hover:text-[#FF5A25] hover:opacity-100 transition-colors duration-150"
+            className="hover:text-accent-orange hover:opacity-100 transition-colors duration-150"
           >
             Escrow Rules
           </Link>
@@ -119,19 +119,19 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
             <button
               type="button"
               onClick={() => setIsLocaleMenuOpen(!isLocaleMenuOpen)}
-              className="flex items-center gap-1.5 h-7 px-2.5 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] hover:border-[#111113]/40 transition-colors"
+              className="flex items-center gap-1.5 h-7 px-2.5 border border-ink/15 bg-surface text-xs font-mono text-ink hover:border-ink/40 transition-colors rounded-ui"
               aria-label="Select Language and Currency"
               aria-expanded={isLocaleMenuOpen}
             >
-              <Globe className="h-3.5 w-3.5 text-[#111113]/60" />
+              <Globe className="h-3.5 w-3.5 text-ink/60" />
               <span className="text-xs">{selectedLocale.flag}</span>
-              <span className="hidden sm:inline text-[11px]">{selectedLocale.currency}</span>
-              <ChevronDown className={cn("h-3 w-3 text-[#111113]/60 transition-transform", isLocaleMenuOpen && "rotate-180")} />
+              <span className="hidden sm:inline text-meta">{selectedLocale.currency}</span>
+              <ChevronDown className={cn("h-3 w-3 text-ink/60 transition-transform", isLocaleMenuOpen && "rotate-180")} />
             </button>
 
             {isLocaleMenuOpen && (
-              <div className="absolute right-0 bottom-full mb-2 w-52 border border-[#111113]/15 bg-white p-1.5 shadow-lg z-50 text-[#111113] animate-in fade-in zoom-in-95 duration-150">
-                <div className="px-2 py-1 label border-b border-[#111113]/12 mb-1">
+              <div className="absolute right-0 bottom-full mb-2 w-52 border border-ink/15 bg-surface p-1.5 shadow-lg z-50 text-ink animate-in fade-in zoom-in-95 duration-150 rounded-card">
+                <div className="px-2 py-1 label border-b border-ink-faint mb-1">
                   Region &amp; Currency
                 </div>
                 {SUPPORTED_LOCALES.map((loc) => {
@@ -147,15 +147,15 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
                       className={cn(
                         "w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-mono transition-colors text-left",
                         isSelected
-                          ? "bg-[#111113] text-white font-bold"
-                          : "hover:bg-[#F8F7F4] text-[#111113]"
+                          ? "bg-ink text-white font-bold"
+                          : "hover:bg-paper text-ink"
                       )}
                     >
                       <div className="flex items-center gap-2">
                         <span>{loc.flag}</span>
-                        <span className="text-[11px]">{loc.label}</span>
+                        <span className="text-meta">{loc.label}</span>
                       </div>
-                      <span className={cn("text-[10px]", isSelected ? "text-[#22c55e]" : "text-[#111113]/60")}>
+                      <span className={cn("text-caption", isSelected ? "text-trust" : "text-ink/60")}>
                         {loc.currency}
                       </span>
                     </button>
@@ -169,11 +169,11 @@ export function MinimalistAuthFooter({ className, onHelpClick }: MinimalistAuthF
           <button
             type="button"
             onClick={handleTriggerHelp}
-            className="flex items-center gap-1.5 h-7 px-2.5 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] hover:border-[#111113]/40 transition-colors"
+            className="flex items-center gap-1.5 h-7 px-2.5 border border-ink/15 bg-surface text-xs font-mono text-ink hover:border-ink/40 transition-colors rounded-ui"
             title="Chat with Support or read KYC FAQ"
           >
-            <HelpCircle className="h-3.5 w-3.5 text-[#22c55e]" />
-            <span className="text-[11px]">Help</span>
+            <HelpCircle className="h-3.5 w-3.5 text-trust" />
+            <span className="text-meta">Help</span>
           </button>
         </div>
       </div>

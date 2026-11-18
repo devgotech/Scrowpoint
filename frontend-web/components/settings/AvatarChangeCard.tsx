@@ -130,25 +130,25 @@ export function AvatarChangeCard({
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white p-5 sm:p-6 space-y-6 transition-all duration-200",
+        "border border-ink-faint bg-surface p-5 sm:p-6 space-y-6 transition-all duration-200 rounded-card",
         className
       )}
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#111113]/12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-ink-faint">
         <div>
-          <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em] flex items-center gap-2">
-            <User className="h-4 w-4 text-[#111113]" />
+          <h3 className="font-primary text-base font-bold text-ink tracking-[-0.03em] flex items-center gap-2">
+            <User className="h-4 w-4 text-ink" />
             <span>Profile Photo & Avatar</span>
           </h3>
-          <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
+          <p className="font-secondary text-xs text-ink/65 mt-0.5">
             Your avatar represents your verified store on gadget listings, escrow rooms, and buyer chats.
           </p>
         </div>
 
         {isKYCVerified && (
-          <span className="self-start sm:self-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#22c55e]/10 text-[#15803d] text-xs font-mono font-medium">
-            <Check className="h-3 w-3 text-[#22c55e]" />
+          <span className="self-start sm:self-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-trust/10 text-trust-strong text-xs font-mono font-medium">
+            <Check className="h-3 w-3 text-trust" />
             <span>Verified Merchant Photo</span>
           </span>
         )}
@@ -162,8 +162,8 @@ export function AvatarChangeCard({
             className={cn(
               "relative rounded-full p-1 transition-all duration-200",
               isKYCVerified
-                ? "ring-2 ring-[#22c55e] ring-offset-2 ring-offset-white"
-                : "ring-2 ring-[#111113]/15"
+                ? "ring-2 ring-trust ring-offset-2 ring-offset-white"
+                : "ring-2 ring-ink/15"
             )}
           >
             <UserAvatar
@@ -180,7 +180,7 @@ export function AvatarChangeCard({
               aria-label="Upload new avatar photo"
               title="Upload new avatar"
               disabled={isUploading}
-              className="absolute bottom-1 right-1 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#111113] text-white shadow-md hover:bg-[#FF5A25] transition-colors duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-[#111113] focus:ring-offset-2 cursor-pointer"
+              className="absolute bottom-1 right-1 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-ink text-white shadow-md hover:bg-accent-orange transition-colors duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 cursor-pointer"
             >
               {isUploading ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -204,10 +204,10 @@ export function AvatarChangeCard({
         {/* Text & Primary Actions */}
         <div className="flex-1 text-center sm:text-left space-y-3 w-full">
           <div>
-            <h4 className="font-primary text-sm font-bold text-[#111113]">
+            <h4 className="font-primary text-sm font-bold text-ink">
               {displayName}
             </h4>
-            <p className="font-secondary text-xs text-[#111113]/65 leading-relaxed mt-0.5">
+            <p className="font-secondary text-xs text-ink/65 leading-relaxed mt-0.5">
               PNG, JPG, or WEBP. Max file size: 5MB. Recommended dimension: 400×400px.
             </p>
           </div>
@@ -232,7 +232,7 @@ export function AvatarChangeCard({
                 variant="outline"
                 size="sm"
                 onClick={handleRemovePhoto}
-                className="gap-1.5 text-xs text-[#c53030] hover:text-[#9b2c2c] hover:bg-[#f56565]/10 border-[#111113]/15 h-9 px-3.5 rounded-full"
+                className="gap-1.5 text-xs text-state-error-strong hover:text-state-error-dark hover:bg-state-error/10 border-ink/15 h-9 px-3.5 rounded-full"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span>Remove Photo</span>
@@ -242,14 +242,14 @@ export function AvatarChangeCard({
 
           {/* Inline Feedback Messages */}
           {successMessage && (
-            <div className="flex items-center gap-2 p-2.5 bg-[#22c55e]/10 border border-[#22c55e]/20 text-[#15803d] text-xs font-secondary animate-in fade-in duration-200">
-              <Check className="h-4 w-4 shrink-0 text-[#22c55e]" />
+            <div className="flex items-center gap-2 p-2.5 bg-trust/10 border border-trust/20 text-trust-strong text-xs font-secondary animate-in fade-in duration-200">
+              <Check className="h-4 w-4 shrink-0 text-trust" />
               <span>{successMessage}</span>
             </div>
           )}
 
           {errorMessage && (
-            <div className="flex items-center gap-2 p-2.5 bg-[#f56565]/10 border border-[#f56565]/20 text-[#c53030] text-xs font-secondary animate-in fade-in duration-200">
+            <div className="flex items-center gap-2 p-2.5 bg-state-error/10 border border-state-error/20 text-state-error-strong text-xs font-secondary animate-in fade-in duration-200">
               <span>{errorMessage}</span>
             </div>
           )}
@@ -257,13 +257,13 @@ export function AvatarChangeCard({
       </div>
 
       {/* Preset Headshots Library */}
-      <div className="pt-4 border-t border-[#111113]/12 space-y-3">
+      <div className="pt-4 border-t border-ink-faint space-y-3">
         <div className="flex items-center justify-between">
           <span className="label flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#111113]" />
+            <Sparkles className="h-3.5 w-3.5 text-ink" />
             <span>Or Choose A Verified Merchant Preset</span>
           </span>
-          <span className="text-[11px] text-[#111113]/60 font-secondary hidden sm:inline">
+          <span className="text-meta text-ink/60 font-secondary hidden sm:inline">
             Tap to preview immediately
           </span>
         </div>
@@ -279,10 +279,10 @@ export function AvatarChangeCard({
                 title={preset.label}
                 aria-label={`Select ${preset.label}`}
                 className={cn(
-                  "group relative aspect-square overflow-hidden border-2 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-[#111113] focus:ring-offset-1 p-0.5 bg-[#F8F7F4] cursor-pointer",
+                  "group relative aspect-square overflow-hidden border-2 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-1 p-0.5 bg-paper cursor-pointer rounded-card",
                   isSelected
-                    ? "border-[#111113]"
-                    : "border-[#111113]/12 hover:border-[#111113]/40"
+                    ? "border-ink"
+                    : "border-ink-faint hover:border-ink/40"
                 )}
               >
                 <img
@@ -293,7 +293,7 @@ export function AvatarChangeCard({
                 />
 
                 {isSelected && (
-                  <div className="absolute inset-0 bg-[#111113]/40 flex items-center justify-center text-white">
+                  <div className="absolute inset-0 bg-ink/40 flex items-center justify-center text-white">
                     <Check className="h-5 w-5 drop-shadow-md stroke-[3]" />
                   </div>
                 )}

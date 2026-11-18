@@ -31,48 +31,48 @@ export default function LegalDocumentPage({
   const currentSlug = providedSlug ?? routeParams.slug ?? "buyer-protection";
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full">
         {/* Breadcrumb Header */}
-        <div className="bg-white border-b border-[#111113]/12 py-8 sm:py-10">
+        <div className="bg-surface border-b border-ink-faint py-8 sm:py-10">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em] mb-3">
               <Link
                 href="/"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Home</span>
               </Link>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="text-[#111113]/65">Trust &amp; Legal</span>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span className="text-ink/65">Trust &amp; Legal</span>
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="font-bold text-[#111113]">
+              <span className="font-bold text-ink">
                 {currentSlug.replace("-", " ")}
               </span>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
+                <h1 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
                   SCROWPOINT TRUST &amp; LEGAL REGISTRY
-                  <span className="text-[#FF5A25]">.</span>
+                  <span className="text-accent-orange">.</span>
                 </h1>
-                <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1.5">
+                <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1.5">
                   Enforceable statutory guidelines, custodial escrow
                   protections, and diagnostic rules.
                 </p>
               </div>
 
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3.5 py-1.5 text-[10px] font-mono uppercase tracking-wider font-bold text-[#15803d]">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-trust-strong/10 px-3.5 py-1.5 text-caption font-mono uppercase tracking-wider font-bold text-trust-strong">
+                <ShieldCheck className="h-3.5 w-3.5 text-trust" />
                 <span>Paystack Custodial Hold</span>
               </div>
             </div>
