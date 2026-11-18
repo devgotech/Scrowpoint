@@ -39,23 +39,23 @@ export function VerdictActionGroup({
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white p-6 space-y-4",
+        "border border-ink-faint bg-surface p-6 space-y-4 rounded-card",
         className
       )}
     >
-      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
+      <div className="flex items-center justify-between pb-3 border-b border-ink-faint">
         <div className="flex items-center gap-2">
-          <Scale className="h-4 w-4 text-[#111113]" />
-          <h4 className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">
+          <Scale className="h-4 w-4 text-ink" />
+          <h4 className="font-primary text-sm font-bold text-ink tracking-[-0.02em]">
             Arbitration Verdict Console ({caseId})
           </h4>
         </div>
-        <span className="font-mono text-xs font-bold text-[#111113]">
+        <span className="font-mono text-xs font-bold text-ink">
           Locked: {formatNaira(orderAmount)}
         </span>
       </div>
 
-      <p className="font-secondary text-xs text-[#111113]/65 leading-relaxed">
+      <p className="font-secondary text-xs text-ink/65 leading-relaxed">
         Selecting a verdict will execute binding database triggers on the Paystack custodial holding account.
       </p>
 
@@ -66,18 +66,18 @@ export function VerdictActionGroup({
           onClick={() => {
             onExecuteVerdict?.("refund_buyer");
           }}
-          className="p-4 border border-[#f56565]/40 bg-[#f56565]/10 hover:bg-[#f56565]/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
+          className="p-4 border border-state-error/40 bg-state-error/10 hover:bg-state-error/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
         >
           <div className="flex items-center justify-between">
-            <span className="font-primary text-xs font-bold text-[#c53030]">
+            <span className="font-primary text-xs font-bold text-state-error-strong">
               Full Buyer Refund
             </span>
-            <RotateCcw className="h-4 w-4 text-[#f56565]" />
+            <RotateCcw className="h-4 w-4 text-state-error" />
           </div>
-          <div className="font-mono text-sm font-extrabold text-[#c53030]">
+          <div className="font-mono text-sm font-extrabold text-state-error-strong">
             {formatNaira(orderAmount)}
           </div>
-          <p className="font-secondary text-[11px] text-[#7f1d1d] leading-tight">
+          <p className="font-secondary text-meta text-state-error-deep leading-tight">
             Trigger return waybill; refund buyer upon return receipt.
           </p>
         </button>
@@ -88,18 +88,18 @@ export function VerdictActionGroup({
           onClick={() => {
             onExecuteVerdict?.("release_seller");
           }}
-          className="p-4 border border-[#22c55e]/40 bg-[#22c55e]/10 hover:bg-[#22c55e]/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
+          className="p-4 border border-trust/40 bg-trust/10 hover:bg-trust/20 text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
         >
           <div className="flex items-center justify-between">
-            <span className="font-primary text-xs font-bold text-[#15803d]">
+            <span className="font-primary text-xs font-bold text-trust-strong">
               Release to Seller
             </span>
-            <CheckCircle2 className="h-4 w-4 text-[#22c55e]" />
+            <CheckCircle2 className="h-4 w-4 text-trust" />
           </div>
-          <div className="font-mono text-sm font-extrabold text-[#15803d]">
+          <div className="font-mono text-sm font-extrabold text-trust-strong">
             {formatNaira(orderAmount)}
           </div>
-          <p className="font-secondary text-[11px] text-[#15803d]/80 leading-tight">
+          <p className="font-secondary text-meta text-trust-strong/80 leading-tight">
             Claim rejected; release escrow funds to seller&apos;s NUBAN.
           </p>
         </button>
@@ -110,18 +110,18 @@ export function VerdictActionGroup({
           onClick={() => {
             onExecuteVerdict?.("split");
           }}
-          className="p-4 border border-[#111113] bg-[#F8F7F4] hover:bg-[#F0EFEA] text-left transition-all duration-200 ease-out space-y-1 cursor-pointer"
+          className="p-4 border border-ink bg-paper hover:bg-surface-muted text-left transition-all duration-200 ease-out space-y-1 cursor-pointer rounded-card"
         >
           <div className="flex items-center justify-between">
-            <span className="font-primary text-xs font-bold text-[#111113]">
+            <span className="font-primary text-xs font-bold text-ink">
               50 / 50 Compromise
             </span>
-            <Scale className="h-4 w-4 text-[#111113]" />
+            <Scale className="h-4 w-4 text-ink" />
           </div>
-          <div className="font-mono text-sm font-extrabold text-[#111113]">
+          <div className="font-mono text-sm font-extrabold text-ink">
             {formatNaira(orderAmount / 2)} each
           </div>
-          <p className="font-secondary text-[11px] text-[#111113]/65 leading-tight">
+          <p className="font-secondary text-meta text-ink/65 leading-tight">
             Split settlement to cover repair or battery replacement costs.
           </p>
         </button>

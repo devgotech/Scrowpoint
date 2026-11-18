@@ -68,16 +68,16 @@ export function FilterSidebar({
   const content = (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
+      <div className="flex items-center justify-between pb-3 border-b border-ink-faint">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4 text-[#111113]" />
-          <span className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">Filter Catalog</span>
+          <SlidersHorizontal className="h-4 w-4 text-ink" />
+          <span className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">Filter Catalog</span>
         </div>
 
         <button
           type="button"
           onClick={onResetFilters}
-          className="inline-flex items-center gap-1 text-[11px] font-mono text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+          className="inline-flex items-center gap-1 text-meta font-mono text-ink/65 hover:text-accent-orange transition-colors"
         >
           <RotateCcw className="h-3 w-3" />
           <span>Reset</span>
@@ -85,20 +85,20 @@ export function FilterSidebar({
       </div>
 
       {/* Trust Filter: Verified Sellers Only */}
-      <div className="border border-[#22c55e]/30 bg-[#22c55e]/10 p-3">
+      <div className="border border-trust/30 bg-trust/10 p-3">
         <label className="flex items-start gap-2.5 cursor-pointer">
           <input
             type="checkbox"
             checked={filters.kycOnly}
             onChange={(e) => onChangeFilters({ ...filters, kycOnly: e.target.checked })}
-            className="mt-0.5 h-4 w-4 border-[#111113]/25 text-[#22c55e] focus:ring-[#22c55e]"
+            className="mt-0.5 h-4 w-4 border-ink/25 text-trust focus:ring-trust"
           />
           <div>
-            <span className="font-primary text-xs font-bold text-[#15803d] flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+            <span className="font-primary text-xs font-bold text-trust-strong flex items-center gap-1">
+              <ShieldCheck className="h-3.5 w-3.5 text-trust" />
               <span>SmileID Verified Only</span>
             </span>
-            <span className="font-secondary text-[10px] text-[#111113]/65 leading-tight block mt-0.5">
+            <span className="font-secondary text-caption text-ink/65 leading-tight block mt-0.5">
               Exclude sellers who haven&apos;t passed biometric Government ID checks.
             </span>
           </div>
@@ -119,8 +119,8 @@ export function FilterSidebar({
               className={cn(
                 "w-full flex items-center justify-between px-3 py-2 text-xs font-medium transition-all duration-200 ease-out text-left",
                 filters.category === cat.id
-                  ? "bg-[#111113] text-white font-semibold"
-                  : "text-[#111113]/70 hover:bg-[#F8F7F4] hover:text-[#111113]"
+                  ? "bg-ink text-white font-semibold"
+                  : "text-ink/70 hover:bg-paper hover:text-ink"
               )}
             >
               <span>{cat.label}</span>
@@ -144,8 +144,8 @@ export function FilterSidebar({
               className={cn(
                 "px-2 py-1.5 text-xs font-medium border text-center transition-all duration-200 ease-out",
                 filters.brand === b.id
-                  ? "bg-[#111113] text-white border-[#111113] font-semibold"
-                  : "bg-white border-[#111113]/12 text-[#111113] hover:bg-[#F8F7F4]"
+                  ? "bg-ink text-white border-ink font-semibold"
+                  : "bg-surface border-ink-faint text-ink hover:bg-paper"
               )}
             >
               {b.label}
@@ -168,8 +168,8 @@ export function FilterSidebar({
               className={cn(
                 "w-full flex items-center justify-between px-3 py-2 text-xs font-medium transition-all duration-200 ease-out text-left",
                 filters.condition === cond.id
-                  ? "bg-[#111113] text-white font-semibold"
-                  : "text-[#111113]/70 hover:bg-[#F8F7F4] hover:text-[#111113]"
+                  ? "bg-ink text-white font-semibold"
+                  : "text-ink/70 hover:bg-paper hover:text-ink"
               )}
             >
               <span>{cond.label}</span>
@@ -184,7 +184,7 @@ export function FilterSidebar({
         <label className="label block">
           Max Price (₦ NGN)
         </label>
-        <div className="flex items-center justify-between font-mono text-xs font-bold text-[#111113] mb-1">
+        <div className="flex items-center justify-between font-mono text-xs font-bold text-ink mb-1">
           <span>₦50,000</span>
           <span>₦{(filters.maxPrice).toLocaleString()}</span>
         </div>
@@ -197,7 +197,7 @@ export function FilterSidebar({
           onChange={(e) =>
             onChangeFilters({ ...filters, maxPrice: Number(e.target.value) })
           }
-          className="w-full accent-[#111113] cursor-pointer"
+          className="w-full accent-ink cursor-pointer"
         />
       </div>
     </div>
@@ -208,7 +208,7 @@ export function FilterSidebar({
       {/* Desktop Sidebar (lg:block) */}
       <aside
         className={cn(
-          "hidden lg:block w-64 shrink-0 border border-[#111113]/12 bg-white p-5",
+          "hidden lg:block w-64 shrink-0 border border-ink-faint bg-surface p-5 rounded-card",
           className
         )}
       >
@@ -224,21 +224,21 @@ export function FilterSidebar({
         >
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-[#111113]/50 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-ink/50 backdrop-blur-xs transition-opacity"
             onClick={onCloseMobile}
           />
 
           {/* Drawer Pane */}
-          <div className="relative ml-auto w-full max-w-xs bg-white h-full p-6 shadow-xl overflow-y-auto flex flex-col justify-between">
+          <div className="relative ml-auto w-full max-w-xs bg-surface h-full p-6 shadow-xl overflow-y-auto flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#111113]/12">
-                <span className="font-primary text-base font-bold tracking-[-0.03em] text-[#111113]">
+              <div className="flex items-center justify-between pb-4 mb-4 border-b border-ink-faint">
+                <span className="font-primary text-base font-bold tracking-[-0.03em] text-ink">
                   Filter Gadgets
                 </span>
                 <button
                   type="button"
                   onClick={onCloseMobile}
-                  className="p-1.5 hover:bg-[#F0EFEA] text-[#111113]/65"
+                  className="p-1.5 hover:bg-surface-muted text-ink/65"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -247,7 +247,7 @@ export function FilterSidebar({
               {content}
             </div>
 
-            <div className="pt-6 mt-6 border-t border-[#111113]/12">
+            <div className="pt-6 mt-6 border-t border-ink-faint">
               <Button
                 variant="default"
                 size="lg"

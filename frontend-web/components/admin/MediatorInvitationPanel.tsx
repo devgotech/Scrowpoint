@@ -43,12 +43,12 @@ export function MediatorInvitationPanel() {
   };
 
   return (
-    <section className="border border-[#111113]/12 bg-white p-5 space-y-4">
+    <section className="border border-ink-faint bg-surface p-5 space-y-4 rounded-card">
       <div>
         <h2 className="font-primary text-base font-bold tracking-[-0.03em]">
           Invite a mediator
         </h2>
-        <p className="mt-1 text-xs text-[#111113]/65">
+        <p className="mt-1 text-xs text-ink/65">
           Mediators can review and resolve disputes, but cannot manage accounts or KYC.
           The invitation link is single-use and expires after 24 hours.
         </p>
@@ -66,15 +66,15 @@ export function MediatorInvitationPanel() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="mediator@example.com"
-          className="min-w-0 flex-1 border border-[#111113]/20 px-3 py-2 text-sm outline-none focus:border-[#FF5A25]"
+          className="min-w-0 flex-1 border border-ink/20 px-3 py-2 text-sm outline-none focus:border-accent-orange"
         />
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Creating…" : "Create invitation"}
         </Button>
       </form>
 
-      {message && <p role="status" className="text-xs text-[#15803d]">{message}</p>}
-      {error && <p role="alert" className="text-xs text-[#b91c1c]">{error}</p>}
+      {message && <p role="status" className="text-xs text-trust-strong">{message}</p>}
+      {error && <p role="alert" className="text-xs text-red-700">{error}</p>}
 
       {inviteUrl && (
         <div className="flex flex-col sm:flex-row gap-2">
@@ -85,7 +85,7 @@ export function MediatorInvitationPanel() {
             id="mediator-invite-link"
             readOnly
             value={inviteUrl}
-            className="min-w-0 flex-1 border border-[#111113]/20 bg-[#F8F7F4] px-3 py-2 text-xs"
+            className="min-w-0 flex-1 border border-ink/20 bg-paper px-3 py-2 text-xs rounded-card"
           />
           <Button type="button" variant="outline" onClick={copyInvitation}>
             Copy link

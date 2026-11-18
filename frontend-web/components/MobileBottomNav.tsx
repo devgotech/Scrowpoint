@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  * Requirements (5_screen_flows.md & 4_ui_system.md):
  * - Fixed to the bottom of the viewport: `fixed bottom-0 z-40 w-full`.
  * - Visible ONLY on screens under 768px: `md:hidden`.
- * - Background: `bg-[#f8fafc]/95 backdrop-blur-md border-t border-[#e2e8f0]`.
+ * - Background: `bg-slate-50/95 backdrop-blur-md border-t border-slate-200`.
  * - Exact height: `h-16`.
  * - Reconciled Routes:
  *   1. Marketplace: /marketplace
@@ -89,7 +89,7 @@ export function MobileBottomNav({
     <nav
       aria-label="Mobile Navigation"
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-40 flex h-16 w-full items-center justify-around border-t border-[#111113]/12 bg-[#F8F7F4]/95 backdrop-blur-md md:hidden px-1 pb-safe",
+        "fixed bottom-0 left-0 right-0 z-40 flex h-16 w-full items-center justify-around border-t border-ink-faint bg-paper/95 backdrop-blur-md md:hidden px-1 pb-safe",
         className
       )}
     >
@@ -110,26 +110,26 @@ export function MobileBottomNav({
             className={cn(
               "relative flex flex-1 flex-col items-center justify-center py-1 transition-colors duration-200 ease-out select-none min-h-[44px]",
               isActive
-                ? "text-[#111113] font-bold"
-                : "text-[#111113]/55 hover:text-[#111113]"
+                ? "text-ink font-bold"
+                : "text-ink/55 hover:text-ink"
             )}
           >
             <div className="relative">
               <Icon className="h-5 w-5" />
               {item.badgeCount && item.badgeCount > 0 ? (
-                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#22c55e] text-[9px] font-mono font-bold text-[#111113]">
+                <span className="absolute -top-1.5 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-trust text-micro font-mono font-bold text-ink">
                   {item.badgeCount}
                 </span>
               ) : null}
             </div>
 
-            <span className="mt-1 text-[10px] font-primary uppercase tracking-[0.06em] leading-none">
+            <span className="mt-1 text-caption font-primary uppercase tracking-[0.06em] leading-none">
               {item.label}
             </span>
 
             {/* Active Indicator Bar */}
             {isActive && (
-              <span className="absolute bottom-1 h-0.5 w-6 rounded-full bg-[#FF5A25]" />
+              <span className="absolute bottom-1 h-0.5 w-6 rounded-full bg-accent-orange" />
             )}
           </Link>
         );

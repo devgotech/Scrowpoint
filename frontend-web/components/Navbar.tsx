@@ -102,7 +102,7 @@ export function Navbar({
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full border-b border-[#111113]/12 bg-[#F8F7F4]/95 backdrop-blur-md",
+        "sticky top-0 z-40 w-full border-b border-ink-faint bg-paper/95 backdrop-blur-md",
         className
       )}
     >
@@ -111,9 +111,9 @@ export function Navbar({
         <Link
           href="/"
           onClick={() => onNavigate?.("/")}
-          className="font-primary text-2xl font-extrabold tracking-[-0.05em] text-[#111113] select-none hover:opacity-80 transition-opacity"
+          className="font-primary text-2xl font-extrabold tracking-[-0.05em] text-ink select-none hover:opacity-80 transition-opacity"
         >
-          SCROWPOINT<span className="text-[#FF5A25]">.</span>
+          SCROWPOINT<span className="text-accent-orange">.</span>
         </Link>
 
         {/* Center: Variation 7 Uppercase Navigation Links */}
@@ -124,8 +124,8 @@ export function Navbar({
             className={cn(
               "transition-colors duration-200",
               currentPath === "/marketplace"
-                ? "text-[#FF5A25] font-semibold"
-                : "text-[#111113]/80 hover:text-[#111113]"
+                ? "text-accent-orange font-semibold"
+                : "text-ink/80 hover:text-ink"
             )}
           >
             Marketplace
@@ -136,8 +136,8 @@ export function Navbar({
             className={cn(
               "transition-colors duration-200",
               currentPath === "/trust-and-safety"
-                ? "text-[#FF5A25] font-semibold"
-                : "text-[#111113]/80 hover:text-[#111113]"
+                ? "text-accent-orange font-semibold"
+                : "text-ink/80 hover:text-ink"
             )}
           >
             Trust &amp; Safety
@@ -148,8 +148,8 @@ export function Navbar({
             className={cn(
               "transition-colors duration-200",
               currentPath === "/pricing"
-                ? "text-[#FF5A25] font-semibold"
-                : "text-[#111113]/80 hover:text-[#111113]"
+                ? "text-accent-orange font-semibold"
+                : "text-ink/80 hover:text-ink"
             )}
           >
             Calculator
@@ -161,8 +161,8 @@ export function Navbar({
               className={cn(
                 "transition-colors duration-200",
                 isDashboardActive
-                  ? "text-[#FF5A25] font-semibold"
-                  : "text-[#111113]/80 hover:text-[#111113]"
+                  ? "text-accent-orange font-semibold"
+                  : "text-ink/80 hover:text-ink"
               )}
             >
               Seller Hub
@@ -172,10 +172,10 @@ export function Navbar({
             href="/waitlist"
             onClick={() => onNavigate?.("/waitlist")}
             className={cn(
-              "px-3 py-1.5 border border-[#111113]/15 bg-white/80 hover:bg-white hover:border-[#111113]/40 transition-colors duration-200",
+              "px-3 py-1.5 border border-ink/15 bg-white/80 hover:bg-surface hover:border-ink/40 transition-colors duration-200",
               currentPath === "/waitlist"
-                ? "border-[#111113] bg-[#111113] text-white"
-                : "text-[#111113]"
+                ? "border-ink bg-ink text-white"
+                : "text-ink"
             )}
           >
             Waitlist
@@ -204,17 +204,17 @@ export function Navbar({
                   size="icon"
                   onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                   aria-label="Notifications"
-                  className="relative h-9 w-9 text-[#111113]/70 hover:text-[#111113]"
+                  className="relative h-9 w-9 text-ink/70 hover:text-ink"
                 >
                   <Bell className="h-5 w-5" />
                   {unreadNotificationsCount > 0 && (
-                    <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-[#FF5A25]" />
+                    <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-accent-orange" />
                   )}
                 </Button>
 
                 {isNotificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 border border-[#111113]/12 bg-white p-4 shadow-lg z-50 text-[#111113]">
-                    <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
+                  <div className="absolute right-0 mt-2 w-80 border border-ink-faint bg-surface p-4 shadow-lg z-50 text-ink rounded-card">
+                    <div className="flex items-center justify-between pb-3 border-b border-ink-faint">
                       <span className="font-primary font-bold text-sm">
                         Notifications
                       </span>
@@ -223,35 +223,35 @@ export function Navbar({
                       </span>
                     </div>
                     <div className="py-2 space-y-2 text-xs font-secondary">
-                      <div className="p-2.5 bg-[#F8F7F4] border border-[#111113]/12">
+                      <div className="p-2.5 bg-paper border border-ink-faint rounded-card">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-[#111113]">
+                          <span className="font-semibold text-ink">
                             Escrow Funded
                           </span>
-                          <span className="text-[10px] text-[#111113]/60 font-mono">
+                          <span className="text-caption text-ink/60 font-mono">
                             10m ago
                           </span>
                         </div>
-                        <p className="text-[#111113]/70">
+                        <p className="text-ink/70">
                           Order #SP-8921 funds are held securely. You may now ship
                           the gadget.
                         </p>
                       </div>
-                      <div className="p-2.5 hover:bg-[#F8F7F4] transition-colors">
+                      <div className="p-2.5 hover:bg-paper transition-colors">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="font-semibold text-[#111113]">
+                          <span className="font-semibold text-ink">
                             KYC Verification
                           </span>
-                          <span className="text-[10px] text-[#111113]/60 font-mono">
+                          <span className="text-caption text-ink/60 font-mono">
                             2h ago
                           </span>
                         </div>
-                        <p className="text-[#111113]/70">
+                        <p className="text-ink/70">
                           Your tier-1 identity documents were reviewed and approved.
                         </p>
                       </div>
                     </div>
-                    <div className="pt-2 border-t border-[#111113]/12 text-center">
+                    <div className="pt-2 border-t border-ink-faint text-center">
                       <Link
                         href="/notifications"
                         onClick={(e) => {
@@ -261,7 +261,7 @@ export function Navbar({
                             onNavigate("/notifications");
                           }
                         }}
-                        className="text-xs font-semibold text-[#111113]/70 hover:text-[#111113]"
+                        className="text-xs font-semibold text-ink/70 hover:text-ink"
                       >
                         View all activity
                       </Link>
@@ -278,12 +278,12 @@ export function Navbar({
                   title="Profile & Account Menu"
                   aria-label="Open profile dropdown"
                   className={cn(
-                    "flex items-center gap-1.5 rounded-full p-0.5 hover:ring-2 hover:ring-[#111113]/20 focus:outline-none focus:ring-2 focus:ring-[#111113] transition-all cursor-pointer",
-                    isProfileActive && "ring-2 ring-[#111113] ring-offset-2 ring-offset-[#F8F7F4]"
+                    "flex items-center gap-1.5 rounded-full p-0.5 hover:ring-2 hover:ring-ink/20 focus:outline-none focus:ring-2 focus:ring-ink transition-all cursor-pointer",
+                    isProfileActive && "ring-2 ring-ink ring-offset-2 ring-offset-paper"
                   )}
                   aria-expanded={isDropdownOpen}
                 >
-                  <Avatar className="h-9 w-9 border border-[#111113]/20">
+                  <Avatar className="h-9 w-9 border border-ink/20">
                     {user.avatarUrl && (
                       <AvatarImage src={user.avatarUrl} alt={user.name} />
                     )}
@@ -291,14 +291,14 @@ export function Navbar({
                   </Avatar>
                   <ChevronDown
                     className={cn(
-                      "hidden sm:block h-3.5 w-3.5 text-[#111113]/60 transition-transform duration-200",
+                      "hidden sm:block h-3.5 w-3.5 text-ink/60 transition-transform duration-200",
                       isDropdownOpen && "rotate-180"
                     )}
                   />
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-72 border border-[#111113]/12 bg-white p-2 shadow-xl z-50 text-[#111113]">
+                  <div className="absolute right-0 mt-2 w-72 border border-ink-faint bg-surface p-2 shadow-xl z-50 text-ink rounded-card">
                     <Link
                       href="/settings/profile"
                       onClick={() => {
@@ -306,38 +306,38 @@ export function Navbar({
                         onNavigate?.("/settings/profile");
                       }}
                       className={cn(
-                        "block px-3 py-2.5 border-b border-[#111113]/12 transition-colors group mb-1",
+                        "block px-3 py-2.5 border-b border-ink-faint transition-colors group mb-1",
                         isProfileActive
-                          ? "bg-[#F8F7F4]"
-                          : "hover:bg-[#F8F7F4]"
+                          ? "bg-paper"
+                          : "hover:bg-paper"
                       )}
                     >
                       <div className="flex items-center justify-between">
-                        <p className="font-primary font-bold text-sm truncate text-[#111113]">
+                        <p className="font-primary font-bold text-sm truncate text-ink">
                           {user.name || "Authenticated Trader"}
                         </p>
-                        <span className="font-mono text-[10px] font-semibold px-1.5 py-0.5 bg-[#111113] text-white">
+                        <span className="font-mono text-caption font-semibold px-1.5 py-0.5 bg-ink text-white">
                           {isProfileActive ? "Current" : "Manage →"}
                         </span>
                       </div>
-                      <p className="text-xs text-[#111113]/60 truncate font-mono mt-0.5">
+                      <p className="text-xs text-ink/60 truncate font-mono mt-0.5">
                         {user.email}
                       </p>
 
                       <div className="mt-2 flex items-center gap-2">
                         {isKYCVerified ? (
-                          <Badge variant="trust" className="gap-1 text-[11px] py-0 font-mono tracking-wider">
-                            <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
+                          <Badge variant="trust" className="gap-1 text-meta py-0 font-mono tracking-wider">
+                            <ShieldCheck className="h-3 w-3 text-trust" />
                             <span>KYC Verified</span>
                           </Badge>
                         ) : kycTier === "manual_review_required" ? (
-                          <Badge variant="warning" className="gap-1 text-[11px] py-0 font-mono tracking-wider">
-                            <ShieldAlert className="h-3 w-3 text-[#ecc94b]" />
+                          <Badge variant="warning" className="gap-1 text-meta py-0 font-mono tracking-wider">
+                            <ShieldAlert className="h-3 w-3 text-state-warning" />
                             <span>In Manual Review</span>
                           </Badge>
                         ) : (
-                          <Badge variant="secondary" className="gap-1 text-[11px] py-0 font-mono tracking-wider">
-                            <Shield className="h-3 w-3 text-[#111113]/60" />
+                          <Badge variant="secondary" className="gap-1 text-meta py-0 font-mono tracking-wider">
+                            <Shield className="h-3 w-3 text-ink/60" />
                             <span>KYC Pending</span>
                           </Badge>
                         )}
@@ -354,8 +354,8 @@ export function Navbar({
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm transition-colors",
                           isProfileActive
-                            ? "bg-[#111113] text-white font-semibold"
-                            : "text-[#111113] hover:bg-[#F8F7F4] font-medium"
+                            ? "bg-ink text-white font-semibold"
+                            : "text-ink hover:bg-paper font-medium"
                         )}
                       >
                         <div className="flex items-center gap-2.5">
@@ -373,8 +373,8 @@ export function Navbar({
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm transition-colors",
                           isDashboardActive
-                            ? "bg-[#111113] text-white font-semibold"
-                            : "text-[#111113] hover:bg-[#F8F7F4] font-medium"
+                            ? "bg-ink text-white font-semibold"
+                            : "text-ink hover:bg-paper font-medium"
                         )}
                       >
                         <div className="flex items-center gap-2.5">
@@ -392,12 +392,12 @@ export function Navbar({
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm transition-colors",
                           isPostGadgetActive
-                            ? "bg-[#111113] text-white font-semibold"
-                            : "text-[#111113] hover:bg-[#F8F7F4] font-medium"
+                            ? "bg-ink text-white font-semibold"
+                            : "text-ink hover:bg-paper font-medium"
                         )}
                       >
                         <div className="flex items-center gap-2.5">
-                          <PlusCircle className="h-4 w-4 text-[#FF5A25]" />
+                          <PlusCircle className="h-4 w-4 text-accent-orange" />
                           <span>Post New Gadget</span>
                         </div>
                       </Link>
@@ -411,8 +411,8 @@ export function Navbar({
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm transition-colors",
                           isWalletActive
-                            ? "bg-[#111113] text-white font-semibold"
-                            : "text-[#111113] hover:bg-[#F8F7F4] font-medium"
+                            ? "bg-ink text-white font-semibold"
+                            : "text-ink hover:bg-paper font-medium"
                         )}
                       >
                         <div className="flex items-center gap-2.5">
@@ -430,8 +430,8 @@ export function Navbar({
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm transition-colors",
                           isEscrowActive
-                            ? "bg-[#111113] text-white font-semibold"
-                            : "text-[#111113] hover:bg-[#F8F7F4] font-medium"
+                            ? "bg-ink text-white font-semibold"
+                            : "text-ink hover:bg-paper font-medium"
                         )}
                       >
                         <div className="flex items-center gap-2.5">
@@ -449,8 +449,8 @@ export function Navbar({
                         className={cn(
                           "flex items-center justify-between px-3 py-2 text-sm transition-colors",
                           isKYCActive
-                            ? "bg-[#111113] text-white font-semibold"
-                            : "text-[#111113] hover:bg-[#F8F7F4] font-medium"
+                            ? "bg-ink text-white font-semibold"
+                            : "text-ink hover:bg-paper font-medium"
                         )}
                       >
                         <div className="flex items-center gap-2.5">
@@ -469,26 +469,26 @@ export function Navbar({
                           className={cn(
                             "flex items-center justify-between px-3 py-2 text-sm transition-colors",
                             isAdminActive
-                              ? "bg-[#111113] text-white font-semibold"
-                              : "bg-[#ecc94b]/15 text-[#975a16] hover:bg-[#ecc94b]/25 font-semibold"
+                              ? "bg-ink text-white font-semibold"
+                              : "bg-state-warning/15 text-state-warning-strong hover:bg-state-warning/25 font-semibold"
                           )}
                         >
                           <div className="flex items-center gap-2.5">
-                            <ShieldAlert className="h-4 w-4 text-[#ecc94b]" />
+                            <ShieldAlert className="h-4 w-4 text-state-warning" />
                             <span>{isMediator ? "Mediation Desk" : "Admin Dispute Portal"}</span>
                           </div>
                         </Link>
                       )}
                     </div>
 
-                    <div className="pt-1 border-t border-[#111113]/12">
+                    <div className="pt-1 border-t border-ink-faint">
                       <button
                         type="button"
                         onClick={async () => {
                           setIsDropdownOpen(false);
                           await logout();
                         }}
-                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-[#c53030] hover:bg-[#f56565]/10 transition-colors"
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-state-error-strong hover:bg-state-error/10 transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>Log out</span>
@@ -503,7 +503,7 @@ export function Navbar({
             <div className="flex items-center gap-3">
               <Link
                 href="/register"
-                className="hidden sm:inline-block nav-link text-[#111113]/70 hover:text-[#111113] transition-colors"
+                className="hidden sm:inline-block nav-link text-ink/70 hover:text-ink transition-colors"
               >
                 Register
               </Link>

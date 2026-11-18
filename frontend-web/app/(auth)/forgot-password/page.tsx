@@ -176,9 +176,9 @@ function ForgotPasswordForm({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col justify-between antialiased font-secondary selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col justify-between antialiased font-secondary selection:bg-accent-orange selection:text-white">
       {/* Top Bar with Back Link & Wordmark */}
-      <div className="w-full border-b border-[#111113]/12 bg-white py-3.5 px-4 sm:px-6">
+      <div className="w-full border-b border-ink-faint bg-surface py-3.5 px-4 sm:px-6">
         <div className="mx-auto max-w-md flex items-center justify-between">
           <button
             type="button"
@@ -189,7 +189,7 @@ function ForgotPasswordForm({
                 router.push("/login");
               }
             }}
-            className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.12em] text-[#111113]/65 hover:text-[#FF5A25] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.12em] text-ink/65 hover:text-accent-orange transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to Sign In</span>
@@ -198,22 +198,22 @@ function ForgotPasswordForm({
           <Link
             href="/"
             onClick={onNavigateHome}
-            className="font-primary text-xl font-extrabold tracking-[-0.05em] text-[#111113] select-none hover:opacity-80 transition-opacity"
+            className="font-primary text-xl font-extrabold tracking-[-0.05em] text-ink select-none hover:opacity-80 transition-opacity"
           >
-            SCROWPOINT<span className="text-[#FF5A25]">.</span>
+            SCROWPOINT<span className="text-accent-orange">.</span>
           </Link>
         </div>
       </div>
 
       {/* Main Recovery Card */}
       <div className="my-auto py-8 px-4 sm:px-6">
-        <div className="border border-[#111113]/12 bg-white p-6 sm:p-8 w-full max-w-md mx-auto">
+        <div className="border border-ink-faint bg-surface p-6 sm:p-8 w-full max-w-md mx-auto rounded-card">
           {/* Step Progress Strip */}
           <div className="mb-6">
-            <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#111113]/60 mb-2">
+            <div className="flex items-center justify-between text-caption font-mono uppercase tracking-wider text-ink/60 mb-2">
               <span
                 className={cn(
-                  step === "request" && "text-[#111113] font-bold"
+                  step === "request" && "text-ink font-bold"
                 )}
               >
                 01. Request Link
@@ -221,7 +221,7 @@ function ForgotPasswordForm({
               <span>→</span>
               <span
                 className={cn(
-                  step === "verify_and_reset" && "text-[#FF5A25] font-bold"
+                  step === "verify_and_reset" && "text-accent-orange font-bold"
                 )}
               >
                 02. Set New Password
@@ -229,26 +229,26 @@ function ForgotPasswordForm({
               <span>→</span>
               <span
                 className={cn(
-                  step === "completed" && "text-[#15803d] font-bold"
+                  step === "completed" && "text-trust-strong font-bold"
                 )}
               >
                 03. Vault Unlocked
               </span>
             </div>
             <div className="grid grid-cols-3 gap-1.5 h-1">
-              <div className="bg-[#111113]" />
+              <div className="bg-ink" />
               <div
                 className={cn(
                   "transition-colors",
                   step === "verify_and_reset" || step === "completed"
-                    ? "bg-[#FF5A25]"
-                    : "bg-[#111113]/12"
+                    ? "bg-accent-orange"
+                    : "bg-ink/12"
                 )}
               />
               <div
                 className={cn(
                   "transition-colors",
-                  step === "completed" ? "bg-[#22c55e]" : "bg-[#111113]/12"
+                  step === "completed" ? "bg-trust" : "bg-ink/12"
                 )}
               />
             </div>
@@ -259,23 +259,23 @@ function ForgotPasswordForm({
               ================================================================= */}
           {step === "request" && (
             <>
-              <div className="space-y-2 text-center pb-6 border-b border-[#111113]/12">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#111113] text-white">
-                  <KeyRound className="h-5 w-5 text-[#FF5A25]" />
+              <div className="space-y-2 text-center pb-6 border-b border-ink-faint">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center bg-ink text-white">
+                  <KeyRound className="h-5 w-5 text-accent-orange" />
                 </div>
 
-                <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+                <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
                   Recover Escrow Account
                 </h1>
 
-                <p className="font-secondary text-sm text-[#111113]/65">
+                <p className="font-secondary text-sm text-ink/65">
                   Enter your registered email address and we’ll send you a
                   secure password reset link.
                 </p>
               </div>
 
               {errorMessage && (
-                <div className="mt-4 border border-[#f56565]/40 bg-[#f56565]/10 p-3 flex items-start gap-2.5 text-xs text-[#c53030]">
+                <div className="mt-4 border border-state-error/40 bg-state-error/10 p-3 flex items-start gap-2.5 text-xs text-state-error-strong">
                   <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                   <span>{errorMessage}</span>
                 </div>
@@ -287,17 +287,17 @@ function ForgotPasswordForm({
                     Registered Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#111113]/50" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink/50" />
                     <input
                       id="reset-email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. chidi.okafor@scrowpoint.com"
-                      className="w-full h-11 pl-9 pr-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                      className="w-full h-11 pl-9 pr-3 border border-ink/15 bg-surface text-xs font-secondary text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                     />
                   </div>
-                  <p className="font-secondary text-xs text-[#111113]/60 mt-1.5">
+                  <p className="font-secondary text-xs text-ink/60 mt-1.5">
                     Note: For security, active escrow payouts are paused for 24h
                     following a password reset.
                   </p>
@@ -328,20 +328,20 @@ function ForgotPasswordForm({
               ================================================================= */}
           {step === "verify_and_reset" && (
             <>
-              <div className="space-y-2 text-center pb-5 border-b border-[#111113]/12">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#111113] text-white">
-                  <Lock className="h-5 w-5 text-[#FF5A25]" />
+              <div className="space-y-2 text-center pb-5 border-b border-ink-faint">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center bg-ink text-white">
+                  <Lock className="h-5 w-5 text-accent-orange" />
                 </div>
 
-                <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+                <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
                   Set a New Password
                 </h1>
 
-                <p className="font-secondary text-xs text-[#111113]/70">
+                <p className="font-secondary text-xs text-ink/70">
                   {email ? (
                     <>
                       The secure reset link is associated with{" "}
-                      <span className="font-mono font-semibold text-[#111113]">
+                      <span className="font-mono font-semibold text-ink">
                         {email}
                       </span>
                     </>
@@ -352,7 +352,7 @@ function ForgotPasswordForm({
               </div>
 
               {statusBanner && (
-                <div className="mt-4 border border-[#15803d]/30 bg-[#22c55e]/10 p-3 flex items-center justify-between gap-2 text-xs text-[#15803d]">
+                <div className="mt-4 border border-trust-strong/30 bg-trust/10 p-3 flex items-center justify-between gap-2 text-xs text-trust-strong">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
                     <span>{statusBanner}</span>
@@ -361,7 +361,7 @@ function ForgotPasswordForm({
               )}
 
               {errorMessage && (
-                <div className="mt-4 border border-[#f56565]/40 bg-[#f56565]/10 p-3 flex items-start gap-2.5 text-xs text-[#c53030]">
+                <div className="mt-4 border border-state-error/40 bg-state-error/10 p-3 flex items-start gap-2.5 text-xs text-state-error-strong">
                   <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                   <span>{errorMessage}</span>
                 </div>
@@ -380,14 +380,14 @@ function ForgotPasswordForm({
                     value={resetToken}
                     onChange={(e) => setResetToken(e.target.value)}
                     placeholder="Open the reset link from your email"
-                    className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                    className="w-full h-11 px-3 border border-ink/15 bg-surface text-xs font-mono text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                   />
 
-                  <div className="mt-2 flex items-center justify-between text-[11px] font-mono text-[#111113]/60">
+                  <div className="mt-2 flex items-center justify-between text-meta font-mono text-ink/60">
                     <button
                       type="button"
                       onClick={() => setStep("request")}
-                      className="hover:text-[#111113] underline underline-offset-4 cursor-pointer"
+                      className="hover:text-ink underline underline-offset-4 cursor-pointer"
                     >
                       Change email address
                     </button>
@@ -401,7 +401,7 @@ function ForgotPasswordForm({
                           "inline-flex items-center gap-1",
                           resendCooldown > 0 || isSubmitting
                             ? "opacity-50 cursor-not-allowed"
-                            : "text-[#111113] hover:text-[#FF5A25] cursor-pointer"
+                            : "text-ink hover:text-accent-orange cursor-pointer"
                         )}
                       >
                         <RefreshCw className="h-3 w-3" />
@@ -427,12 +427,12 @@ function ForgotPasswordForm({
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full h-11 pl-3 pr-10 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                      className="w-full h-11 pl-3 pr-10 border border-ink/15 bg-surface text-xs font-mono text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                     />
                     <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#111113]/50 hover:text-[#111113]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-ink/50 hover:text-ink"
                     >
                       {showNewPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -443,11 +443,11 @@ function ForgotPasswordForm({
                   </div>
 
                   {/* Live 4-Checkpoint Password Policy Checklist */}
-                  <div className="mt-2.5 grid grid-cols-2 gap-1.5 p-2.5 bg-[#F8F7F4] border border-[#111113]/10 text-[11px] font-mono">
+                  <div className="mt-2.5 grid grid-cols-2 gap-1.5 p-2.5 bg-paper border border-ink/10 text-meta font-mono rounded-card">
                     <div
                       className={cn(
                         "flex items-center gap-1.5",
-                        hasMinLength ? "text-[#15803d] font-semibold" : "text-[#111113]/50"
+                        hasMinLength ? "text-trust-strong font-semibold" : "text-ink/50"
                       )}
                     >
                       <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -457,8 +457,8 @@ function ForgotPasswordForm({
                       className={cn(
                         "flex items-center gap-1.5",
                         hasUpperAndLower
-                          ? "text-[#15803d] font-semibold"
-                          : "text-[#111113]/50"
+                          ? "text-trust-strong font-semibold"
+                          : "text-ink/50"
                       )}
                     >
                       <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -467,7 +467,7 @@ function ForgotPasswordForm({
                     <div
                       className={cn(
                         "flex items-center gap-1.5",
-                        hasNumber ? "text-[#15803d] font-semibold" : "text-[#111113]/50"
+                        hasNumber ? "text-trust-strong font-semibold" : "text-ink/50"
                       )}
                     >
                       <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -476,7 +476,7 @@ function ForgotPasswordForm({
                     <div
                       className={cn(
                         "flex items-center gap-1.5",
-                        hasSymbol ? "text-[#15803d] font-semibold" : "text-[#111113]/50"
+                        hasSymbol ? "text-trust-strong font-semibold" : "text-ink/50"
                       )}
                     >
                       <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -499,13 +499,13 @@ function ForgotPasswordForm({
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Re-enter new password"
-                    className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                    className="w-full h-11 px-3 border border-ink/15 bg-surface text-xs font-mono text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                   />
                   {confirmPassword.length > 0 && (
                     <p
                       className={cn(
-                        "mt-1 font-mono text-[11px]",
-                        passwordsMatch ? "text-[#15803d]" : "text-[#c53030]"
+                        "mt-1 font-mono text-meta",
+                        passwordsMatch ? "text-trust-strong" : "text-state-error-strong"
                       )}
                     >
                       {passwordsMatch
@@ -540,20 +540,20 @@ function ForgotPasswordForm({
               ================================================================= */}
           {step === "completed" && (
             <div className="space-y-6 pt-2 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center bg-[#22c55e]/15 border border-[#15803d]/30 text-[#15803d]">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center bg-trust/15 border border-trust-strong/30 text-trust-strong">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
 
               <div className="space-y-2">
-                <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-[#15803d] font-bold">
+                <span className="font-mono text-meta uppercase tracking-[0.15em] text-trust-strong font-bold">
                   PASSWORD_HASH_ROTATED // 200 OK
                 </span>
-                <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+                <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
                   Vault Password Updated
                 </h1>
-                <p className="font-secondary text-sm text-[#111113]/70">
+                <p className="font-secondary text-sm text-ink/70">
                   Your password for{" "}
-                  <span className="font-mono font-semibold text-[#111113]">
+                  <span className="font-mono font-semibold text-ink">
                     {email}
                   </span>{" "}
                   has been reset and all older device sessions have been
@@ -561,20 +561,20 @@ function ForgotPasswordForm({
                 </p>
               </div>
 
-              <div className="p-4 bg-[#F8F7F4] border border-[#111113]/12 text-left space-y-1.5 font-mono text-xs">
+              <div className="p-4 bg-paper border border-ink-faint text-left space-y-1.5 font-mono text-xs rounded-card">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#111113]/60">Account ID:</span>
-                  <span className="text-[#111113] font-semibold">{email}</span>
+                  <span className="text-ink/60">Account ID:</span>
+                  <span className="text-ink font-semibold">{email}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#111113]/60">Previous Sessions:</span>
-                  <span className="text-[#15803d] font-semibold">
+                  <span className="text-ink/60">Previous Sessions:</span>
+                  <span className="text-trust-strong font-semibold">
                     Revoked &amp; Cleared
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[#111113]/60">Encryption:</span>
-                  <span className="text-[#111113]">bcrypt cost=10 + JWT</span>
+                  <span className="text-ink/60">Encryption:</span>
+                  <span className="text-ink">bcrypt cost=10 + JWT</span>
                 </div>
               </div>
 
@@ -606,7 +606,7 @@ function ForgotPasswordForm({
                       router.push("/login");
                     }
                   }}
-                  className="w-full py-2.5 text-xs font-mono uppercase tracking-wider text-[#111113]/70 hover:text-[#111113] cursor-pointer"
+                  className="w-full py-2.5 text-xs font-mono uppercase tracking-wider text-ink/70 hover:text-ink cursor-pointer"
                 >
                   Return to Sign In Screen
                 </button>
@@ -615,8 +615,8 @@ function ForgotPasswordForm({
           )}
 
           {/* Footer Security Note */}
-          <div className="mt-6 pt-4 border-t border-[#111113]/12 flex items-center justify-center gap-1.5 text-[11px] font-mono text-[#15803d]">
-            <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+          <div className="mt-6 pt-4 border-t border-ink-faint flex items-center justify-center gap-1.5 text-meta font-mono text-trust-strong">
+            <ShieldCheck className="h-3.5 w-3.5 text-trust" />
             <span>Zero-Knowledge Password Recovery Protocol</span>
           </div>
         </div>
@@ -629,7 +629,7 @@ function ForgotPasswordForm({
 
 export default function ForgotPasswordPage(props: ForgotPasswordPageProps) {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#F8F7F4]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-paper" />}>
       <ForgotPasswordForm {...props} />
     </Suspense>
   );

@@ -163,29 +163,29 @@ export function ToastItem({
     info: {
       icon: Info,
       containerClasses:
-        "border-[#111113]/15 bg-white text-[#111113] border-l-4 border-l-[#111113]",
-      iconClasses: "text-[#111113] bg-[#F0EFEA]",
+        "border-ink/15 bg-surface text-ink border-l-4 border-l-ink",
+      iconClasses: "text-ink bg-surface-muted",
       badgeLabel: "INFO",
     },
     error: {
       icon: AlertCircle,
       containerClasses:
-        "border-[#f56565]/40 bg-white text-[#111113] border-l-4 border-l-[#f56565]",
-      iconClasses: "text-[#f56565] bg-[#f56565]/10",
+        "border-state-error/40 bg-surface text-ink border-l-4 border-l-state-error",
+      iconClasses: "text-state-error bg-state-error/10",
       badgeLabel: "ERROR",
     },
     warning: {
       icon: AlertTriangle,
       containerClasses:
-        "border-[#ecc94b]/50 bg-white text-[#111113] border-l-4 border-l-[#ecc94b]",
-      iconClasses: "text-[#ecc94b] bg-[#ecc94b]/15",
+        "border-state-warning/50 bg-surface text-ink border-l-4 border-l-state-warning",
+      iconClasses: "text-state-warning bg-state-warning/15",
       badgeLabel: "WARNING",
     },
     success: {
       icon: CheckCircle2,
       containerClasses:
-        "border-[#22c55e]/40 bg-white text-[#111113] border-l-4 border-l-[#22c55e]",
-      iconClasses: "text-[#22c55e] bg-[#22c55e]/15",
+        "border-trust/40 bg-surface text-ink border-l-4 border-l-trust",
+      iconClasses: "text-trust bg-trust/15",
       badgeLabel: "SUCCESS",
     },
   }[toast.type];
@@ -213,16 +213,16 @@ export function ToastItem({
       {/* Content */}
       <div className="flex-1 space-y-1 pr-6 min-w-0">
         <div className="flex items-center gap-2">
-          <h5 className="font-primary text-xs font-bold tracking-[-0.02em] leading-tight text-[#111113] truncate">
+          <h5 className="font-primary text-xs font-bold tracking-[-0.02em] leading-tight text-ink truncate">
             {toast.title}
           </h5>
-          <span className="font-mono text-[9px] uppercase tracking-wider text-[#111113]/65 px-1.5 py-0.2 bg-[#F0EFEA]">
+          <span className="font-mono text-micro uppercase tracking-wider text-ink/65 px-1.5 py-0.2 bg-surface-muted">
             {config.badgeLabel}
           </span>
         </div>
 
         {toast.description && (
-          <p className="font-secondary text-xs text-[#111113]/70 leading-5 break-words">
+          <p className="font-secondary text-xs text-ink/70 leading-5 break-words">
             {toast.description}
           </p>
         )}
@@ -231,7 +231,7 @@ export function ToastItem({
           <button
             type="button"
             onClick={toast.action.onClick}
-            className="mt-2 text-xs font-secondary font-semibold text-[#111113] hover:text-[#FF5A25] underline underline-offset-2 transition-colors"
+            className="mt-2 text-xs font-secondary font-semibold text-ink hover:text-accent-orange underline underline-offset-2 transition-colors"
           >
             {toast.action.label}
           </button>
@@ -244,7 +244,7 @@ export function ToastItem({
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss notification"
-          className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center text-[#111113]/60 hover:bg-[#F0EFEA] hover:text-[#111113] transition-colors"
+          className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center text-ink/60 hover:bg-surface-muted hover:text-ink transition-colors"
         >
           <X className="h-3.5 w-3.5" />
         </button>

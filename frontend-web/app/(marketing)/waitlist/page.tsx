@@ -14,7 +14,7 @@ import { GadgetVectorPattern } from "@/components/marketing/GadgetVectorPattern"
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper canvas (#F8F7F4), Deep Carbon Ink (#111113), Vermilion Orange accent (#FF5A25).
  * - Space Grotesk headings (tracking-[-0.04em]), Plus Jakarta Sans body copy, Space Grotesk Mono (.label / font-mono) for ledger metadata, queue IDs, and NGN figures.
- * - Sharp 0px architectural cards (border-[#111113]/12 bg-white) paired with 999px pill primary CTAs (.btn-primary).
+ * - Sharp 0px architectural cards (border-ink-faint bg-surface) paired with 999px pill primary CTAs (.btn-primary).
  * - Unboxed typographic metadata lines (no compound pill slop).
  */
 
@@ -381,11 +381,11 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-[#F8F7F4]">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-paper">
       {/* =====================================================================
           1. VARIATION 7 EDITORIAL WAITLIST HEADER
           ===================================================================== */}
-      <header className="sticky top-0 z-40 w-full border-b border-[#111113]/12 bg-[#F8F7F4]/95 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-ink-faint bg-paper/95 backdrop-blur-md">
         <div className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-4 sm:px-8">
           {/* Left: Brand Wordmark + Back to Overview */}
           <div className="flex items-center gap-6">
@@ -394,18 +394,18 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
               onClick={onNavigateHome}
               className="flex items-center gap-2 focus:outline-none"
             >
-              <span className="font-primary text-2xl font-extrabold tracking-[-0.05em] text-[#111113] leading-none">
-                SCROWPOINT<span className="text-[#FF5A25]">.</span>
+              <span className="font-primary text-2xl font-extrabold tracking-[-0.05em] text-ink leading-none">
+                SCROWPOINT<span className="text-accent-orange">.</span>
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-2.5 pl-6 border-l border-[#111113]/15">
-              <span className="h-2 w-2 rounded-full bg-[#FF5A25] animate-pulse" />
+            <div className="hidden md:flex items-center gap-2.5 pl-6 border-l border-ink/15">
+              <span className="h-2 w-2 rounded-full bg-accent-orange animate-pulse" />
               <span className="label !opacity-80">
                 Founding Cohort 01
               </span>
-              <span className="text-[#111113]/25">•</span>
-              <span className="font-mono text-[11px] uppercase tracking-wider text-[#15803d] font-bold">
+              <span className="text-ink/25">•</span>
+              <span className="font-mono text-meta uppercase tracking-wider text-trust-strong font-bold">
                 {remainingSlots} of {TOTAL_SLOTS} Slots Open
               </span>
             </div>
@@ -416,7 +416,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
             <Link
               href="/"
               onClick={onNavigateHome}
-              className="hidden sm:inline-flex items-center gap-1.5 nav-link text-[#111113]/70 hover:text-[#111113] transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 nav-link text-ink/70 hover:text-ink transition-colors"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Platform Overview</span>
@@ -432,8 +432,8 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             ) : (
-              <span className="font-mono text-xs uppercase tracking-wider text-[#15803d] font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-[#22c55e]" />
+              <span className="font-mono text-xs uppercase tracking-wider text-trust-strong font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-trust" />
                 <span>Queue #{submittedData.queuePosition} Secured</span>
               </span>
             )}
@@ -450,7 +450,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
             Left (7 cols): Editorial Pitch, Core Business Model, & Cohort Perks
             Right (5 cols): Sticky Architectural Reservation Form / Pass
             =================================================================== */}
-        <section className="relative overflow-hidden border-b border-[#111113]/12 py-12 sm:py-20">
+        <section className="relative overflow-hidden border-b border-ink-faint py-12 sm:py-20">
           {/* Seamless Repeating Gadget Vector Pattern Background */}
           <GadgetVectorPattern idPrefix="sp-waitlist-hero" variant="split" />
 
@@ -462,25 +462,25 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
               <div className="lg:col-span-7 space-y-8">
                 {/* Unboxed Editorial Kicker & Metadata Line */}
                 <div className="space-y-5">
-                  <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono uppercase tracking-[0.15em] text-[#111113]/70">
-                    <span className="text-[#111113] font-bold">P2P Escrow Engine v.2026</span>
-                    <span aria-hidden="true" className="text-[#111113]/25">•</span>
+                  <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono uppercase tracking-[0.15em] text-ink/70">
+                    <span className="text-ink font-bold">P2P Escrow Engine v.2026</span>
+                    <span aria-hidden="true" className="text-ink/25">•</span>
                     <span>Wave 1 Priority Access</span>
-                    <span aria-hidden="true" className="text-[#111113]/25">•</span>
-                    <span className="text-[#FF5A25] font-bold">
+                    <span aria-hidden="true" className="text-ink/25">•</span>
+                    <span className="text-accent-orange font-bold">
                       {remainingSlots} Founding Slots Remaining
                     </span>
                   </div>
 
-                  <h1 className="font-primary text-5xl sm:text-6xl xl:text-[5.25rem] font-bold tracking-[-0.04em] text-[#111113] leading-[0.92] uppercase">
+                  <h1 className="font-primary text-5xl sm:text-6xl xl:text-[5.25rem] font-bold tracking-[-0.04em] text-ink leading-[0.92] uppercase">
                     END FAKE ALERTS.
                     <br />
-                    END DEFECTIVE TECH<span className="text-[#FF5A25]">.</span>
+                    END DEFECTIVE TECH<span className="text-accent-orange">.</span>
                   </h1>
 
-                  <p className="font-secondary text-base sm:text-lg text-[#111113]/75 max-w-xl leading-relaxed">
+                  <p className="font-secondary text-base sm:text-lg text-ink/75 max-w-xl leading-relaxed">
                     Buyer funds lock in segregated Paystack custody while sellers dispatch via tracked courier—releasing payout only after a{" "}
-                    <strong className="font-semibold text-[#111113]">
+                    <strong className="font-semibold text-ink">
                       48-hour hardware inspection
                     </strong>
                     .
@@ -491,47 +491,47 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="label">Core Protocol Architecture</span>
-                    <span className="label !opacity-100 text-[#15803d]">Zero Counterparty Risk</span>
+                    <span className="label !opacity-100 text-trust-strong">Zero Counterparty Risk</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 sm:divide-x divide-[#111113]/12">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 border border-ink-faint bg-surface divide-y sm:divide-y-0 sm:divide-x divide-ink-faint rounded-card">
                     <div className="p-4 flex items-center gap-3">
-                      <div className="h-9 w-9 shrink-0 border border-[#111113]/12 bg-[#F8F7F4] flex items-center justify-center">
-                        <CreditCard className="h-4 w-4 text-[#111113]" />
+                      <div className="h-9 w-9 shrink-0 border border-ink-faint bg-paper flex items-center justify-center rounded-ui">
+                        <CreditCard className="h-4 w-4 text-ink" />
                       </div>
                       <div>
-                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
                           Paystack Custody
                         </p>
-                        <p className="font-mono text-[11px] text-[#111113]/60 uppercase tracking-wider">
+                        <p className="font-mono text-meta text-ink/60 uppercase tracking-wider">
                           100% Locked Upfront
                         </p>
                       </div>
                     </div>
 
                     <div className="p-4 flex items-center gap-3">
-                      <div className="h-9 w-9 shrink-0 border border-[#111113]/12 bg-[#F8F7F4] flex items-center justify-center">
-                        <Fingerprint className="h-4 w-4 text-[#FF5A25]" />
+                      <div className="h-9 w-9 shrink-0 border border-ink-faint bg-paper flex items-center justify-center rounded-ui">
+                        <Fingerprint className="h-4 w-4 text-accent-orange" />
                       </div>
                       <div>
-                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
                           SmileID Biometrics
                         </p>
-                        <p className="font-mono text-[11px] text-[#111113]/60 uppercase tracking-wider">
+                        <p className="font-mono text-meta text-ink/60 uppercase tracking-wider">
                           Mandatory NIN / BVN
                         </p>
                       </div>
                     </div>
 
                     <div className="p-4 flex items-center gap-3">
-                      <div className="h-9 w-9 shrink-0 border border-[#111113]/12 bg-[#F8F7F4] flex items-center justify-center">
-                        <Clock className="h-4 w-4 text-[#15803d]" />
+                      <div className="h-9 w-9 shrink-0 border border-ink-faint bg-paper flex items-center justify-center rounded-ui">
+                        <Clock className="h-4 w-4 text-trust-strong" />
                       </div>
                       <div>
-                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                        <p className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
                           48H Diagnostic SLA
                         </p>
-                        <p className="font-mono text-[11px] text-[#111113]/60 uppercase tracking-wider">
+                        <p className="font-mono text-meta text-ink/60 uppercase tracking-wider">
                           Verify Before Payout
                         </p>
                       </div>
@@ -543,68 +543,68 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="label">Cohort 01 Value Proposition (First 500)</span>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#FF5A25] font-bold">
+                    <span className="font-mono text-meta uppercase tracking-wider text-accent-orange font-bold">
                       Priority Allocation
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 divide-x divide-[#111113]/12">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 border border-ink-faint bg-surface divide-y sm:divide-y-0 divide-x divide-ink-faint rounded-card">
                     <div className="p-4 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#15803d] font-bold">
+                        <span className="font-mono text-caption uppercase tracking-widest text-trust-strong font-bold">
                           Fee Waiver
                         </span>
-                        <Percent className="h-3.5 w-3.5 text-[#15803d]" />
+                        <Percent className="h-3.5 w-3.5 text-trust-strong" />
                       </div>
-                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-ink">
                         0% FEE
                       </p>
-                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                      <p className="font-secondary text-meta text-ink/65">
                         On first 5 trades
                       </p>
                     </div>
 
                     <div className="p-4 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#FF5A25] font-bold">
+                        <span className="font-mono text-caption uppercase tracking-widest text-accent-orange font-bold">
                           Max Savings
                         </span>
-                        <Award className="h-3.5 w-3.5 text-[#FF5A25]" />
+                        <Award className="h-3.5 w-3.5 text-accent-orange" />
                       </div>
-                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-ink">
                         ₦125K
                       </p>
-                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                      <p className="font-secondary text-meta text-ink/65">
                         Escrow fee cap saved
                       </p>
                     </div>
 
                     <div className="p-4 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#111113]/60 font-bold">
+                        <span className="font-mono text-caption uppercase tracking-widest text-ink/60 font-bold">
                           Settlement
                         </span>
-                        <Truck className="h-3.5 w-3.5 text-[#111113]" />
+                        <Truck className="h-3.5 w-3.5 text-ink" />
                       </div>
-                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-ink">
                         INSTANT
                       </p>
-                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                      <p className="font-secondary text-meta text-ink/65">
                         Direct NIBSS payout
                       </p>
                     </div>
 
                     <div className="p-4 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-[#15803d] font-bold">
+                        <span className="font-mono text-caption uppercase tracking-widest text-trust-strong font-bold">
                           Trust Badge
                         </span>
-                        <ShieldCheck className="h-3.5 w-3.5 text-[#15803d]" />
+                        <ShieldCheck className="h-3.5 w-3.5 text-trust-strong" />
                       </div>
-                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-[#111113]">
+                      <p className="font-mono text-2xl sm:text-3xl font-bold tracking-[-0.04em] text-ink">
                         TIER 01
                       </p>
-                      <p className="font-secondary text-[11px] text-[#111113]/65">
+                      <p className="font-secondary text-meta text-ink/65">
                         Founding profile seal
                       </p>
                     </div>
@@ -622,33 +622,33 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
               >
                 {!submittedData ? (
                   /* ARCHITECTURAL RESERVATION FORM CARD */
-                  <div className="border border-[#111113]/15 bg-white">
+                  <div className="border border-ink/15 bg-surface rounded-card">
                     {/* Top Ledger Header Bar */}
-                    <div className="border-b border-[#111113]/12 bg-[#111113] text-white px-6 py-4 flex items-center justify-between">
+                    <div className="rounded-t-card border-b border-ink-faint bg-ink text-white px-6 py-4 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-[#FF5A25]" />
-                        <span className="font-mono text-[11px] uppercase tracking-[0.15em] font-bold">
+                        <span className="h-2 w-2 rounded-full bg-accent-orange" />
+                        <span className="font-mono text-meta uppercase tracking-[0.15em] font-bold">
                           Cohort 01 Reservation Desk
                         </span>
                       </div>
-                      <span className="font-mono text-[11px] text-white/80">
+                      <span className="font-mono text-meta text-white/80">
                         {currentClaimed}/{TOTAL_SLOTS} Claimed
                       </span>
                     </div>
 
                     {/* Capacity Bar */}
-                    <div className="px-6 pt-5 pb-4 border-b border-[#111113]/12 bg-[#F8F7F4]">
+                    <div className="px-6 pt-5 pb-4 border-b border-ink-faint bg-paper">
                       <div className="flex items-center justify-between text-xs font-mono mb-2">
-                        <span className="text-[#111113] font-bold uppercase tracking-wider">
+                        <span className="text-ink font-bold uppercase tracking-wider">
                           0% Fee Allocation Capacity
                         </span>
-                        <span className="text-[#FF5A25] font-bold">
+                        <span className="text-accent-orange font-bold">
                           {capacityPercentage}% Filled ({remainingSlots} left)
                         </span>
                       </div>
-                      <div className="h-1.5 w-full bg-[#111113]/10 overflow-hidden">
+                      <div className="h-1.5 w-full bg-ink/10 overflow-hidden">
                         <div
-                          className="h-full bg-[#111113] transition-all duration-500"
+                          className="h-full bg-ink transition-all duration-500"
                           style={{ width: `${capacityPercentage}%` }}
                         />
                       </div>
@@ -657,10 +657,10 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                     {/* Form Body */}
                     <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
                       <div>
-                        <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                        <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink">
                           Reserve Your Founding Position
                         </h2>
-                        <p className="font-secondary text-xs text-[#111113]/65 mt-1">
+                        <p className="font-secondary text-xs text-ink/65 mt-1">
                           Lock in your 0% fee voucher for your first 5 escrow trades. No credit card required.
                         </p>
                       </div>
@@ -670,7 +670,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                         <label className="label !opacity-90 block mb-2">
                           01. Primary Trading Role
                         </label>
-                        <div className="grid grid-cols-3 border border-[#111113]/15 bg-[#F8F7F4] p-1 gap-1">
+                        <div className="grid grid-cols-3 border border-ink/15 bg-paper p-1 gap-1 rounded-card">
                           {[
                             { value: "buyer" as UserRoleChoice, label: "Buy Tech" },
                             { value: "seller" as UserRoleChoice, label: "Sell Tech" },
@@ -685,8 +685,8 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                                 className={cn(
                                   "min-h-[40px] px-2 py-2 text-xs font-secondary font-semibold transition-colors cursor-pointer text-center",
                                   active
-                                    ? "bg-[#111113] text-white"
-                                    : "text-[#111113]/70 hover:text-[#111113] hover:bg-white/60"
+                                    ? "bg-ink text-white"
+                                    : "text-ink/70 hover:text-ink hover:bg-white/60"
                                 )}
                               >
                                 {option.label}
@@ -700,7 +700,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="label !opacity-90 block mb-1.5">
-                            02. Full Name / Store Name <span className="text-[#FF5A25]">*</span>
+                            02. Full Name / Store Name <span className="text-accent-orange">*</span>
                           </label>
                           <input
                             type="text"
@@ -713,14 +713,14 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             }}
                             placeholder="e.g. Adeola Tech Hub"
                             className={cn(
-                              "w-full h-11 px-3.5 border bg-white text-xs font-secondary text-[#111113] placeholder:text-[#111113]/40 transition-colors outline-none",
+                              "w-full h-11 px-3.5 border bg-surface text-xs font-secondary text-ink placeholder:text-ink/40 transition-colors outline-none rounded-ui",
                               formErrors.fullName
-                                ? "border-[#f56565] focus:border-[#c53030]"
-                                : "border-[#111113]/15 focus:border-[#111113]"
+                                ? "border-state-error focus:border-state-error-strong"
+                                : "border-ink/15 focus:border-ink"
                             )}
                           />
                           {formErrors.fullName && (
-                            <p className="font-secondary text-[11px] text-[#c53030] mt-1">
+                            <p className="font-secondary text-meta text-state-error-strong mt-1">
                               {formErrors.fullName}
                             </p>
                           )}
@@ -728,7 +728,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
 
                         <div>
                           <label className="label !opacity-90 block mb-1.5">
-                            03. Email Address <span className="text-[#FF5A25]">*</span>
+                            03. Email Address <span className="text-accent-orange">*</span>
                           </label>
                           <input
                             type="email"
@@ -741,14 +741,14 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             }}
                             placeholder="you@domain.ng"
                             className={cn(
-                              "w-full h-11 px-3.5 border bg-white text-xs font-secondary text-[#111113] placeholder:text-[#111113]/40 transition-colors outline-none",
+                              "w-full h-11 px-3.5 border bg-surface text-xs font-secondary text-ink placeholder:text-ink/40 transition-colors outline-none rounded-ui",
                               formErrors.email
-                                ? "border-[#f56565] focus:border-[#c53030]"
-                                : "border-[#111113]/15 focus:border-[#111113]"
+                                ? "border-state-error focus:border-state-error-strong"
+                                : "border-ink/15 focus:border-ink"
                             )}
                           />
                           {formErrors.email && (
-                            <p className="font-secondary text-[11px] text-[#c53030] mt-1">
+                            <p className="font-secondary text-meta text-state-error-strong mt-1">
                               {formErrors.email}
                             </p>
                           )}
@@ -766,7 +766,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             placeholder="+234 803 000 0000"
-                            className="w-full h-11 px-3.5 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] placeholder:text-[#111113]/40 focus:border-[#111113] outline-none"
+                            className="w-full h-11 px-3.5 border border-ink/15 bg-surface text-xs font-mono text-ink placeholder:text-ink/40 focus:border-ink outline-none rounded-ui"
                           />
                         </div>
 
@@ -782,7 +782,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                                 setFormErrors({ ...formErrors, customCity: undefined });
                               }
                             }}
-                            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] outline-none cursor-pointer"
+                            className="w-full h-11 px-3 border border-ink/15 bg-surface text-xs font-secondary text-ink focus:border-ink outline-none cursor-pointer rounded-ui"
                           >
                             {LOCATION_PRESETS.map((preset) => (
                               <option key={preset.value} value={preset.value}>
@@ -795,11 +795,11 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
 
                       {/* Dynamic Custom City Input */}
                       {locationPreset === "other" && (
-                        <div className="border border-[#111113]/20 bg-[#F8F7F4] p-4 space-y-2">
-                          <label className="font-mono text-[11px] uppercase tracking-wider font-bold text-[#111113] flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 text-[#FF5A25]" />
+                        <div className="border border-ink/20 bg-paper p-4 space-y-2 rounded-card">
+                          <label className="font-mono text-meta uppercase tracking-wider font-bold text-ink flex items-center gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-accent-orange" />
                             <span>
-                              Specify Trading City &amp; State <span className="text-[#FF5A25]">*</span>
+                              Specify Trading City &amp; State <span className="text-accent-orange">*</span>
                             </span>
                           </label>
                           <input
@@ -813,19 +813,19 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             }}
                             placeholder="e.g. Benin City, Edo State / Uyo, Akwa Ibom"
                             className={cn(
-                              "w-full h-10 px-3 border bg-white text-xs font-secondary text-[#111113] placeholder:text-[#111113]/40 outline-none",
+                              "w-full h-10 px-3 border bg-surface text-xs font-secondary text-ink placeholder:text-ink/40 outline-none rounded-ui",
                               formErrors.customCity
-                                ? "border-[#f56565]"
-                                : "border-[#111113]/15 focus:border-[#111113]"
+                                ? "border-state-error"
+                                : "border-ink/15 focus:border-ink"
                             )}
                             autoFocus
                           />
                           {formErrors.customCity && (
-                            <p className="font-secondary text-[11px] text-[#c53030]">
+                            <p className="font-secondary text-meta text-state-error-strong">
                               {formErrors.customCity}
                             </p>
                           )}
-                          <p className="font-secondary text-[11px] text-[#111113]/65">
+                          <p className="font-secondary text-meta text-ink/65">
                             Used to prioritize DHL/GIG dispatch hubs in your state for Wave 1.
                           </p>
                         </div>
@@ -847,16 +847,16 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                                 className={cn(
                                   "flex items-center gap-2.5 px-3 py-2.5 border text-left text-xs font-secondary transition-colors cursor-pointer",
                                   checked
-                                    ? "border-[#111113] bg-[#F8F7F4] text-[#111113] font-semibold"
-                                    : "border-[#111113]/12 bg-white text-[#111113]/65 hover:border-[#111113]/30"
+                                    ? "border-ink bg-paper text-ink font-semibold"
+                                    : "border-ink-faint bg-surface text-ink/65 hover:border-ink/30"
                                 )}
                               >
                                 <span
                                   className={cn(
                                     "flex h-4 w-4 shrink-0 items-center justify-center border transition-colors",
                                     checked
-                                      ? "border-[#111113] bg-[#111113] text-white"
-                                      : "border-[#111113]/25 bg-white"
+                                      ? "border-ink bg-ink text-white"
+                                      : "border-ink/25 bg-surface"
                                   )}
                                 >
                                   {checked && <Check className="h-3 w-3 stroke-[3]" />}
@@ -882,10 +882,10 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                                 key={tier}
                                 onClick={() => setFormData({ ...formData, monthlyVolume: tier })}
                                 className={cn(
-                                  "py-2.5 px-2 text-[11px] border font-mono transition-colors text-center cursor-pointer",
+                                  "py-2.5 px-2 text-meta border font-mono transition-colors text-center cursor-pointer",
                                   active
-                                    ? "border-[#111113] bg-[#111113] text-white font-bold"
-                                    : "border-[#111113]/15 bg-white text-[#111113]/70 hover:bg-[#F8F7F4]"
+                                    ? "border-ink bg-ink text-white font-bold"
+                                    : "border-ink/15 bg-surface text-ink/70 hover:bg-paper"
                                 )}
                               >
                                 {tier}
@@ -914,7 +914,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             </>
                           )}
                         </button>
-                        <p className="font-mono text-[10px] uppercase tracking-wider text-center text-[#111113]/60">
+                        <p className="font-mono text-caption uppercase tracking-wider text-center text-ink/60">
                           0% Fee Voucher • SmileID Priority • NDPR Protected
                         </p>
                       </div>
@@ -924,68 +924,68 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                   /* ===========================================================
                      CONFIRMED FOUNDING COHORT ALLOCATION PASS
                      =========================================================== */
-                  <div className="border border-[#111113] bg-white">
+                  <div className="border border-ink bg-surface rounded-card">
                     {/* Pass Header */}
-                    <div className="bg-[#111113] text-white px-6 py-4 flex items-center justify-between">
+                    <div className="rounded-t-card bg-ink text-white px-6 py-4 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[#22c55e]" />
+                        <CheckCircle2 className="h-4 w-4 text-trust" />
                         <span className="font-mono text-xs uppercase tracking-[0.15em] font-bold">
                           Founding Pass Issued
                         </span>
                       </div>
-                      <span className="font-mono text-xs text-[#FF5A25] font-bold">
+                      <span className="font-mono text-xs text-accent-orange font-bold">
                         REF: {submittedData.referralCode}
                       </span>
                     </div>
 
                     <div className="p-6 sm:p-8 space-y-6">
                       {/* Queue Number Ledger Box */}
-                      <div className="border border-[#111113]/15 bg-[#F8F7F4] p-6 text-center space-y-2">
+                      <div className="border border-ink/15 bg-paper p-6 text-center space-y-2 rounded-card">
                         <span className="label block">
                           Verified Cohort 01 Queue Position
                         </span>
-                        <div className="font-mono text-5xl sm:text-6xl font-bold text-[#111113] tracking-[-0.04em]">
+                        <div className="font-mono text-5xl sm:text-6xl font-bold text-ink tracking-[-0.04em]">
                           #{submittedData.queuePosition}
                         </div>
-                        <div className="pt-1 flex items-center justify-center gap-2 text-xs font-mono text-[#15803d] font-bold">
-                          <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                        <div className="pt-1 flex items-center justify-center gap-2 text-xs font-mono text-trust-strong font-bold">
+                          <ShieldCheck className="h-4 w-4 text-trust" />
                           <span>0% Escrow Fee Waiver Locked (First 5 Trades)</span>
                         </div>
                       </div>
 
                       {/* Holder Metadata Ledger */}
-                      <div className="border border-[#111113]/12 divide-y divide-[#111113]/12 text-xs">
+                      <div className="border border-ink-faint divide-y divide-ink-faint text-xs">
                         <div className="flex items-center justify-between py-2.5 px-3.5">
-                          <span className="font-mono uppercase text-[#111113]/60">Registered Holder</span>
-                          <span className="font-primary font-bold text-[#111113]">{submittedData.fullName}</span>
+                          <span className="font-mono uppercase text-ink/60">Registered Holder</span>
+                          <span className="font-primary font-bold text-ink">{submittedData.fullName}</span>
                         </div>
                         <div className="flex items-center justify-between py-2.5 px-3.5">
-                          <span className="font-mono uppercase text-[#111113]/60">Token Delivery</span>
-                          <span className="font-mono font-semibold text-[#111113]">{submittedData.email}</span>
+                          <span className="font-mono uppercase text-ink/60">Token Delivery</span>
+                          <span className="font-mono font-semibold text-ink">{submittedData.email}</span>
                         </div>
                         <div className="flex items-center justify-between py-2.5 px-3.5">
-                          <span className="font-mono uppercase text-[#111113]/60">Primary Hub</span>
-                          <span className="font-secondary font-semibold text-[#111113]">{submittedData.city}</span>
+                          <span className="font-mono uppercase text-ink/60">Primary Hub</span>
+                          <span className="font-secondary font-semibold text-ink">{submittedData.city}</span>
                         </div>
                         <div className="flex items-center justify-between py-2.5 px-3.5">
-                          <span className="font-mono uppercase text-[#111113]/60">Est. Volume</span>
-                          <span className="font-mono font-bold text-[#15803d]">{submittedData.monthlyVolume}</span>
+                          <span className="font-mono uppercase text-ink/60">Est. Volume</span>
+                          <span className="font-mono font-bold text-trust-strong">{submittedData.monthlyVolume}</span>
                         </div>
                       </div>
 
                       {/* Referral Priority Boost */}
-                      <div className="border border-[#111113]/15 bg-[#F8F7F4] p-5 space-y-3">
+                      <div className="border border-ink/15 bg-paper p-5 space-y-3 rounded-card">
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <span className="font-mono text-[11px] uppercase tracking-wider font-bold text-[#111113] flex items-center gap-1.5">
-                              <Gift className="h-3.5 w-3.5 text-[#FF5A25]" />
+                            <span className="font-mono text-meta uppercase tracking-wider font-bold text-ink flex items-center gap-1.5">
+                              <Gift className="h-3.5 w-3.5 text-accent-orange" />
                               <span>Priority Queue Jump (+25 Spots)</span>
                             </span>
-                            <p className="font-secondary text-xs text-[#111113]/70 mt-1">
+                            <p className="font-secondary text-xs text-ink/70 mt-1">
                               Invite fellow gadget buyers or Computer Village merchants to advance into Wave 1 immediate access.
                             </p>
                           </div>
-                          <span className="font-mono text-[11px] font-bold bg-white border border-[#111113]/15 px-2 py-0.5 text-[#111113] shrink-0">
+                          <span className="font-mono text-meta font-bold bg-surface border border-ink/15 px-2 py-0.5 text-ink shrink-0 rounded-card">
                             {submittedData.referralCount} Referred
                           </span>
                         </div>
@@ -995,16 +995,16 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             type="text"
                             readOnly
                             value={referralUrl}
-                            className="flex-1 h-10 px-3 bg-white border border-[#111113]/15 font-mono text-xs text-[#111113] select-all outline-none"
+                            className="flex-1 h-10 px-3 bg-surface border border-ink/15 font-mono text-xs text-ink select-all outline-none rounded-ui"
                           />
                           <button
                             type="button"
                             onClick={handleCopyReferral}
-                            className="h-10 px-4 bg-[#111113] text-white hover:bg-[#FF5A25] transition-colors font-mono text-xs uppercase tracking-wider font-bold inline-flex items-center gap-1.5 cursor-pointer"
+                            className="h-10 px-4 bg-ink text-white hover:bg-accent-orange transition-colors font-mono text-xs uppercase tracking-wider font-bold inline-flex items-center gap-1.5 cursor-pointer"
                           >
                             {copiedLink ? (
                               <>
-                                <Check className="h-3.5 w-3.5 text-[#22c55e]" />
+                                <Check className="h-3.5 w-3.5 text-trust" />
                                 <span>Copied</span>
                               </>
                             ) : (
@@ -1021,7 +1021,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             href={`https://wa.me/?text=${whatsappShareText}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-[#15803d] hover:bg-[#166534] text-white text-xs font-secondary font-semibold transition-colors"
+                            className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-trust-strong hover:bg-state-success-strong text-white text-xs font-secondary font-semibold transition-colors"
                           >
                             <MessageCircle className="h-3.5 w-3.5" />
                             <span>Share via WhatsApp</span>
@@ -1031,7 +1031,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                             href={`https://twitter.com/intent/tweet?text=${twitterShareText}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 border border-[#111113]/20 bg-white hover:border-[#111113] text-[#111113] text-xs font-secondary font-semibold transition-colors"
+                            className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 border border-ink/20 bg-surface hover:border-ink text-ink text-xs font-secondary font-semibold transition-colors rounded-card"
                           >
                             <Share2 className="h-3.5 w-3.5" />
                             <span>Post on X</span>
@@ -1043,7 +1043,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                         <button
                           type="button"
                           onClick={handleResetForNew}
-                          className="font-mono text-[11px] uppercase tracking-wider text-[#111113]/65 hover:text-[#111113] underline inline-flex items-center gap-1.5 cursor-pointer"
+                          className="font-mono text-meta uppercase tracking-wider text-ink/65 hover:text-ink underline inline-flex items-center gap-1.5 cursor-pointer"
                         >
                           <RefreshCw className="h-3 w-3" />
                           <span>Register Another Trader</span>
@@ -1051,7 +1051,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
 
                         <Link
                           href="/pricing"
-                          className="font-mono text-[11px] uppercase tracking-wider text-[#FF5A25] font-bold hover:underline inline-flex items-center gap-1"
+                          className="font-mono text-meta uppercase tracking-wider text-accent-orange font-bold hover:underline inline-flex items-center gap-1"
                         >
                           <span>Preview Fee Calculator</span>
                           <ArrowRight className="h-3 w-3" />
@@ -1068,16 +1068,16 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
         {/* ===================================================================
             3. THE BUSINESS MODEL LEDGER: WHY SCROWPOINT REPLACES DIRECT P2P
             =================================================================== */}
-        <section className="border-b border-[#111113]/12 py-16 sm:py-24 bg-[#F8F7F4]">
+        <section className="border-b border-ink-faint py-16 sm:py-24 bg-paper">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <span className="label block mb-3">Market Problem vs. Custodial Protocol</span>
-                <h2 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-[#111113] leading-none uppercase">
-                  UNPROTECTED P2P VS. SCROWPOINT CUSTODY<span className="text-[#FF5A25]">.</span>
+                <h2 className="font-primary text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-ink leading-none uppercase">
+                  UNPROTECTED P2P VS. SCROWPOINT CUSTODY<span className="text-accent-orange">.</span>
                 </h2>
               </div>
-              <p className="font-secondary text-sm sm:text-base text-[#111113]/70 max-w-md">
+              <p className="font-secondary text-sm sm:text-base text-ink/70 max-w-md">
                 Click through the 4 trade stages below to see how Scrowpoint protects each step compared to direct WhatsApp or classified transfers.
               </p>
             </div>
@@ -1089,40 +1089,40 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
         {/* ===================================================================
             4. LIVE COHORT 01 ENROLLMENT LEDGER
             =================================================================== */}
-        <section className="border-b border-[#111113]/12 py-16 bg-[#F8F7F4]">
+        <section className="border-b border-ink-faint py-16 bg-paper">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span className="label block mb-1">Live Enrollment Feed</span>
-                <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113]">
+                <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink">
                   Recent Nigerian Buyers &amp; Merchants in Cohort 01
                 </h3>
               </div>
-              <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#15803d] font-bold">
-                <span className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
+              <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-trust-strong font-bold">
+                <span className="h-2 w-2 rounded-full bg-trust animate-pulse" />
                 <span>Verified Pre-Launch Queue</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border border-[#111113]/12 bg-white divide-y sm:divide-y-0 sm:divide-x divide-[#111113]/12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border border-ink-faint bg-surface divide-y sm:divide-y-0 sm:divide-x divide-ink-faint rounded-card">
               {RECENT_SIGNUPS.map((signup) => (
                 <div key={signup.id} className="p-5 space-y-2.5 flex flex-col justify-between">
                   <div className="space-y-1">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-[#111113]/55">
+                    <div className="flex items-center justify-between font-mono text-caption text-ink/55">
                       <span>{signup.id}</span>
                       <span>{signup.time}</span>
                     </div>
-                    <div className="font-primary text-sm font-bold text-[#111113] tracking-[-0.02em]">
+                    <div className="font-primary text-sm font-bold text-ink tracking-[-0.02em]">
                       {signup.name}
                     </div>
-                    <p className="font-secondary text-xs text-[#111113]/65">
+                    <p className="font-secondary text-xs text-ink/65">
                       {signup.location}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-[#111113]/10 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider">
-                    <span className="text-[#111113] font-semibold">{signup.role}</span>
-                    <span className="text-[#15803d] font-bold">{signup.volume}</span>
+                  <div className="pt-2 border-t border-ink/10 flex items-center justify-between font-mono text-caption uppercase tracking-wider">
+                    <span className="text-ink font-semibold">{signup.role}</span>
+                    <span className="text-trust-strong font-bold">{signup.volume}</span>
                   </div>
                 </div>
               ))}
@@ -1133,13 +1133,13 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
         {/* ===================================================================
             5. FOUNDING COHORT FAQ LEDGER
             =================================================================== */}
-        <section className="py-16 sm:py-24 bg-[#F8F7F4]">
+        <section className="py-16 sm:py-24 bg-paper">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <span className="label block mb-3">Protocol Clarifications</span>
-                <h2 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-[#111113] uppercase">
-                  FOUNDING WAITLIST &amp; ESCROW FAQ<span className="text-[#FF5A25]">.</span>
+                <h2 className="font-primary text-3xl sm:text-4xl font-bold tracking-[-0.04em] text-ink uppercase">
+                  FOUNDING WAITLIST &amp; ESCROW FAQ<span className="text-accent-orange">.</span>
                 </h2>
               </div>
               <button
@@ -1156,15 +1156,15 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
               {WAITLIST_FAQS.map((faq) => (
                 <div
                   key={faq.index}
-                  className="border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-3"
+                  className="border border-ink-faint bg-surface p-6 sm:p-8 space-y-3 rounded-card"
                 >
-                  <span className="label block text-[#FF5A25] !opacity-100">
+                  <span className="label block text-accent-orange !opacity-100">
                     [FAQ {faq.index}]
                   </span>
-                  <h4 className="font-primary text-lg sm:text-xl font-bold tracking-[-0.03em] text-[#111113]">
+                  <h4 className="font-primary text-lg sm:text-xl font-bold tracking-[-0.03em] text-ink">
                     {faq.question}
                   </h4>
-                  <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed">
+                  <p className="font-secondary text-xs sm:text-sm text-ink/70 leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>
@@ -1177,29 +1177,29 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
       {/* =====================================================================
           6. VARIATION 7 EDITORIAL FOOTER
           ===================================================================== */}
-      <footer className="border-t border-[#111113]/12 bg-[#F8F7F4] py-12">
+      <footer className="border-t border-ink-faint bg-paper py-12">
         <div className="mx-auto max-w-[1600px] px-4 sm:px-8 space-y-8">
           {/* Top Compliance Strip */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-[#111113]/12">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-ink-faint">
             <div className="flex items-center gap-3">
-              <span className="font-primary text-xl font-extrabold tracking-[-0.05em] text-[#111113]">
-                SCROWPOINT<span className="text-[#FF5A25]">.</span>
+              <span className="font-primary text-xl font-extrabold tracking-[-0.05em] text-ink">
+                SCROWPOINT<span className="text-accent-orange">.</span>
               </span>
-              <span className="text-[#111113]/25">•</span>
+              <span className="text-ink/25">•</span>
               <span className="label">P2P Gadget Escrow Engine</span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] uppercase tracking-wider text-[#111113]/75">
+            <div className="flex flex-wrap items-center gap-6 font-mono text-meta uppercase tracking-wider text-ink/75">
               <span className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-[#22c55e]" />
+                <ShieldCheck className="h-4 w-4 text-trust" />
                 <span>Paystack Segregated Custody</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <Fingerprint className="h-4 w-4 text-[#FF5A25]" />
+                <Fingerprint className="h-4 w-4 text-accent-orange" />
                 <span>SmileID Biometric KYC</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <Lock className="h-4 w-4 text-[#111113]" />
+                <Lock className="h-4 w-4 text-ink" />
                 <span>48H Hardware Audit SLA</span>
               </span>
             </div>
@@ -1211,16 +1211,16 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
               © {new Date().getFullYear()} Scrowpoint Technologies Limited. All rights reserved.
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] uppercase tracking-wider">
-              <Link href="/pricing" className="text-[#111113]/70 hover:text-[#111113] transition-colors">
+            <div className="flex flex-wrap items-center gap-6 font-mono text-meta uppercase tracking-wider">
+              <Link href="/pricing" className="text-ink/70 hover:text-ink transition-colors">
                 Fee Calculator
               </Link>
-              <Link href="/trust-and-safety" className="text-[#111113]/70 hover:text-[#111113] transition-colors">
+              <Link href="/trust-and-safety" className="text-ink/70 hover:text-ink transition-colors">
                 Trust &amp; Safety
               </Link>
               <a
                 href="mailto:early@scrowpoint.com?subject=Founding%20Cohort%2001%20Inquiry"
-                className="text-[#111113]/70 hover:text-[#111113] transition-colors inline-flex items-center gap-1"
+                className="text-ink/70 hover:text-ink transition-colors inline-flex items-center gap-1"
               >
                 <Mail className="h-3.5 w-3.5" />
                 <span>early@scrowpoint.com</span>
@@ -1229,7 +1229,7 @@ export default function WaitlistPage({ onNavigateHome }: WaitlistPageProps) {
                 href="https://wa.me/2348000000000?text=Hello%20Scrowpoint%20Team%2C%20I%20have%20an%20inquiry%20about%20Founding%20Cohort%2001"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#15803d] font-bold hover:underline inline-flex items-center gap-1"
+                className="text-trust-strong font-bold hover:underline inline-flex items-center gap-1"
               >
                 <MessageCircle className="h-3.5 w-3.5" />
                 <span>WhatsApp Desk</span>

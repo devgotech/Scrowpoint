@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
  *   2. Escrow Fee (with dynamic tier calculation: 5% <= 150k, 2.5% <= 750k, 1.5% > 750k)
  *   3. Shipping / Courier fee
  *   4. Total Locked (Highlighted in bold trust vault card)
- * - Corner Radius: --radius-card (8px -> rounded-[8px]) for Card; --radius-control (4px -> rounded-[4px]) for inner boxes & buttons.
+ * - Corner Radius: --radius-card (8px -> rounded-ui) for Card; --radius-control (4px -> rounded-ui) for inner boxes & buttons.
  * - Typography: Strict enforcement of `font-mono` for all monetary numbers, percentages, receipt numbers, and SKUs.
  * - Spacing: Exclusively uses the 4-point spacing scale (p-6, gap-4, space-y-3).
  * - Trust Signals: Trust Green (#22c55e) strictly for escrow signals; text on light background uses --color-trust-strong (#15803d).
@@ -122,35 +122,35 @@ export function EscrowFeeReceipt({
   return (
     <Card
       className={cn(
-        "w-full max-w-xl mx-auto overflow-hidden border border-[#111113]/12 bg-white",
+        "w-full max-w-xl mx-auto overflow-hidden border border-ink-faint bg-surface rounded-card",
         className
       )}
     >
       {/* ====================================================================
           1. RECEIPT HEADER & STATUS
           ==================================================================== */}
-      <CardHeader className="bg-[#F8F7F4] p-6 border-b border-[#111113]/12">
+      <CardHeader className="bg-paper p-6 border-b border-ink-faint">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center bg-[#111113] text-white">
+            <div className="flex h-11 w-11 items-center justify-center bg-ink text-white">
               <Receipt className="h-6 w-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-primary text-lg font-bold tracking-[-0.04em] text-[#111113]">
+                <span className="font-primary text-lg font-bold tracking-[-0.04em] text-ink">
                   Escrow Fee Receipt
                 </span>
                 {isLockedInEscrow && (
                   <Badge
                     variant="trust"
-                    className="gap-1 py-0 px-2 text-[10px] font-mono tracking-wider font-semibold"
+                    className="gap-1 py-0 px-2 text-caption font-mono tracking-wider font-semibold"
                   >
-                    <Lock className="h-3 w-3 text-[#22c55e]" />
+                    <Lock className="h-3 w-3 text-trust" />
                     <span>LOCKED IN ESCROW</span>
                   </Badge>
                 )}
               </div>
-              <p className="font-secondary text-xs text-[#111113]/65 mt-0.5">
+              <p className="font-secondary text-xs text-ink/65 mt-0.5">
                 Itemized transaction breakdown & custodial verification record
               </p>
             </div>
@@ -158,25 +158,25 @@ export function EscrowFeeReceipt({
         </div>
 
         {/* Receipt Number & Date Strip */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#111113]/12 text-xs">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-ink-faint text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-[#111113]/60 font-secondary">Receipt #:</span>
+            <span className="text-ink/60 font-secondary">Receipt #:</span>
             <button
               type="button"
               onClick={handleCopyReceipt}
-              className="inline-flex items-center gap-1.5 font-mono font-semibold text-[#111113] hover:text-[#FF5A25] transition-colors cursor-pointer group"
+              className="inline-flex items-center gap-1.5 font-mono font-semibold text-ink hover:text-accent-orange transition-colors cursor-pointer group"
               title="Copy receipt number"
             >
               <span>{receiptNumber}</span>
               {copied ? (
-                <CheckCircle2 className="h-3.5 w-3.5 text-[#15803d]" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-trust-strong" />
               ) : (
-                <Copy className="h-3 w-3 text-[#111113]/50 group-hover:text-[#111113]" />
+                <Copy className="h-3 w-3 text-ink/50 group-hover:text-ink" />
               )}
             </button>
           </div>
 
-          <div className="font-mono text-[#111113]/60">{createdAt}</div>
+          <div className="font-mono text-ink/60">{createdAt}</div>
         </div>
       </CardHeader>
 
@@ -184,13 +184,13 @@ export function EscrowFeeReceipt({
         {/* ====================================================================
             2. ITEM & PARTIES SUMMARY
             ==================================================================== */}
-        <div className="border border-[#111113]/12 bg-[#F8F7F4] p-4 space-y-3">
+        <div className="border border-ink-faint bg-paper p-4 space-y-3 rounded-card">
           <div className="flex items-start justify-between gap-3">
             <div>
               <span className="label">
                 Purchased Gadget
               </span>
-              <h4 className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113] mt-0.5">
+              <h4 className="font-primary text-sm font-bold tracking-[-0.03em] text-ink mt-0.5">
                 {itemTitle}
               </h4>
             </div>
@@ -198,25 +198,25 @@ export function EscrowFeeReceipt({
               <span className="label">
                 Order Ref
               </span>
-              <p className="font-mono text-xs font-semibold text-[#111113] mt-0.5">
+              <p className="font-mono text-xs font-semibold text-ink mt-0.5">
                 {orderNumber}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-[#111113]/10 text-xs font-mono text-[#111113]/60">
+          <div className="flex items-center justify-between pt-2 border-t border-ink/10 text-xs font-mono text-ink/60">
             <span>SKU: {sku}</span>
             <span>Currency: {currency}</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-secondary text-[#111113]/65">
+          <div className="grid grid-cols-2 gap-2 pt-1 text-xs font-secondary text-ink/65">
             <div>
-              <span className="text-[11px] block text-[#111113]/55">Buyer:</span>
-              <span className="font-semibold text-[#111113]">{buyerName}</span>
+              <span className="text-meta block text-ink/55">Buyer:</span>
+              <span className="font-semibold text-ink">{buyerName}</span>
             </div>
             <div className="text-right">
-              <span className="text-[11px] block text-[#111113]/55">Seller:</span>
-              <span className="font-semibold text-[#111113]">{sellerName}</span>
+              <span className="text-meta block text-ink/55">Seller:</span>
+              <span className="font-semibold text-ink">{sellerName}</span>
             </div>
           </div>
         </div>
@@ -225,7 +225,7 @@ export function EscrowFeeReceipt({
             3. ITEMIZED FINANCIAL LIST (Strict font-mono for numbers)
             ==================================================================== */}
         <div className="space-y-3 text-sm">
-          <div className="flex items-center justify-between pb-2 border-b border-[#111113]/12 label">
+          <div className="flex items-center justify-between pb-2 border-b border-ink-faint label">
             <span>Fee Itemization</span>
             <span>Amount</span>
           </div>
@@ -233,12 +233,12 @@ export function EscrowFeeReceipt({
           {/* Item 1: Gadget Price */}
           <div className="flex items-center justify-between py-1">
             <div className="flex items-center gap-2">
-              <span className="font-secondary text-[#111113]">Item Price</span>
-              <span className="text-[11px] text-[#111113]/55 font-mono">
+              <span className="font-secondary text-ink">Item Price</span>
+              <span className="text-meta text-ink/55 font-mono">
                 (Declared value)
               </span>
             </div>
-            <span className="font-mono text-[#111113] font-semibold">
+            <span className="font-mono text-ink font-semibold">
               {formattedItemPrice}
             </span>
           </div>
@@ -247,16 +247,16 @@ export function EscrowFeeReceipt({
           <div className="flex items-center justify-between py-1">
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="font-secondary text-[#111113]">Escrow Protection Fee</span>
-                <span className="font-mono text-[10px] uppercase tracking-wider bg-[#F0EFEA] border border-[#111113]/12 px-1.5 py-0.2 text-[#111113]/75 font-semibold">
+                <span className="font-secondary text-ink">Escrow Protection Fee</span>
+                <span className="font-mono text-caption uppercase tracking-wider bg-surface-muted border border-ink-faint px-1.5 py-0.2 text-ink/75 font-semibold rounded-card">
                   {feeRatePercent}% tier
                 </span>
               </div>
-              <span className="text-[11px] text-[#111113]/60 font-secondary">
+              <span className="text-meta text-ink/60 font-secondary">
                 Custodial guarantee, fraud shielding & mediation coverage
               </span>
             </div>
-            <span className="font-mono text-[#111113] font-semibold">
+            <span className="font-mono text-ink font-semibold">
               {formattedEscrowFee}
             </span>
           </div>
@@ -265,14 +265,14 @@ export function EscrowFeeReceipt({
           <div className="flex items-center justify-between py-1">
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="font-secondary text-[#111113]">Tracked Shipping</span>
-                <Truck className="h-3.5 w-3.5 text-[#111113]/60" />
+                <span className="font-secondary text-ink">Tracked Shipping</span>
+                <Truck className="h-3.5 w-3.5 text-ink/60" />
               </div>
-              <span className="text-[11px] text-[#111113]/60 font-secondary">
+              <span className="text-meta text-ink/60 font-secondary">
                 Doorstep dispatch with signature & inspection receipt
               </span>
             </div>
-            <span className="font-mono text-[#111113] font-semibold">
+            <span className="font-mono text-ink font-semibold">
               {formattedShippingFee}
             </span>
           </div>
@@ -280,8 +280,8 @@ export function EscrowFeeReceipt({
           {/* Optional Gateway Fee */}
           {gatewayFeeKobo > 0 && (
             <div className="flex items-center justify-between py-1">
-              <span className="font-secondary text-[#111113]">Payment Processing Fee</span>
-              <span className="font-mono text-[#111113] font-semibold">
+              <span className="font-secondary text-ink">Payment Processing Fee</span>
+              <span className="font-mono text-ink font-semibold">
                 {formattedGatewayFee}
               </span>
             </div>
@@ -290,27 +290,27 @@ export function EscrowFeeReceipt({
           {/* ================================================================
               4. TOTAL LOCKED IN ESCROW HIGHLIGHT
               ================================================================ */}
-          <div className="mt-4 border border-[#22c55e]/30 bg-[#22c55e]/15 p-4">
+          <div className="mt-4 border border-trust/30 bg-trust/15 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center bg-[#22c55e]/25 text-[#15803d]">
-                  <Lock className="h-4 w-4 text-[#22c55e]" />
+                <div className="flex h-8 w-8 items-center justify-center bg-trust/25 text-trust-strong">
+                  <Lock className="h-4 w-4 text-trust" />
                 </div>
                 <div>
-                  <span className="font-primary text-sm font-bold tracking-[-0.03em] text-[#111113]">
+                  <span className="font-primary text-sm font-bold tracking-[-0.03em] text-ink">
                     Total Locked in Escrow
                   </span>
-                  <p className="text-[11px] font-secondary text-[#111113]/70">
+                  <p className="text-meta font-secondary text-ink/70">
                     Halted in vault until 48h inspection approval
                   </p>
                 </div>
               </div>
 
               <div className="text-right">
-                <span className="font-mono text-xl font-bold tracking-tight text-[#15803d]">
+                <span className="font-mono text-xl font-bold tracking-tight text-trust-strong">
                   {formattedTotalLocked}
                 </span>
-                <span className="block font-mono text-[10px] text-[#111113]/60 uppercase tracking-wider">
+                <span className="block font-mono text-caption text-ink/60 uppercase tracking-wider">
                   {currency} Guaranteed
                 </span>
               </div>
@@ -319,8 +319,8 @@ export function EscrowFeeReceipt({
         </div>
 
         {/* Trust Guarantee Advisory */}
-        <div className="flex items-start gap-2.5 bg-[#F8F7F4] p-3 text-xs text-[#111113]/70 border border-[#111113]/12">
-          <ShieldCheck className="h-4 w-4 text-[#22c55e] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2.5 bg-paper p-3 text-xs text-ink/70 border border-ink-faint rounded-card">
+          <ShieldCheck className="h-4 w-4 text-trust shrink-0 mt-0.5" />
           <p className="font-secondary leading-relaxed">
             The seller does not receive any payout until you receive the package, inspect the gadget,
             and approve condition within the 48-hour inspection window.
@@ -331,9 +331,9 @@ export function EscrowFeeReceipt({
       {/* ====================================================================
           5. FOOTER UTILITIES (Print / Download)
           ==================================================================== */}
-      <CardFooter className="bg-[#F8F7F4] p-4 border-t border-[#111113]/12 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs font-mono text-[#111113]/65">
-          <Lock className="h-3.5 w-3.5 text-[#22c55e]" />
+      <CardFooter className="bg-paper p-4 border-t border-ink-faint flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs font-mono text-ink/65">
+          <Lock className="h-3.5 w-3.5 text-trust" />
           <span>Paystack Escrow Custody Hash: Verified</span>
         </div>
 

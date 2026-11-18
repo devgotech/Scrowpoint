@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
  *
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4) canvas, Deep Carbon Ink (#111113), Vermilion Orange (#FF5A25)
- * - Sharp 0px architectural cards (border-[#111113]/12 bg-white)
+ * - Sharp 0px architectural cards (border-ink-faint bg-surface)
  * - 999px pill primary CTAs (.btn-primary / rounded-full)
  * - Friendly, welcoming Trade Conversation & Milestone stream
  */
@@ -119,7 +119,7 @@ export default function EscrowRoomPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       {/* 1. Global Navbar */}
       <Navbar />
 
@@ -143,27 +143,27 @@ export default function EscrowRoomPage({
       <main className="flex-1 w-full py-8 sm:py-10">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 space-y-8">
           {/* Top Breadcrumb & Interactive Stage Switcher */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#111113]/12">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-ink-faint">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em]">
               <Link
                 href="/marketplace"
                 onClick={onNavigateHome}
-                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Marketplace</span>
               </Link>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="font-bold text-[#111113]">
+              <span className="font-bold text-ink">
                 Active Escrow Room ({orderData.orderId})
               </span>
             </div>
 
             {/* Interactive Stage Selector */}
-            <div className="flex items-center gap-1 bg-white border border-[#111113]/12 p-1 self-start sm:self-auto overflow-x-auto max-w-full">
-              <span className="font-mono text-[10px] uppercase tracking-wider font-bold text-[#111113]/55 px-2.5">
+            <div className="flex items-center gap-1 bg-surface border border-ink-faint p-1 self-start sm:self-auto overflow-x-auto max-w-full rounded-card">
+              <span className="font-mono text-caption uppercase tracking-wider font-bold text-ink/55 px-2.5">
                 Preview Stage:
               </span>
               {(
@@ -182,8 +182,8 @@ export default function EscrowRoomPage({
                   className={cn(
                     "px-3 py-1.5 text-xs font-mono uppercase tracking-wider transition-colors whitespace-nowrap",
                     currentState === s.id
-                      ? "bg-[#111113] text-white font-bold"
-                      : "text-[#111113]/65 hover:text-[#111113] hover:bg-[#F8F7F4]"
+                      ? "bg-ink text-white font-bold"
+                      : "text-ink/65 hover:text-ink hover:bg-paper"
                   )}
                 >
                   {s.label}
@@ -209,46 +209,46 @@ export default function EscrowRoomPage({
               <OrderSummaryCard order={orderData} />
 
               {/* Action Engine: Release Funds or Report Issue */}
-              <div className="border border-[#111113]/12 bg-white p-6 space-y-5">
-                <div className="flex items-center justify-between pb-3.5 border-b border-[#111113]/12">
+              <div className="border border-ink-faint bg-surface p-6 space-y-5 rounded-card">
+                <div className="flex items-center justify-between pb-3.5 border-b border-ink-faint">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center bg-[#111113] text-white">
-                      <Scale className="h-4 w-4 text-[#FF5A25]" />
+                    <div className="flex h-8 w-8 items-center justify-center bg-ink text-white">
+                      <Scale className="h-4 w-4 text-accent-orange" />
                     </div>
                     <div>
-                      <span className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] block">
+                      <span className="font-primary text-sm font-bold tracking-[-0.02em] text-ink block">
                         Buyer Decision Desk
                       </span>
-                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/60">
+                      <span className="font-mono text-caption uppercase tracking-wider text-ink/60">
                         48-Hour Home Inspection Decision
                       </span>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[#15803d]/10 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-                    <ShieldCheck className="h-3 w-3 text-[#22c55e]" />
+                  <span className="inline-flex items-center gap-1 rounded-full bg-trust-strong/10 px-2.5 py-0.5 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+                    <ShieldCheck className="h-3 w-3 text-trust" />
                     <span>Protected</span>
                   </span>
                 </div>
 
                 {currentState === "completed" ? (
-                  <div className="border border-[#15803d]/30 bg-[#22c55e]/10 p-4 text-center space-y-2">
-                    <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#15803d]">
-                      <CheckCircle2 className="h-4 w-4 text-[#15803d]" />
+                  <div className="border border-trust-strong/30 bg-trust/10 p-4 text-center space-y-2">
+                    <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-trust-strong">
+                      <CheckCircle2 className="h-4 w-4 text-trust-strong" />
                       <span>Escrow Trade Successfully Settled</span>
                     </div>
-                    <p className="font-secondary text-xs text-[#111113]/80">
+                    <p className="font-secondary text-xs text-ink/80">
                       <span className="font-mono font-bold">₦850,000</span> has
                       been disbursed directly to Chidi Gadgets&apos; verified
                       bank account.
                     </p>
                   </div>
                 ) : currentState === "disputed" ? (
-                  <div className="border border-[#f56565]/40 bg-[#f56565]/10 p-4 space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#c53030]">
-                      <ShieldAlert className="h-4 w-4 text-[#c53030]" />
+                  <div className="border border-state-error/40 bg-state-error/10 p-4 space-y-3">
+                    <div className="flex items-center gap-2 text-xs font-bold text-state-error-strong">
+                      <ShieldAlert className="h-4 w-4 text-state-error-strong" />
                       <span>Dispute Active — Funds Safely Frozen</span>
                     </div>
-                    <p className="font-secondary text-xs text-[#111113]/80 leading-relaxed">
+                    <p className="font-secondary text-xs text-ink/80 leading-relaxed">
                       Your <span className="font-mono font-bold">₦875,750</span>{" "}
                       deposit is safely locked in Paystack custody while our
                       mediation specialist reviews the inspection evidence.
@@ -262,7 +262,7 @@ export default function EscrowRoomPage({
                           }
                           window.dispatchEvent(new CustomEvent("sp_open_live_chat"));
                         }}
-                      className="w-full h-10 border border-[#c53030] bg-white text-xs font-mono uppercase tracking-wider font-bold text-[#c53030] hover:bg-[#c53030] hover:text-white transition-colors"
+                      className="w-full h-10 border border-state-error-strong bg-surface text-xs font-mono uppercase tracking-wider font-bold text-state-error-strong hover:bg-state-error-strong hover:text-white transition-colors rounded-ui"
                     >
                       {onNavigateDisputes
                         ? "View Arbitration Case File"
@@ -276,14 +276,14 @@ export default function EscrowRoomPage({
                       <button
                         type="button"
                         onClick={handleReleaseFunds}
-                        className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
+                        className="btn-primary w-full h-12 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
                       >
-                        <CheckCircle2 className="h-4 w-4 text-[#22c55e]" />
+                        <CheckCircle2 className="h-4 w-4 text-trust" />
                         <span>Everything Works — Approve Payout</span>
                       </button>
-                      <p className="font-secondary text-[11px] text-[#111113]/65 text-center mt-2">
+                      <p className="font-secondary text-meta text-ink/65 text-center mt-2">
                         Releases{" "}
-                        <span className="font-mono font-bold text-[#111113]">
+                        <span className="font-mono font-bold text-ink">
                           ₦850,000
                         </span>{" "}
                         to {orderData.sellerName.replace(" (Seller)", "")}{" "}
@@ -292,16 +292,16 @@ export default function EscrowRoomPage({
                     </div>
 
                     {/* Secondary Warning Button: Report Hardware Issue */}
-                    <div className="pt-2 border-t border-[#111113]/10">
+                    <div className="pt-2 border-t border-ink/10">
                       <button
                         type="button"
                         onClick={() => setIsDisputeModalOpen(true)}
-                        className="w-full h-11 border border-[#ecc94b] bg-[#ecc94b]/15 hover:bg-[#ecc94b]/25 text-[#975a16] text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
+                        className="w-full h-11 border border-state-warning bg-state-warning/15 hover:bg-state-warning/25 text-state-warning-strong text-xs font-mono uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-2"
                       >
-                        <AlertTriangle className="h-4 w-4 text-[#975a16]" />
+                        <AlertTriangle className="h-4 w-4 text-state-warning-strong" />
                         <span>Something&apos;s Wrong — Pause &amp; Report</span>
                       </button>
-                      <p className="font-secondary text-[11px] text-[#111113]/60 text-center mt-1.5">
+                      <p className="font-secondary text-meta text-ink/60 text-center mt-1.5">
                         Pauses the 48-hour timer and keeps your money locked
                         until resolved.
                       </p>
@@ -341,23 +341,23 @@ export default function EscrowRoomPage({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111113]/75 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/75 backdrop-blur-xs animate-in fade-in"
         >
-          <div className="w-full max-w-md border border-[#111113] bg-white p-6 sm:p-8 text-center space-y-5">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#15803d]/10 border border-[#15803d]/25 text-[#15803d]">
-              <CheckCircle2 className="h-6 w-6 text-[#15803d]" />
+          <div className="w-full max-w-md border border-ink bg-surface p-6 sm:p-8 text-center space-y-5 rounded-card">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-trust-strong/10 border border-trust-strong/25 text-trust-strong">
+              <CheckCircle2 className="h-6 w-6 text-trust-strong" />
             </div>
             <div className="space-y-1.5">
-              <span className="inline-flex items-center rounded-full bg-[#15803d]/10 px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#15803d]">
+              <span className="inline-flex items-center rounded-full bg-trust-strong/10 px-3 py-0.5 font-mono text-caption font-bold uppercase tracking-widest text-trust-strong">
                 Escrow Settlement Complete
               </span>
-              <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
-                Payout Disbursed<span className="text-[#FF5A25]">.</span>
+              <h3 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink uppercase">
+                Payout Disbursed<span className="text-accent-orange">.</span>
               </h3>
             </div>
-            <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed">
+            <p className="font-secondary text-xs sm:text-sm text-ink/70 leading-relaxed">
               You confirmed the device passed your home inspection.{" "}
-              <span className="font-mono font-bold text-[#111113]">
+              <span className="font-mono font-bold text-ink">
                 ₦850,000
               </span>{" "}
               has been transferred to {orderData.sellerName}. Your warranty
@@ -366,7 +366,7 @@ export default function EscrowRoomPage({
             <button
               type="button"
               onClick={() => setIsSettledModalOpen(false)}
-              className="btn-primary w-full h-11 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
+              className="btn-primary w-full h-11 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
             >
               Done
             </button>

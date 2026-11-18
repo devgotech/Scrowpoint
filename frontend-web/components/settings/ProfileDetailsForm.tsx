@@ -71,15 +71,15 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "border border-[#111113]/12 bg-white p-6 space-y-6",
+        "border border-ink-faint bg-surface p-6 space-y-6 rounded-card",
         className
       )}
     >
-      <div className="pb-4 border-b border-[#111113]/12">
-        <h3 className="font-primary text-base font-bold text-[#111113] tracking-[-0.03em]">
+      <div className="pb-4 border-b border-ink-faint">
+        <h3 className="font-primary text-base font-bold text-ink tracking-[-0.03em]">
           Profile & Store Identity
         </h3>
-        <p className="font-secondary text-xs text-[#111113]/65 mt-1">
+        <p className="font-secondary text-xs text-ink/65 mt-1">
           Your legal name is locked to your SmileID NIN verification.
         </p>
       </div>
@@ -94,9 +94,9 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
             type="text"
             value={legalName}
             disabled
-            className="w-full h-11 px-3 border border-[#111113]/12 bg-[#F8F7F4] text-xs font-secondary text-[#111113]/60 cursor-not-allowed outline-none"
+            className="w-full h-11 px-3 border border-ink-faint bg-paper text-xs font-secondary text-ink/60 cursor-not-allowed outline-none rounded-ui"
           />
-          <p className="font-secondary text-[11px] text-[#111113]/60 mt-1">
+          <p className="font-secondary text-meta text-ink/60 mt-1">
             Verified by National Identity Management Commission.
           </p>
         </div>
@@ -110,9 +110,9 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
             type="text"
             value={storeName}
             onChange={(e) => setStoreName(e.target.value)}
-            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none"
+            className="w-full h-11 px-3 border border-ink/15 bg-surface text-xs font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink outline-none rounded-ui"
           />
-          <p className="font-secondary text-[11px] text-[#111113]/60 mt-1">
+          <p className="font-secondary text-meta text-ink/60 mt-1">
             Displayed publicly on your gadget listings.
           </p>
         </div>
@@ -126,7 +126,7 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none"
+            className="w-full h-11 px-3 border border-ink/15 bg-surface text-xs font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink outline-none rounded-ui"
           />
         </div>
 
@@ -139,7 +139,7 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full h-11 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none"
+            className="w-full h-11 px-3 border border-ink/15 bg-surface text-xs font-secondary text-ink focus:border-ink focus:ring-1 focus:ring-ink outline-none rounded-ui"
           />
         </div>
       </div>
@@ -153,7 +153,7 @@ export function ProfileDetailsForm({ className, onSave }: ProfileDetailsFormProp
         >
           {saved ? (
             <>
-              <Check className="h-4 w-4 text-[#22c55e]" />
+              <Check className="h-4 w-4 text-trust" />
               <span>Saved Successfully</span>
             </>
           ) : (

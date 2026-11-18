@@ -34,10 +34,10 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
   return (
     <>
       {/* Subtle architectural registration micro-dots between gadgets */}
-      <circle cx="110" cy="110" r="1.5" fill="#111113" fillOpacity={dotOpacity} />
-      <circle cx="330" cy="110" r="1.5" fill="#111113" fillOpacity={dotOpacity} />
-      <circle cx="110" cy="330" r="1.5" fill="#111113" fillOpacity={dotOpacity} />
-      <circle cx="330" cy="330" r="1.5" fill="#111113" fillOpacity={dotOpacity} />
+      <circle cx="110" cy="110" r="1.5" fill="var(--color-ink)" fillOpacity={dotOpacity} />
+      <circle cx="330" cy="110" r="1.5" fill="var(--color-ink)" fillOpacity={dotOpacity} />
+      <circle cx="110" cy="330" r="1.5" fill="var(--color-ink)" fillOpacity={dotOpacity} />
+      <circle cx="330" cy="330" r="1.5" fill="var(--color-ink)" fillOpacity={dotOpacity} />
 
       {/* ---------------------------------------------------------------
           1. MACBOOK PRO LAPTOP (Top Center: x=220, y=68)
@@ -45,7 +45,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(220, 68)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -64,7 +64,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           y1="-12"
           x2="-12"
           y2="-20"
-          stroke={isSpotlight ? "#FF5A25" : "#111113"}
+          stroke={isSpotlight ? "var(--color-accent-orange)" : "var(--color-ink)"}
           strokeOpacity={isSpotlight ? "0.3" : inkOpacity}
           strokeWidth="1.6"
         />
@@ -81,7 +81,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(76, 178) rotate(-6)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkStrongOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -102,7 +102,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
         <circle cx="0" cy="2" r="11" strokeWidth="1.6" />
         <path
           d="M -4 2 L -1 5 L 5 -2"
-          stroke="#15803d"
+          stroke="var(--color-trust-strong)"
           strokeOpacity={trustStrokeOpacity}
           strokeWidth="2.2"
         />
@@ -116,7 +116,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(224, 206)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -137,7 +137,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           cx="38"
           cy="-6"
           r="2.2"
-          stroke="#FF5A25"
+          stroke="var(--color-accent-orange)"
           strokeOpacity={vermilionStrokeOpacity}
           strokeWidth="2"
         />
@@ -155,7 +155,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(368, 174) rotate(5)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -171,7 +171,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           cx="-2"
           cy="-45"
           r="1.2"
-          fill="#111113"
+          fill="var(--color-ink)"
           fillOpacity={isSpotlight ? "0.3" : "0.08"}
         />
         {/* Screen Widget / Note Sketch Detail */}
@@ -180,7 +180,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
         <line x1="2" y1="-20" x2="16" y2="-20" strokeWidth="1.6" />
         <path
           d="M -24 8 C -14 0 -4 14 8 2 C 14 -4 18 6 20 4"
-          stroke={isSpotlight ? "#FF5A25" : "#111113"}
+          stroke={isSpotlight ? "var(--color-accent-orange)" : "var(--color-ink)"}
           strokeOpacity={isSpotlight ? "0.3" : inkOpacity}
           strokeWidth="1.6"
         />
@@ -195,7 +195,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(96, 346) rotate(-4)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -220,7 +220,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(254, 352) rotate(3)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkStrongOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -245,7 +245,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           cx="-18"
           cy="-10"
           r="2.5"
-          fill="#FF5A25"
+          fill="var(--color-accent-orange)"
           fillOpacity={vermilionFillOpacity}
           stroke="none"
         />
@@ -257,7 +257,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(0, 64)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -273,7 +273,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
       </g>
       <g
         transform="translate(440, 64)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -294,7 +294,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           --------------------------------------------------------------- */}
       <g
         transform="translate(388, 354) rotate(-5)"
-        stroke="#111113"
+        stroke="var(--color-ink)"
         strokeOpacity={inkOpacity}
         strokeWidth={outerStrokeWidth}
         strokeLinecap="round"
@@ -312,7 +312,7 @@ function renderGadgetTileContents(mode: "base" | "spotlight") {
           cx="0"
           cy="9"
           r="2.2"
-          fill="#22c55e"
+          fill="var(--color-trust)"
           fillOpacity={trustFillOpacity}
           stroke="none"
         />
@@ -470,9 +470,9 @@ export function GadgetVectorPattern({
       >
         <defs>
           <radialGradient id={glowId} cx="50%" cy="35%" r="48%">
-            <stop offset="0%" stopColor="#FF5A25" stopOpacity="0.03" />
-            <stop offset="60%" stopColor="#FF5A25" stopOpacity="0.008" />
-            <stop offset="100%" stopColor="#FF5A25" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--color-accent-orange)" stopOpacity="0.03" />
+            <stop offset="60%" stopColor="var(--color-accent-orange)" stopOpacity="0.008" />
+            <stop offset="100%" stopColor="var(--color-accent-orange)" stopOpacity="0" />
           </radialGradient>
 
           <pattern

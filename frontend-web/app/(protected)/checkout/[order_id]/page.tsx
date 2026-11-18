@@ -27,7 +27,7 @@ import { useAuth } from "@/components/providers/AuthContext";
  *
  * Design System Compliance (4_ui_system.md — Design Variation 7):
  * - Warm Editorial Paper (#F8F7F4), Crisp Editorial White (#FFFFFF), Deep Carbon Ink (#111113)
- * - Sharp 0px architectural cards (border-[#111113]/12) paired with 999px pill primary CTAs
+ * - Sharp 0px architectural cards (border-ink-faint) paired with 999px pill primary CTAs
  */
 
 export interface CheckoutPageProps {
@@ -135,14 +135,14 @@ export default function CheckoutPage({
 
   if (!gadget) {
     return (
-      <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary">
+      <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary">
         <Navbar />
         <main className="flex-1 w-full py-12">
           <div className="mx-auto max-w-xl px-4 sm:px-8 text-center">
-            <h1 className="font-primary text-2xl font-bold text-[#111113]">
+            <h1 className="font-primary text-2xl font-bold text-ink">
               {isListingLoading ? "Loading selected gadget" : "Gadget listing unavailable"}
             </h1>
-            <p role={isListingLoading ? "status" : "alert"} className="mt-3 text-sm text-[#111113]/70">
+            <p role={isListingLoading ? "status" : "alert"} className="mt-3 text-sm text-ink/70">
               {isListingLoading
                 ? "Confirming listing details before checkout."
                 : "We couldn't confirm this listing, so checkout is unavailable."}
@@ -221,51 +221,51 @@ export default function CheckoutPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#111113] flex flex-col font-secondary antialiased selection:bg-[#FF5A25] selection:text-white">
+    <div className="min-h-screen bg-paper text-ink flex flex-col font-secondary antialiased selection:bg-accent-orange selection:text-white">
       <Navbar />
 
       <main className="flex-1 w-full py-8 sm:py-12">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 space-y-8">
           {/* Breadcrumb Header */}
-          <div className="flex items-center justify-between pb-5 border-b border-[#111113]/12">
+          <div className="flex items-center justify-between pb-5 border-b border-ink-faint">
             <div className="flex items-center gap-2.5 text-xs font-mono uppercase tracking-[0.12em]">
               <Link
                 href="/marketplace"
                 onClick={onBackToGadget}
-                className="inline-flex items-center gap-1.5 text-[#111113]/65 hover:text-[#FF5A25] transition-colors"
+                className="inline-flex items-center gap-1.5 text-ink/65 hover:text-accent-orange transition-colors"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span>Cancel &amp; Return</span>
               </Link>
-              <span aria-hidden="true" className="text-[#111113]/25">
+              <span aria-hidden="true" className="text-ink/25">
                 /
               </span>
-              <span className="font-bold text-[#111113]">
+              <span className="font-bold text-ink">
                 Escrow Checkout ({orderId})
               </span>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-[#15803d]/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#15803d]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-trust-strong/10 px-3 py-1 font-mono text-caption font-bold uppercase tracking-wider text-trust-strong">
+              <ShieldCheck className="h-3.5 w-3.5 text-trust" />
               <span>Paystack Custody Secured</span>
             </div>
           </div>
 
           {isSuccess ? (
             /* Success State Confirmation */
-            <div className="max-w-md mx-auto border border-[#111113] bg-white p-8 text-center space-y-5">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#15803d]/10 border border-[#15803d]/25 text-[#15803d]">
-                <CheckCircle2 className="h-7 w-7 text-[#15803d]" />
+            <div className="max-w-md mx-auto border border-ink bg-surface p-8 text-center space-y-5 rounded-card">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-trust-strong/10 border border-trust-strong/25 text-trust-strong">
+                <CheckCircle2 className="h-7 w-7 text-trust-strong" />
               </div>
               <div className="space-y-1.5">
-                <span className="inline-flex items-center rounded-full bg-[#15803d]/10 px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#15803d]">
+                <span className="inline-flex items-center rounded-full bg-trust-strong/10 px-3 py-0.5 font-mono text-caption font-bold uppercase tracking-widest text-trust-strong">
                   Escrow Vault Funded
                 </span>
-                <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
-                  ₦{orderData.totalDeposit.toLocaleString("en-NG")} Locked in Escrow<span className="text-[#FF5A25]">.</span>
+                <h2 className="font-primary text-2xl font-bold tracking-[-0.03em] text-ink uppercase">
+                  ₦{orderData.totalDeposit.toLocaleString("en-NG")} Locked in Escrow<span className="text-accent-orange">.</span>
                 </h2>
               </div>
-              <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 leading-relaxed">
+              <p className="font-secondary text-xs sm:text-sm text-ink/70 leading-relaxed">
                 Your deposit has cleared into the segregated Paystack vault. The
                 merchant has been notified to dispatch your gadget via insured
                 courier.
@@ -274,7 +274,7 @@ export default function CheckoutPage({
                 <button
                   type="button"
                   onClick={() => handlePaymentSuccess()}
-                  className="btn-primary w-full h-12 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
+                  className="btn-primary w-full h-12 rounded-full bg-ink hover:bg-accent-orange text-white text-xs font-mono uppercase tracking-wider font-bold transition-colors"
                 >
                   Enter Active Escrow Room
                 </button>
@@ -285,15 +285,15 @@ export default function CheckoutPage({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
               {/* Left Column: Payment Method Selector */}
               <div className="lg:col-span-7 space-y-6">
-                <div className="border border-[#111113]/12 bg-white p-6 sm:p-8 space-y-6">
-                  <div className="border-b border-[#111113]/12 pb-4">
+                <div className="border border-ink-faint bg-surface p-6 sm:p-8 space-y-6 rounded-card">
+                  <div className="border-b border-ink-faint pb-4">
                     <span className="label block mb-1">
                       [01] Custodial Funding Rail
                     </span>
-                    <h1 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-[#111113] uppercase">
-                      Select Payment Method<span className="text-[#FF5A25]">.</span>
+                    <h1 className="font-primary text-xl sm:text-2xl font-bold tracking-[-0.03em] text-ink uppercase">
+                      Select Payment Method<span className="text-accent-orange">.</span>
                     </h1>
-                    <p className="font-secondary text-xs sm:text-sm text-[#111113]/70 mt-1">
+                    <p className="font-secondary text-xs sm:text-sm text-ink/70 mt-1">
                       Choose how you want to fund the segregated Paystack escrow
                       holding vault.
                     </p>
@@ -311,18 +311,18 @@ export default function CheckoutPage({
                 <OrderSummaryCard order={orderData} />
 
                 {/* Checkout Trigger */}
-                <div className="border border-[#111113]/12 bg-white p-6 space-y-4">
-                  <div className="flex items-center justify-between pb-3.5 border-b border-[#111113]/12">
-                    <span className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113]">
+                <div className="border border-ink-faint bg-surface p-6 space-y-4 rounded-card">
+                  <div className="flex items-center justify-between pb-3.5 border-b border-ink-faint">
+                    <span className="font-primary text-sm font-bold tracking-[-0.02em] text-ink">
                       Authorize Escrow Hold
                     </span>
-                    <span className="font-mono text-base font-bold text-[#111113]">
+                    <span className="font-mono text-base font-bold text-ink">
                       ₦{orderData.totalDeposit.toLocaleString("en-NG")}
                     </span>
                   </div>
 
                   {paymentError && (
-                    <p role="alert" className="border border-[#f56565]/40 bg-[#f56565]/10 p-3 text-xs text-[#c53030]">
+                    <p role="alert" className="border border-state-error/40 bg-state-error/10 p-3 text-xs text-state-error-strong">
                       {paymentError}
                     </p>
                   )}
@@ -333,7 +333,7 @@ export default function CheckoutPage({
                     onPay={handlePay}
                   />
 
-                  <p className="font-secondary text-[11px] text-[#111113]/65 text-center leading-relaxed">
+                  <p className="font-secondary text-meta text-ink/65 text-center leading-relaxed">
                     By locking funds in escrow, you are protected by the 48-Hour
                     Diagnostic SLA and Custodial Escrow Agreement.
                   </p>

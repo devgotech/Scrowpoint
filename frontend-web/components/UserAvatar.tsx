@@ -31,7 +31,7 @@ export interface UserAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const SIZE_STYLES: Record<UserAvatarSize, { container: string; text: string }> = {
-  xs: { container: "h-6 w-6 border", text: "text-[10px]" },
+  xs: { container: "h-6 w-6 border", text: "text-caption" },
   sm: { container: "h-8 w-8 border", text: "text-xs" },
   md: { container: "h-9 w-9 border", text: "text-xs" },
   lg: { container: "h-12 w-12 border-2", text: "text-sm" },
@@ -80,7 +80,7 @@ export function UserAvatar({
 
   return (
     <Avatar
-      className={cn(sizeConfig.container, "border-[#111113]/15 bg-[#F0EFEA]", className)}
+      className={cn(sizeConfig.container, "border-ink/15 bg-surface-muted", className)}
       {...props}
     >
       {src ? (
@@ -92,7 +92,7 @@ export function UserAvatar({
       ) : null}
       <AvatarFallback
         className={cn(
-          "font-primary font-bold text-[#111113] bg-[#F0EFEA] tracking-wide select-none",
+          "font-primary font-bold text-ink bg-surface-muted tracking-wide select-none",
           sizeConfig.text
         )}
       >

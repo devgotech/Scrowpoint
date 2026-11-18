@@ -612,7 +612,7 @@ export function AuthForm({
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white p-6 sm:p-8 w-full max-w-md mx-auto relative",
+        "border border-ink-faint bg-surface p-6 sm:p-8 w-full max-w-md mx-auto relative rounded-card",
         className
       )}
     >
@@ -621,10 +621,10 @@ export function AuthForm({
           ===================================================================== */}
       {mode === "register" && (
         <div className="mb-6">
-          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#111113]/60 mb-2">
+          <div className="flex items-center justify-between text-caption font-mono uppercase tracking-wider text-ink/60 mb-2">
             <span
               className={cn(
-                regStage === "credentials" && "text-[#111113] font-bold"
+                regStage === "credentials" && "text-ink font-bold"
               )}
             >
               01. Account
@@ -632,7 +632,7 @@ export function AuthForm({
             <span>→</span>
             <span
               className={cn(
-                regStage === "verify_email_otp" && "text-[#FF5A25] font-bold"
+                regStage === "verify_email_otp" && "text-accent-orange font-bold"
               )}
             >
               02. Email OTP
@@ -640,29 +640,29 @@ export function AuthForm({
             <span>→</span>
             <span
               className={cn(
-                regStage === "onboarding_ready" && "text-[#15803d] font-bold"
+                regStage === "onboarding_ready" && "text-trust-strong font-bold"
               )}
             >
               03. KYC Setup
             </span>
           </div>
           <div className="grid grid-cols-3 gap-1.5 h-1">
-            <div className="bg-[#111113]" />
+            <div className="bg-ink" />
             <div
               className={cn(
                 "transition-colors",
                 regStage === "verify_email_otp" ||
                   regStage === "onboarding_ready"
-                  ? "bg-[#FF5A25]"
-                  : "bg-[#111113]/12"
+                  ? "bg-accent-orange"
+                  : "bg-ink/12"
               )}
             />
             <div
               className={cn(
                 "transition-colors",
                 regStage === "onboarding_ready"
-                  ? "bg-[#22c55e]"
-                  : "bg-[#111113]/12"
+                  ? "bg-trust"
+                  : "bg-ink/12"
               )}
             />
           </div>
@@ -674,18 +674,18 @@ export function AuthForm({
           ===================================================================== */}
       {mode === "register" && regStage === "verify_email_otp" && (
         <div className="space-y-5">
-          <div className="space-y-2 text-center pb-5 border-b border-[#111113]/12">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#111113] text-white">
-              <Mail className="h-5 w-5 text-[#FF5A25]" />
+          <div className="space-y-2 text-center pb-5 border-b border-ink-faint">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center bg-ink text-white">
+              <Mail className="h-5 w-5 text-accent-orange" />
             </div>
 
-            <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+            <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
               Verify Your Email
             </h1>
 
-            <p className="font-secondary text-xs text-[#111113]/70">
+            <p className="font-secondary text-xs text-ink/70">
               Enter the 6-digit security code dispatched to{" "}
-              <span className="font-mono font-semibold text-[#111113]">
+              <span className="font-mono font-semibold text-ink">
                 {email}
               </span>{" "}
               to activate your escrow ledger.
@@ -693,14 +693,14 @@ export function AuthForm({
           </div>
 
           {otpStatusBanner && (
-            <div className="border border-[#15803d]/30 bg-[#22c55e]/10 p-3 flex items-center gap-2 text-xs text-[#15803d]">
+            <div className="border border-trust-strong/30 bg-trust/10 p-3 flex items-center gap-2 text-xs text-trust-strong">
               <CheckCircle2 className="h-4 w-4 shrink-0" />
               <span>{otpStatusBanner}</span>
             </div>
           )}
 
           {errorMessage && (
-            <div className="border border-[#f56565]/40 bg-[#f56565]/10 p-3 flex items-start gap-2.5 text-xs text-[#c53030]">
+            <div className="border border-state-error/40 bg-state-error/10 p-3 flex items-start gap-2.5 text-xs text-state-error-strong">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
@@ -717,7 +717,7 @@ export function AuthForm({
                       setOtpDigits(DEMO_EMAIL_OTP.split(""));
                       setErrorMessage(null);
                     }}
-                    className="inline-flex items-center gap-1 font-mono text-[11px] text-[#FF5A25] hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1 font-mono text-meta text-accent-orange hover:underline cursor-pointer"
                   >
                     <Sparkles className="h-3 w-3" />
                     <span>Auto-Fill Demo OTP ({DEMO_EMAIL_OTP})</span>
@@ -740,16 +740,16 @@ export function AuthForm({
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                     onPaste={idx === 0 ? handleOtpPaste : undefined}
                     aria-label={`Email OTP digit ${idx + 1}`}
-                    className="h-12 w-full text-center font-mono text-lg font-bold text-[#111113] border border-[#111113]/20 bg-[#F8F7F4]/60 focus:bg-white focus:border-[#111113] focus:ring-1 focus:ring-[#111113] outline-none transition-colors"
+                    className="h-12 w-full text-center font-mono text-lg font-bold text-ink border border-ink/20 bg-paper/60 focus:bg-surface focus:border-ink focus:ring-1 focus:ring-ink outline-none transition-colors rounded-ui"
                   />
                 ))}
               </div>
 
-              <div className="mt-2.5 flex items-center justify-between text-[11px] font-mono text-[#111113]/60">
+              <div className="mt-2.5 flex items-center justify-between text-meta font-mono text-ink/60">
                 <button
                   type="button"
                   onClick={() => setRegStage("credentials")}
-                  className="hover:text-[#111113] underline underline-offset-4 cursor-pointer"
+                  className="hover:text-ink underline underline-offset-4 cursor-pointer"
                 >
                   Edit email address
                 </button>
@@ -762,7 +762,7 @@ export function AuthForm({
                     "inline-flex items-center gap-1",
                     resendCooldown > 0
                       ? "opacity-50 cursor-not-allowed"
-                      : "text-[#111113] hover:text-[#FF5A25] cursor-pointer"
+                      : "text-ink hover:text-accent-orange cursor-pointer"
                   )}
                 >
                   <RefreshCw className="h-3 w-3" />
@@ -775,8 +775,8 @@ export function AuthForm({
               </div>
             </div>
 
-            <div className="p-3 bg-[#F8F7F4] border border-[#111113]/12 text-xs font-secondary text-[#111113]/75 space-y-1">
-              <p className="font-mono text-[10px] uppercase tracking-wider text-[#111113] font-bold">
+            <div className="p-3 bg-paper border border-ink-faint text-xs font-secondary text-ink/75 space-y-1 rounded-card">
+              <p className="font-mono text-caption uppercase tracking-wider text-ink font-bold">
                 Why Email OTP is Mandatory
               </p>
               <p>
@@ -811,46 +811,46 @@ export function AuthForm({
           ===================================================================== */}
       {mode === "register" && regStage === "onboarding_ready" && (
         <div className="space-y-5 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center bg-[#22c55e]/15 border border-[#15803d]/30 text-[#15803d]">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center bg-trust/15 border border-trust-strong/30 text-trust-strong">
             <CheckCircle2 className="h-6 w-6" />
           </div>
 
           <div className="space-y-1.5">
-            <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-[#15803d] font-bold">
+            <span className="font-mono text-meta uppercase tracking-[0.15em] text-trust-strong font-bold">
               EMAIL_VERIFIED // ESCROW_ACCOUNT_READY
             </span>
-            <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+            <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
               Welcome, {fullName || email.split("@")[0]}
             </h1>
-            <p className="font-secondary text-xs text-[#111113]/70">
+            <p className="font-secondary text-xs text-ink/70">
               Your Scrowpoint account is active. Complete your 60-second SmileID
               NIN/BVN biometric check to unlock full escrow limits.
             </p>
           </div>
 
           {/* Account Summary Ledger */}
-          <div className="p-4 bg-[#F8F7F4] border border-[#111113]/12 text-left space-y-2 font-mono text-xs">
+          <div className="p-4 bg-paper border border-ink-faint text-left space-y-2 font-mono text-xs rounded-card">
             <div className="flex items-center justify-between">
-              <span className="text-[#111113]/60">Verified Email:</span>
-              <span className="text-[#111113] font-semibold truncate max-w-[200px]">
+              <span className="text-ink/60">Verified Email:</span>
+              <span className="text-ink font-semibold truncate max-w-[200px]">
                 {email}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[#111113]/60">Trading Role:</span>
-              <span className="uppercase text-[#111113] font-bold">
+              <span className="text-ink/60">Trading Role:</span>
+              <span className="uppercase text-ink font-bold">
                 {role === "seller" ? "Verified Seller" : "Gadget Buyer"}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[#111113]/60">Primary Hub:</span>
-              <span className="text-[#111113] truncate max-w-[200px]">
+              <span className="text-ink/60">Primary Hub:</span>
+              <span className="text-ink truncate max-w-[200px]">
                 {location}
               </span>
             </div>
-            <div className="flex items-center justify-between pt-1.5 border-t border-[#111113]/10">
-              <span className="text-[#111113]/60">SmileID KYC Tier:</span>
-              <span className="text-[#FF5A25] font-bold">
+            <div className="flex items-center justify-between pt-1.5 border-t border-ink/10">
+              <span className="text-ink/60">SmileID KYC Tier:</span>
+              <span className="text-accent-orange font-bold">
                 Step 2 — Ready for Biometrics
               </span>
             </div>
@@ -870,7 +870,7 @@ export function AuthForm({
               }}
               className="w-full h-12 rounded-full text-xs font-semibold gap-2"
             >
-              <Fingerprint className="h-4 w-4 text-[#FF5A25]" />
+              <Fingerprint className="h-4 w-4 text-accent-orange" />
               <span>Proceed to SmileID KYC Verification</span>
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -882,7 +882,7 @@ export function AuthForm({
                   role === "seller" ? "/seller/dashboard" : "/marketplace"
                 );
               }}
-              className="w-full py-2.5 border border-[#111113]/15 bg-white hover:bg-[#F8F7F4] text-xs font-mono uppercase tracking-wider text-[#111113]/75 hover:text-[#111113] transition-colors cursor-pointer"
+              className="w-full py-2.5 border border-ink/15 bg-surface hover:bg-paper text-xs font-mono uppercase tracking-wider text-ink/75 hover:text-ink transition-colors cursor-pointer rounded-card"
             >
               {role === "seller"
                 ? "Skip for Now & Open Seller Hub →"
@@ -898,18 +898,18 @@ export function AuthForm({
       {(mode === "login" || regStage === "credentials") && (
         <>
           {/* Form Header */}
-          <div className="space-y-2 text-center pb-6 border-b border-[#111113]/12">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#111113] text-white">
+          <div className="space-y-2 text-center pb-6 border-b border-ink-faint">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center bg-ink text-white">
               <Lock className="h-5 w-5" />
             </div>
 
-            <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-[#111113]">
+            <h1 className="font-primary text-2xl font-bold tracking-[-0.04em] text-ink">
               {mode === "login"
                 ? "Sign in to Scrowpoint"
                 : "Create Protected Account"}
             </h1>
 
-            <p className="font-secondary text-sm text-[#111113]/65">
+            <p className="font-secondary text-sm text-ink/65">
               {mode === "login"
                 ? "Access your active escrow rooms and transaction ledger."
                 : "Trade secondhand smartphones and laptops with zero fraud risk."}
@@ -918,7 +918,7 @@ export function AuthForm({
 
           {/* Error Callout */}
           {errorMessage && (
-            <div className="mt-4 border border-[#f56565]/40 bg-[#f56565]/10 p-3 flex items-start gap-2.5 text-xs text-[#c53030]">
+            <div className="mt-4 border border-state-error/40 bg-state-error/10 p-3 flex items-start gap-2.5 text-xs text-state-error-strong">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
@@ -928,7 +928,7 @@ export function AuthForm({
           <div className="pt-6 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="label">Instant OAuth Handshake</span>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[#15803d]">
+              <span className="font-mono text-caption uppercase tracking-wider text-trust-strong">
                 Auto-Verifies Email
               </span>
             </div>
@@ -941,7 +941,7 @@ export function AuthForm({
                   setErrorMessage(null);
                   setOauthProviderModal("google");
                 }}
-                className="h-11 px-4 border border-[#111113]/15 bg-[#F8F7F4]/70 hover:bg-[#111113] hover:text-white hover:border-[#111113] text-[#111113] transition-colors duration-200 flex items-center justify-center gap-2.5 text-xs font-primary font-semibold tracking-[-0.01em] cursor-pointer"
+                className="h-11 px-4 border border-ink/15 bg-paper/70 hover:bg-ink hover:text-white hover:border-ink text-ink transition-colors duration-200 flex items-center justify-center gap-2.5 text-xs font-primary font-semibold tracking-[-0.01em] cursor-pointer rounded-ui"
               >
                 <GoogleLogoSvg />
                 <span>
@@ -956,7 +956,7 @@ export function AuthForm({
                   setErrorMessage(null);
                   setOauthProviderModal("facebook");
                 }}
-                className="h-11 px-4 border border-[#111113]/15 bg-[#F8F7F4]/70 hover:bg-[#111113] hover:text-white hover:border-[#111113] text-[#111113] transition-colors duration-200 flex items-center justify-center gap-2.5 text-xs font-primary font-semibold tracking-[-0.01em] cursor-pointer"
+                className="h-11 px-4 border border-ink/15 bg-paper/70 hover:bg-ink hover:text-white hover:border-ink text-ink transition-colors duration-200 flex items-center justify-center gap-2.5 text-xs font-primary font-semibold tracking-[-0.01em] cursor-pointer rounded-ui"
               >
                 <FacebookLogoSvg />
                 <span>
@@ -969,8 +969,8 @@ export function AuthForm({
 
             {/* Inline OAuth Account Picker / Consent Drawer */}
             {oauthProviderModal && (
-              <div className="mt-3 border border-[#111113] bg-[#F8F7F4] p-4 space-y-3.5 animate-in fade-in duration-150">
-                <div className="flex items-center justify-between border-b border-[#111113]/12 pb-2.5">
+              <div className="mt-3 border border-ink bg-paper p-4 space-y-3.5 animate-in fade-in duration-150 rounded-card">
+                <div className="flex items-center justify-between border-b border-ink-faint pb-2.5">
                   <div className="flex items-center gap-2">
                     {oauthProviderModal === "google" ? (
                       <GoogleLogoSvg />
@@ -978,12 +978,12 @@ export function AuthForm({
                       <FacebookLogoSvg />
                     )}
                     <div>
-                      <p className="font-primary text-xs font-bold uppercase tracking-wider text-[#111113]">
+                      <p className="font-primary text-xs font-bold uppercase tracking-wider text-ink">
                         {oauthProviderModal === "google"
                           ? "Google OAuth 2.0"
                           : "Facebook OAuth 2.0"}
                       </p>
-                      <p className="font-mono text-[10px] text-[#111113]/60">
+                      <p className="font-mono text-caption text-ink/60">
                         POST /api/auth/oauth/{oauthProviderModal}
                       </p>
                     </div>
@@ -992,13 +992,13 @@ export function AuthForm({
                     type="button"
                     onClick={() => setOauthProviderModal(null)}
                     aria-label="Close OAuth account chooser"
-                    className="h-7 w-7 flex items-center justify-center text-[#111113]/60 hover:text-[#111113] hover:bg-white border border-transparent hover:border-[#111113]/15 transition-colors"
+                    className="h-7 w-7 flex items-center justify-center text-ink/60 hover:text-ink hover:bg-surface border border-transparent hover:border-ink/15 transition-colors"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
 
-                <p className="font-secondary text-xs text-[#111113]/75">
+                <p className="font-secondary text-xs text-ink/75">
                   Select a verified{" "}
                   {oauthProviderModal === "google" ? "Google" : "Facebook"}{" "}
                   profile or enter your own account to authenticate:
@@ -1019,34 +1019,34 @@ export function AuthForm({
                           avatarUrl: acct.avatarUrl,
                         })
                       }
-                      className="w-full p-2.5 bg-white border border-[#111113]/15 hover:border-[#111113] transition-colors flex items-center justify-between text-left group cursor-pointer"
+                      className="w-full p-2.5 bg-surface border border-ink/15 hover:border-ink transition-colors flex items-center justify-between text-left group cursor-pointer rounded-card"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
                         <img
                           src={acct.avatarUrl}
                           alt={acct.name}
-                          className="h-8 w-8 object-cover border border-[#111113]/15 shrink-0"
+                          className="h-8 w-8 object-cover border border-ink/15 shrink-0"
                         />
                         <div className="min-w-0">
-                          <p className="font-primary text-xs font-bold text-[#111113] truncate group-hover:text-[#FF5A25] transition-colors">
+                          <p className="font-primary text-xs font-bold text-ink truncate group-hover:text-accent-orange transition-colors">
                             {acct.name}
                           </p>
-                          <p className="font-mono text-[11px] text-[#111113]/65 truncate">
+                          <p className="font-mono text-meta text-ink/65 truncate">
                             {acct.email}
                           </p>
-                          <p className="font-secondary text-[10px] text-[#15803d] truncate">
+                          <p className="font-secondary text-caption text-trust-strong truncate">
                             {acct.badge}
                           </p>
                         </div>
                       </div>
-                      <ArrowRight className="h-3.5 w-3.5 text-[#111113]/40 group-hover:text-[#FF5A25] shrink-0 ml-2 transition-colors" />
+                      <ArrowRight className="h-3.5 w-3.5 text-ink/40 group-hover:text-accent-orange shrink-0 ml-2 transition-colors" />
                     </button>
                   ))}
                 </div>
 
                 <form
                   onSubmit={handleCustomOAuthSubmit}
-                  className="pt-2 border-t border-[#111113]/12 space-y-2"
+                  className="pt-2 border-t border-ink-faint space-y-2"
                 >
                   <label className="label block">
                     Or use another{" "}
@@ -1063,12 +1063,12 @@ export function AuthForm({
                           ? "you@gmail.com"
                           : "you@facebook.com"
                       }
-                      className="flex-1 h-9 px-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113]"
+                      className="flex-1 h-9 px-3 border border-ink/15 bg-surface text-xs font-secondary text-ink outline-none focus:border-ink rounded-ui"
                     />
                     <button
                       type="submit"
                       disabled={isOauthSubmitting}
-                      className="px-3.5 h-9 bg-[#111113] hover:bg-[#FF5A25] text-white font-primary text-xs font-semibold transition-colors cursor-pointer shrink-0"
+                      className="px-3.5 h-9 bg-ink hover:bg-accent-orange text-white font-primary text-xs font-semibold transition-colors cursor-pointer shrink-0"
                     >
                       {isOauthSubmitting ? "Linking..." : "Continue"}
                     </button>
@@ -1078,7 +1078,7 @@ export function AuthForm({
                     value={oauthCustomName}
                     onChange={(e) => setOauthCustomName(e.target.value)}
                     placeholder="Display Name (optional — e.g. Tunde Bakare)"
-                    className="w-full h-8 px-3 border border-[#111113]/12 bg-white text-[11px] font-secondary text-[#111113] outline-none focus:border-[#111113]"
+                    className="w-full h-8 px-3 border border-ink-faint bg-surface text-meta font-secondary text-ink outline-none focus:border-ink rounded-ui"
                   />
                 </form>
               </div>
@@ -1087,19 +1087,19 @@ export function AuthForm({
 
           {/* Architectural Divider */}
           <div className="relative my-6 flex items-center justify-center">
-            <div className="w-full border-t border-[#111113]/12" />
-            <span className="bg-white px-3 font-mono text-[10px] uppercase tracking-[0.16em] text-[#111113]/50 shrink-0">
+            <div className="w-full border-t border-ink-faint" />
+            <span className="bg-surface px-3 font-mono text-caption uppercase tracking-[0.16em] text-ink/50 shrink-0">
               {mode === "login"
                 ? "Or sign in with email"
                 : "Or register manually"}
             </span>
-            <div className="w-full border-t border-[#111113]/12" />
+            <div className="w-full border-t border-ink-faint" />
           </div>
 
           {/* Quick Demo Credentials Bar in Login Mode (Matches api_tests.http) */}
           {mode === "login" && (
-            <div className="mb-4 p-2.5 bg-[#F8F7F4] border border-[#111113]/12 flex items-center justify-between gap-2">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[#111113]/60">
+            <div className="mb-4 p-2.5 bg-paper border border-ink-faint flex items-center justify-between gap-2 rounded-card">
+              <span className="font-mono text-caption uppercase tracking-wider text-ink/60">
                 Quick Fill:
               </span>
               <div className="flex items-center gap-1.5">
@@ -1109,7 +1109,7 @@ export function AuthForm({
                     setEmail("buyer@example.com");
                     setPassword("Password123!");
                   }}
-                  className="px-2 py-1 bg-white border border-[#111113]/15 hover:border-[#111113] font-mono text-[10px] uppercase text-[#111113] transition-colors cursor-pointer"
+                  className="px-2 py-1 bg-surface border border-ink/15 hover:border-ink font-mono text-caption uppercase text-ink transition-colors cursor-pointer rounded-card"
                 >
                   Buyer
                 </button>
@@ -1119,7 +1119,7 @@ export function AuthForm({
                     setEmail("seller@example.com");
                     setPassword("Password123!");
                   }}
-                  className="px-2 py-1 bg-white border border-[#111113]/15 hover:border-[#111113] font-mono text-[10px] uppercase text-[#111113] transition-colors cursor-pointer"
+                  className="px-2 py-1 bg-surface border border-ink/15 hover:border-ink font-mono text-caption uppercase text-ink transition-colors cursor-pointer rounded-card"
                 >
                   Seller
                 </button>
@@ -1129,7 +1129,7 @@ export function AuthForm({
                     setEmail("admin@scrowpoint.com");
                     setPassword("AdminPassword123!");
                   }}
-                  className="px-2 py-1 bg-white border border-[#111113]/15 hover:border-[#111113] font-mono text-[10px] uppercase text-[#111113] transition-colors cursor-pointer"
+                  className="px-2 py-1 bg-surface border border-ink/15 hover:border-ink font-mono text-caption uppercase text-ink transition-colors cursor-pointer rounded-card"
                 >
                   Admin
                 </button>
@@ -1153,14 +1153,14 @@ export function AuthForm({
                       className={cn(
                         "h-10 px-3 border text-xs font-primary font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
                         role === "buyer"
-                          ? "border-[#111113] bg-[#111113] text-white"
-                          : "border-[#111113]/15 bg-[#F8F7F4]/60 text-[#111113]/75 hover:border-[#111113]/40"
+                          ? "border-ink bg-ink text-white"
+                          : "border-ink/15 bg-paper/60 text-ink/75 hover:border-ink/40"
                       )}
                     >
                       <CheckCircle2
                         className={cn(
                           "h-3.5 w-3.5",
-                          role === "buyer" ? "text-[#FF5A25]" : "opacity-30"
+                          role === "buyer" ? "text-accent-orange" : "opacity-30"
                         )}
                       />
                       <span>Gadget Buyer</span>
@@ -1171,14 +1171,14 @@ export function AuthForm({
                       className={cn(
                         "h-10 px-3 border text-xs font-primary font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer",
                         role === "seller"
-                          ? "border-[#111113] bg-[#111113] text-white"
-                          : "border-[#111113]/15 bg-[#F8F7F4]/60 text-[#111113]/75 hover:border-[#111113]/40"
+                          ? "border-ink bg-ink text-white"
+                          : "border-ink/15 bg-paper/60 text-ink/75 hover:border-ink/40"
                       )}
                     >
                       <CheckCircle2
                         className={cn(
                           "h-3.5 w-3.5",
-                          role === "seller" ? "text-[#FF5A25]" : "opacity-30"
+                          role === "seller" ? "text-accent-orange" : "opacity-30"
                         )}
                       />
                       <span>Verified Seller</span>
@@ -1191,17 +1191,17 @@ export function AuthForm({
                     Legal Full Name
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#111113]/50" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink/50" />
                     <input
                       id="auth-fullname"
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Must match your NIN / BVN name"
-                      className="w-full h-11 pl-9 pr-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                      className="w-full h-11 pl-9 pr-3 border border-ink/15 bg-surface text-xs font-secondary text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                     />
                   </div>
-                  <p className="font-secondary text-xs text-[#111113]/60 mt-1">
+                  <p className="font-secondary text-xs text-ink/60 mt-1">
                     Required for SmileID identity verification.
                   </p>
                 </div>
@@ -1212,14 +1212,14 @@ export function AuthForm({
                       Phone Number
                     </label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#111113]/50" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink/50" />
                       <input
                         id="auth-phone"
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+234 803 000 0000"
-                        className="w-full h-11 pl-8 pr-3 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                        className="w-full h-11 pl-8 pr-3 border border-ink/15 bg-surface text-xs font-mono text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                       />
                     </div>
                   </div>
@@ -1232,12 +1232,12 @@ export function AuthForm({
                       Primary Trading Hub
                     </label>
                     <div className="relative">
-                      <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#111113]/50 pointer-events-none" />
+                      <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink/50 pointer-events-none" />
                       <select
                         id="auth-location"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        className="w-full h-11 pl-8 pr-2 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113]"
+                        className="w-full h-11 pl-8 pr-2 border border-ink/15 bg-surface text-xs font-secondary text-ink outline-none focus:border-ink rounded-ui"
                       >
                         {TRADING_LOCATIONS.map((loc) => (
                           <option key={loc} value={loc}>
@@ -1256,17 +1256,17 @@ export function AuthForm({
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#111113]/50" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink/50" />
                 <input
                   id="auth-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. adeola@gmail.com"
-                  className="w-full h-11 pl-9 pr-3 border border-[#111113]/15 bg-white text-xs font-secondary text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                  className="w-full h-11 pl-9 pr-3 border border-ink/15 bg-surface text-xs font-secondary text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                 />
               </div>
-              <p className="font-secondary text-xs text-[#111113]/60 mt-1">
+              <p className="font-secondary text-xs text-ink/60 mt-1">
                 {mode === "register"
                   ? "We will send a 6-digit OTP to verify this email in the next step."
                   : "We send real-time escrow milestone receipts here."}
@@ -1288,7 +1288,7 @@ export function AuthForm({
                         router.push("/forgot-password");
                       }
                     }}
-                    className="font-mono text-xs text-[#111113]/65 hover:text-[#FF5A25] underline underline-offset-4 transition-colors cursor-pointer"
+                    className="font-mono text-xs text-ink/65 hover:text-accent-orange underline underline-offset-4 transition-colors cursor-pointer"
                   >
                     Forgot password?
                   </button>
@@ -1301,12 +1301,12 @@ export function AuthForm({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full h-11 pl-3 pr-10 border border-[#111113]/15 bg-white text-xs font-mono text-[#111113] outline-none focus:border-[#111113] focus:ring-1 focus:ring-[#111113]"
+                  className="w-full h-11 pl-3 pr-10 border border-ink/15 bg-surface text-xs font-mono text-ink outline-none focus:border-ink focus:ring-1 focus:ring-ink rounded-ui"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#111113]/50 hover:text-[#111113]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink/50 hover:text-ink"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -1317,13 +1317,13 @@ export function AuthForm({
               </div>
 
               {mode === "register" && password.length > 0 ? (
-                <div className="mt-2 grid grid-cols-2 gap-1.5 p-2.5 bg-[#F8F7F4] border border-[#111113]/10 text-[11px] font-mono">
+                <div className="mt-2 grid grid-cols-2 gap-1.5 p-2.5 bg-paper border border-ink/10 text-meta font-mono rounded-card">
                   <div
                     className={cn(
                       "flex items-center gap-1.5",
                       hasMinLength
-                        ? "text-[#15803d] font-semibold"
-                        : "text-[#111113]/50"
+                        ? "text-trust-strong font-semibold"
+                        : "text-ink/50"
                     )}
                   >
                     <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -1333,8 +1333,8 @@ export function AuthForm({
                     className={cn(
                       "flex items-center gap-1.5",
                       hasUpperAndLower
-                        ? "text-[#15803d] font-semibold"
-                        : "text-[#111113]/50"
+                        ? "text-trust-strong font-semibold"
+                        : "text-ink/50"
                     )}
                   >
                     <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -1344,8 +1344,8 @@ export function AuthForm({
                     className={cn(
                       "flex items-center gap-1.5",
                       hasNumber
-                        ? "text-[#15803d] font-semibold"
-                        : "text-[#111113]/50"
+                        ? "text-trust-strong font-semibold"
+                        : "text-ink/50"
                     )}
                   >
                     <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -1355,8 +1355,8 @@ export function AuthForm({
                     className={cn(
                       "flex items-center gap-1.5",
                       hasSymbol
-                        ? "text-[#15803d] font-semibold"
-                        : "text-[#111113]/50"
+                        ? "text-trust-strong font-semibold"
+                        : "text-ink/50"
                     )}
                   >
                     <CheckCircle2 className="h-3 w-3 shrink-0" />
@@ -1364,7 +1364,7 @@ export function AuthForm({
                   </div>
                 </div>
               ) : (
-                <p className="font-secondary text-xs text-[#111113]/60 mt-1">
+                <p className="font-secondary text-xs text-ink/60 mt-1">
                   Minimum 8 characters with numbers and symbols.
                 </p>
               )}
@@ -1372,19 +1372,19 @@ export function AuthForm({
 
             {/* Submit Button */}
             {mode === "register" && (
-              <label className="flex items-start gap-2.5 text-xs leading-relaxed text-[#111113]/75">
+              <label className="flex items-start gap-2.5 text-xs leading-relaxed text-ink/75">
                 <input
                   type="checkbox"
                   checked={termsAccepted}
                   onChange={(event) => setTermsAccepted(event.target.checked)}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#FF5A25]"
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-accent-orange"
                 />
                 <span>
                   I agree to the{" "}
                   <Link
                     href="/legal/terms"
                     target="_blank"
-                    className="font-semibold text-[#111113] underline underline-offset-2 hover:text-[#FF5A25]"
+                    className="font-semibold text-ink underline underline-offset-2 hover:text-accent-orange"
                   >
                     Terms of Service
                   </Link>{" "}
@@ -1392,7 +1392,7 @@ export function AuthForm({
                   <Link
                     href="/legal/privacy"
                     target="_blank"
-                    className="font-semibold text-[#111113] underline underline-offset-2 hover:text-[#FF5A25]"
+                    className="font-semibold text-ink underline underline-offset-2 hover:text-accent-orange"
                   >
                     Privacy Policy
                   </Link>
@@ -1427,13 +1427,13 @@ export function AuthForm({
           </form>
 
           {/* Mode Switcher */}
-          <div className="pt-6 mt-6 border-t border-[#111113]/12 text-center font-secondary text-xs text-[#111113]/65">
+          <div className="pt-6 mt-6 border-t border-ink-faint text-center font-secondary text-xs text-ink/65">
             {mode === "login" ? (
               <div>
                 Don&apos;t have an account yet?{" "}
                 <Link
                   href="/register"
-                  className="font-bold text-[#111113] hover:text-[#FF5A25] hover:underline underline-offset-4 transition-colors"
+                  className="font-bold text-ink hover:text-accent-orange hover:underline underline-offset-4 transition-colors"
                 >
                   Register for Free
                 </Link>
@@ -1443,7 +1443,7 @@ export function AuthForm({
                 Already verified on Scrowpoint?{" "}
                 <Link
                   href="/login"
-                  className="font-bold text-[#111113] hover:text-[#FF5A25] hover:underline underline-offset-4 transition-colors"
+                  className="font-bold text-ink hover:text-accent-orange hover:underline underline-offset-4 transition-colors"
                 >
                   Sign In Here
                 </Link>
@@ -1454,8 +1454,8 @@ export function AuthForm({
       )}
 
       {/* Trust Guarantee Note */}
-      <div className="mt-6 pt-4 border-t border-[#111113]/12 flex items-center justify-center gap-1.5 text-[11px] font-mono text-[#15803d]">
-        <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+      <div className="mt-6 pt-4 border-t border-ink-faint flex items-center justify-center gap-1.5 text-meta font-mono text-trust-strong">
+        <ShieldCheck className="h-3.5 w-3.5 text-trust" />
         <span>End-to-End Encrypted Authentication</span>
       </div>
     </div>

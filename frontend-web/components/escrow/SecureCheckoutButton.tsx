@@ -48,10 +48,10 @@ export function SecureCheckoutButton({
         size="lg"
         disabled={disabled || isProcessing}
         onClick={onPay}
-        className="w-full h-12 px-6 rounded-full bg-[#111113] hover:bg-[#FF5A25] text-white font-primary font-bold text-sm flex items-center justify-between gap-3 transition-all duration-200 ease-out"
+        className="w-full h-12 px-6 rounded-full bg-ink hover:bg-accent-orange text-white font-primary font-bold text-sm flex items-center justify-between gap-3 transition-all duration-200 ease-out"
       >
         <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#22c55e] text-[#111113]">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-trust text-ink">
             <Lock className="h-3.5 w-3.5 fill-current" />
           </div>
           <span>{isProcessing ? "Connecting to Paystack Vault..." : "Lock in Escrow"}</span>
@@ -63,8 +63,8 @@ export function SecureCheckoutButton({
         </div>
       </Button>
 
-      <div className="flex items-center justify-center gap-1.5 text-[11px] font-mono text-[#15803d]">
-        <ShieldCheck className="h-3.5 w-3.5 text-[#22c55e]" />
+      <div className="flex items-center justify-center gap-1.5 text-meta font-mono text-trust-strong">
+        <ShieldCheck className="h-3.5 w-3.5 text-trust" />
         <span>Funds protected in segregated vault until 48H inspection passes</span>
       </div>
     </div>

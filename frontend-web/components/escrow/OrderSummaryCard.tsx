@@ -51,26 +51,26 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
   return (
     <div
       className={cn(
-        "border border-[#111113]/12 bg-white p-5 space-y-4",
+        "border border-ink-faint bg-surface p-5 space-y-4 rounded-card",
         className
       )}
     >
       {/* Top Strip: Order ID & Status Badge */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#111113]/12">
+      <div className="flex items-center justify-between pb-3 border-b border-ink-faint">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs font-bold text-[#111113]">
+          <span className="font-mono text-xs font-bold text-ink">
             {order.orderId}
           </span>
           <button
             type="button"
             onClick={handleCopyOrderId}
-            className="text-[#111113]/60 hover:text-[#111113] p-1 transition-colors"
+            className="text-ink/60 hover:text-ink p-1 transition-colors"
             title="Copy Order ID"
           >
             <Copy className="h-3 w-3" />
           </button>
           {copied && (
-            <span className="font-mono text-[10px] text-[#15803d]">Copied!</span>
+            <span className="font-mono text-caption text-trust-strong">Copied!</span>
           )}
         </div>
 
@@ -84,7 +84,7 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
               ? "trust"
               : "outline"
           }
-          className="text-[10px] font-mono tracking-wider"
+          className="text-caption font-mono tracking-wider"
         >
           {order.status === "DISPUTED" ? "DISPUTE FROZEN" : `ESCROW ${order.status}`}
         </Badge>
@@ -95,16 +95,16 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
         <img
           src={order.gadgetImage}
           alt={order.gadgetTitle}
-          className="h-16 w-16 object-cover border border-[#111113]/12 bg-[#F0EFEA]"
+          className="h-16 w-16 object-cover border border-ink-faint bg-surface-muted rounded-ui"
         />
         <div className="min-w-0 flex-1">
           <span className="label block">
             {order.condition} Grade
           </span>
-          <h3 className="font-primary text-sm font-bold tracking-[-0.02em] text-[#111113] truncate mt-0.5">
+          <h3 className="font-primary text-sm font-bold tracking-[-0.02em] text-ink truncate mt-0.5">
             {order.gadgetTitle}
           </h3>
-          <div className="font-mono text-sm font-bold text-[#111113] mt-0.5">
+          <div className="font-mono text-sm font-bold text-ink mt-0.5">
             ₦{(order.amount).toLocaleString()}
           </div>
         </div>
@@ -115,20 +115,20 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
         className={cn(
           "border p-3 flex items-center justify-between",
           order.status === "PENDING_PAYMENT"
-            ? "border-[#ecc94b]/40 bg-[#ecc94b]/10"
-            : "border-[#22c55e]/30 bg-[#22c55e]/10"
+            ? "border-state-warning/40 bg-state-warning/10"
+            : "border-trust/30 bg-trust/10"
         )}
       >
         <div className="flex items-center gap-2">
           {order.status === "PENDING_PAYMENT" ? (
-            <CreditCard className="h-4 w-4 text-[#975a16]" />
+            <CreditCard className="h-4 w-4 text-state-warning-strong" />
           ) : (
-            <Lock className="h-4 w-4 text-[#22c55e]" />
+            <Lock className="h-4 w-4 text-trust" />
           )}
           <span
             className={cn(
               "font-primary text-xs font-bold",
-              order.status === "PENDING_PAYMENT" ? "text-[#975a16]" : "text-[#15803d]"
+              order.status === "PENDING_PAYMENT" ? "text-state-warning-strong" : "text-trust-strong"
             )}
           >
             {order.status === "PENDING_PAYMENT" ? "Awaiting Payment" : "Locked in Escrow Vault"}
@@ -137,7 +137,7 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
         <span
           className={cn(
             "font-mono text-xs font-extrabold",
-            order.status === "PENDING_PAYMENT" ? "text-[#975a16]" : "text-[#15803d]"
+            order.status === "PENDING_PAYMENT" ? "text-state-warning-strong" : "text-trust-strong"
           )}
         >
           ₦{(order.totalDeposit).toLocaleString()}
@@ -146,12 +146,12 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
 
       {/* Logistics Tracking Strip if Shipped */}
       {order.courierWaybill && (
-        <div className="border border-[#111113]/12 bg-[#F8F7F4] p-3 text-xs flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[#111113]">
-            <Truck className="h-4 w-4 text-[#111113]" />
+        <div className="border border-ink-faint bg-paper p-3 text-xs flex items-center justify-between rounded-card">
+          <div className="flex items-center gap-2 text-ink">
+            <Truck className="h-4 w-4 text-ink" />
             <span className="font-medium">{order.courierPartner || "GIG Logistics"}</span>
           </div>
-          <span className="font-mono font-bold text-[#111113]">
+          <span className="font-mono font-bold text-ink">
             {order.courierWaybill}
           </span>
         </div>
@@ -162,31 +162,31 @@ export function OrderSummaryCard({ order, className }: OrderSummaryCardProps) {
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full flex items-center justify-between py-1 text-xs font-mono text-[#111113]/65 hover:text-[#111113]"
+          className="w-full flex items-center justify-between py-1 text-xs font-mono text-ink/65 hover:text-ink"
         >
           <span>{isExpanded ? "Hide Escrow Ledger" : "View Escrow Ledger Breakdown"}</span>
           {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
         </button>
 
         {isExpanded && (
-          <div className="mt-3 pt-3 border-t border-[#111113]/12 space-y-2 text-xs font-secondary">
-            <div className="flex justify-between text-[#111113]/65">
+          <div className="mt-3 pt-3 border-t border-ink-faint space-y-2 text-xs font-secondary">
+            <div className="flex justify-between text-ink/65">
               <span>Agreed Item Price</span>
-              <span className="font-mono text-[#111113]">₦{(order.amount).toLocaleString()}</span>
+              <span className="font-mono text-ink">₦{(order.amount).toLocaleString()}</span>
             </div>
-            <div className="flex justify-between text-[#111113]/65">
+            <div className="flex justify-between text-ink/65">
               <span>Escrow Fee (Protected)</span>
-              <span className="font-mono text-[#111113]">₦{(order.escrowFee).toLocaleString()}</span>
+              <span className="font-mono text-ink">₦{(order.escrowFee).toLocaleString()}</span>
             </div>
-            <div className="flex justify-between text-[#111113]/65">
+            <div className="flex justify-between text-ink/65">
               <span>Tracked Logistics</span>
-              <span className="font-mono text-[#111113]">₦{(order.logisticsFee).toLocaleString()}</span>
+              <span className="font-mono text-ink">₦{(order.logisticsFee).toLocaleString()}</span>
             </div>
-            <div className="flex justify-between pt-2 border-t border-[#111113]/12 font-bold text-[#111113]">
+            <div className="flex justify-between pt-2 border-t border-ink-faint font-bold text-ink">
               <span>Buyer Total Deposit</span>
               <span className="font-mono">₦{(order.totalDeposit).toLocaleString()}</span>
             </div>
-            <div className="flex justify-between text-[11px] font-mono text-[#15803d]">
+            <div className="flex justify-between text-meta font-mono text-trust-strong">
               <span>Seller Net Payout</span>
               <span>₦{(order.amount).toLocaleString()}</span>
             </div>
