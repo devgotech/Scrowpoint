@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    agentUpgrade: "security",
+  },
   async rewrites() {
     const backendUrl = (
       process.env.CORE_BACKEND_URL || "http://localhost:8080"
