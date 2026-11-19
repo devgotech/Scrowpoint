@@ -8,7 +8,7 @@ This workspace (`scrowpoint_workspace/`) contains the core backend infrastructur
 
 ```text
 scrowpoint_workspace/
-├── core-backend/                     # Go 1.22 Core Escrow & State Machine API (:8080)
+├── core-backend/                     # Go 1.26 Core Escrow & State Machine API (:8080)
 │   ├── cmd/api/main.go               # HTTP Server & 48-Hour SLA Background Worker entrypoint
 │   ├── internal/
 │   │   ├── api/router.go             # REST Router & JWT / Role Middleware

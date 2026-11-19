@@ -17,7 +17,9 @@ Paystack keys — otherwise testing on staging changes real users' escrow data.
 ## What happens automatically
 
 1. A push to `dev` runs the **Quality Gates** workflow: Go tests, vet and build;
-   frontend lint and build; and Python media-service tests.
+   frontend lint and build; Python media-service tests; and a dependency
+   vulnerability audit (govulncheck, `npm audit`, `pip-audit`). **CodeQL**
+   security analysis also runs on every push and on PRs into `staging`/`main`.
 2. After those checks pass, **Promote dev to staging** opens or updates a PR
    from `dev` to `staging` and enables squash auto-merge. GitHub merges it only
    after the required `Quality Gates` check passes. Render redeploys staging.
@@ -25,7 +27,23 @@ Paystack keys — otherwise testing on staging changes real users' escrow data.
    **Quality Gates** and **Claude Review** both run on it. Claude posts inline
    comments and a summary, and the `Claude Review` check fails if it finds a
    blocking issue (security hole, wrong money movement, data loss or leak,
-   outage). You merge once both checks are green.
+   outage). Review the diff yourself and merge once both checks are green.
+
+## Free security checks
+
+All of these are free for public repositories and need no API keys.
+
+| Check | Where | What it does | Blocks merges? |
+|---|---|---|---|
+| Dependency audit | `quality-gates.yml` → `dependency-audit` | govulncheck (Go vulnerabilities your code actually calls), `npm audit` (high/critical in production deps), `pip-audit` | Yes — part of the required **Quality Gates** check |
+| CodeQL | `codeql.yml` | Static security analysis of Go, TypeScript, Python and workflows (`security-extended` queries); weekly rescan | Only once you add the code scanning rule below |
+| Dependabot | `.github/dependabot.yml` | Weekly update PRs into `dev`; minor/patch grouped per ecosystem | No — you merge them |
+| Secret scanning + push protection | Repository setting | Rejects pushes containing API keys or passwords | Yes, at push time |
+
+If the dependency audit fails, update the flagged package (`go get <module>@latest`,
+`npm audit fix`, or raise the `requirements.txt` minimum), or wait for
+Dependabot's PR. Keep the Go version in the workflows (`1.26.x`) and in
+`core-backend/Dockerfile` (`golang:1.26-alpine`) in step when you upgrade Go.
 
 ## Testing locally against staging
 
@@ -67,6 +85,13 @@ Claude Code locally before pushing to catch issues earlier and cheaper.
 
 ## One-time GitHub repository settings
 
+In **Settings → Advanced Security** (Code security), enable:
+
+- **Dependency graph**, **Dependabot alerts** and **Dependabot security updates**.
+- **Secret scanning** and **Push protection**.
+- Leave CodeQL **Default setup** off — this repository uses the advanced
+  `codeql.yml` workflow, and the two cannot run together.
+
 In **Settings → General → Pull Requests**, enable **Allow auto-merge**.
 
 In **Settings → Actions → General → Workflow permissions**, allow GitHub Actions
@@ -78,9 +103,12 @@ protection rules) for `staging` and `main`:
 
 - Require a pull request before merging and require the **Quality Gates**
   check.
+- Add **Require code scanning results** for the tool **CodeQL**, blocking on
+  security alerts of **High or higher** and errors. New high-severity CodeQL
+  findings in a PR then block the merge.
 - For `main`, also require the **Claude Review** check. As the only
   collaborator you cannot approve your own PRs, so set required approvals to
-  `0` and let the two required checks be the gate. Do not allow direct pushes,
+  `0` and let the required checks be the gate. Do not allow direct pushes,
   force pushes, or deletion. Keep yourself as a bypass actor only for genuine
   emergencies (e.g. Claude is unavailable during an outage fix).
 - For `staging`, do not require a human approval; keep the required pull request

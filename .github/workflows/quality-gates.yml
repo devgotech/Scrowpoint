@@ -30,7 +30,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: core-backend/go.mod
+          # Latest 1.26 patch, matching the golang:1.26-alpine production image.
+          go-version: "1.26.x"
+          check-latest: true
           cache-dependency-path: core-backend/go.sum
 
       - name: Run Go tests
@@ -89,6 +91,47 @@ jobs:
         working-directory: media-service
         run: python -m unittest discover -s tests -v
 
+  dependency-audit:
+    name: Dependency vulnerability audit
+    # Free checks against public vulnerability databases. Fails on known
+    # vulnerabilities that can affect production (Go: only ones your code
+    # actually calls; npm: high/critical in production deps; Python: any).
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+          check-latest: true
+          cache-dependency-path: core-backend/go.sum
+
+      - name: Go — govulncheck
+        working-directory: core-backend
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend-web/package-lock.json
+
+      - name: Frontend — npm audit (production dependencies)
+        run: npm audit --prefix frontend-web --omit=dev --audit-level=high
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Media service — pip-audit
+        run: |
+          python -m pip install --quiet pip-audit
+          pip-audit --requirement media-service/requirements.txt
+
   quality-gates:
     name: Quality Gates
     if: always()
@@ -96,6 +139,7 @@ jobs:
       - go
       - frontend
       - media
+      - dependency-audit
     runs-on: ubuntu-latest
     steps:
       - name: Require every quality job to pass
@@ -103,7 +147,9 @@ jobs:
           GO_RESULT: ${{ needs.go.result }}
           FRONTEND_RESULT: ${{ needs.frontend.result }}
           MEDIA_RESULT: ${{ needs.media.result }}
+          AUDIT_RESULT: ${{ needs.dependency-audit.result }}
         run: |
           test "${GO_RESULT}" = "success"
           test "${FRONTEND_RESULT}" = "success"
           test "${MEDIA_RESULT}" = "success"
+          test "${AUDIT_RESULT}" = "success"

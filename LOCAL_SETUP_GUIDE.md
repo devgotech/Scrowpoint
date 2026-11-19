@@ -8,7 +8,7 @@ This guide explains how to run the full **Scrowpoint P2P Hardware Escrow** stack
 
 1. **Visual Studio Code**: [Download VS Code](https://code.visualstudio.com/)
 2. **Node.js** (v18 or v20+ with npm): `node --version`
-3. **Go** (v1.22 or later): `go version`
+3. **Go** (v1.26 or later): `go version`
 4. **Python** (v3.10 or v3.11+): `python3 --version`
 5. **PostgreSQL** (v16+) or **Docker Desktop** (recommended for 1-command database & microservice startup).
 

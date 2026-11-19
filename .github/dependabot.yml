@@ -1,0 +1,58 @@
+# Free automated dependency updates. Version-update PRs target `dev`, so they go
+# through Quality Gates and the normal dev -> staging -> main promotion.
+# Minor and patch bumps are grouped into one PR per ecosystem per week to keep
+# the noise down; major bumps arrive as separate PRs for manual review.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /frontend-web
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      frontend-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: gomod
+    directory: /core-backend
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      go-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: pip
+    directory: /media-service
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      python-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directories:
+      - /core-backend
+      - /media-service
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      github-actions:
+        patterns: ["*"]
