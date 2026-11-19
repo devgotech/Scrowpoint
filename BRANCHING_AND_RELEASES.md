@@ -79,9 +79,12 @@ protection rules) for `staging` and `main`:
 
 - Require a pull request before merging and require the **Quality Gates**
   check.
-- Add **Require code scanning results** for the tool **CodeQL**, blocking on
-  security alerts of **High or higher** and errors. New high-severity CodeQL
-  findings in a PR then block the merge.
+- Code scanning gate (only available as a **ruleset**, not a classic branch
+  protection rule): Settings → Rules → Rulesets → New branch ruleset, set
+  Enforcement to **Active**, target `main` and `staging`, tick **Require code
+  scanning results**, Add tool → **CodeQL** with Security alerts **High or
+  higher** and Alerts **Errors**. CodeQL may only appear in the tool list after
+  `codeql.yml` has run once on GitHub. Classic rules and rulesets apply together.
 - For `main`, as the only collaborator you cannot approve your own PRs, so
   set required approvals to `0` and let the required check be the gate. Do
   not allow direct pushes, force pushes, or deletion. Keep yourself as a bypass
