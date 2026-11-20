@@ -285,23 +285,112 @@ func (s *DisputeService) OpenSubCase(ctx context.Context, parentDisputeID, selle
 	return subCase, nil
 }
 
+// ErrDisputeForbidden is returned when a staff member may not act on a dispute:
+// a mediator who is not assigned to it, or anyone who is a party to the order.
+var ErrDisputeForbidden = errors.New("forbidden: you are not permitted to act on this dispute")
+
+// canHandleLocked reports whether staff member actorID (with role) may view or
+// act on the dispute. Admins can handle any case; mediators only their own.
+func canHandleLocked(d *db.Dispute, actorID uuid.UUID, role db.UserRole) bool {
+	switch role {
+	case db.RoleAdmin:
+		return true
+	case db.RoleMediator:
+		return d.AssignedAdminID != nil && *d.AssignedAdminID == actorID
+	default:
+		return false
+	}
+}
+
+// isOrderParty reports whether userID is the buyer or seller on the order, so
+// nobody can rule on a dispute about their own trade.
+func (s *DisputeService) isOrderParty(ctx context.Context, orderID, userID uuid.UUID) bool {
+	if s.orderService == nil {
+		return false
+	}
+	order, err := s.orderService.GetOrderByID(ctx, orderID, uuid.Nil)
+	if err != nil || order == nil {
+		return false
+	}
+	if order.BuyerID == userID {
+		return true
+	}
+	return order.Listing != nil && order.Listing.SellerID == userID
+}
+
+// CanStaffAccessDispute is used by read endpoints (e.g. evidence) to keep
+// mediators to the cases assigned to them.
+func (s *DisputeService) CanStaffAccessDispute(disputeID, actorID uuid.UUID, role db.UserRole) bool {
+	s.Mu.RLock()
+	defer s.Mu.RUnlock()
+	dispute, exists := s.DisputesByID[disputeID]
+	return exists && canHandleLocked(dispute, actorID, role)
+}
+
 func (s *DisputeService) IssueMediationVerdict(
 	ctx context.Context,
 	disputeID uuid.UUID,
-	adminID uuid.UUID,
+	actorID uuid.UUID,
+	role db.UserRole,
 	in DisputeVerdictInput,
 ) (*db.Dispute, error) {
-	s.Mu.Lock()
-	dispute, exists := s.DisputesByID[disputeID]
+	switch in.Outcome {
+	case db.MediationOutcomeRefundBuyer, db.MediationOutcomeReleaseToSeller, db.MediationOutcomeSplit:
+	default:
+		return nil, errors.New("outcome must be refund_buyer, release_to_seller, or split")
+	}
+
+	s.Mu.RLock()
+	existing, exists := s.DisputesByID[disputeID]
+	var orderID uuid.UUID
+	if exists {
+		orderID = existing.OrderID
+	}
+	s.Mu.RUnlock()
 	if !exists {
-		s.Mu.Unlock()
 		return nil, errors.New("dispute not found")
+	}
+	if s.isOrderParty(ctx, orderID, actorID) {
+		return nil, ErrDisputeForbidden
+	}
+
+	s.Mu.Lock()
+	dispute := s.DisputesByID[disputeID]
+	if !canHandleLocked(dispute, actorID, role) {
+		s.Mu.Unlock()
+		return nil, ErrDisputeForbidden
+	}
+	// A verdict moves escrow money, so it can only ever be issued once.
+	if dispute.Status == db.DisputeStatusResolved || dispute.MediationOutcome != nil {
+		s.Mu.Unlock()
+		return nil, errors.New("a verdict has already been issued for this dispute")
+	}
+
+	// Reserve the verdict under the lock so two staff members cannot both rule;
+	// if the escrow movement below fails, the reservation is rolled back so the
+	// case can be ruled on again.
+	prevStatus, prevAssigned := dispute.Status, dispute.AssignedAdminID
+	prevNotes := dispute.MediatorNotes
+	rollback := func(cause error) error {
+		s.Mu.Lock()
+		dispute.Status = prevStatus
+		dispute.MediationOutcome = nil
+		dispute.AssignedAdminID = prevAssigned
+		dispute.VerdictIssuedBy = nil
+		dispute.MediatorNotes = prevNotes
+		dispute.UpdatedAt = time.Now()
+		s.appendTimelineLocked(dispute.ID, "admin", "VERDICT_ROLLED_BACK", fmt.Sprintf("Escrow settlement failed; verdict not applied: %v", cause))
+		s.Mu.Unlock()
+		return cause
 	}
 
 	now := time.Now()
 	dispute.Status = db.DisputeStatusResolved
 	dispute.MediationOutcome = &in.Outcome
-	dispute.AssignedAdminID = &adminID
+	if dispute.AssignedAdminID == nil {
+		dispute.AssignedAdminID = &actorID
+	}
+	dispute.VerdictIssuedBy = &actorID
 	dispute.MediatorNotes = in.Notes
 	dispute.UpdatedAt = now
 	s.appendTimelineLocked(dispute.ID, "admin", "VERDICT_ISSUED", fmt.Sprintf("Ruling: %s. Notes: %s", in.Outcome, in.Notes))
@@ -311,12 +400,12 @@ func (s *DisputeService) IssueMediationVerdict(
 	case db.MediationOutcomeRefundBuyer:
 		_, err := s.escrowService.RefundBuyer(ctx, dispute.OrderID, "Admin arbitration ruling: refunded to buyer")
 		if err != nil {
-			return nil, err
+			return nil, rollback(err)
 		}
 	case db.MediationOutcomeReleaseToSeller:
 		_, err := s.escrowService.ReleaseFundsToSeller(ctx, dispute.OrderID, true, "Admin arbitration ruling: released to seller")
 		if err != nil {
-			return nil, err
+			return nil, rollback(err)
 		}
 	case db.MediationOutcomeSplit:
 		order, err := s.orderService.GetOrderByID(ctx, dispute.OrderID, uuid.Nil)
@@ -374,7 +463,27 @@ func (s *DisputeService) SubmitAppeal(ctx context.Context, disputeID, appellantI
 	return appeal, nil
 }
 
-func (s *DisputeService) DecideAppeal(ctx context.Context, appealID, arbitratorID uuid.UUID, uphold bool, notes string) (*db.Appeal, error) {
+func (s *DisputeService) DecideAppeal(ctx context.Context, appealID, arbitratorID uuid.UUID, role db.UserRole, uphold bool, notes string) (*db.Appeal, error) {
+	s.Mu.RLock()
+	var orderID uuid.UUID
+	found := false
+	for _, a := range s.AppealsByDsp {
+		if a.ID == appealID {
+			if d, ok := s.DisputesByID[a.DisputeID]; ok {
+				orderID = d.OrderID
+			}
+			found = true
+			break
+		}
+	}
+	s.Mu.RUnlock()
+	if !found {
+		return nil, errors.New("appeal record not found")
+	}
+	if s.isOrderParty(ctx, orderID, arbitratorID) {
+		return nil, ErrDisputeForbidden
+	}
+
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
@@ -388,6 +497,21 @@ func (s *DisputeService) DecideAppeal(ctx context.Context, appealID, arbitratorI
 
 	if targetAppeal == nil {
 		return nil, errors.New("appeal record not found")
+	}
+	if targetAppeal.DecidedAt != nil {
+		return nil, errors.New("this appeal has already been decided")
+	}
+	if dispute, ok := s.DisputesByID[targetAppeal.DisputeID]; ok {
+		if !canHandleLocked(dispute, arbitratorID, role) {
+			return nil, ErrDisputeForbidden
+		}
+		// An appeal is a second look: a mediator cannot review their own verdict.
+		// Admins keep final authority so a single-admin team is never stuck.
+		if role == db.RoleMediator && dispute.VerdictIssuedBy != nil && *dispute.VerdictIssuedBy == arbitratorID {
+			return nil, ErrDisputeForbidden
+		}
+	} else if role != db.RoleAdmin {
+		return nil, ErrDisputeForbidden
 	}
 
 	now := time.Now()
@@ -422,12 +546,27 @@ func (s *DisputeService) GetDisputeByID(ctx context.Context, disputeID uuid.UUID
 }
 
 func (s *DisputeService) ListDisputes(ctx context.Context, status string, page, limit int) ([]db.Dispute, int, error) {
+	return s.listDisputes(status, page, limit, func(*db.Dispute) bool { return true })
+}
+
+// ListDisputesForStaff returns the queue a staff member may see: every case
+// for admins, and only cases assigned to them for mediators.
+func (s *DisputeService) ListDisputesForStaff(ctx context.Context, actorID uuid.UUID, role db.UserRole, status string, page, limit int) ([]db.Dispute, int, error) {
+	return s.listDisputes(status, page, limit, func(d *db.Dispute) bool {
+		return canHandleLocked(d, actorID, role)
+	})
+}
+
+func (s *DisputeService) listDisputes(status string, page, limit int, include func(*db.Dispute) bool) ([]db.Dispute, int, error) {
 	s.Mu.RLock()
 	defer s.Mu.RUnlock()
 
-	var list []db.Dispute
+	list := []db.Dispute{}
 	for _, d := range s.DisputesByID {
 		if status != "" && string(d.Status) != status {
+			continue
+		}
+		if !include(d) {
 			continue
 		}
 		item := *d
@@ -472,18 +611,61 @@ func (s *DisputeService) GetTimeline(ctx context.Context, disputeID uuid.UUID) (
 	return items, nil
 }
 
-func (s *DisputeService) AssignDispute(ctx context.Context, disputeID, adminID uuid.UUID) (*db.Dispute, error) {
+// UnassignOpenCases returns a deactivated staff member's unresolved cases to
+// the unassigned queue so an admin can hand them to someone else.
+func (s *DisputeService) UnassignOpenCases(_ context.Context, staffID uuid.UUID) int {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
+	count := 0
+	for _, d := range s.DisputesByID {
+		if d.AssignedAdminID == nil || *d.AssignedAdminID != staffID || d.Status == db.DisputeStatusResolved {
+			continue
+		}
+		d.AssignedAdminID = nil
+		d.UpdatedAt = time.Now()
+		s.appendTimelineLocked(d.ID, "admin", "CASE_UNASSIGNED", "Assigned staff member was deactivated; case returned to the queue")
+		count++
+	}
+	return count
+}
 
-	dispute, exists := s.DisputesByID[disputeID]
+// AssignDispute hands a case to a staff member (a mediator or admin). Only
+// admins call this; the assignee must be active staff and not a party to the
+// order being disputed.
+func (s *DisputeService) AssignDispute(ctx context.Context, disputeID, assigneeID uuid.UUID) (*db.Dispute, error) {
+	if s.authService != nil {
+		assignee, err := s.authService.GetUserByID(ctx, assigneeID)
+		if err != nil {
+			return nil, errors.New("assignee not found")
+		}
+		if assignee.Role != db.RoleMediator && assignee.Role != db.RoleAdmin {
+			return nil, errors.New("cases can only be assigned to mediators or admins")
+		}
+		if assignee.IsSuspended {
+			return nil, errors.New("cannot assign a case to a deactivated staff member")
+		}
+	}
+
+	s.Mu.RLock()
+	existing, exists := s.DisputesByID[disputeID]
+	var orderID uuid.UUID
+	if exists {
+		orderID = existing.OrderID
+	}
+	s.Mu.RUnlock()
 	if !exists {
 		return nil, errors.New("dispute not found")
 	}
+	if s.isOrderParty(ctx, orderID, assigneeID) {
+		return nil, errors.New("cannot assign a case to the buyer or seller on the order")
+	}
 
-	dispute.AssignedAdminID = &adminID
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+	dispute := s.DisputesByID[disputeID]
+	dispute.AssignedAdminID = &assigneeID
 	dispute.UpdatedAt = time.Now()
-	s.appendTimelineLocked(dispute.ID, "admin", "CASE_ASSIGNED", fmt.Sprintf("Case assigned to admin %s", adminID.String()[:8]))
+	s.appendTimelineLocked(dispute.ID, "admin", "CASE_ASSIGNED", fmt.Sprintf("Case assigned to staff member %s", assigneeID.String()[:8]))
 
 	return dispute, nil
 }

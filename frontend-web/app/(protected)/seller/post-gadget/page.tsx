@@ -63,6 +63,7 @@ export default function PostGadgetPage({
   // Wizard Steps: 1: Specs, 2: Diagnostics, 3: Media & Video, 4: Pricing & Logistics
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [publishError, setPublishError] = useState<{ message: string; needsKyc: boolean } | null>(null);
   const [publishedListingId, setPublishedListingId] = useState<string | null>(null);
 
   // Step 1: Hardware Specs State
@@ -194,6 +195,7 @@ export default function PostGadgetPage({
   // Submit Listing (`POST /api/listings`)
   const handlePublish = async () => {
     setIsSubmitting(true);
+    setPublishError(null);
     try {
       const token =
         typeof window !== "undefined"
@@ -233,6 +235,19 @@ export default function PostGadgetPage({
         onSuccess?.(String(createdId));
         return;
       }
+      // The backend refused the listing (e.g. identity not verified yet).
+      // Show the reason instead of pretending it was published.
+      const payload = await res.json().catch(() => null);
+      setIsSubmitting(false);
+      setPublishError({
+        message:
+          payload?.error ||
+          (res.status === 401
+            ? "Your session has expired. Sign in again to publish."
+            : "This listing could not be published."),
+        needsKyc: res.status === 403,
+      });
+      return;
     } catch {
       // Fallback when backend is unreachable
     }
@@ -1305,6 +1320,23 @@ export default function PostGadgetPage({
                   </button>
                 )}
               </div>
+
+              {publishError && (
+                <div
+                  role="alert"
+                  className="border border-state-error/40 bg-state-error/10 p-4 text-xs text-state-error-strong flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                >
+                  <span>{publishError.message}</span>
+                  {publishError.needsKyc && (
+                    <Link
+                      href="/verify-identity"
+                      className="shrink-0 font-mono font-bold uppercase tracking-wider underline underline-offset-4 hover:text-ink"
+                    >
+                      Verify identity
+                    </Link>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* ============================================================

@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 // Custom Domain & Shell Components
 import { EmptyState } from "@/components/EmptyState";
 import { EscrowStatusBar } from "@/components/EscrowStatusBar";
+import { CookieConsentModal, type CookieConsentChoices } from "@/components/CookieConsentModal";
 import { Navbar } from "@/components/Navbar";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import {
@@ -148,6 +149,37 @@ const MOCK_ORDER_DATA: EscrowOrderData = {
   sellerName: "Chidi Tech Hub",
   status: "FUNDED",
 };
+
+function CookieConsentSandboxDemo() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [lastChoice, setLastChoice] = useState<CookieConsentChoices | null>(null);
+
+  return (
+    <div className="flex flex-col items-center justify-center p-6 border border-dashed border-ink/20 bg-paper text-center space-y-3 w-full max-w-md mx-auto rounded-card">
+      <div>
+        <h4 className="font-primary text-sm font-bold text-ink tracking-[-0.02em]">Cookie Consent Modal</h4>
+        <p className="font-secondary text-xs text-ink/65 mt-0.5">
+          Presentational only. Open it, try Customize, and the chosen categories show below. Nothing is saved.
+        </p>
+      </div>
+      <Button variant="default" size="sm" onClick={() => setIsOpen(true)}>
+        Open Cookie Consent Preview
+      </Button>
+      {lastChoice && (
+        <p className="font-mono text-caption text-ink/65">
+          Last choice: {Object.entries(lastChoice).filter(([, on]) => on).map(([id]) => id).join(", ")}
+        </p>
+      )}
+      <CookieConsentModal
+        open={isOpen}
+        onConsent={(choices) => {
+          setLastChoice(choices);
+          setIsOpen(false);
+        }}
+      />
+    </div>
+  );
+}
 
 function EvidenceUploadSandboxDemo() {
   const [isOpen, setIsOpen] = useState(false);
@@ -834,6 +866,15 @@ export const COMPONENT_REGISTRY: ComponentRegistryItem[] = [
   // --------------------------------------------------------------------------
   // OVERLAYS & SHELL
   // --------------------------------------------------------------------------
+  {
+    id: "overlay-cookie-consent",
+    title: "CookieConsentModal (NDPR Cookie Notice)",
+    category: "Overlays",
+    tierLabel: "Tier 1 Foundation",
+    description: "Cookie notice with equal-weight Reject / Accept and a Preferences view (strictly necessary locked on, optional categories off by default). Consent storage is not wired yet.",
+    tags: ["Cookies", "Consent", "NDPR", "Dialog"],
+    render: () => <CookieConsentSandboxDemo />,
+  },
   {
     id: "overlay-navbar",
     title: "Navbar (Variation 7 Editorial Header)",

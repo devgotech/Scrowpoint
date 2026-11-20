@@ -150,3 +150,43 @@ func TestAuthenticateRejectsNonHMACSigningAlgorithm(t *testing.T) {
 		t.Errorf("invalid token response status=%d body=%q", recorder.Code, recorder.Body.String())
 	}
 }
+
+type stubSessions struct {
+	role db.UserRole
+	err  error
+}
+
+func (s stubSessions) ValidateSession(context.Context, uuid.UUID, uuid.UUID) (db.UserRole, error) {
+	return s.role, s.err
+}
+
+func TestAuthenticateUsesSessionValidator(t *testing.T) {
+	mw := NewAuthMiddleware("session-secret")
+	// The token still says admin, but the stored account was demoted.
+	user := &db.User{ID: uuid.New(), Email: "staff@example.com", Role: db.RoleAdmin}
+	token, err := mw.GenerateToken(user, uuid.New(), time.Hour)
+	if err != nil {
+		t.Fatalf("GenerateToken: %v", err)
+	}
+	serve := func() (int, db.UserRole) {
+		var seen db.UserRole
+		recorder := httptest.NewRecorder()
+		request := httptest.NewRequest(http.MethodGet, "/", nil)
+		request.Header.Set("Authorization", "Bearer "+token)
+		mw.Authenticate(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			claims, _ := GetUserClaims(r.Context())
+			seen = claims.Role
+			w.WriteHeader(http.StatusNoContent)
+		})).ServeHTTP(recorder, request)
+		return recorder.Code, seen
+	}
+
+	mw.SetSessionValidator(stubSessions{role: db.RoleMediator})
+	if code, role := serve(); code != http.StatusNoContent || role != db.RoleMediator {
+		t.Fatalf("live session: status %d role %q, want 204 and the stored role", code, role)
+	}
+	mw.SetSessionValidator(stubSessions{err: context.Canceled})
+	if code, _ := serve(); code != http.StatusUnauthorized {
+		t.Fatalf("revoked session: status %d, want 401", code)
+	}
+}

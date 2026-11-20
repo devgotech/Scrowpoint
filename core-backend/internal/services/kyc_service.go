@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -461,10 +462,55 @@ func (s *KYCService) GetHistory(ctx context.Context, userID uuid.UUID) ([]db.Use
 	return res, nil
 }
 
+// PendingKYCReview is one identity submission waiting for an admin decision.
+type PendingKYCReview struct {
+	ID          uuid.UUID    `json:"id"`
+	UserID      uuid.UUID    `json:"userId"`
+	FullName    string       `json:"fullName"`
+	Email       string       `json:"email"`
+	IDType      string       `json:"idType"`
+	Status      db.KYCStatus `json:"status"`
+	SubmittedAt time.Time    `json:"submittedAt"`
+}
+
+// ListPendingReviews returns submissions awaiting a manual decision, oldest first.
+func (s *KYCService) ListPendingReviews(ctx context.Context) []PendingKYCReview {
+	s.Mu.RLock()
+	var pending []db.UserVerification
+	for _, list := range s.Verifications {
+		for _, v := range list {
+			if v.Status == db.KYCPending || v.Status == db.KYCManualReviewRequired {
+				pending = append(pending, *v)
+			}
+		}
+	}
+	s.Mu.RUnlock()
+
+	reviews := make([]PendingKYCReview, 0, len(pending))
+	for _, v := range pending {
+		review := PendingKYCReview{ID: v.ID, UserID: v.UserID, Status: v.Status, SubmittedAt: v.CreatedAt}
+		var meta struct {
+			IDType string `json:"idType"`
+		}
+		if json.Unmarshal(v.Metadata, &meta) == nil {
+			review.IDType = meta.IDType
+		}
+		if user, err := s.authService.GetUserByID(ctx, v.UserID); err == nil {
+			review.FullName = user.Name
+			review.Email = user.Email
+		}
+		reviews = append(reviews, review)
+	}
+	sort.Slice(reviews, func(i, j int) bool { return reviews[i].SubmittedAt.Before(reviews[j].SubmittedAt) })
+	return reviews
+}
+
 func (s *KYCService) AdminReviewDecision(ctx context.Context, verificationID uuid.UUID, approve bool, reason string) (*db.UserVerification, error) {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 
+	// Exact match only: a decision must never land on a different person's
+	// verification because an ID was mistyped or stale.
 	var target *db.UserVerification
 	for _, list := range s.Verifications {
 		for _, v := range list {
@@ -473,24 +519,6 @@ func (s *KYCService) AdminReviewDecision(ctx context.Context, verificationID uui
 				break
 			}
 		}
-	}
-	// Fallback 1: check if verificationID corresponds to a UserID
-	if target == nil {
-		if list, ok := s.Verifications[verificationID]; ok && len(list) > 0 {
-			target = list[len(list)-1]
-		}
-	}
-	// Fallback 2: if only one or multiple verifications exist, pick the most recent
-	if target == nil {
-		var latest *db.UserVerification
-		for _, list := range s.Verifications {
-			for _, v := range list {
-				if latest == nil || v.CreatedAt.After(latest.CreatedAt) {
-					latest = v
-				}
-			}
-		}
-		target = latest
 	}
 	if target == nil {
 		return nil, errors.New("verification record not found")

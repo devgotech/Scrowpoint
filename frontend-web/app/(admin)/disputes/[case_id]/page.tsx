@@ -9,7 +9,9 @@ import { MinimalistAuthFooter } from "@/components/footers";
 import { ReadonlyChatTranscript } from "@/components/admin/ReadonlyChatTranscript";
 import { EvidenceViewer } from "@/components/admin/EvidenceViewer";
 import { VerdictActionGroup } from "@/components/admin/VerdictActionGroup";
+import { CaseAssignmentPanel } from "@/components/admin/CaseAssignmentPanel";
 import { adminApi, type AdminDisputeEvidenceResponseDTO } from "@/lib/api";
+import { useAuth } from "@/components/providers/AuthContext";
 
 /**
  * Screen: The Arbitration Room (Phase 6 §1)
@@ -30,7 +32,9 @@ export default function ArbitrationRoomPage({
 }: ArbitrationRoomPageProps) {
   const routeParams = useParams<{ case_id?: string }>();
   const caseId = providedCaseId ?? routeParams.case_id ?? "dsp-101";
+  const { isAdmin } = useAuth();
   const [verdictMessage, setVerdictMessage] = useState<string | null>(null);
+  const [verdictError, setVerdictError] = useState<string | null>(null);
   const [evidenceState, setEvidenceState] = useState<{
     caseId: string;
     data: AdminDisputeEvidenceResponseDTO | null;
@@ -73,17 +77,26 @@ export default function ArbitrationRoomPage({
   const handleExecuteVerdict = async (
     type: "refund_buyer" | "release_seller" | "split"
   ) => {
-    const verdictMap = {
-      refund_buyer: "REFUND_TO_BUYER" as const,
-      release_seller: "RELEASE_TO_SELLER" as const,
-      split: "SPLIT_SETTLEMENT" as const,
+    const outcomeMap = {
+      refund_buyer: "refund_buyer" as const,
+      release_seller: "release_to_seller" as const,
+      split: "split" as const,
     };
 
-    await adminApi.resolveDispute(caseId, {
-      verdict: verdictMap[type],
-      seller_split_pct: type === "split" ? 50 : type === "release_seller" ? 100 : 0,
-      admin_notes: `Executed binding arbitration ruling (${verdictMap[type]}) for ${caseId}`,
+    setVerdictError(null);
+    const result = await adminApi.resolveDispute(caseId, {
+      outcome: outcomeMap[type],
+      notes: `Executed binding arbitration ruling (${outcomeMap[type]}) for ${caseId}`,
     });
+    if (!result.ok) {
+      setVerdictMessage(null);
+      setVerdictError(
+        result.status === 403
+          ? "You can only rule on cases assigned to you, and never on a trade you are part of."
+          : result.error || "The ruling could not be executed."
+      );
+      return;
+    }
 
     if (type === "refund_buyer") {
       setVerdictMessage(
@@ -157,11 +170,18 @@ export default function ArbitrationRoomPage({
               <span>{verdictMessage}</span>
             </div>
           )}
+          {verdictError && (
+            <div role="alert" className="p-4 border border-state-error/40 bg-state-error/10 text-state-error-strong font-mono text-xs font-bold flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 text-state-error-strong" />
+              <span>{verdictError}</span>
+            </div>
+          )}
 
           {/* Split Pane: Transcript (Left 6 Cols) & Evidence Viewer (Right 6 Cols) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             <div className="lg:col-span-6 space-y-6">
               <ReadonlyChatTranscript />
+              {isAdmin && <CaseAssignmentPanel caseId={caseId} />}
             </div>
 
             <div className="lg:col-span-6 space-y-6">

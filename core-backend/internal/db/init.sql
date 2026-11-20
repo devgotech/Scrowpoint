@@ -182,6 +182,7 @@ CREATE TABLE disputes (
     status dispute_status NOT NULL DEFAULT 'open',
     mediation_outcome mediation_outcome,
     assigned_admin_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    verdict_issued_by UUID REFERENCES users(id) ON DELETE SET NULL,
     evidence_deadline TIMESTAMPTZ,
     seller_response_deadline TIMESTAMPTZ,
     return_deadline TIMESTAMPTZ,

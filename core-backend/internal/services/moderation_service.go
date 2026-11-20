@@ -145,6 +145,7 @@ func (s *ModerationService) SuspendUser(ctx context.Context, targetUserID, admin
 	s.authService.Mu.Lock()
 	user.IsSuspended = true
 	user.UpdatedAt = time.Now()
+	s.authService.revokeAllSessionsLocked(user.ID)
 	s.authService.Mu.Unlock()
 
 	return nil

@@ -56,6 +56,9 @@ type ListingService struct {
 	AuthService    *AuthService
 }
 
+// ErrSellerNotVerified blocks publishing until the seller passes SmileID KYC.
+var ErrSellerNotVerified = errors.New("complete identity verification (SmileID KYC) before publishing a listing")
+
 func NewListingService(authService *AuthService) *ListingService {
 	return &ListingService{
 		ListingsByID:   make(map[uuid.UUID]*db.Listing),
@@ -272,8 +275,13 @@ func (s *ListingService) PublishListing(ctx context.Context, sellerID uuid.UUID)
 	if err != nil {
 		return nil, err
 	}
-	if seller.KYCStatus == db.KYCRejected {
-		return nil, errors.New("cannot publish listing: seller identity verification rejected")
+	// Only identity-verified accounts can sell: buyers rely on SmileID KYC to
+	// trust the counterparty, so the check lives here, not just in the UI.
+	if seller.IsSuspended {
+		return nil, ErrSellerNotVerified
+	}
+	if seller.KYCStatus != db.KYCApproved {
+		return nil, ErrSellerNotVerified
 	}
 
 	if draft.SKU == "" || strings.HasPrefix(draft.SKU, "--") {
@@ -687,4 +695,3 @@ func (s *ListingService) VerifyIMEI(ctx context.Context, in IMEIVerificationInpu
 		VerifiedAt:       time.Now(),
 	}, nil
 }
-

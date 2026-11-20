@@ -2,14 +2,26 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
 
+	"core-backend/internal/db"
 	"core-backend/internal/services"
 )
+
+// writeDisputeError maps dispute permission failures to 403 and everything
+// else to 400.
+func writeDisputeError(w http.ResponseWriter, err error) {
+	if errors.Is(err, services.ErrDisputeForbidden) {
+		JSONError(w, http.StatusForbidden, err.Error())
+		return
+	}
+	JSONError(w, http.StatusBadRequest, err.Error())
+}
 
 type AdminHandler struct {
 	disputeService    *services.DisputeService
@@ -29,13 +41,15 @@ func NewAdminHandler(
 	}
 }
 
-func (h *AdminHandler) ListDisputes(w http.ResponseWriter, r *http.Request) {
+// ListDisputes returns the arbitration queue: all cases for admins, assigned
+// cases only for mediators.
+func (h *AdminHandler) ListDisputes(w http.ResponseWriter, r *http.Request, actorID uuid.UUID, role db.UserRole) {
 	q := r.URL.Query()
 	status := q.Get("status")
 	page, _ := strconv.Atoi(q.Get("page"))
 	limit, _ := strconv.Atoi(q.Get("limit"))
 
-	disputes, total, err := h.disputeService.ListDisputes(r.Context(), status, page, limit)
+	disputes, total, err := h.disputeService.ListDisputesForStaff(r.Context(), actorID, role, status, page, limit)
 	if err != nil {
 		JSONError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -64,16 +78,37 @@ func (h *AdminHandler) AssignDispute(w http.ResponseWriter, r *http.Request, adm
 		return
 	}
 
-	dispute, err := h.disputeService.AssignDispute(r.Context(), disputeID, adminID)
+	// Body is optional: {"assigneeId": "<staff uuid>"}. Without it the
+	// calling admin takes the case.
+	assigneeID := adminID
+	var req struct {
+		AssigneeID string `json:"assigneeId"`
+	}
+	if r.Body != nil && r.ContentLength != 0 {
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			JSONError(w, http.StatusBadRequest, "Invalid request payload")
+			return
+		}
+	}
+	if strings.TrimSpace(req.AssigneeID) != "" {
+		parsed, err := uuid.Parse(strings.TrimSpace(req.AssigneeID))
+		if err != nil {
+			JSONError(w, http.StatusBadRequest, "Invalid assignee UUID")
+			return
+		}
+		assigneeID = parsed
+	}
+
+	dispute, err := h.disputeService.AssignDispute(r.Context(), disputeID, assigneeID)
 	if err != nil {
-		JSONError(w, http.StatusBadRequest, err.Error())
+		writeDisputeError(w, err)
 		return
 	}
 
 	JSONSuccess(w, http.StatusOK, dispute)
 }
 
-func (h *AdminHandler) GetDisputeEvidence(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) GetDisputeEvidence(w http.ResponseWriter, r *http.Request, actorID uuid.UUID, role db.UserRole) {
 	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	if len(parts) != 5 {
 		JSONError(w, http.StatusBadRequest, "Dispute ID is required")
@@ -88,6 +123,10 @@ func (h *AdminHandler) GetDisputeEvidence(w http.ResponseWriter, r *http.Request
 	dispute, err := h.disputeService.GetDisputeByID(r.Context(), disputeID)
 	if err != nil {
 		JSONError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	if !h.disputeService.CanStaffAccessDispute(disputeID, actorID, role) {
+		JSONError(w, http.StatusForbidden, services.ErrDisputeForbidden.Error())
 		return
 	}
 
@@ -120,7 +159,7 @@ func (h *AdminHandler) GetDisputeEvidence(w http.ResponseWriter, r *http.Request
 	})
 }
 
-func (h *AdminHandler) IssueVerdict(w http.ResponseWriter, r *http.Request, adminID uuid.UUID) {
+func (h *AdminHandler) IssueVerdict(w http.ResponseWriter, r *http.Request, adminID uuid.UUID, role db.UserRole) {
 	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	disputeID, err := uuid.Parse(parts[3])
 	if err != nil {
@@ -134,16 +173,16 @@ func (h *AdminHandler) IssueVerdict(w http.ResponseWriter, r *http.Request, admi
 		return
 	}
 
-	dispute, err := h.disputeService.IssueMediationVerdict(r.Context(), disputeID, adminID, req)
+	dispute, err := h.disputeService.IssueMediationVerdict(r.Context(), disputeID, adminID, role, req)
 	if err != nil {
-		JSONError(w, http.StatusBadRequest, err.Error())
+		writeDisputeError(w, err)
 		return
 	}
 
 	JSONSuccess(w, http.StatusOK, dispute)
 }
 
-func (h *AdminHandler) DecideAppeal(w http.ResponseWriter, r *http.Request, adminID uuid.UUID) {
+func (h *AdminHandler) DecideAppeal(w http.ResponseWriter, r *http.Request, adminID uuid.UUID, role db.UserRole) {
 	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	appealID, err := uuid.Parse(parts[3])
 	if err != nil {
@@ -160,9 +199,9 @@ func (h *AdminHandler) DecideAppeal(w http.ResponseWriter, r *http.Request, admi
 		return
 	}
 
-	appeal, err := h.disputeService.DecideAppeal(r.Context(), appealID, adminID, req.Uphold, req.Notes)
+	appeal, err := h.disputeService.DecideAppeal(r.Context(), appealID, adminID, role, req.Uphold, req.Notes)
 	if err != nil {
-		JSONError(w, http.StatusBadRequest, err.Error())
+		writeDisputeError(w, err)
 		return
 	}
 

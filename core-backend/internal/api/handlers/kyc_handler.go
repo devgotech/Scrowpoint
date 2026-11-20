@@ -103,6 +103,11 @@ func (h *KYCHandler) GetHistory(w http.ResponseWriter, r *http.Request, userID u
 	JSONSuccess(w, http.StatusOK, history)
 }
 
+// ListPending returns identity submissions waiting for an admin decision.
+func (h *KYCHandler) ListPending(w http.ResponseWriter, r *http.Request) {
+	JSONSuccess(w, http.StatusOK, h.kycService.ListPendingReviews(r.Context()))
+}
+
 func (h *KYCHandler) AdminReview(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	if len(parts) < 5 {

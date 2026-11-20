@@ -485,6 +485,11 @@ export interface BackendDisputeDTO {
   issueType: string;
   status: string;
   mediatorNotes?: string;
+  /** Staff member (mediator or admin) the case is assigned to. */
+  assignedAdminId?: string;
+  /** Staff member who issued the verdict. */
+  verdictIssuedBy?: string;
+  mediationOutcome?: "refund_buyer" | "release_to_seller" | "split";
   evidence?: Array<{
     id: string;
     disputeId: string;
@@ -560,10 +565,69 @@ export interface AdminDisputeEvidenceResponseDTO {
   mediatorNotes?: string;
 }
 
+export interface StaffMemberDTO {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "mediator";
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface PendingStaffInvitationDTO {
+  email: string;
+  invitedBy: string;
+  expiresAt: string;
+}
+
+export interface PendingKYCReviewDTO {
+  id: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  idType: string;
+  status: string;
+  submittedAt: string;
+}
+
 export const adminApi = {
   getSummary: () => apiFetch<AdminSummaryDTO>("/api/admin/summary"),
 
-  listDisputes: () => apiFetch<BackendDisputeDTO[]>("/api/admin/disputes"),
+  /** Admins see every case; mediators only the cases assigned to them. */
+  listDisputes: () =>
+    apiFetch<{ items: BackendDisputeDTO[]; total: number; page: number; limit: number }>(
+      "/api/admin/disputes"
+    ),
+
+  /** Admin only. Omit assigneeId to take the case yourself. */
+  assignDispute: (disputeId: string, assigneeId?: string) =>
+    apiFetch<BackendDisputeDTO>(
+      `/api/admin/disputes/${encodeURIComponent(disputeId)}/assign`,
+      {
+        method: "POST",
+        body: JSON.stringify(assigneeId ? { assigneeId } : {}),
+      }
+    ),
+
+  /** Admin only: admins, mediators, and pending mediator invitations. */
+  listStaff: () =>
+    apiFetch<{ staff: StaffMemberDTO[]; pendingInvitations: PendingStaffInvitationDTO[] }>(
+      "/api/admin/staff"
+    ),
+
+  /** Admin only. Deactivating signs the person out everywhere and returns their open cases to the queue. */
+  setStaffActive: (staffId: string, active: boolean) =>
+    apiFetch<{ staff: StaffMemberDTO; casesUnassigned: number }>(
+      `/api/admin/staff/${encodeURIComponent(staffId)}/${active ? "reactivate" : "deactivate"}`,
+      { method: "POST" }
+    ),
+
+  /** Admin only: cancel an unaccepted mediator invitation. */
+  revokeMediatorInvitation: (email: string) =>
+    apiFetch<{ revoked: boolean }>("/api/admin/staff/invitations/revoke", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
 
   createMediatorInvitation: (payload: { email: string }) =>
     apiFetch<{ token: string; email: string; expiresAt: string }>(
@@ -579,15 +643,15 @@ export const adminApi = {
       `/api/admin/disputes/${encodeURIComponent(disputeId)}/evidence`
     ),
 
+  /** Admins can rule on any case; mediators only on cases assigned to them. A case can only be ruled on once. */
   resolveDispute: (
     disputeId: string,
     payload: {
-      verdict: "RELEASE_TO_SELLER" | "REFUND_TO_BUYER" | "SPLIT_SETTLEMENT";
-      seller_split_pct?: number;
-      admin_notes: string;
+      outcome: "refund_buyer" | "release_to_seller" | "split";
+      notes: string;
     }
   ) =>
-    apiFetch<{ resolved: boolean; dispute_id: string; verdict: string }>(
+    apiFetch<BackendDisputeDTO>(
       `/api/admin/disputes/${encodeURIComponent(disputeId)}/verdict`,
       {
         method: "POST",
@@ -595,25 +659,16 @@ export const adminApi = {
       }
     ),
 
-  listPendingKYC: () =>
-    apiFetch<
-      Array<{
-        id: string;
-        user_id: string;
-        full_name: string;
-        id_type: string;
-        masked_id: string;
-        status: string;
-        submitted_at: string;
-      }>
-    >("/api/admin/kyc/pending"),
+  /** Admin only: identity submissions waiting for a manual decision, oldest first. */
+  listPendingKYC: () => apiFetch<PendingKYCReviewDTO[]>("/api/admin/kyc/pending"),
 
+  /** Admin only. The backend reads `approve`; a missing flag counts as a rejection. */
   reviewKYC: (kycId: string, payload: { decision: "APPROVE" | "REJECT"; reason?: string }) =>
-    apiFetch<{ kyc_id: string; decision: string }>(
+    apiFetch<{ id: string; status: string }>(
       `/api/admin/kyc/${encodeURIComponent(kycId)}/review`,
       {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ approve: payload.decision === "APPROVE", reason: payload.reason }),
       }
     ),
 
