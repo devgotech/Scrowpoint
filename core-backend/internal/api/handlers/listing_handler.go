@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -91,6 +92,10 @@ func (h *ListingHandler) getSellerListings(w http.ResponseWriter, r *http.Reques
 func (h *ListingHandler) publishListing(w http.ResponseWriter, r *http.Request, sellerID uuid.UUID) {
 	liveListing, err := h.listingService.PublishListing(r.Context(), sellerID)
 	if err != nil {
+		if errors.Is(err, services.ErrSellerNotVerified) {
+			JSONError(w, http.StatusForbidden, err.Error())
+			return
+		}
 		JSONError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -285,4 +290,3 @@ func (h *ListingHandler) VerifyIMEI(w http.ResponseWriter, r *http.Request) {
 
 	JSONSuccess(w, http.StatusOK, res)
 }
-

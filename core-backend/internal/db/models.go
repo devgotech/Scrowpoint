@@ -311,6 +311,7 @@ type Dispute struct {
 	Status                 DisputeStatus     `json:"status" db:"status"`
 	MediationOutcome       *MediationOutcome `json:"mediationOutcome,omitempty" db:"mediation_outcome"`
 	AssignedAdminID        *uuid.UUID        `json:"assignedAdminId,omitempty" db:"assigned_admin_id"`
+	VerdictIssuedBy        *uuid.UUID        `json:"verdictIssuedBy,omitempty" db:"verdict_issued_by"`
 	EvidenceDeadline       *time.Time        `json:"evidenceDeadline,omitempty" db:"evidence_deadline"`
 	SellerResponseDeadline *time.Time        `json:"sellerResponseDeadline,omitempty" db:"seller_response_deadline"`
 	ReturnDeadline         *time.Time        `json:"returnDeadline,omitempty" db:"return_deadline"`

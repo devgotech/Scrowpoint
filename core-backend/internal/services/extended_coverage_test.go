@@ -337,7 +337,7 @@ func TestExtendedPaymentAndDisputeFlows(t *testing.T) {
 	}); err != nil {
 		t.Fatalf("OpenSubCase: %v", err)
 	}
-	if _, err := disputes.IssueMediationVerdict(ctx, dispute.ID, fixture.admin.ID, DisputeVerdictInput{
+	if _, err := disputes.IssueMediationVerdict(ctx, dispute.ID, fixture.admin.ID, db.RoleAdmin, DisputeVerdictInput{
 		Outcome: db.MediationOutcomeSplit, Notes: "Split decision",
 	}); err != nil {
 		t.Fatalf("IssueMediationVerdict: %v", err)
@@ -346,7 +346,7 @@ func TestExtendedPaymentAndDisputeFlows(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SubmitAppeal: %v", err)
 	}
-	if _, err := disputes.DecideAppeal(ctx, appeal.ID, fixture.admin.ID, true, "Decision upheld"); err != nil {
+	if _, err := disputes.DecideAppeal(ctx, appeal.ID, fixture.admin.ID, db.RoleAdmin, true, "Decision upheld"); err != nil {
 		t.Fatalf("DecideAppeal: %v", err)
 	}
 }

@@ -15,6 +15,7 @@ import { KYCManualApprovalQueue } from "@/components/admin/KYCManualApprovalQueu
 import { adminApi } from "@/lib/api";
 import { useAuth } from "@/components/providers/AuthContext";
 import { MediatorInvitationPanel } from "@/components/admin/MediatorInvitationPanel";
+import { StaffManagementPanel } from "@/components/admin/StaffManagementPanel";
 
 /**
  * Screen: Dispute Triage & Pending KYC (Phase 6 §2)
@@ -42,10 +43,11 @@ export default function AdminDashboardPage({
   useEffect(() => {
     let mounted = true;
     adminApi.listDisputes().then((res) => {
-      if (!mounted || !res.ok || !Array.isArray(res.data) || res.data.length === 0) {
+      const items = res.data?.items;
+      if (!mounted || !res.ok || !Array.isArray(items) || items.length === 0) {
         return;
       }
-      const mapped: DisputeQueueRecord[] = res.data.map((d) => ({
+      const mapped: DisputeQueueRecord[] = items.map((d) => ({
         id: d.id,
         orderNumber: d.orderId,
         gadgetTitle: "Escrow Disputed Device",
@@ -57,7 +59,9 @@ export default function AdminDashboardPage({
         isUrgent: true,
         status: "MEDIATION",
       }));
-      setDisputeCases([...mapped, ...SAMPLE_DISPUTE_QUEUE]);
+      // Show only real cases once the backend returns any: mediators only
+      // receive their assigned cases, so sample rows would be misleading.
+      setDisputeCases(mapped);
     });
     return () => {
       mounted = false;
@@ -156,6 +160,8 @@ export default function AdminDashboardPage({
           />
 
           {isAdmin && <MediatorInvitationPanel />}
+
+          {isAdmin && <StaffManagementPanel />}
 
           {isAdmin && (
             <KYCManualApprovalQueue

@@ -72,6 +72,7 @@ func main() {
 	jwtMw := middleware.NewAuthMiddleware(jwtSecret)
 
 	authService := services.NewAuthService()
+	jwtMw.SetSessionValidator(authService)
 	userService := services.NewUserService(authService)
 	smileClient := services.NewSmileIDClient(
 		smilePartnerID,
@@ -220,6 +221,7 @@ func main() {
 		mediaHandler,
 	)
 	router.RegisterExtendedHandlers(waitlistHandler, supportHandler)
+	router.SetStaffHandler(handlers.NewStaffHandler(authService, disputeService))
 	persistingRouter := services.PersistingHandler(router, persistState)
 
 	cronInterval := 30 * time.Second

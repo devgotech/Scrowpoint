@@ -334,6 +334,12 @@ func TestListingHandlerDraftSearchAndPublish(t *testing.T) {
 	assertHandlerStatus(t, recorder, http.StatusOK)
 	recorder = httptest.NewRecorder()
 	handler.HandleListings(recorder, httptest.NewRequest(http.MethodPost, "/api/listings", nil), seller.ID)
+	assertHandlerStatus(t, recorder, http.StatusForbidden) // not KYC-verified yet
+	auth.Mu.Lock()
+	seller.KYCStatus = db.KYCApproved
+	auth.Mu.Unlock()
+	recorder = httptest.NewRecorder()
+	handler.HandleListings(recorder, httptest.NewRequest(http.MethodPost, "/api/listings", nil), seller.ID)
 	assertHandlerStatus(t, recorder, http.StatusCreated)
 
 	recorder = httptest.NewRecorder()
@@ -670,10 +676,10 @@ func TestDisputeAndAdminHandlerWorkflow(t *testing.T) {
 
 	adminHandler := NewAdminHandler(disputeService, nil, &MediaHandler{})
 	recorder = httptest.NewRecorder()
-	adminHandler.ListDisputes(recorder, httptest.NewRequest(http.MethodGet, "/api/admin/disputes?page=1&limit=10", nil))
+	adminHandler.ListDisputes(recorder, httptest.NewRequest(http.MethodGet, "/api/admin/disputes?page=1&limit=10", nil), admin.ID, db.RoleAdmin)
 	assertHandlerStatus(t, recorder, http.StatusOK)
 	recorder = httptest.NewRecorder()
-	adminHandler.ListDisputes(recorder, httptest.NewRequest(http.MethodGet, "/api/admin/disputes", nil))
+	adminHandler.ListDisputes(recorder, httptest.NewRequest(http.MethodGet, "/api/admin/disputes", nil), admin.ID, db.RoleAdmin)
 	assertHandlerStatus(t, recorder, http.StatusOK)
 	recorder = httptest.NewRecorder()
 	adminHandler.AssignDispute(recorder, httptest.NewRequest(http.MethodPost,
@@ -681,17 +687,19 @@ func TestDisputeAndAdminHandlerWorkflow(t *testing.T) {
 	assertHandlerStatus(t, recorder, http.StatusOK)
 	recorder = httptest.NewRecorder()
 	adminHandler.GetDisputeEvidence(recorder, httptest.NewRequest(http.MethodGet,
-		"/api/admin/disputes/"+disputeID.String()+"/evidence", nil))
+		"/api/admin/disputes/"+disputeID.String()+"/evidence", nil), admin.ID, db.RoleAdmin)
 	assertHandlerStatus(t, recorder, http.StatusServiceUnavailable)
 	recorder = httptest.NewRecorder()
 	adminHandler.IssueVerdict(recorder, httptest.NewRequest(http.MethodPost,
 		"/api/admin/disputes/"+disputeID.String()+"/verdict",
-		strings.NewReader(`{"outcome":"split","notes":"Split verdict"}`)), admin.ID)
-	assertHandlerStatus(t, recorder, http.StatusOK)
+		strings.NewReader(`{"outcome":"split","notes":"Split verdict"}`)), admin.ID, db.RoleAdmin)
+	// The return was already confirmed, which resolved the dispute with a
+	// refund; a second verdict would move escrow money twice, so it is refused.
+	assertHandlerStatus(t, recorder, http.StatusBadRequest)
 	recorder = httptest.NewRecorder()
 	adminHandler.DecideAppeal(recorder, httptest.NewRequest(http.MethodPost,
 		"/api/admin/appeals/"+appealResponse.Data.ID.String()+"/decision",
-		strings.NewReader(`{"uphold":true,"notes":"Confirmed"}`)), admin.ID)
+		strings.NewReader(`{"uphold":true,"notes":"Confirmed"}`)), admin.ID, db.RoleAdmin)
 	assertHandlerStatus(t, recorder, http.StatusOK)
 }
 
@@ -959,13 +967,13 @@ func TestHandlerValidationResponses(t *testing.T) {
 	admin.AssignDispute(recorder, httptest.NewRequest(http.MethodPost, "/api/admin/disputes/not-a-uuid/assign", nil), userID)
 	assertHandlerStatus(t, recorder, http.StatusBadRequest)
 	recorder = httptest.NewRecorder()
-	admin.GetDisputeEvidence(recorder, httptest.NewRequest(http.MethodGet, "/api/admin/disputes/not-a-uuid/evidence", nil))
+	admin.GetDisputeEvidence(recorder, httptest.NewRequest(http.MethodGet, "/api/admin/disputes/not-a-uuid/evidence", nil), userID, db.RoleAdmin)
 	assertHandlerStatus(t, recorder, http.StatusBadRequest)
 	recorder = httptest.NewRecorder()
-	admin.IssueVerdict(recorder, httptest.NewRequest(http.MethodPost, "/api/admin/disputes/not-a-uuid/verdict", strings.NewReader("{}")), userID)
+	admin.IssueVerdict(recorder, httptest.NewRequest(http.MethodPost, "/api/admin/disputes/not-a-uuid/verdict", strings.NewReader("{}")), userID, db.RoleAdmin)
 	assertHandlerStatus(t, recorder, http.StatusBadRequest)
 	recorder = httptest.NewRecorder()
-	admin.DecideAppeal(recorder, httptest.NewRequest(http.MethodPost, "/api/admin/appeals/not-a-uuid/decision", strings.NewReader("{}")), userID)
+	admin.DecideAppeal(recorder, httptest.NewRequest(http.MethodPost, "/api/admin/appeals/not-a-uuid/decision", strings.NewReader("{}")), userID, db.RoleAdmin)
 	assertHandlerStatus(t, recorder, http.StatusBadRequest)
 	recorder = httptest.NewRecorder()
 	admin.DismissReport(recorder, httptest.NewRequest(http.MethodPost, "/api/admin/reports/not-a-uuid/dismiss", nil), userID)

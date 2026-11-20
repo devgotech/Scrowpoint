@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math/big"
 	"net/mail"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -204,6 +205,106 @@ func (s *AuthService) AcceptMediatorInvitation(ctx context.Context, token, name,
 	return user, nil
 }
 
+// StaffMember is the admin-facing view of an admin or mediator account.
+type StaffMember struct {
+	ID        uuid.UUID   `json:"id"`
+	Name      string      `json:"name"`
+	Email     string      `json:"email"`
+	Role      db.UserRole `json:"role"`
+	IsActive  bool        `json:"isActive"`
+	CreatedAt time.Time   `json:"createdAt"`
+}
+
+// PendingStaffInvitation is an unaccepted, unexpired mediator invitation.
+type PendingStaffInvitation struct {
+	Email     string    `json:"email"`
+	InvitedBy uuid.UUID `json:"invitedBy"`
+	ExpiresAt time.Time `json:"expiresAt"`
+}
+
+// ListStaff returns every admin and mediator account plus pending invitations.
+func (s *AuthService) ListStaff(_ context.Context) ([]StaffMember, []PendingStaffInvitation) {
+	s.Mu.RLock()
+	defer s.Mu.RUnlock()
+	staff := make([]StaffMember, 0)
+	for _, u := range s.UsersByID {
+		if u.Role != db.RoleAdmin && u.Role != db.RoleMediator {
+			continue
+		}
+		staff = append(staff, StaffMember{
+			ID: u.ID, Name: u.Name, Email: u.Email, Role: u.Role,
+			IsActive: !u.IsSuspended, CreatedAt: u.CreatedAt,
+		})
+	}
+	sort.Slice(staff, func(i, j int) bool {
+		if staff[i].Role != staff[j].Role {
+			return staff[i].Role == db.RoleAdmin
+		}
+		return staff[i].CreatedAt.Before(staff[j].CreatedAt)
+	})
+	now := time.Now()
+	pending := make([]PendingStaffInvitation, 0)
+	for _, inv := range s.MediatorInvitations {
+		if inv.AcceptedAt == nil && inv.ExpiresAt.After(now) {
+			pending = append(pending, PendingStaffInvitation{Email: inv.Email, InvitedBy: inv.InvitedBy, ExpiresAt: inv.ExpiresAt})
+		}
+	}
+	sort.Slice(pending, func(i, j int) bool { return pending[i].ExpiresAt.Before(pending[j].ExpiresAt) })
+	return staff, pending
+}
+
+// SetStaffActive deactivates or reactivates an admin or mediator. Deactivating
+// signs them out everywhere at once. An admin cannot deactivate themselves,
+// and the last active admin can never be deactivated.
+func (s *AuthService) SetStaffActive(_ context.Context, actorID, targetID uuid.UUID, active bool) (*StaffMember, error) {
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+	target, exists := s.UsersByID[targetID]
+	if !exists || (target.Role != db.RoleAdmin && target.Role != db.RoleMediator) {
+		return nil, errors.New("staff member not found")
+	}
+	if !active {
+		if targetID == actorID {
+			return nil, errors.New("you cannot deactivate your own account")
+		}
+		if target.Role == db.RoleAdmin {
+			activeAdmins := 0
+			for _, u := range s.UsersByID {
+				if u.Role == db.RoleAdmin && !u.IsSuspended {
+					activeAdmins++
+				}
+			}
+			if activeAdmins <= 1 && !target.IsSuspended {
+				return nil, errors.New("cannot deactivate the last active admin")
+			}
+		}
+	}
+	target.IsSuspended = !active
+	target.UpdatedAt = time.Now()
+	if !active {
+		s.revokeAllSessionsLocked(targetID)
+	}
+	return &StaffMember{
+		ID: target.ID, Name: target.Name, Email: target.Email, Role: target.Role,
+		IsActive: !target.IsSuspended, CreatedAt: target.CreatedAt,
+	}, nil
+}
+
+// RevokeMediatorInvitation cancels any pending invitation for the email.
+func (s *AuthService) RevokeMediatorInvitation(_ context.Context, email string) bool {
+	cleanEmail := strings.ToLower(strings.TrimSpace(email))
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+	revoked := false
+	for hash, inv := range s.MediatorInvitations {
+		if inv.Email == cleanEmail && inv.AcceptedAt == nil {
+			delete(s.MediatorInvitations, hash)
+			revoked = true
+		}
+	}
+	return revoked
+}
+
 func hashInvitationToken(token string) string {
 	hash := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(hash[:])
@@ -227,21 +328,76 @@ func (s *AuthService) Login(ctx context.Context, email, password, userAgent, ip 
 		return nil, nil, errors.New("invalid email or password")
 	}
 
-	sessionID := uuid.New()
+	return user, s.createSessionLocked(user.ID, userAgent, ip, SessionTTL), nil
+}
+
+// SessionTTL is how long an issued login session (and its token) stays valid.
+const SessionTTL = 7 * 24 * time.Hour
+
+// ErrSessionInvalid means a token's session was revoked, expired, never
+// issued, or belongs to a suspended or missing account.
+var ErrSessionInvalid = errors.New("session is no longer valid")
+
+func (s *AuthService) createSessionLocked(userID uuid.UUID, userAgent, ip string, ttl time.Duration) *Session {
+	now := time.Now()
 	session := &Session{
-		ID:        sessionID,
-		UserID:    user.ID,
+		ID:        uuid.New(),
+		UserID:    userID,
 		UserAgent: userAgent,
 		IPAddress: ip,
-		CreatedAt: time.Now(),
-		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
-		IsRevoked: false,
+		CreatedAt: now,
+		ExpiresAt: now.Add(ttl),
 	}
+	s.Sessions[session.ID] = session
+	s.UserSessions[userID] = append(s.UserSessions[userID], session.ID)
+	return session
+}
 
-	s.Sessions[sessionID] = session
-	s.UserSessions[user.ID] = append(s.UserSessions[user.ID], sessionID)
+// CreateSession registers a server-side session for a user who was just
+// authenticated by another flow (e.g. sign-up), so its token can be revoked.
+func (s *AuthService) CreateSession(_ context.Context, userID uuid.UUID, userAgent, ip string) (*Session, error) {
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+	user, exists := s.UsersByID[userID]
+	if !exists {
+		return nil, errors.New("user not found")
+	}
+	if user.IsSuspended {
+		return nil, errors.New("account is suspended")
+	}
+	return s.createSessionLocked(userID, userAgent, ip, SessionTTL), nil
+}
 
-	return user, session, nil
+// ValidateSession is called on every authenticated request. It rejects tokens
+// whose session was revoked or expired, or whose account is suspended, and
+// returns the account's current role so role changes take effect immediately.
+func (s *AuthService) ValidateSession(_ context.Context, userID, sessionID uuid.UUID) (db.UserRole, error) {
+	s.Mu.RLock()
+	defer s.Mu.RUnlock()
+	session, exists := s.Sessions[sessionID]
+	if !exists || session.UserID != userID || session.IsRevoked || !time.Now().Before(session.ExpiresAt) {
+		return "", ErrSessionInvalid
+	}
+	user, exists := s.UsersByID[userID]
+	if !exists || user.IsSuspended {
+		return "", ErrSessionInvalid
+	}
+	return user.Role, nil
+}
+
+// RevokeAllSessions signs a user out everywhere.
+func (s *AuthService) RevokeAllSessions(_ context.Context, userID uuid.UUID) {
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+	s.revokeAllSessionsLocked(userID)
+}
+
+func (s *AuthService) revokeAllSessionsLocked(userID uuid.UUID) {
+	for _, sid := range s.UserSessions[userID] {
+		if sess, ok := s.Sessions[sid]; ok {
+			sess.IsRevoked = true
+		}
+	}
 }
 
 func (s *AuthService) OAuthLogin(ctx context.Context, provider, email, name, providerUID, userAgent, ip string) (*db.User, *Session, error) {

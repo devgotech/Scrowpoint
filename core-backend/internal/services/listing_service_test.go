@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/google/uuid"
@@ -44,6 +45,12 @@ func TestListingDraftMediaPublishAndSearch(t *testing.T) {
 	if err != nil {
 		t.Fatalf("AddDraftMedia returned error: %v", err)
 	}
+	if _, err := service.PublishListing(ctx, seller.ID); !errors.Is(err, ErrSellerNotVerified) {
+		t.Fatalf("PublishListing before KYC approval = %v, want ErrSellerNotVerified", err)
+	}
+	auth.Mu.Lock()
+	seller.KYCStatus = db.KYCApproved
+	auth.Mu.Unlock()
 	listing, err := service.PublishListing(ctx, seller.ID)
 	if err != nil {
 		t.Fatalf("PublishListing returned error: %v", err)

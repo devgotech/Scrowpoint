@@ -137,9 +137,13 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessID := uuid.New()
-	ttl := 7 * 24 * time.Hour
-	token, err := h.tokenGen.GenerateToken(user, sessID, ttl)
+	session, err := h.authService.CreateSession(r.Context(), user.ID, r.UserAgent(), r.RemoteAddr)
+	if err != nil {
+		JSONError(w, http.StatusInternalServerError, "Failed to create session")
+		return
+	}
+	ttl := services.SessionTTL
+	token, err := h.tokenGen.GenerateToken(user, session.ID, ttl)
 	if err != nil {
 		JSONError(w, http.StatusInternalServerError, "Failed to issue security token")
 		return

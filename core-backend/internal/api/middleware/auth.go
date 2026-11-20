@@ -28,8 +28,22 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
+// SessionValidator confirms a token's server-side session is still live and
+// returns the account's current role. *services.AuthService implements it.
+type SessionValidator interface {
+	ValidateSession(ctx context.Context, userID, sessionID uuid.UUID) (db.UserRole, error)
+}
+
 type AuthMiddleware struct {
 	jwtSecret []byte
+	sessions  SessionValidator
+}
+
+// SetSessionValidator enables per-request session checks, so logging out,
+// revoking a session, suspending an account, or changing a role takes effect
+// immediately instead of when the token expires.
+func (m *AuthMiddleware) SetSessionValidator(v SessionValidator) {
+	m.sessions = v
 }
 
 func NewAuthMiddleware(secret string) *AuthMiddleware {
@@ -84,6 +98,16 @@ func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
 		if err != nil || !token.Valid {
 			handlers.JSONError(w, http.StatusUnauthorized, "Invalid or expired token")
 			return
+		}
+
+		if m.sessions != nil {
+			role, err := m.sessions.ValidateSession(r.Context(), claims.UserID, claims.SessionID)
+			if err != nil {
+				handlers.JSONError(w, http.StatusUnauthorized, "Session expired or revoked. Please sign in again.")
+				return
+			}
+			// Trust the stored role, not the one baked into the token.
+			claims.Role = role
 		}
 
 		ctx := context.WithValue(r.Context(), UserClaimsKey, claims)
