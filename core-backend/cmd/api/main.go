@@ -148,6 +148,8 @@ func main() {
 			adminUser.EmailVerifiedAt = &now
 			adminUser.KYCStatus = db.KYCApproved
 			log.Printf("[DEV-SEED] Development Admin seeded: %s", adminUser.Email)
+		} else if repaired, _ := authService.RepairAdminPassword(ctx, devAdminEmail, devAdminPass); repaired {
+			log.Printf("[DEV-SEED] Restored the missing password on development admin: %s", devAdminEmail)
 		}
 	} else if env == "production" || env == "staging" {
 		bootstrapEmail := strings.TrimSpace(os.Getenv("BOOTSTRAP_ADMIN_EMAIL"))
@@ -169,7 +171,15 @@ func main() {
 			}
 			authService.Mu.RUnlock()
 			if hasAdmin {
-				log.Printf("[INFO] %s admin already exists; bootstrap credentials were not used.", strings.ToUpper(env))
+				repaired, err := authService.RepairAdminPassword(ctx, bootstrapEmail, bootstrapPassword)
+				if err != nil {
+					log.Fatalf("[FATAL] %s admin password repair failed: %v", strings.ToUpper(env), err)
+				}
+				if repaired {
+					log.Printf("[BOOTSTRAP] Restored the missing password on %s admin: %s", strings.ToUpper(env), bootstrapEmail)
+				} else {
+					log.Printf("[INFO] %s admin already exists; bootstrap credentials were not used.", strings.ToUpper(env))
+				}
 			} else {
 				adminUser, err := authService.SignUp(ctx, services.SignUpInput{
 					Email:    bootstrapEmail,

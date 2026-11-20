@@ -11,7 +11,11 @@ import {
   SAMPLE_DISPUTE_QUEUE,
   type DisputeQueueRecord,
 } from "@/components/admin/DisputeQueueDataTable";
-import { KYCManualApprovalQueue } from "@/components/admin/KYCManualApprovalQueue";
+import {
+  KYCManualApprovalQueue,
+  SAMPLE_PENDING_KYC,
+  type PendingKYCRecord,
+} from "@/components/admin/KYCManualApprovalQueue";
 import { adminApi } from "@/lib/api";
 import { useAuth } from "@/components/providers/AuthContext";
 import { MediatorInvitationPanel } from "@/components/admin/MediatorInvitationPanel";
@@ -37,14 +41,19 @@ export default function AdminDashboardPage({
   const router = useRouter();
   const { isAdmin, isMediator } = useAuth();
   const [kycActionNotice, setKycActionNotice] = useState<string | null>(null);
-  const [disputeCases, setDisputeCases] =
-    useState<DisputeQueueRecord[]>(SAMPLE_DISPUTE_QUEUE);
+  const [disputeCases, setDisputeCases] = useState<DisputeQueueRecord[]>([]);
+  const [pendingKyc, setPendingKyc] = useState<PendingKYCRecord[] | null>(null);
 
+  // Sample rows appear only when the backend is unreachable (offline previews).
+  // A real response, even an empty one, always wins: mediators only receive
+  // their assigned cases, and admins must never act on placeholder records.
   useEffect(() => {
     let mounted = true;
     adminApi.listDisputes().then((res) => {
+      if (!mounted) return;
       const items = res.data?.items;
-      if (!mounted || !res.ok || !Array.isArray(items) || items.length === 0) {
+      if (!res.ok || !Array.isArray(items)) {
+        if (res.status === 0) setDisputeCases(SAMPLE_DISPUTE_QUEUE);
         return;
       }
       const mapped: DisputeQueueRecord[] = items.map((d) => ({
@@ -59,28 +68,50 @@ export default function AdminDashboardPage({
         isUrgent: true,
         status: "MEDIATION",
       }));
-      // Show only real cases once the backend returns any: mediators only
-      // receive their assigned cases, so sample rows would be misleading.
       setDisputeCases(mapped);
     });
+    if (isAdmin) {
+      adminApi.listPendingKYC().then((res) => {
+        if (!mounted) return;
+        if (!res.ok || !Array.isArray(res.data)) {
+          setPendingKyc(res.status === 0 ? SAMPLE_PENDING_KYC : []);
+          return;
+        }
+        setPendingKyc(
+          res.data.map((review) => ({
+            id: review.id,
+            userName: review.fullName || review.email,
+            userEmail: review.email,
+            docType: review.idType || "Identity document",
+            submittedAt: new Date(review.submittedAt).toLocaleString("en-NG"),
+          }))
+        );
+      });
+    }
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [isAdmin]);
 
   const handleReviewKyc = async (id: string, decision: "APPROVE" | "REJECT") => {
-    await adminApi.reviewKYC(id, {
+    const record = pendingKyc?.find((item) => item.id === id);
+    const who = record?.userName ?? "this applicant";
+    const result = await adminApi.reviewKYC(id, {
       decision,
       reason:
         decision === "APPROVE"
           ? "Cleared by Senior Compliance Officer"
           : "Document glare / biometric recapture required",
     });
-    if (decision === "APPROVE") {
-      setKycActionNotice(`Approved SmileID KYC record for ${id}`);
-    } else {
-      setKycActionNotice(`Flagged KYC record ${id} for biometric recapture`);
+    if (!result.ok) {
+      setKycActionNotice(`Could not record the decision for ${who}: ${result.error || "request failed"}`);
+      return;
     }
+    setKycActionNotice(
+      decision === "APPROVE"
+        ? `Approved identity verification for ${who}.`
+        : `Rejected identity verification for ${who}; they will need to resubmit.`
+    );
   };
 
   const handleSelectCase = (caseId: string) => {
@@ -165,6 +196,8 @@ export default function AdminDashboardPage({
 
           {isAdmin && (
             <KYCManualApprovalQueue
+              key={pendingKyc === null ? "loading" : "loaded"}
+              items={pendingKyc ?? []}
               onApprove={(id) => handleReviewKyc(id, "APPROVE")}
               onReject={(id) => handleReviewKyc(id, "REJECT")}
             />

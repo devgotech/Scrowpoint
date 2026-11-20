@@ -432,7 +432,7 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					rt.adminHandler.GetSummary(w, r)
 				case path == "/api/admin/disputes" && r.Method == http.MethodGet:
 					rt.adminHandler.ListDisputes(w, r, userID, claims.Role)
-				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "disputes" && parts[3] == "assign":
+				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "disputes" && parts[4] == "assign":
 					rt.adminHandler.AssignDispute(w, r, userID)
 				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "disputes" && parts[4] == "evidence" && r.Method == http.MethodGet:
 					rt.adminHandler.GetDisputeEvidence(w, r, userID, claims.Role)
@@ -442,10 +442,12 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					rt.adminHandler.DecideAppeal(w, r, userID, claims.Role)
 				case path == "/api/admin/reports" && r.Method == http.MethodGet:
 					rt.adminHandler.ListReports(w, r)
-				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "reports" && parts[3] == "dismiss":
+				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "reports" && parts[4] == "dismiss":
 					rt.adminHandler.DismissReport(w, r, userID)
-				case len(parts) == 4 && parts[1] == "admin" && parts[2] == "users" && parts[3] == "suspend":
+				case len(parts) == 5 && parts[1] == "admin" && parts[2] == "users" && parts[4] == "suspend":
 					rt.adminHandler.SuspendUser(w, r, userID)
+				case path == "/api/admin/kyc/pending" && r.Method == http.MethodGet:
+					rt.kycHandler.ListPending(w, r)
 				case strings.HasPrefix(path, "/api/admin/kyc/") && strings.HasSuffix(path, "/review"):
 					rt.kycHandler.AdminReview(w, r)
 				default:

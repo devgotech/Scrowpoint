@@ -69,6 +69,17 @@ func TestAdminReviewDecisionUpdatesVerificationAndUser(t *testing.T) {
 		t.Fatalf("SubmitKYC returned error: %v", err)
 	}
 
+	pending := service.ListPendingReviews(context.Background())
+	if len(pending) != 1 || pending[0].ID != verification.ID || pending[0].Email != user.Email {
+		t.Fatalf("ListPendingReviews = %+v, want the one submission", pending)
+	}
+	if _, err := service.AdminReviewDecision(context.Background(), uuid.New(), true, ""); err == nil {
+		t.Fatal("an unknown verification ID was resolved to some other submission")
+	}
+	if user.KYCStatus == db.KYCApproved {
+		t.Fatal("an unknown verification ID approved the latest submission")
+	}
+
 	reviewed, err := service.AdminReviewDecision(context.Background(), verification.ID, false, "Document is unreadable")
 	if err != nil {
 		t.Fatalf("AdminReviewDecision returned error: %v", err)

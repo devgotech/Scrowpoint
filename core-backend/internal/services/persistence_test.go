@@ -103,6 +103,9 @@ func TestPersistentServicesRoundTrip(t *testing.T) {
 	if _, err := auth2.GetUserByID(ctx, user.ID); err != nil {
 		t.Fatalf("restored user: %v", err)
 	}
+	if _, _, err := auth2.Login(ctx, "persist@example.com", "password123", "", ""); err != nil {
+		t.Fatalf("password sign-in after restore: %v", err)
+	}
 	invitedMediator, err := auth2.AcceptMediatorInvitation(ctx, invitationToken, "Persisted Mediator", "mediator-password-123")
 	if err != nil || invitedMediator.Role != db.RoleMediator {
 		t.Fatalf("restored mediator invitation = %v, %v", invitedMediator, err)

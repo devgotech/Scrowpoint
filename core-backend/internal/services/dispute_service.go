@@ -561,7 +561,7 @@ func (s *DisputeService) listDisputes(status string, page, limit int, include fu
 	s.Mu.RLock()
 	defer s.Mu.RUnlock()
 
-	var list []db.Dispute
+	list := []db.Dispute{}
 	for _, d := range s.DisputesByID {
 		if status != "" && string(d.Status) != status {
 			continue

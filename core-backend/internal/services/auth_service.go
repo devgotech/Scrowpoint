@@ -331,6 +331,28 @@ func (s *AuthService) Login(ctx context.Context, email, password, userAgent, ip 
 	return user, s.createSessionLocked(user.ID, userAgent, ip, SessionTTL), nil
 }
 
+// RepairAdminPassword sets the password on an existing admin account that has
+// no stored password hash. Older builds dropped hashes when saving state, which
+// left accounts unable to sign in after a restart. It never overwrites a
+// working password and only touches admin accounts. It reports whether it
+// changed anything.
+func (s *AuthService) RepairAdminPassword(ctx context.Context, email, password string) (bool, error) {
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+
+	user, exists := s.UsersByEmail[strings.ToLower(strings.TrimSpace(email))]
+	if !exists || user.Role != db.RoleAdmin || user.PasswordHash != "" {
+		return false, nil
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return false, errors.New("failed to hash password")
+	}
+	user.PasswordHash = string(hashedPassword)
+	user.UpdatedAt = time.Now()
+	return true, nil
+}
+
 // SessionTTL is how long an issued login session (and its token) stays valid.
 const SessionTTL = 7 * 24 * time.Hour
 

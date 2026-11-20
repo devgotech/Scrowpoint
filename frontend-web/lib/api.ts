@@ -580,6 +580,16 @@ export interface PendingStaffInvitationDTO {
   expiresAt: string;
 }
 
+export interface PendingKYCReviewDTO {
+  id: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  idType: string;
+  status: string;
+  submittedAt: string;
+}
+
 export const adminApi = {
   getSummary: () => apiFetch<AdminSummaryDTO>("/api/admin/summary"),
 
@@ -649,25 +659,16 @@ export const adminApi = {
       }
     ),
 
-  listPendingKYC: () =>
-    apiFetch<
-      Array<{
-        id: string;
-        user_id: string;
-        full_name: string;
-        id_type: string;
-        masked_id: string;
-        status: string;
-        submitted_at: string;
-      }>
-    >("/api/admin/kyc/pending"),
+  /** Admin only: identity submissions waiting for a manual decision, oldest first. */
+  listPendingKYC: () => apiFetch<PendingKYCReviewDTO[]>("/api/admin/kyc/pending"),
 
+  /** Admin only. The backend reads `approve`; a missing flag counts as a rejection. */
   reviewKYC: (kycId: string, payload: { decision: "APPROVE" | "REJECT"; reason?: string }) =>
-    apiFetch<{ kyc_id: string; decision: string }>(
+    apiFetch<{ id: string; status: string }>(
       `/api/admin/kyc/${encodeURIComponent(kycId)}/review`,
       {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ approve: payload.decision === "APPROVE", reason: payload.reason }),
       }
     ),
 

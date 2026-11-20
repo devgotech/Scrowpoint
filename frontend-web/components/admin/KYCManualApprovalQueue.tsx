@@ -18,9 +18,10 @@ export interface PendingKYCRecord {
   id: string;
   userName: string;
   userEmail: string;
-  ninNumber: string;
-  docType: "NIN Slip" | "Passport" | "Driver's License";
-  flagReason: string;
+  /** Only shown when known; the live API does not return identity numbers. */
+  ninNumber?: string;
+  docType: string;
+  flagReason?: string;
   submittedAt: string;
 }
 
@@ -113,11 +114,14 @@ export function KYCManualApprovalQueue({
                   </span>
                 </div>
                 <div className="font-mono text-xs text-ink/65">
-                  NIN: {item.ninNumber} • {item.userEmail}
+                  {item.ninNumber ? `NIN: ${item.ninNumber} • ` : ""}
+                  {item.userEmail} • {item.submittedAt}
                 </div>
-                <div className="font-secondary text-meta text-state-warning-strong bg-state-warning/15 px-2 py-0.5 inline-block">
-                  Flag: {item.flagReason}
-                </div>
+                {item.flagReason && (
+                  <div className="font-secondary text-meta text-state-warning-strong bg-state-warning/15 px-2 py-0.5 inline-block">
+                    Flag: {item.flagReason}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2 shrink-0">

@@ -34,6 +34,10 @@ type authState struct {
 	UserSessions        map[uuid.UUID][]uuid.UUID
 	TokensByValue       map[string]*VerificationToken
 	MediatorInvitations map[string]*MediatorInvitation
+	// PasswordHashes is stored separately because db.User hides its hash from
+	// JSON so it never leaks into API responses. Without it, nobody could sign
+	// in with a password after a restart or redeploy.
+	PasswordHashes map[uuid.UUID]string
 }
 
 type listingState struct {
@@ -94,12 +98,19 @@ func (s PersistentServices) Export() (map[string][]byte, error) {
 	}
 
 	s.Auth.Mu.RLock()
+	passwordHashes := make(map[uuid.UUID]string, len(s.Auth.UsersByID))
+	for id, user := range s.Auth.UsersByID {
+		if user.PasswordHash != "" {
+			passwordHashes[id] = user.PasswordHash
+		}
+	}
 	err := collect("auth", authState{
 		UsersByID:           s.Auth.UsersByID,
 		Sessions:            s.Auth.Sessions,
 		UserSessions:        s.Auth.UserSessions,
 		TokensByValue:       s.Auth.TokensByValue,
 		MediatorInvitations: s.Auth.MediatorInvitations,
+		PasswordHashes:      passwordHashes,
 	})
 	s.Auth.Mu.RUnlock()
 	if err != nil {
@@ -212,7 +223,10 @@ func (s PersistentServices) Restore(states map[string][]byte) error {
 	if auth.UsersByID != nil {
 		s.Auth.UsersByID = auth.UsersByID
 		s.Auth.UsersByEmail = make(map[string]*db.User, len(auth.UsersByID))
-		for _, user := range auth.UsersByID {
+		for id, user := range auth.UsersByID {
+			if hash, ok := auth.PasswordHashes[id]; ok {
+				user.PasswordHash = hash
+			}
 			s.Auth.UsersByEmail[user.Email] = user
 		}
 	}
