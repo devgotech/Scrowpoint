@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Lock,
   LogOut,
+  Menu,
   PlusCircle,
   Shield,
   ShieldAlert,
@@ -54,6 +55,8 @@ export function Navbar({
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const isProfileActive =
     currentPath === "/settings/profile" || currentPath.startsWith("/settings");
@@ -68,6 +71,16 @@ export function Navbar({
     currentPath.startsWith("/verify-identity") || currentPath.startsWith("/kyc");
   const isAdminActive = currentPath.startsWith("/admin");
 
+  const navLinks = [
+    { href: "/marketplace", label: "Marketplace", active: currentPath === "/marketplace" },
+    { href: "/trust-and-safety", label: "Trust & Safety", active: currentPath === "/trust-and-safety" },
+    { href: "/pricing", label: "Calculator", active: currentPath === "/pricing" },
+    ...(isAuthenticated && user
+      ? [{ href: "/seller/dashboard", label: "Seller Hub", active: isDashboardActive }]
+      : []),
+    { href: "/waitlist", label: "Waitlist", active: currentPath === "/waitlist", boxed: true },
+  ];
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -81,6 +94,9 @@ export function Navbar({
         !notificationsRef.current.contains(event.target as Node)
       ) {
         setIsNotificationsOpen(false);
+      }
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
       }
     }
 
@@ -116,71 +132,75 @@ export function Navbar({
           SCROWPOINT<span className="text-accent-orange">.</span>
         </Link>
 
-        {/* Center: Variation 7 Uppercase Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 nav-link">
-          <Link
-            href="/marketplace"
-            onClick={() => onNavigate?.("/marketplace")}
-            className={cn(
-              "transition-colors duration-200",
-              currentPath === "/marketplace"
-                ? "text-accent-orange font-semibold"
-                : "text-ink/80 hover:text-ink"
-            )}
-          >
-            Marketplace
-          </Link>
-          <Link
-            href="/trust-and-safety"
-            onClick={() => onNavigate?.("/trust-and-safety")}
-            className={cn(
-              "transition-colors duration-200",
-              currentPath === "/trust-and-safety"
-                ? "text-accent-orange font-semibold"
-                : "text-ink/80 hover:text-ink"
-            )}
-          >
-            Trust &amp; Safety
-          </Link>
-          <Link
-            href="/pricing"
-            onClick={() => onNavigate?.("/pricing")}
-            className={cn(
-              "transition-colors duration-200",
-              currentPath === "/pricing"
-                ? "text-accent-orange font-semibold"
-                : "text-ink/80 hover:text-ink"
-            )}
-          >
-            Calculator
-          </Link>
-          {isAuthenticated && user && (
-            <Link
-              href="/seller/dashboard"
-              onClick={() => onNavigate?.("/seller/dashboard")}
-              className={cn(
-                "transition-colors duration-200",
-                isDashboardActive
-                  ? "text-accent-orange font-semibold"
-                  : "text-ink/80 hover:text-ink"
-              )}
-            >
-              Seller Hub
-            </Link>
+        {/* Center: full links on wide screens (xl+). Between 768px and 1280px they
+            collapse into a Menu dropdown so labels never wrap; below 768px the
+            MobileBottomNav takes over. */}
+        <nav className="hidden xl:flex items-center gap-6 2xl:gap-8 nav-link whitespace-nowrap">
+          {navLinks.map((link) =>
+            link.boxed ? (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => onNavigate?.(link.href)}
+                className={cn(
+                  "px-3 py-1.5 border border-ink/15 bg-white/80 hover:bg-surface hover:border-ink/40 transition-colors duration-200",
+                  link.active ? "border-ink bg-ink text-white" : "text-ink"
+                )}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => onNavigate?.(link.href)}
+                className={cn(
+                  "transition-colors duration-200",
+                  link.active ? "text-accent-orange font-semibold" : "text-ink/80 hover:text-ink"
+                )}
+              >
+                {link.label}
+              </Link>
+            )
           )}
-          <Link
-            href="/waitlist"
-            onClick={() => onNavigate?.("/waitlist")}
-            className={cn(
-              "px-3 py-1.5 border border-ink/15 bg-white/80 hover:bg-surface hover:border-ink/40 transition-colors duration-200",
-              currentPath === "/waitlist"
-                ? "border-ink bg-ink text-white"
-                : "text-ink"
-            )}
-          >
-            Waitlist
-          </Link>
         </nav>
+
+        <div ref={menuRef} className="relative hidden md:block xl:hidden mr-auto ml-6">
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-expanded={isMenuOpen}
+            aria-haspopup="true"
+            className="nav-link inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 border border-ink/15 bg-white/80 text-ink hover:border-ink/40 transition-colors duration-200"
+          >
+            <Menu className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Menu</span>
+            <ChevronDown
+              className={cn("h-3.5 w-3.5 transition-transform duration-200", isMenuOpen && "rotate-180")}
+              aria-hidden="true"
+            />
+          </button>
+          {isMenuOpen && (
+            <div className="absolute left-0 top-full mt-2 w-56 border border-ink-faint bg-surface py-1.5 shadow-lg rounded-card nav-link">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onNavigate?.(link.href);
+                  }}
+                  className={cn(
+                    "block px-4 py-2.5 transition-colors duration-200 hover:bg-paper",
+                    link.active ? "text-accent-orange font-semibold" : "text-ink/80 hover:text-ink"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Right Section: Guest vs Authenticated States */}
         <div className="flex items-center gap-3 md:gap-4">
@@ -190,7 +210,7 @@ export function Navbar({
               <Link href="/seller/post-gadget" className="hidden sm:block">
                 <button
                   type="button"
-                  className="btn-primary flex items-center gap-2 !py-2.5 !px-5 text-[0.8rem]"
+                  className="btn-primary flex items-center gap-2 whitespace-nowrap !py-2.5 !px-5 text-[0.8rem]"
                 >
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span>Sell Gadget</span>
